@@ -14,6 +14,7 @@ import {
   writeSpec,
   type SpecRecord,
 } from '../spec-io.js';
+import { SpecFrontmatterSchema } from '../../schemas/spec.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -28,6 +29,10 @@ beforeEach(() => {
 afterEach(() => {
   rmSync(root, { recursive: true, force: true });
 });
+
+function confirmSpec(code: string): void {
+  updateSpec(paths, code, { status: 'confirmed' });
+}
 
 describe('generateSpecCode — 编码生成', () => {
   it('L1 编码 = topic-L1', () => {
@@ -69,7 +74,8 @@ describe('createSpec — 创建 spec', () => {
   });
 
   it('创建 L2 spec (parent = L1)', () => {
-    const l1 = createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    confirmSpec('auth-L1');
     const l2 = createSpec({ paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1' });
     expect(l2.fm.parentCode).toBe('auth-L1');
     expect(l2.filePath).toContain('auth-L2');
@@ -77,10 +83,19 @@ describe('createSpec — 创建 spec', () => {
 
   it('创建 L3 spec (parent = L2)', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    confirmSpec('auth-L1');
     createSpec({ paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1' });
+    confirmSpec('auth-L2');
     const l3 = createSpec({ paths, code: 'auth-L3', level: 'L3', title: 'Auth Impl', topic: 'auth', parentCode: 'auth-L2' });
     expect(l3.fm.parentCode).toBe('auth-L2');
     expect(l3.fm.steps).toBeUndefined();
+  });
+
+  it('L2/L3 parent 未确认前抛 R4 错误', () => {
+    createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    expect(() => createSpec({
+      paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1',
+    })).toThrow(/R4/);
   });
 
   it('L2 无 parent 抛 R7 错误', () => {
@@ -108,9 +123,48 @@ describe('createSpec — 创建 spec', () => {
     })).toThrow(/不存在/);
   });
 
-  it('L1 spec 文件名含日期后缀', () => {
+  it('L1 spec 文件名使用 canonical code.md', () => {
     const rec = createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
-    expect(rec.filePath).toMatch(/auth-L1-\d{8}\.md$/);
+    expect(rec.filePath).toMatch(/auth-L1\.md$/);
+  });
+
+  it('拒绝不安全 topic 路径片段', () => {
+    expect(() => createSpec({
+      paths, code: 'auth-L1', level: 'L1', title: 'Bad', topic: '../outside', parentCode: null,
+    })).toThrow(/topic 非法/);
+    expect(existsSync(join(root, 'outside'))).toBe(false);
+  });
+
+  it('拒绝不安全 spec code 路径片段', () => {
+    expect(() => createSpec({
+      paths, code: '../bad-L1', level: 'L1', title: 'Bad', topic: 'auth', parentCode: null,
+    })).toThrow(/spec code 非法/);
+  });
+});
+
+describe('SpecFrontmatterSchema — code 契约', () => {
+  it('接受当前生成的点分 spec code', () => {
+    const parsed = SpecFrontmatterSchema.safeParse({
+      code: 'spec-manager-ai-ux-L3.1.1-readme',
+      level: 'L3',
+      title: 'README',
+      topic: 'spec-manager-ai-ux',
+      parentCode: 'spec-manager-ai-ux-L2.1',
+      status: 'draft',
+    });
+    expect(parsed.success).toBe(true);
+  });
+
+  it('拒绝包含路径分隔符的 spec code', () => {
+    const parsed = SpecFrontmatterSchema.safeParse({
+      code: '../bad-L1',
+      level: 'L1',
+      title: 'Bad',
+      topic: 'auth',
+      parentCode: null,
+      status: 'draft',
+    });
+    expect(parsed.success).toBe(false);
   });
 });
 
@@ -131,8 +185,21 @@ describe('readSpec — 读取 spec', () => {
 describe('updateSpec — 更新 spec', () => {
   it('更新 content', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
-    const { record } = updateSpec(paths, 'auth-L1', { content: '# New Content\n' });
+    const { record } = updateSpec(paths, 'auth-L1', { content: '# New Content\n', aiSummary: 'new content' });
     expect(record.content).toBe('# New Content\n');
+  });
+
+  it('更新 content 缺 aiSummary 抛 R13', () => {
+    createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    expect(() => updateSpec(paths, 'auth-L1', { content: '# New Content\n' })).toThrow(/R13/);
+  });
+
+  it('更新 content 仍是占位抛 R22', () => {
+    createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    expect(() => updateSpec(paths, 'auth-L1', {
+      content: '# Auth\n\n<!-- 在此粘贴正文 -->\n',
+      aiSummary: 'placeholder',
+    })).toThrow(/R22/);
   });
 
   it('更新 aiSummary', () => {
@@ -157,7 +224,9 @@ describe('updateSpec — 更新 spec', () => {
 
   it('追加 step', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    confirmSpec('auth-L1');
     createSpec({ paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1' });
+    confirmSpec('auth-L2');
     createSpec({ paths, code: 'auth-L3', level: 'L3', title: 'Auth Impl', topic: 'auth', parentCode: 'auth-L2' });
     const step = { stepNo: 1, stepType: 'mcp_tool' as const, name: 'read file', status: 'succeeded' as const };
     const { record } = updateSpec(paths, 'auth-L3', { appendStep: step });
@@ -167,7 +236,9 @@ describe('updateSpec — 更新 spec', () => {
 
   it('替换 step', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    confirmSpec('auth-L1');
     createSpec({ paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1' });
+    confirmSpec('auth-L2');
     createSpec({ paths, code: 'auth-L3', level: 'L3', title: 'Auth Impl', topic: 'auth', parentCode: 'auth-L2' });
     updateSpec(paths, 'auth-L3', {
       appendStep: { stepNo: 1, stepType: 'mcp_tool', name: 'old', status: 'pending' },
@@ -189,13 +260,13 @@ describe('updateSpec — 更新 spec', () => {
   });
 
   it('更新不存在的 spec 抛错', () => {
-    expect(() => updateSpec(paths, 'nonexistent', { content: 'x' })).toThrow(/not found/i);
+    expect(() => updateSpec(paths, 'nonexistent', { content: 'x', aiSummary: 'x' })).toThrow(/not found/i);
   });
 
   it('更新后 updated 时间戳变新', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
     const before = findSpecByCode(paths, 'auth-L1')!.fm.updated;
-    const { record } = updateSpec(paths, 'auth-L1', { content: 'new' });
+    const { record } = updateSpec(paths, 'auth-L1', { content: 'new', aiSummary: 'new' });
     expect(record.fm.updated >= before).toBe(true);
   });
 });
@@ -214,6 +285,7 @@ describe('findSpecByCode — 按 code 查找', () => {
 
   it('多个同 topic 不同 level 的 spec 都能找到', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    confirmSpec('auth-L1');
     createSpec({ paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1' });
     expect(findSpecByCode(paths, 'auth-L1')).not.toBeNull();
     expect(findSpecByCode(paths, 'auth-L2')).not.toBeNull();
@@ -238,7 +310,7 @@ describe('listAllSpecs — 列出所有 spec (带缓存)', () => {
     // 第一次 list 填缓存
     expect(listAllSpecs(paths)).toHaveLength(1);
     // 直接修改文件
-    updateSpec(paths, 'auth-L1', { content: '# Updated\n' });
+    updateSpec(paths, 'auth-L1', { content: '# Updated\n', aiSummary: 'updated' });
     // 不 invalidate 的话可能拿到旧缓存(取决于 mtime)
     invalidateSpecCache(rec.filePath);
     const updated = listAllSpecs(paths);

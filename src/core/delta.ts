@@ -130,16 +130,16 @@ export function parseDeltaFile(filePath: string): { specCode: string; entries: C
       // 用 indexOf 找每个 ### Requirement: 起点和下一个段头终点
       const reqRegex = /^### Requirement:\s*(\S+)$/gm;
       let m: RegExpExecArray | null;
-      const reqStarts: Array<{ code: string; bodyStart: number }> = [];
+      const reqStarts: Array<{ code: string; lineStart: number; bodyStart: number }> = [];
       while ((m = reqRegex.exec(body)) !== null) {
         const code = m[1];
         const bodyStart = m.index + m[0].length; // 跳过整行（含 \n）
-        reqStarts.push({ code, bodyStart });
+        reqStarts.push({ code, lineStart: m.index, bodyStart });
       }
       for (let i = 0; i < reqStarts.length; i++) {
         const { code, bodyStart } = reqStarts[i];
-        const nextStart = i + 1 < reqStarts.length ? reqStarts[i + 1].bodyStart : body.length;
-        let reqBody = body.slice(bodyStart, nextStart).trim();
+        const nextStart = i + 1 < reqStarts.length ? reqStarts[i + 1].lineStart : body.length;
+        const reqBody = body.slice(bodyStart, nextStart).trim();
         if (op === 'ADDED') {
           // ADDED 必须含 title + content
           const titleMatch = reqBody.match(/^#+\s+(.+?)$/m);

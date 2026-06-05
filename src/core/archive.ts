@@ -14,13 +14,12 @@
 
 import { existsSync, mkdirSync, renameSync, rmSync, unlinkSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
-import { writeFrontmatter, writeAtomic } from './frontmatter.js';
+import { readFrontmatter, writeFrontmatter, writeAtomic } from './frontmatter.js';
 import { parseDeltaSpec, getChangeDir } from './delta.js';
-import { findSpecByCode, readSpec, writeSpec, createSpec, invalidateSpecCache, type SpecRecord } from './spec-io.js';
+import { findSpecByCode, readSpec, writeSpec, createSpec, invalidateSpecCache, listAllSpecs, type SpecRecord } from './spec-io.js';
 import { hit } from './audit.js';
-import { todayYYYYMMDD } from './constants.js';
-import type { ProjectPaths } from './paths.js';
-import type { ChangeOpT } from '../schemas/change.js';
+import { assertSafeSpecCode, assertSafeTopic, type ProjectPaths } from './paths.js';
+import { ProposalSchema, type ChangeEntry, type ChangeOpT } from '../schemas/change.js';
 
 export interface ArchiveResult {
   changeName: string;
@@ -30,6 +29,8 @@ export interface ArchiveResult {
 }
 
 export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult {
+  validateChangeProposal(paths, name);
+
   // 1. 解析 delta
   const delta = parseDeltaSpec(paths, name);
 
@@ -41,6 +42,7 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
   const sortedEntries = [...delta.changes].sort((a, b) => {
     return order.indexOf(a.op) - order.indexOf(b.op);
   });
+  preflightArchive(paths, name, sortedEntries);
 
   for (const e of sortedEntries) {
     try {
@@ -49,11 +51,7 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
           if (!e.newCode) throw new Error('RENAMED 缺 newCode');
           const spec = findSpecByCode(paths, e.code);
           if (!spec) throw new Error(`Spec not found: ${e.code}`);
-          const specDir = dirname(spec.filePath);
-          // 从旧文件名提取日期后缀，保持一致
-          const oldFileName = spec.filePath.split('/').pop() ?? '';
-          const dateMatch = oldFileName.match(/-(\d{8})\.md$/);
-          const dateSuffix = dateMatch ? `-${dateMatch[1]}` : `-${todayYYYYMMDD()}`;          const newFilePath = join(specDir, `${e.newCode}${dateSuffix}.md`);
+          const newFilePath = renamedFilePath(spec, e.newCode);
           const newSpec: SpecRecord = {
             ...spec,
             filePath: newFilePath,
@@ -156,7 +154,12 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
     } catch (err) {
       const reason = err instanceof Error ? err.message : String(err);
       skipped.push({ op: e.op, code: e.code, reason });
+      break;
     }
+  }
+
+  if (skipped.length > 0) {
+    throw new Error(renderArchiveError(name, skipped, 'Change 应用失败，已停止归档'));
   }
 
   // 3. 把 changes/<name>/ 整体移到 archive/<name>/
@@ -176,4 +179,152 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
     hit({ paths, ruleId: 'R24' });
     return { changeName: name, applied, skipped, archivedTo: archiveTarget };
   }
+}
+
+function validateChangeProposal(paths: ProjectPaths, name: string): void {
+  const dir = getChangeDir(paths, name);
+  if (!dir) throw new Error(`Change not found: ${name}`);
+  if (!existsSync(dir.proposal)) {
+    hit({ paths, ruleId: 'R24' });
+    throw new Error(`R24: delta change 必须包含 proposal.md`);
+  }
+  try {
+    const { data } = readFrontmatter(dir.proposal);
+    ProposalSchema.parse(data);
+  } catch (err) {
+    hit({ paths, ruleId: 'R24' });
+    const reason = err instanceof Error ? err.message : String(err);
+    throw new Error(`R24: proposal.md 必须填写 why/scope 并通过 schema 校验: ${reason}`);
+  }
+}
+
+function preflightArchive(paths: ProjectPaths, name: string, entries: ChangeEntry[]): void {
+  const specsByCode = new Map(listAllSpecs(paths).map(s => [s.fm.code, s]));
+  const errors: ArchiveResult['skipped'] = [];
+
+  for (const e of entries) {
+    try {
+      switch (e.op) {
+        case 'RENAMED': {
+          if (!e.newCode) throw new Error('RENAMED 缺 newCode');
+          assertSafeSpecCode(e.newCode);
+          const spec = specsByCode.get(e.code);
+          if (!spec) throw new Error(`Spec not found: ${e.code}`);
+          if (e.newCode === e.code) throw new Error('RENAMED 的 newCode 不能等于原 code');
+          if (specsByCode.has(e.newCode)) throw new Error(`目标 spec 已存在: ${e.newCode}`);
+          const newFilePath = renamedFilePath(spec, e.newCode);
+          if (existsSync(newFilePath) && newFilePath !== spec.filePath) {
+            throw new Error(`目标文件已存在: ${newFilePath}`);
+          }
+          specsByCode.delete(e.code);
+          specsByCode.set(e.newCode, { ...spec, fm: { ...spec.fm, code: e.newCode }, filePath: newFilePath });
+          break;
+        }
+        case 'REMOVED': {
+          if (!specsByCode.has(e.code)) throw new Error(`Spec not found: ${e.code}`);
+          specsByCode.delete(e.code);
+          break;
+        }
+        case 'MODIFIED': {
+          if (!specsByCode.has(e.code)) throw new Error(`Spec not found: ${e.code}`);
+          if (!e.content) throw new Error('MODIFIED 缺 content');
+          break;
+        }
+        case 'ADDED': {
+          assertSafeSpecCode(e.code);
+          if (specsByCode.has(e.code)) throw new Error(`Spec ${e.code} 已存在，无法 ADDED`);
+          const meta = resolveAddedMetadata(paths, name, e);
+          assertSafeTopic(meta.topic);
+          validateParentForAdded(specsByCode, e.code, meta.level, meta.parentCode);
+          specsByCode.set(e.code, {
+            fm: {
+              code: e.code,
+              level: meta.level,
+              title: meta.title,
+              topic: meta.topic,
+              parentCode: meta.parentCode,
+              status: 'draft',
+            },
+            content: '',
+            filePath: '',
+          });
+          break;
+        }
+      }
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
+      errors.push({ op: e.op, code: e.code, reason });
+    }
+  }
+
+  if (errors.length > 0) {
+    throw new Error(renderArchiveError(name, errors, 'Change 预检失败，未修改 specs 且未归档'));
+  }
+}
+
+function renamedFilePath(spec: SpecRecord, newCode: string): string {
+  const specDir = dirname(spec.filePath);
+  return join(specDir, `${newCode}.md`);
+}
+
+function resolveAddedMetadata(
+  paths: ProjectPaths,
+  name: string,
+  entry: ChangeEntry,
+): { topic: string; level: 'L0' | 'L1' | 'L2' | 'L3'; title: string; parentCode: string | null } {
+  const dir = getChangeDir(paths, name);
+  let topic = '';
+  let placeholder: SpecRecord | null = null;
+  if (dir) {
+    for (const f of dir.specFiles) {
+      if (f.endsWith(`/${entry.code}.md`)) {
+        topic = basename(dirname(dirname(f)));
+        const rec = readSpec(f);
+        if (rec) placeholder = rec;
+        break;
+      }
+    }
+  }
+  if (!topic) {
+    throw new Error(`无法推断 ${entry.code} 的 topic（请把占位文件放在 changes/${name}/specs/<topic>/${entry.code}/${entry.code}.md）`);
+  }
+  const level = (placeholder?.fm.level ?? entry.level) as 'L0' | 'L1' | 'L2' | 'L3' | undefined;
+  const title = placeholder?.fm.title ?? entry.title;
+  const parentCode = placeholder?.fm.parentCode ?? entry.parentCode ?? null;
+  if (!level) throw new Error('ADDED 缺 level（占位文件 frontmatter 也未指定）');
+  if (!title) throw new Error('ADDED 缺 title（占位文件 frontmatter 也未指定）');
+  return { topic, level, title, parentCode };
+}
+
+function validateParentForAdded(
+  specsByCode: Map<string, SpecRecord>,
+  code: string,
+  level: 'L0' | 'L1' | 'L2' | 'L3',
+  parentCode: string | null,
+): void {
+  const expectedParentLevels: Record<'L0' | 'L1' | 'L2' | 'L3', Array<'L0' | 'L1' | 'L2' | 'L3'>> = {
+    L0: [],
+    L1: [],
+    L2: ['L0', 'L1'],
+    L3: ['L2'],
+  };
+  if (!parentCode) {
+    if (level === 'L2' || level === 'L3') throw new Error(`R7: ${level} 必须有 parentCode`);
+    return;
+  }
+  const parent = specsByCode.get(parentCode);
+  if (!parent) throw new Error(`parentCode 指向不存在的 spec: ${parentCode}`);
+  if (!expectedParentLevels[level].includes(parent.fm.level)) {
+    throw new Error(
+      `R7: ${level} 的 parent 必须是 ${expectedParentLevels[level].join('/')}, ` +
+      `实际是 ${parent.fm.level} (${parentCode})`,
+    );
+  }
+  if (code === parentCode) throw new Error('ADDED 的 parentCode 不能等于自身 code');
+}
+
+function renderArchiveError(name: string, skipped: ArchiveResult['skipped'], header: string): string {
+  const lines = [`${header}: ${name}`];
+  for (const s of skipped) lines.push(`[${s.op}] ${s.code}: ${s.reason}`);
+  return lines.join('\n');
 }

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { PLAN_STEPS_MAX } from '../core/constants.js';
+import { PLAN_STEPS_MAX, SPEC_CODE_RE } from '../core/constants.js';
 
 export const SpecLevelSchema = z.enum(['L0', 'L1', 'L2', 'L3']);
 export type SpecLevelT = z.infer<typeof SpecLevelSchema>;
@@ -28,7 +28,7 @@ export const StepFrontmatterSchema = z.object({
 
 export const SpecFrontmatterSchema = z.object({
   id: z.string().optional(),
-  code: z.string().regex(/^\d{4}-\d{2}-\d{2}-[a-z0-9]+$/, 'code 必须是 YYYY-MM-DD-<shortId> 格式'),
+  code: z.string().regex(SPEC_CODE_RE, 'code 必须是 <topic>-L<level>[.<n>...][-desc] 格式'),
   level: SpecLevelSchema,
   title: z.string().min(1),
   topic: z.string().min(1),

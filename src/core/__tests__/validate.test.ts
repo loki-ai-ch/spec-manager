@@ -59,6 +59,35 @@ scope
 ## 方案概述
 overview
 
+## 技术决策
+decisions
+
+## 受影响模块
+modules
+
+## 接口契约
+contract
+
+## L3 裂变计划
+plan
+
+## 复用清单
+\`src/core/auth.ts\`
+`;
+    expect(validateSpecContent('L2', content)).toEqual([]);
+  });
+
+  it('L2 退化为 todolist 时返回 R17 warning', () => {
+    const content = `# Auth Design
+
+## 方案概述
+- [ ] TODO: task 1
+- [ ] TODO: task 2
+- [ ] 待办 task 3
+
+## 技术决策
+none
+
 ## 受影响模块
 modules
 
@@ -68,7 +97,55 @@ contract
 ## L3 裂变计划
 plan
 `;
-    expect(validateSpecContent('L2', content)).toEqual([]);
+    const warnings = validateSpecContent('L2', content);
+    expect(warnings.some(w => w.rule === 'R17')).toBe(true);
+  });
+
+  it('跨层引用不用 spec code 时返回 R14 warning', () => {
+    const content = `# Auth Design
+
+## 方案概述
+overview
+
+## 技术决策
+decisions
+
+## 受影响模块
+\`src/core/auth.ts\`
+
+## 接口契约
+contract
+
+## L3 裂变计划
+plan
+
+## 关联
+- 父 L1: 用户认证需求
+`;
+    const warnings = validateSpecContent('L2', content);
+    expect(warnings.some(w => w.rule === 'R14')).toBe(true);
+  });
+
+  it('scope-split L2 未批量列出子 L3 时返回 R20 warning', () => {
+    const content = `# Auth Design
+
+## 方案概述
+scope-split
+
+## 技术决策
+decisions
+
+## 受影响模块
+\`src/core/auth.ts\`
+
+## 接口契约
+contract
+
+## L3 裂变计划
+只有一个任务
+`;
+    const warnings = validateSpecContent('L2', content);
+    expect(warnings.some(w => w.rule === 'R20')).toBe(true);
   });
 
   it('L3 完整正文无 warning', () => {
@@ -82,6 +159,9 @@ steps
 
 ## 验证命令
 vitest
+
+## 代码调查
+\`src/core/auth.ts\`
 `;
     expect(validateSpecContent('L3', content)).toEqual([]);
   });
@@ -95,6 +175,22 @@ goal
     const warnings = validateSpecContent('L3', content);
     expect(warnings.some(w => w.section === '实施步骤')).toBe(true);
     expect(warnings.some(w => w.section === '验证命令')).toBe(true);
+  });
+
+  it('L3 缺代码调查依据时返回 R23 warning', () => {
+    const content = `# Auth Impl
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+vitest
+`;
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.some(w => w.rule === 'R23')).toBe(true);
   });
 
   it('L0 缺段返回 warning', () => {
@@ -222,5 +318,16 @@ describe('validatePlanJson — planJson 校验', () => {
     };
     const warnings = validatePlanJson(plan);
     expect(warnings.some(w => w.rule === 'R10')).toBe(false);
+  });
+
+  it('修改类 plan 前两步未调研时返回 R8 warning', () => {
+    const plan = {
+      steps: [
+        { stepNo: 1, stepType: 'mcp_tool', name: 'edit source file' },
+        { stepNo: 2, stepType: 'mcp_tool', name: 'run verify tests' },
+      ],
+    };
+    const warnings = validatePlanJson(plan);
+    expect(warnings.some(w => w.rule === 'R8')).toBe(true);
   });
 });

@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:fs';
+import { mkdtempSync, writeFileSync, mkdirSync, rmSync, existsSync, readdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { listSpecFiles, specFilePath, getPaths, type ProjectPaths } from '../paths.js';
-import { findSpecByCode, listAllSpecs, createSpec, generateSpecCode, invalidateSpecCache, updateSpec } from '../spec-io.js';
+import { findSpecByCode, listAllSpecs, createSpec, generateSpecCode, invalidateSpecCache, updateSpec, migrateSpecPaths } from '../spec-io.js';
 import { archiveChange } from '../archive.js';
 import type { SpecLevel } from '../validate.js';
 
@@ -21,17 +21,28 @@ afterEach(() => {
 });
 
 /**
- * 平铺布局：直接写 specs/<topic>/<code>-<date>.md
+ * 平铺布局：默认写 specs/<topic>/<code>.md；legacy 文件保留 -<date> 后缀用于兼容测试。
  */
-function writeSpecFile(topic: string, code: string, title = 'Test', level = 'L1', parentCode: string | null = null): string {
+function writeSpecFile(
+  topic: string,
+  code: string,
+  title = 'Test',
+  level = 'L1',
+  parentCode: string | null = null,
+  opts?: { legacyDate?: string },
+): string {
   const dir = join(root, 'specs', topic);
   mkdirSync(dir, { recursive: true });
-  const date = '20260604';
-  const filePath = join(dir, `${code}-${date}.md`);
+  const fileName = opts?.legacyDate ? `${code}-${opts.legacyDate}.md` : `${code}.md`;
+  const filePath = join(dir, fileName);
   const pc = parentCode ?? 'null';
   const fm = `---\ncode: ${code}\nlevel: ${level}\ntitle: ${title}\ntopic: ${topic}\nparentCode: ${pc}\nstatus: draft\nproject: 1\naiSummary: ''\ncoveredTasks: []\nrelations: []\ncreated: 2026-06-04T00:00:00Z\nupdated: 2026-06-04T00:00:00Z\n---\n# ${title}\n`;
   writeFileSync(filePath, fm, 'utf8');
   return filePath;
+}
+
+function confirmSpec(code: string): void {
+  updateSpec(paths, code, { status: 'confirmed' });
 }
 
 describe('listSpecFiles — 平铺扫描', () => {
@@ -46,18 +57,35 @@ describe('listSpecFiles — 平铺扫描', () => {
     expect(all[0]).toEqual({
       topic: 'auth',
       code: 'auth-L1',
+      filePath: expect.stringContaining('auth-L1.md'),
+    });
+  });
+
+  it('兼容 legacy 日期后缀 spec 文件', () => {
+    writeSpecFile('auth', 'auth-L1', 'Auth L1', 'L1', null, { legacyDate: '20260604' });
+    const all = listSpecFiles(paths);
+    expect(all).toHaveLength(1);
+    expect(all[0]).toEqual({
+      topic: 'auth',
+      code: 'auth-L1',
       filePath: expect.stringContaining('auth-L1-20260604.md'),
     });
+  });
+
+  it('canonical 与 legacy 同 code 并存时拒绝静默选择', () => {
+    writeSpecFile('auth', 'auth-L1', 'Auth L1');
+    writeSpecFile('auth', 'auth-L1', 'Auth L1 Legacy', 'L1', null, { legacyDate: '20260604' });
+    expect(() => listSpecFiles(paths)).toThrow(/重复 spec code/);
   });
 
   it('3 层平铺 L1+L2+L3 全部发现', () => {
     writeSpecFile('auth', 'auth-L1', 'L1', 'L1');
     writeSpecFile('auth', 'auth-L2', 'L2', 'L2', 'auth-L1');
     writeSpecFile('auth', 'auth-L3', 'L3', 'L3', 'auth-L2');
-    writeSpecFile('auth', 'auth-L3b', 'L3-2', 'L3', 'auth-L2');
+    writeSpecFile('auth', 'auth-L3.1.2', 'L3-2', 'L3', 'auth-L2');
     const all = listSpecFiles(paths);
     const codes = all.map(s => s.code).sort();
-    expect(codes).toEqual(['auth-L1', 'auth-L2', 'auth-L3', 'auth-L3b']);
+    expect(codes).toEqual(['auth-L1', 'auth-L2', 'auth-L3', 'auth-L3.1.2'].sort());
   });
 
   it('多 topic 平铺', () => {
@@ -120,29 +148,29 @@ describe('findSpecByCode — 平铺查找', () => {
 });
 
 describe('specFilePath — 平铺路径计算', () => {
-  it('L1: specs/<topic>/<code>-<date>.md', () => {
+  it('L1: specs/<topic>/<code>.md', () => {
     const p = specFilePath(paths, null, 'auth-L1', 'auth', '20260604');
-    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L1-20260604.md'));
+    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L1.md'));
   });
 
   it('L2: 同样平铺在 specs/<topic>/ 下', () => {
     const p = specFilePath(paths, null, 'auth-L2.1', 'auth', '20260605');
-    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L2.1-20260605.md'));
+    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L2.1.md'));
   });
 
   it('L3: 同样平铺', () => {
     const p = specFilePath(paths, null, 'auth-L3.1.1', 'auth', '20260606');
-    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L3.1.1-20260606.md'));
+    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L3.1.1.md'));
   });
 
   it('无 topic 时从 code 推断', () => {
     const p = specFilePath(paths, null, 'auth-L1', undefined, '20260604');
-    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L1-20260604.md'));
+    expect(p).toBe(join(root, 'specs', 'auth', 'auth-L1.md'));
   });
 });
 
 describe('createSpec — 平铺落盘', () => {
-  it('L1 落在 specs/<topic>/<code>-<date>.md', () => {
+  it('L1 落在 specs/<topic>/<code>.md', () => {
     const code = generateSpecCode('auth', 'L1');
     const rec = createSpec({
       paths,
@@ -153,7 +181,7 @@ describe('createSpec — 平铺落盘', () => {
       parentCode: null,
     });
     expect(existsSync(rec.filePath)).toBe(true);
-    expect(rec.filePath).toMatch(/specs\/auth\/auth-L1-\d{8}\.md$/);
+    expect(rec.filePath).toMatch(/specs\/auth\/auth-L1\.md$/);
     expect(rec.fm.code).toBe(code);
     expect(rec.fm.status).toBe('draft');
   });
@@ -161,20 +189,23 @@ describe('createSpec — 平铺落盘', () => {
   it('L2 平铺在 topic 下', () => {
     const l1Code = generateSpecCode('auth', 'L1');
     createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
+    confirmSpec(l1Code);
     const l2Code = generateSpecCode('auth', 'L2', l1Code);
     const l2 = createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    expect(l2.filePath).toMatch(/specs\/auth\/auth-L2\.1-\d{8}\.md$/);
+    expect(l2.filePath).toMatch(/specs\/auth\/auth-L2\.1\.md$/);
     expect(l2.fm.parentCode).toBe(l1Code);
   });
 
   it('L3 平铺在 topic 下', () => {
     const l1Code = generateSpecCode('auth', 'L1');
     createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
+    confirmSpec(l1Code);
     const l2Code = generateSpecCode('auth', 'L2', l1Code);
     createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
+    confirmSpec(l2Code);
     const l3Code = generateSpecCode('auth', 'L3', l2Code);
     const l3 = createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
-    expect(l3.filePath).toMatch(/specs\/auth\/auth-L3\.1\.1-\d{8}\.md$/);
+    expect(l3.filePath).toMatch(/specs\/auth\/auth-L3\.1\.1\.md$/);
   });
 
   it('L2 无 parent 抛 R7', () => {
@@ -218,7 +249,9 @@ describe('createSpec — 平铺落盘', () => {
     const l2Code = generateSpecCode('auth', 'L2', l1Code);
     const l3Code = generateSpecCode('auth', 'L3', l2Code);
     createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
+    confirmSpec(l1Code);
     createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
+    confirmSpec(l2Code);
     createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
     const all = listAllSpecs(paths);
     expect(all).toHaveLength(3);
@@ -240,7 +273,7 @@ describe('generateSpecCode — 格式校验', () => {
 
 describe('listAllSpecs 内存缓存', () => {
   it('连续调用返回相同结果(缓存命中)', () => {
-    writeSpecFile('auth', ['auth-L1'], 'L1', 'L1');
+    writeSpecFile('auth', 'auth-L1', 'L1', 'L1');
     const a = listAllSpecs(paths);
     const b = listAllSpecs(paths);
     expect(a).toEqual(b);
@@ -252,20 +285,59 @@ describe('listAllSpecs 内存缓存', () => {
     createSpec({ paths, code, level: 'L1', title: 'old title', topic: 'auth', parentCode: null });
     expect(listAllSpecs(paths)[0].fm.title).toBe('old title');
     await new Promise(r => setTimeout(r, 5));
-    updateSpec(paths, code, { content: '# new body' });
+    updateSpec(paths, code, { content: '# new body', aiSummary: 'new body' });
     expect(listAllSpecs(paths)[0].content).toBe('# new body\n');
   });
 
   it('invalidateSpecCache() 清空全部缓存', () => {
-    writeSpecFile('auth', ['auth-L1'], 'L1', 'L1');
+    writeSpecFile('auth', 'auth-L1', 'L1', 'L1');
     expect(listAllSpecs(paths)).toHaveLength(1);
     invalidateSpecCache();
     expect(listAllSpecs(paths)).toHaveLength(1);
   });
 });
 
+describe('migrateSpecPaths — legacy 日期后缀迁移', () => {
+  it('dry-run 只返回计划，不改文件', () => {
+    const oldPath = writeSpecFile('auth', 'auth-L1', 'Auth', 'L1', null, { legacyDate: '20260604' });
+    const result = migrateSpecPaths(paths, { dryRun: true });
+    expect(result.dryRun).toBe(true);
+    expect(result.migrated).toHaveLength(1);
+    expect(result.migrated[0].from).toBe(oldPath);
+    expect(result.migrated[0].to).toBe(join(root, 'specs', 'auth', 'auth-L1.md'));
+    expect(existsSync(oldPath)).toBe(true);
+    expect(existsSync(join(root, 'specs', 'auth', 'auth-L1.md'))).toBe(false);
+  });
+
+  it('执行迁移后 findSpecByCode 读取 canonical 文件', () => {
+    const oldPath = writeSpecFile('auth', 'auth-L1', 'Auth', 'L1', null, { legacyDate: '20260604' });
+    const result = migrateSpecPaths(paths);
+    const newPath = join(root, 'specs', 'auth', 'auth-L1.md');
+    expect(result.migrated).toHaveLength(1);
+    expect(existsSync(oldPath)).toBe(false);
+    expect(existsSync(newPath)).toBe(true);
+    expect(findSpecByCode(paths, 'auth-L1')!.filePath).toBe(newPath);
+  });
+
+  it('frontmatter code 不一致时拒绝迁移', () => {
+    writeSpecFile('auth', 'auth-L1', 'Auth', 'L1', null, { legacyDate: '20260604' });
+    const badPath = join(root, 'specs', 'auth', 'auth-L1-20260604.md');
+    const raw = `---\ncode: auth-L2\nlevel: L1\ntitle: Auth\ntopic: auth\nparentCode: null\nstatus: draft\n---\n# Auth\n`;
+    writeFileSync(badPath, raw, 'utf8');
+    expect(() => migrateSpecPaths(paths)).toThrow(/frontmatter code 不一致/);
+    expect(existsSync(badPath)).toBe(true);
+  });
+
+  it('目标 canonical 文件已存在时拒绝迁移', () => {
+    writeSpecFile('auth', 'auth-L1', 'Auth', 'L1', null, { legacyDate: '20260604' });
+    writeSpecFile('auth', 'auth-L1', 'Auth Canonical');
+    expect(() => migrateSpecPaths(paths)).toThrow(/目标文件已存在/);
+    expect(readdirSync(join(root, 'specs', 'auth')).sort()).toEqual(['auth-L1-20260604.md', 'auth-L1.md']);
+  });
+});
+
 describe('archiveChange — RENAMED 整目录移动', () => {
-  it('L1 rename 应移到 <newCode>/<newCode>-<date>.md,旧 <oldCode>/ 目录不残留', () => {
+  it('L1 rename 应移到 <newCode>.md,旧文件不残留', () => {
     const oldCode = 'auth-L1';
     const newCode = 'auth-v2-L1';
     createSpec({ paths, code: oldCode, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
@@ -281,10 +353,7 @@ code: ${oldCode}
 `, 'utf8');
     archiveChange(paths, 'r1');
     // 旧文件不应存在
-    expect(existsSync(join(root, 'specs', 'auth', `${oldCode}-20260604.md`))).toBe(false);
-    // 新文件名带日期后缀，平铺在 topic 目录下
-    const topicDir = join(root, 'specs', 'auth');
-    const files = require('node:fs').readdirSync(topicDir);
-    expect(files.some((f: string) => f.startsWith(`${newCode}-`) && f.endsWith('.md'))).toBe(true);
+    expect(existsSync(join(root, 'specs', 'auth', `${oldCode}.md`))).toBe(false);
+    expect(existsSync(join(root, 'specs', 'auth', `${newCode}.md`))).toBe(true);
   });
 });

@@ -13,6 +13,7 @@ import { siblingMetaDir, type ProjectPaths } from './paths.js';
 import { findSpecByCode, updateSpec, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
 import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
+import { validatePlanJson } from './validate.js';
 import { ID_PAD_WIDTH, TASK_FILE_EXT, TASK_ID_PREFIX } from './constants.js';
 import { hit } from './audit.js';
 
@@ -104,7 +105,7 @@ function findTaskById(paths: ProjectPaths, taskId: string, specCode?: string): T
 export interface CreateTaskInput {
   paths: ProjectPaths;
   specCode: string;
-  planJson: { steps: Array<{ stepNo: number | string; stepType: StepTypeT; name: string }> };
+  planJson: { coveredSpecs?: string[]; steps: Array<{ stepNo: number | string; stepType: StepTypeT; name: string }> };
   autoConfirm: boolean;
 }
 
@@ -117,7 +118,24 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     throw new Error(`R3: L3 必须 frozen 才能建 Task，当前 status=${spec.fm.status}`);
   }
 
-  PlanJsonSchema.parse(input.planJson);
+  const parsedPlan = PlanJsonSchema.safeParse(input.planJson);
+  if (!parsedPlan.success) {
+    const message = parsedPlan.error.issues.map(i => i.message).join('; ');
+    if (message.includes('R11')) {
+      hit({ paths: input.paths, ruleId: 'R11', specCode: input.specCode });
+    }
+    throw new Error(message);
+  }
+  const planWarnings = validatePlanJson(input.planJson);
+  const r10 = planWarnings.find(w => w.rule === 'R10');
+  if (r10) {
+    hit({ paths: input.paths, ruleId: 'R10', specCode: input.specCode });
+    throw new Error(r10.message);
+  }
+  if (!input.planJson.coveredSpecs?.includes(input.specCode)) {
+    hit({ paths: input.paths, ruleId: 'R12', specCode: input.specCode });
+    throw new Error(`R12: planJson.coveredSpecs 必须包含当前 L3 specCode (${input.specCode})，禁止凭记忆写 planJson`);
+  }
 
   const taskId = generateTaskId(spec.filePath, input.specCode);
   const task: TaskRecord = {
@@ -163,13 +181,17 @@ export function findTask(paths: ProjectPaths, specCode: string, taskId: string):
   return JSON.parse(readFileSync(f, 'utf8')) as TaskRecord;
 }
 
-export function listTasks(paths: ProjectPaths, opts?: { specCode?: string; status?: TaskStatus }): TaskRecord[] {
+export function listTasks(paths: ProjectPaths, opts?: { specCode?: string; status?: TaskStatus; topic?: string }): TaskRecord[] {
   const out: TaskRecord[] = [];
   if (!existsSync(paths.specsDir)) return out;
   const specPrefix = opts?.specCode ? `${opts.specCode}-` : null;
+  const topicSpecCodes = opts?.topic
+    ? new Set(listAllSpecs(paths).filter(s => s.fm.topic === opts.topic).map(s => s.fm.code))
+    : null;
   // 平铺布局: tasks/ 在每个 topic 目录下,文件名=<specCode>-<taskId>.json
   for (const topicEntry of readdirSync(paths.specsDir, { withFileTypes: true })) {
     if (!topicEntry.isDirectory()) continue;
+    if (opts?.topic && topicEntry.name !== opts.topic) continue;
     const tasksDir = join(paths.specsDir, topicEntry.name, 'tasks');
     if (!existsSync(tasksDir)) continue;
     for (const f of readdirSync(tasksDir)) {
@@ -177,6 +199,7 @@ export function listTasks(paths: ProjectPaths, opts?: { specCode?: string; statu
       // 按文件名前缀快速过滤，避免读取无关文件
       if (specPrefix && !f.startsWith(specPrefix)) continue;
       const t = JSON.parse(readFileSync(join(tasksDir, f), 'utf8')) as TaskRecord;
+      if (topicSpecCodes && !topicSpecCodes.has(t.specCode)) continue;
       if (opts?.status && t.status !== opts.status) continue;
       out.push(t);
     }
@@ -214,19 +237,23 @@ export interface StepInput {
   latencyMs?: number;
 }
 
-export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnType<typeof findSpecByCode> } {
+export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnType<typeof findSpecByCode>; warnings: string[] } {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
 
   // R15: outputJson 必含 summary（warning 而非 throw）
   const warnings: string[] = [];
-  if (input.status === 'succeeded' && input.outputJson) {
-    try {
-      const parsed = JSON.parse(input.outputJson);
-      if (typeof parsed.summary !== 'string' || parsed.summary.length === 0) {
-        warnings.push('R15: outputJson 缺 summary 字段');
+  if (input.status === 'succeeded') {
+    if (!input.outputJson) {
+      warnings.push('R15: succeeded step 必须提供 outputJson.summary');
+    } else {
+      try {
+        const parsed = JSON.parse(input.outputJson);
+        if (typeof parsed.summary !== 'string' || parsed.summary.length === 0) {
+          warnings.push('R15: outputJson 缺 summary 字段');
+        }
+      } catch {
+        warnings.push('outputJson 不是合法 JSON');
       }
-    } catch {
-      warnings.push('outputJson 不是合法 JSON');
     }
   }
 
@@ -254,7 +281,7 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   spec.fm.updated = new Date().toISOString();
   writeSpec(spec);
 
-  return { task, spec };
+  return { task, spec, warnings };
 }
 
 export interface CompleteInput {
@@ -279,13 +306,17 @@ export function completeTask(input: CompleteInput): CompleteResult {
   // R5: 校验所有 plan 步骤都已上报(不能跳步)
   const l3 = findSpecByCode(input.paths, task.specCode);
   if (l3) {
-    const unfinished = (l3.fm.steps ?? []).filter(s => s.status === 'pending' || s.status === 'running');
+    if (l3.fm.status !== 'frozen') {
+      hit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id });
+      throw new Error(`R6: task complete 前 L3 必须仍是 frozen，当前 status=${l3.fm.status}`);
+    }
+    const unfinished = (l3.fm.steps ?? []).filter(s => s.status !== 'succeeded');
     if (unfinished.length > 0) {
       hit({ paths: input.paths, ruleId: 'R5', specCode: task.specCode });
       throw new Error(
-        `R5: 仍有 ${unfinished.length} 个步骤未完成（pending/running）:` +
+        `R5: 仍有 ${unfinished.length} 个步骤未成功（pending/running/failed/skipped）:` +
         unfinished.map(s => `#${s.stepNo}`).join(', ') +
-        ` — 请先逐个 reportStep，禁止跳号`,
+        ` — 请先逐个 reportStep 到 succeeded，失败或跳过步骤需修复后重新上报，禁止跳号`,
       );
     }
   }
@@ -299,6 +330,11 @@ export function completeTask(input: CompleteInput): CompleteResult {
   const skipped: CompleteResult['skippedSpecs'] = [];
 
   cascadeImplemented(input.paths, task.specCode, cascaded, skipped);
+  const implemented = findSpecByCode(input.paths, task.specCode);
+  if (implemented?.fm.status !== 'implemented') {
+    hit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id });
+    throw new Error(`R6: task complete 后 ${task.specCode} 必须是 implemented，当前 status=${implemented?.fm.status ?? 'missing'}`);
+  }
 
   const cascadedL1Specs = cascaded
     .filter(c => c.level === 'L1' || c.level === 'L0')

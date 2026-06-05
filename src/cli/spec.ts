@@ -7,12 +7,14 @@ import {
   generateSpecCode,
   isPlaceholderContent,
   listAllSpecs,
+  migrateSpecPaths,
   updateSpec,
   DESC_MAX_LEN,
 } from '../core/spec-io.js';
 import { canTransition, isActiveStatus, nextStatuses } from '../core/status.js';
 import { validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
 import { hit } from '../core/audit.js';
+import { listDecisions } from '../core/decision.js';
 
 export function registerSpec(program: Command): void {
   const cmd = program.command('spec').description('Spec 增删改查');
@@ -26,6 +28,7 @@ export function registerSpec(program: Command): void {
     .option('--parent <parentCode>', '父 spec code（L2→L1, L3→L2）')
     .option('--desc <desc>', `描述后缀（≤${DESC_MAX_LEN} 字符，如 readme/batch/tests），追加到 code 末尾`)
     .option('--milestone <milestone>', '迭代版本号（如 v1.0 / v1.0-beta）')
+    .option('--allow-duplicate-topic', '允许同 topic 下创建额外 L1（已确认不是重复需求）', false)
     .action((level: string, opts) => {
       if (!['L0', 'L1', 'L2', 'L3'].includes(level)) {
         console.error(`✗ level 必须是 L0/L1/L2/L3，收到 "${level}"`);
@@ -60,6 +63,19 @@ export function registerSpec(program: Command): void {
       if (findSpecByCode(paths, code)) {
         console.error(`✗ code 重复: ${code}`);
         process.exit(2);
+      }
+      if (level === 'L1') {
+        hit({ paths, ruleId: 'R16', specCode: code });
+        const existingL1 = listAllSpecs(paths)
+          .filter(s => s.fm.level === 'L1' && s.fm.topic === opts.topic && isActiveStatus(s.fm.status));
+        if (existingL1.length > 0 && !opts.allowDuplicateTopic) {
+          const decisions = listDecisions(paths, { topic: opts.topic, includeAll: true });
+          console.error(`✗ R16: topic=${opts.topic} 已有 active L1，创建新 L1 前必须先查重`);
+          for (const s of existingL1) console.error(`  - ${s.fm.code} (${s.fm.status}) ${s.fm.title}`);
+          console.error(`  历史决策: ${decisions.length} 张`);
+          console.error(`  若确认不是重复需求，请加 --allow-duplicate-topic`);
+          process.exit(2);
+        }
       }
       const rec = createSpec({
         paths,
@@ -138,6 +154,7 @@ export function registerSpec(program: Command): void {
         console.log('\n--- content ---');
         console.log(rec.content);
       } else {
+        hit({ paths, ruleId: 'R19', specCode: code });
         console.log('\n(省略正文；加 --include-content 查看)');
       }
     });
@@ -207,6 +224,8 @@ export function registerSpec(program: Command): void {
           console.error(`  如确需手动推进，请用: spec-manager spec implement ${code} --force`);
           process.exit(2);
         }
+        hit({ paths, ruleId: 'R2', specCode: code });
+        hit({ paths, ruleId: 'R9', specCode: code });
         updateSpec(paths, code, { status: target, changeSummary: `${rec.fm.status} → ${target}` });
         console.log(`✓ ${code}: ${rec.fm.status} → ${target}`);
       });
@@ -246,6 +265,29 @@ export function registerSpec(program: Command): void {
       }
       updateSpec(paths, code, { addRelation: { type: opts.type, target: opts.target } });
       console.log(`✓ ${code} --[${opts.type}]--> ${opts.target}`);
+    });
+
+  cmd
+    .command('migrate-paths')
+    .description('迁移 active spec 文件名：<code>-YYYYMMDD.md → <code>.md（读取仍兼容旧格式）')
+    .option('--dry-run', '只显示迁移计划，不改文件', false)
+    .action((opts: { dryRun: boolean }) => {
+      const paths = getPaths();
+      if (!paths.isInitialized) {
+        console.error('✗ 项目未初始化');
+        process.exit(1);
+      }
+      const result = migrateSpecPaths(paths, { dryRun: opts.dryRun });
+      if (result.migrated.length === 0) {
+        console.log('✓ 无需迁移，active spec 文件名已是 canonical 格式');
+        return;
+      }
+      console.log(`${opts.dryRun ? '计划迁移' : '✓ 已迁移'} ${result.migrated.length} 个 spec 文件:`);
+      for (const m of result.migrated) {
+        console.log(`  ${m.code}`);
+        console.log(`    from: ${m.from}`);
+        console.log(`    to:   ${m.to}`);
+      }
     });
 
   cmd

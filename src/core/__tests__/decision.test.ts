@@ -100,6 +100,20 @@ describe('listDecisions — topic / includeAll / docCode / criteria 过滤', () 
     expect(onlyA[0].fm.docCode).toBe(codeA);
   });
 
+  it('同 topic 多个 L1 时不重复扫描且 docCode 精确匹配', () => {
+    const codeA = createL1Implemented('auth', 'Auth A');
+    const codeB = 'auth-v2-L1';
+    createSpec({ paths, code: codeB, level: 'L1', title: 'Auth B', topic: 'auth', parentCode: null });
+    updateSpec(paths, codeB, { status: 'implemented' });
+
+    createDecision({ paths, docCode: codeA, topic: 'auth', what: 'A decision' });
+
+    const byTopic = listDecisions(paths, { topic: 'auth' });
+    expect(byTopic).toHaveLength(1);
+    expect(byTopic[0].fm.docCode).toBe(codeA);
+    expect(listDecisions(paths, { docCode: codeB })).toHaveLength(0);
+  });
+
   it('默认不含 superseded', () => {
     const { codeA } = setup();
     const a = createDecision({ paths, docCode: codeA, topic: 'auth', what: 'A' });

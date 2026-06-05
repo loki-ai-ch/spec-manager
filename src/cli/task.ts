@@ -7,7 +7,7 @@
  *   fail <task-id> [--code E] [--msg M]
  *   wait <task-id> [--reason R]
  *   show <task-id> [--full]
- *   list [--spec S] [--status running]
+ *   list [--topic T] [--spec S] [--status running]
  */
 
 import { Command } from 'commander';
@@ -28,6 +28,8 @@ import { listDecisions } from '../core/decision.js';
 import { findSpecByCode } from '../core/spec-io.js';
 import { hit as auditHit } from '../core/audit.js';
 import { StepStatusSchema } from '../schemas/spec.js';
+
+const TASK_STATUSES: TaskStatus[] = ['draft', 'running', 'waiting', 'completed', 'failed'];
 
 export function registerTaskCommands(program: Command): void {
   const task = program
@@ -104,7 +106,7 @@ export function registerTaskCommands(program: Command): void {
         process.exit(2);
       }
       const paths = getPaths();
-      reportStep({
+      const result = reportStep({
         paths,
         taskId,
         specCode: opts.spec,
@@ -118,8 +120,7 @@ export function registerTaskCommands(program: Command): void {
         errorMessage: opts.errorMessage,
       });
       console.log(`✓ Step ${opts.no} reported for task ${taskId}`);
-      // R15 warnings 已经在 core 层处理了（返回 warnings 但不 throw）
-      // 简化起见，这里只输出成功
+      for (const w of result.warnings) console.warn(`⚠ ${w}`);
     });
 
   task
@@ -235,13 +236,19 @@ export function registerTaskCommands(program: Command): void {
 
   task
     .command('list')
-    .description('列出所有 Task（可按 spec / status 过滤）')
+    .description('列出所有 Task（可按 topic / spec / status 过滤）')
+    .option('--topic <topic>', '按 topic 过滤（连续性层：执行前查同主题历史任务）')
     .option('--spec <specCode>', '按 spec code 过滤')
     .option('--status <status>', '按 status 过滤（draft|running|waiting|completed|failed）')
     .option('--json', '以 JSON 格式输出', false)
-    .action((opts: { spec?: string; status?: string; json: boolean }) => {
+    .action((opts: { topic?: string; spec?: string; status?: string; json: boolean }) => {
       const paths = getPaths();
+      if (opts.status && !TASK_STATUSES.includes(opts.status as TaskStatus)) {
+        console.error(`✗ --status 非法: ${opts.status}（必须 ${TASK_STATUSES.join('|')}）`);
+        process.exit(2);
+      }
       const all = listTasks(paths, {
+        topic: opts.topic,
         specCode: opts.spec,
         status: opts.status as TaskStatus | undefined,
       });

@@ -166,7 +166,7 @@ This creates `.spec-manager/` (config + audit + incidents). Add `.spec-manager/a
 
 ```bash
 spec-manager spec new L1 --topic auth --title "User authentication"
-# → outputs: code auth-L1, file specs/auth/auth-L1-20260605.md
+# → outputs: code auth-L1, file specs/auth/auth-L1.md
 ```
 
 Before writing the L1 body, the agent should ask 3-4 PRE-WRITE questions (see `templates/L1-prd.md`): who is the user, what's the success metric, what's explicitly out of scope, and — if there's an active decision card on this topic — whether the new spec is consistent with it (`spec-manager decision list --topic auth`).

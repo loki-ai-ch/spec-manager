@@ -6,11 +6,11 @@ topic: spec-manager-ai-ux
 parentCode: spec-manager-ai-ux-L1
 status: implemented
 aiSummary: >-
-  五模块并行优化：spec 编码改为 topic-L<N>、目录名=code、文件名=code+时间戳、SKILL.md 精简、CLI task
+  五模块并行优化：spec 编码改为 topic-L<N>、topic 平铺目录、active 文件名=code.md、SKILL.md 精简、CLI task
   batch、测试补全
 created: '2026-06-05T04:19:15.011Z'
-updated: '2026-06-05T04:26:49.084Z'
-changeSummary: confirmed → frozen
+updated: '2026-06-05T17:51:32+08:00'
+changeSummary: 同步方法论 L2 必填段：技术决策
 ---
 # 技术方案：重构优化 AI 使用本项目操作 — 技术设计
 
@@ -25,7 +25,7 @@ Phase 3: CLI task batch 命令
 Phase 4: 核心模块测试补全
 ```
 
-## 关键技术决策
+## 技术决策
 
 | 问题 | 候选选项 | 选择 | 理由 |
 |---|---|---|---|
@@ -60,34 +60,31 @@ Phase 4: 核心模块测试补全
 
 ### 文件命名规则
 
-- **目录名** = spec code（如 `spec-manager-ai-ux-L1/`）
-- **.md 文件名** = spec code + `-` + 创建日期（如 `spec-manager-ai-ux-L1-20260605.md`）
-- 子 spec 嵌套在父 spec 目录内
+- **topic 目录名** = topic（如 `spec-manager-ai-ux/`）
+- **.md 文件名** = spec code（如 `spec-manager-ai-ux-L1.md`）
+- 子 spec 直接平铺在 topic 目录内，父子关系由 `parentCode` 和点分 code 表达
 
 ### 文件系统目录结构
 
 | 变更 | 旧结构 | 新结构 |
 |---|---|---|
 | spec 编码 | `<YYYY-MM-DD>-<shortId>` | `<topic>-L<N>[.M...]`（点分编号，层级自文档化） |
-| 目录名 | `<code>/` | `<code>/` |
-| 文件名 | `<code>.md` | `<code>-<YYYYMMDD>.md` |
-| 子 spec 嵌套 | `<parent-dir>/<code>/<code>.md` | `<parent-dir>/<code>/<code>-<YYYYMMDD>.md` |
+| 目录名 | `<code>/` | `<topic>/` |
+| 文件名 | `<code>.md` | `<code>.md` |
+| 子 spec 嵌套 | `<parent-dir>/<code>/<code>.md` | 平铺在 `specs/<topic>/` |
 
 ### 新目录结构示例
 
 ```
 specs/
 └── spec-manager-ai-ux/
-    └── spec-manager-ai-ux-L1/                           # L1 目录
-        ├── spec-manager-ai-ux-L1-20260605.md           # L1 正文
-        ├── decisions/                                    # L1 的决策卡片
-        │   └── DC-001.md
-        └── spec-manager-ai-ux-L2.1/                     # L2 子目录（点分编号）
-            ├── spec-manager-ai-ux-L2.1-20260605.md     # L2 正文
-            └── spec-manager-ai-ux-L3.1.1/               # L3 子目录
-                ├── spec-manager-ai-ux-L3.1.1-20260605.md # L3 正文
-                └── tasks/                                 # L3 的 task
-                    └── T-001.json
+    ├── spec-manager-ai-ux-L1.md
+    ├── spec-manager-ai-ux-L2.1.md
+    ├── spec-manager-ai-ux-L3.1.1-readme.md
+    ├── decisions/
+    │   └── DC-001.md
+    └── tasks/
+        └── spec-manager-ai-ux-L3.1.1-readme-T-001.json
 ```
 
 ## 接口契约
@@ -155,4 +152,4 @@ spec-manager task batch <specCode> --plan <file> [--auto-confirm]
 
 ## 关联
 
-- 父 L1: 2026-06-05-783847（重构优化 AI 使用本项目操作）
+- 父 L1: spec-manager-ai-ux-L1（重构优化 AI 使用本项目操作）

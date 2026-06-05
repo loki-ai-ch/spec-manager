@@ -7,37 +7,49 @@ parentCode: spec-manager-ai-ux-L2.1
 status: implemented
 aiSummary: RESOLVER 内联到 SKILL.md、精简至 ≤120 行、删除 RESOLVER.md
 created: '2026-06-05T04:30:22.871Z'
-updated: '2026-06-05T04:38:42.260Z'
+updated: '2026-06-05T17:55:22+08:00'
+changeSummary: 同步方法论 R12：planJson coveredSpecs 使用 canonical specCode
 steps:
   - stepNo: 1
     stepType: mcp_tool
     name: '上下文收集: SKILL.md + RESOLVER.md'
-    status: pending
+    status: succeeded
+    outputJson: '{"summary":"读取 SKILL.md/RESOLVER.md 并确认合并范围"}'
   - stepNo: 2
     stepType: mcp_tool
     name: 合并 RESOLVER 到 SKILL.md，精简至 ≤120 行
-    status: pending
+    status: succeeded
+    outputJson: '{"summary":"合并 RESOLVER 内容到 SKILL.md 并精简结构"}'
   - stepNo: 3
     stepType: mcp_tool
     name: 同步 skill/SKILL.md 分发版本
-    status: pending
+    status: succeeded
+    outputJson: '{"summary":"同步分发版本 SKILL.md"}'
   - stepNo: 4
     stepType: mcp_tool
     name: 删除 RESOLVER.md（两处）
-    status: pending
+    status: succeeded
+    outputJson: '{"summary":"删除重复 RESOLVER.md 文件"}'
   - stepNo: 5
     stepType: mcp_tool
     name: '验证: 行数 + 路由表存在'
-    status: pending
-changeSummary: frozen → implemented (task complete)
+    status: succeeded
+    outputJson: '{"summary":"验证 SKILL.md 行数和路由表存在"}'
 ---
 # SKILL.md 合并精简 — 实施规格
 
 ## 目标
 
-实施 2026-06-05-159dad 的 SKILL.md 合并精简：将 RESOLVER.md 内容内联到 SKILL.md，精简至 ≤120 行，删除 RESOLVER.md。
+实施 spec-manager-ai-ux-L2.1 的 SKILL.md 合并精简：将 RESOLVER.md 内容内联到 SKILL.md，精简至 ≤120 行，删除 RESOLVER.md。
 
 **前置依赖**: 无
+
+## 代码调查
+
+- `.claude/skills/spec-manager/SKILL.md`
+- `.claude/skills/spec-manager/RESOLVER.md`
+- `skill/SKILL.md`
+- `skill/RESOLVER.md`
 
 ## 实施步骤
 
@@ -103,6 +115,7 @@ grep "入口路由" .claude/skills/spec-manager/SKILL.md
 
 ```json
 {
+  "coveredSpecs": ["spec-manager-ai-ux-L3.1.2-skill"],
   "steps": [
     {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: SKILL.md + RESOLVER.md"},
     {"stepNo": 2, "stepType": "mcp_tool", "name": "合并 RESOLVER 到 SKILL.md，精简至 ≤120 行"},

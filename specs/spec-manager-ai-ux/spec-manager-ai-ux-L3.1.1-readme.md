@@ -7,7 +7,8 @@ parentCode: spec-manager-ai-ux-L2.1
 status: implemented
 aiSummary: EN+ZH README 新增 5 个使用场景：quick/research/full/delta/postmortem，每条 ≤10 行
 created: '2026-06-05T04:30:21.944Z'
-updated: '2026-06-05T04:35:55.779Z'
+updated: '2026-06-05T17:55:22+08:00'
+changeSummary: 同步方法论 R12：planJson coveredSpecs 使用 canonical specCode
 steps:
   - stepNo: '1'
     stepType: mcp_tool
@@ -55,15 +56,19 @@ steps:
     outputJson: '{"summary":"验证通过：EN+ZH 各 5 个使用场景，编号 1-5，场景类型一致","files":[]}'
     latencyMs: 500
     reportedAt: '2026-06-05T04:35:51.181Z'
-changeSummary: 'cascade: task complete'
 ---
 # README 场景化改造 — 实施规格
 
 ## 目标
 
-实施 2026-06-05-159dad 的 README 场景化改造：EN+ZH README 新增 5 个使用场景示例。
+实施 spec-manager-ai-ux-L2.1 的 README 场景化改造：EN+ZH README 新增 5 个使用场景示例。
 
 **前置依赖**: 无
+
+## 代码调查
+
+- `README.md`
+- `readme_zh.md`
 
 ## 实施步骤
 
@@ -122,6 +127,7 @@ grep -c "^###" readme_zh.md
 
 ```json
 {
+  "coveredSpecs": ["spec-manager-ai-ux-L3.1.1-readme"],
   "steps": [
     {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: README.md + readme_zh.md"},
     {"stepNo": 2, "stepType": "llm_call", "name": "设计 5 个使用场景(quick/research/full/delta/postmortem)"},

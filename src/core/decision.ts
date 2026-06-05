@@ -41,9 +41,11 @@ export function listDecisions(
   const out: DecisionRecord[] = [];
   const l1Specs = listAllSpecs(paths).filter(s => s.fm.level === 'L1' || s.fm.level === 'L0');
   const criteriaFilter = normalizeCriteriaFilter(opts?.criteria);
+  const scannedTopics = new Set<string>();
   for (const spec of l1Specs) {
     if (opts?.topic && spec.fm.topic !== opts.topic) continue;
-    if (opts?.docCode && spec.fm.code !== opts.docCode) continue;
+    if (scannedTopics.has(spec.fm.topic)) continue;
+    scannedTopics.add(spec.fm.topic);
     const decDir = siblingMetaDir(spec.filePath, 'decisions');
     if (!existsSync(decDir)) continue;
     for (const f of readdirSync(decDir)) {
@@ -51,6 +53,8 @@ export function listDecisions(
       const filePath = join(decDir, f);
       const { data, content } = readFrontmatter(filePath);
       const fm = data as unknown as DecisionRecord['fm'];
+      if (opts?.topic && fm.topic !== opts.topic) continue;
+      if (opts?.docCode && fm.docCode !== opts.docCode) continue;
       if (!opts?.includeAll && fm.status !== 'active') continue;
       if (criteriaFilter && !decisionAffectsAny(fm.affectedCriteria, criteriaFilter)) continue;
       out.push({ id: fm.id, fm, content, filePath });

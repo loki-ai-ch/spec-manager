@@ -19,11 +19,12 @@ export function registerAuditCommands(program: Command): void {
   audit
     .command('session')
     .description('启动一个 audit session（不调也能 hit，sessionId 自动生成）')
-    .option('--session-id <id>', '自定义 session ID', () => `sess-${randomBytes(4).toString('hex')}`)
+    .option('--session-id <id>', '自定义 session ID')
     .option('--topic <topic>', '绑定 topic')
-    .action((opts: { sessionId: string; topic?: string }) => {
+    .action((opts: { sessionId?: string; topic?: string }) => {
       const paths = getPaths();
-      const state = startSession(paths, { sessionId: opts.sessionId, topic: opts.topic });
+      const sessionId = opts.sessionId ?? `sess-${randomBytes(4).toString('hex')}`;
+      const state = startSession(paths, { sessionId, topic: opts.topic });
       console.log(`✓ Audit session started: ${state.sessionId}`);
       if (state.topic) console.log(`  topic: ${state.topic}`);
       console.log(`  file: ${paths.auditFile}`);

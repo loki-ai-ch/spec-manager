@@ -1,9 +1,11 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdtempSync, mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { Command } from 'commander';
 import { getPaths, type ProjectPaths } from '../paths.js';
 import { hit, readAudit, startSession, report, showSummary, RULE_ID_RE, ALL_RULE_IDS, checkCompliance, COMPLIANCE_BASELINE } from '../audit.js';
+import { registerAuditCommands } from '../../cli/audit.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -108,6 +110,34 @@ describe('startSession — 初始化审计会话', () => {
     startSession(paths, { sessionId: 'reset' });
     const state = readAudit(paths);
     expect(state.rules.R3).toBe(0);
+  });
+});
+
+describe('audit CLI session', () => {
+  async function runAuditCli(args: string[]): Promise<void> {
+    const oldRoot = process.env.SPEC_MANAGER_ROOT;
+    process.env.SPEC_MANAGER_ROOT = root;
+    const logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    try {
+      const program = new Command();
+      program.exitOverride();
+      registerAuditCommands(program);
+      await program.parseAsync(['node', 'test', ...args], { from: 'node' });
+    } finally {
+      logSpy.mockRestore();
+      if (oldRoot === undefined) delete process.env.SPEC_MANAGER_ROOT;
+      else process.env.SPEC_MANAGER_ROOT = oldRoot;
+    }
+  }
+
+  it('不传 --session-id 时自动生成 sessionId', async () => {
+    await runAuditCli(['audit', 'session']);
+    expect(readAudit(paths).sessionId).toMatch(/^sess-[0-9a-f]{8}$/);
+  });
+
+  it('传 --session-id 时保留用户指定值', async () => {
+    await runAuditCli(['audit', 'session', '--session-id', 'manual']);
+    expect(readAudit(paths).sessionId).toBe('manual');
   });
 });
 

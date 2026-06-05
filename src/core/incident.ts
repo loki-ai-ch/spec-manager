@@ -34,6 +34,7 @@ export interface IncidentRecord {
 }
 
 const VALID_SEVERITY: Severity[] = ['low', 'medium', 'high', 'critical'];
+const VALID_STATUS: IncidentStatus[] = ['open', 'mitigated', 'resolved', 'closed'];
 
 export function listIncidents(paths: ProjectPaths, opts?: { status?: IncidentStatus; relatedDecision?: string }): IncidentRecord[] {
   if (!existsSync(paths.incidentsDir)) return [];
@@ -118,6 +119,9 @@ export function createIncident(input: CreateIncidentInput): IncidentRecord {
 export function updateIncidentStatus(paths: ProjectPaths, id: string, status: IncidentStatus, note?: string): IncidentRecord {
   const inc = findIncident(paths, id);
   if (!inc) throw new Error(`Incident not found: ${id}`);
+  if (!VALID_STATUS.includes(status)) {
+    throw new Error(`status 非法: ${status}（必须 ${VALID_STATUS.join('|')}）`);
+  }
   const updated: IncidentRecord = {
     ...inc,
     fm: { ...inc.fm, status, updated: new Date().toISOString() },

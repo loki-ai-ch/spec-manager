@@ -5,11 +5,19 @@
  * 读策略：先解析 frontmatter，找不到时返回 null（由调用方决定 fallback）。
  */
 
-import { statSync } from 'node:fs';
+import { existsSync, renameSync, statSync } from 'node:fs';
 import { readFrontmatter, writeFrontmatter, writeAtomic } from './frontmatter.js';
 import type { SpecLevel } from './validate.js';
-import { listSpecFiles, specFilePath, type ProjectPaths } from './paths.js';
-import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER, PLACEHOLDER_CONTENT_MAX, todayYYYYMMDD } from './constants.js';
+import {
+  assertSafeSpecCode,
+  assertSafeTopic,
+  listSpecFiles,
+  listSpecPathMigrations,
+  specFilePath,
+  type ProjectPaths,
+  type SpecFileEntry,
+} from './paths.js';
+import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER, PLACEHOLDER_CONTENT_MAX } from './constants.js';
 import { hit } from './audit.js';
 
 export interface SpecFrontmatter {
@@ -126,6 +134,7 @@ export function listAllSpecs(paths: ProjectPaths): SpecRecord[] {
     }
     const rec = readSpec(f.filePath);
     if (rec) {
+      validateSpecFileIdentity(f, rec);
       specCache.set(f.filePath, { mtimeMs, record: rec });
       out.push(rec);
     }
@@ -179,13 +188,20 @@ export function createSpec(args: {
         `实际是 ${parent.fm.level} (${args.parentCode})`,
       );
     }
+    if ((args.level === 'L2' || args.level === 'L3') && parent.fm.status === 'draft') {
+      hit({ paths: args.paths, ruleId: 'R4', specCode: args.code });
+      throw new Error(
+        `R4: 创建 ${args.level} 前父级 ${args.parentCode} 必须先通过独立审核（confirmed/frozen/implemented），` +
+        `当前 status=${parent.fm.status}`,
+      );
+    }
+    hit({ paths: args.paths, ruleId: 'R4', specCode: args.code });
     parentFilePath = parent.filePath;
   } else if (args.level === 'L2' || args.level === 'L3') {
     hit({ paths: args.paths, ruleId: 'R7', specCode: args.code });
     throw new Error(`R7: ${args.level} 必须有 parentCode`);
   }
-  const date = todayYYYYMMDD();
-  const filePath = specFilePath(args.paths, parentFilePath, args.code, args.topic, date);
+  const filePath = specFilePath(args.paths, parentFilePath, args.code, args.topic);
   const now = new Date().toISOString();
   const fm: SpecFrontmatter = {
     code: args.code,
@@ -200,6 +216,9 @@ export function createSpec(args: {
   };
   const rec: SpecRecord = { fm, content: `# ${args.title}\n\n${PLACEHOLDER_MARKER}\n`, filePath };
   writeSpec(rec);
+  if (args.level === 'L0' || args.level === 'L1') {
+    hit({ paths: args.paths, ruleId: 'R4', specCode: args.code });
+  }
   return rec;
 }
 
@@ -233,9 +252,20 @@ export function updateSpec(
   const fm = { ...existing.fm };
   let content = existing.content;
 
-  if (patch.content !== undefined) content = patch.content;
+  if (patch.content !== undefined) {
+    if (patch.aiSummary === undefined || patch.aiSummary.trim().length === 0) {
+      hit({ paths, ruleId: 'R13', specCode: code });
+      throw new Error(`R13: spec update --content 必须同时提供 aiSummary，禁止写正文后没有 AI 摘要`);
+    }
+    if (isPlaceholderContent(patch.content)) {
+      hit({ paths, ruleId: 'R22', specCode: code });
+      throw new Error(`R22: contentTemplate 仍是占位内容，spec 创建后必须立即写正文`);
+    }
+    content = patch.content;
+  }
   if (patch.aiSummary !== undefined) {
     if (patch.aiSummary.length > AI_SUMMARY_MAX) {
+      hit({ paths, ruleId: 'R21', specCode: code });
       warnings.push(`aiSummary 超过 ${AI_SUMMARY_MAX} 字符，已自动截断（原长 ${patch.aiSummary.length}）`);
       fm.aiSummary = patch.aiSummary.slice(0, AI_SUMMARY_MAX);
     } else {
@@ -261,6 +291,11 @@ export function updateSpec(
 
   const rec: SpecRecord = { fm, content, filePath: existing.filePath };
   writeSpec(rec);
+  if (patch.content !== undefined) {
+    hit({ paths, ruleId: 'R1', specCode: code });
+    hit({ paths, ruleId: 'R13', specCode: code });
+    hit({ paths, ruleId: 'R22', specCode: code });
+  }
   return { record: rec, warnings };
 }
 
@@ -272,4 +307,52 @@ export function isPlaceholderContent(content: string): boolean {
   if (!content || !content.includes(PLACEHOLDER_MARKER)) return false;
   const stripped = content.replace(PLACEHOLDER_MARKER, '').trim();
   return stripped.length < PLACEHOLDER_CONTENT_MAX;
+}
+
+function validateSpecFileIdentity(entry: SpecFileEntry, record: SpecRecord): void {
+  assertSafeTopic(entry.topic);
+  assertSafeSpecCode(entry.code);
+  if (record.fm.code !== entry.code) {
+    throw new Error(`Spec 文件名和 frontmatter code 不一致: ${entry.filePath} (filename=${entry.code}, fm=${record.fm.code})`);
+  }
+  if (record.fm.topic !== entry.topic) {
+    throw new Error(`Spec 目录和 frontmatter topic 不一致: ${entry.filePath} (dir=${entry.topic}, fm=${record.fm.topic})`);
+  }
+}
+
+export interface SpecPathMigrationResult {
+  dryRun: boolean;
+  migrated: Array<{ code: string; from: string; to: string }>;
+}
+
+export function migrateSpecPaths(paths: ProjectPaths, opts?: { dryRun?: boolean }): SpecPathMigrationResult {
+  const migrations = listSpecPathMigrations(paths);
+  const errors: string[] = [];
+  for (const m of migrations) {
+    try {
+      assertSafeTopic(m.topic);
+      assertSafeSpecCode(m.code);
+      const rec = readSpec(m.from);
+      if (!rec) throw new Error('无法读取 spec');
+      validateSpecFileIdentity({ topic: m.topic, code: m.code, filePath: m.from }, rec);
+      if (existsSync(m.to)) throw new Error(`目标文件已存在: ${m.to}`);
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : String(err);
+      errors.push(`${m.from}: ${reason}`);
+    }
+  }
+  if (errors.length > 0) {
+    throw new Error(`spec path migration 预检失败:\n${errors.join('\n')}`);
+  }
+  if (!opts?.dryRun) {
+    for (const m of migrations) {
+      renameSync(m.from, m.to);
+      invalidateSpecCache(m.from);
+      invalidateSpecCache(m.to);
+    }
+  }
+  return {
+    dryRun: opts?.dryRun ?? false,
+    migrated: migrations.map(m => ({ code: m.code, from: m.from, to: m.to })),
+  };
 }

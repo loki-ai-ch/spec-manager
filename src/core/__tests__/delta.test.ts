@@ -133,6 +133,33 @@ Updated content here.
     expect(entries[0].code).toBe('auth-L1');
   });
 
+  it('解析同一段内多个 MODIFIED requirement 时不串内容', () => {
+    const content = `---
+code: auth-L1
+---
+
+## MODIFIED Requirements
+
+### Requirement: auth-L1
+First updated content.
+
+### Requirement: auth-L2
+Second updated content.
+`;
+    const deltaDir = join(root, 'changes', 'test-change', 'deltas');
+    mkdirSync(deltaDir, { recursive: true });
+    const filePath = join(deltaDir, 'auth-L1.md');
+    writeFileSync(filePath, content, 'utf8');
+
+    const { entries } = parseDeltaFile(filePath);
+    expect(entries).toHaveLength(2);
+    expect(entries[0].code).toBe('auth-L1');
+    expect(entries[0].content).toBe('First updated content.');
+    expect(entries[0].content).not.toContain('### Requirement: auth-L2');
+    expect(entries[1].code).toBe('auth-L2');
+    expect(entries[1].content).toBe('Second updated content.');
+  });
+
   it('解析 REMOVED 段', () => {
     const content = `---
 code: auth-L1

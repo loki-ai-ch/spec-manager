@@ -29,6 +29,12 @@ export const TASK_FILE_EXT = '.json';
 /** Task ID 前缀 */
 export const TASK_ID_PREFIX = 'T-';
 
+/** topic 必须是安全的单段路径名 */
+export const TOPIC_RE = /^[a-z0-9][a-z0-9-]*$/;
+
+/** spec code: <topic>-L1 / <topic>-L2.1 / <topic>-L3.1.1[-desc];desc 不能是 8 位日期 */
+export const SPEC_CODE_RE = /^[a-z0-9][a-z0-9-]*-L[0-3](?:\.\d+)*(?:-(?!\d{8}$)[a-z0-9][a-z0-9-]*)?$/;
+
 /** 当天日期 YYYYMMDD */
 export function todayYYYYMMDD(): string {
   return new Date().toISOString().slice(0, 10).replace(/-/g, '');

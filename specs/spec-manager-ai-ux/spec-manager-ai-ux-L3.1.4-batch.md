@@ -7,14 +7,14 @@ parentCode: spec-manager-ai-ux-L2.1
 status: implemented
 aiSummary: 新增 task batch 子命令，一条命令完成 create→start→step×N→complete
 created: '2026-06-05T04:30:23.856Z'
-updated: '2026-06-05T04:46:10.627Z'
-changeSummary: 'frozen → implemented: task batch 子命令实现'
+updated: '2026-06-05T17:55:22+08:00'
+changeSummary: 同步方法论 R12：planJson coveredSpecs 使用 canonical specCode
 ---
 # CLI task batch 命令 — 实施规格
 
 ## 目标
 
-实施 2026-06-05-159dad 的 CLI task batch：新增 `task batch` 子命令，一条命令完成 create→start→step×N→complete。
+实施 spec-manager-ai-ux-L2.1 的 CLI task batch：新增 `task batch` 子命令，一条命令完成 create→start→step×N→complete。
 
 **前置依赖**: 无
 
@@ -75,6 +75,7 @@ pnpm test src/core/__tests__/task-batch.test.ts
 
 ```json
 {
+  "coveredSpecs": ["spec-manager-ai-ux-L3.1.4-batch"],
   "steps": [
     {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: task.ts CLI + core/task.ts + task-cascade.test.ts"},
     {"stepNo": 2, "stepType": "mcp_tool", "name": "在 src/cli/task.ts 新增 batch 子命令"},

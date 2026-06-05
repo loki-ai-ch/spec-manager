@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdtempSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getPaths, type ProjectPaths } from '../paths.js';
@@ -29,33 +29,54 @@ function markPlanSucceeded(paths: ProjectPaths, specCode: string, planJson: { st
   }
 }
 
+function planFor(specCode: string, steps = [{ stepNo: 1, stepType: 'mcp_tool' as const, name: 'run verify test' }]) {
+  return { coveredSpecs: [specCode], steps };
+}
+
+function createFrozenHierarchy(topic = 'auth'): { l1Code: string; l2Code: string; l3Code: string } {
+  const l1Code = generateSpecCode(topic, 'L1');
+  createSpec({ paths, code: l1Code, level: 'L1', title: `${topic} L1`, topic, parentCode: null });
+  updateSpec(paths, l1Code, { status: 'confirmed' });
+  const l2Code = generateSpecCode(topic, 'L2', l1Code);
+  createSpec({ paths, code: l2Code, level: 'L2', title: `${topic} L2`, topic, parentCode: l1Code });
+  updateSpec(paths, l1Code, { status: 'frozen' });
+  updateSpec(paths, l2Code, { status: 'confirmed' });
+  const l3Code = generateSpecCode(topic, 'L3', l2Code);
+  createSpec({ paths, code: l3Code, level: 'L3', title: `${topic} L3`, topic, parentCode: l2Code });
+  updateSpec(paths, l2Code, { status: 'frozen' });
+  updateSpec(paths, l3Code, { status: 'confirmed' });
+  updateSpec(paths, l3Code, { status: 'frozen' });
+  return { l1Code, l2Code, l3Code };
+}
+
+function createDraftL3Hierarchy(topic = 'auth'): { l1Code: string; l2Code: string; l3Code: string } {
+  const l1Code = generateSpecCode(topic, 'L1');
+  createSpec({ paths, code: l1Code, level: 'L1', title: `${topic} L1`, topic, parentCode: null });
+  updateSpec(paths, l1Code, { status: 'confirmed' });
+  const l2Code = generateSpecCode(topic, 'L2', l1Code);
+  createSpec({ paths, code: l2Code, level: 'L2', title: `${topic} L2`, topic, parentCode: l1Code });
+  updateSpec(paths, l2Code, { status: 'confirmed' });
+  const l3Code = generateSpecCode(topic, 'L3', l2Code);
+  createSpec({ paths, code: l3Code, level: 'L3', title: `${topic} L3`, topic, parentCode: l2Code });
+  return { l1Code, l2Code, l3Code };
+}
+
 /**
  * 完整 task cascade 到 L1 → cascadedL1Specs 应含 L1 code(R18 提示用)。
  */
 describe('completeTask cascade → cascadedL1Specs', () => {
   it('cascadedL1Specs 正确收集 L1', () => {
-    const l1Code = generateSpecCode('auth', 'L1');
-    createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
-    const l2Code = generateSpecCode('auth', 'L2', l1Code);
-    createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    const l3Code = generateSpecCode('auth', 'L3', l2Code);
-    createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
+    const { l1Code, l3Code } = createFrozenHierarchy('auth');
 
-    updateSpec(paths, l1Code, { status: 'confirmed' });
-    updateSpec(paths, l1Code, { status: 'frozen' });
-    updateSpec(paths, l2Code, { status: 'confirmed' });
-    updateSpec(paths, l2Code, { status: 'frozen' });
-    updateSpec(paths, l3Code, { status: 'confirmed' });
-    updateSpec(paths, l3Code, { status: 'frozen' });
-
+    const planJson = planFor(l3Code);
     const { task } = createTask({
       paths,
       specCode: l3Code,
       autoConfirm: false,
-      planJson: { steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'do it' }] },
+      planJson,
     });
     startTask(paths, task.id);
-    markPlanSucceeded(paths, l3Code, { steps: [{ stepNo: 1 }] }, task.id);
+    markPlanSucceeded(paths, l3Code, planJson, task.id);
     const result = completeTask({ paths, taskId: task.id });
     expect(result.cascadedL1Specs).toEqual([l1Code]);
     expect(result.cascadedSpecs.map(c => c.level)).toEqual(['L3', 'L2', 'L1']);
@@ -64,30 +85,31 @@ describe('completeTask cascade → cascadedL1Specs', () => {
   it('多个 L3 共享 L1 时,部分 L3 完成的 L1 不进 cascadedL1Specs', () => {
     const l1Code = generateSpecCode('auth', 'L1');
     createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
+    updateSpec(paths, l1Code, { status: 'confirmed' });
     const l2Code = generateSpecCode('auth', 'L2', l1Code);
     createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
+    updateSpec(paths, l1Code, { status: 'frozen' });
+    updateSpec(paths, l2Code, { status: 'confirmed' });
     const l3a = generateSpecCode('auth', 'L3', l2Code, 0);
     createSpec({ paths, code: l3a, level: 'L3', title: 'L3a', topic: 'auth', parentCode: l2Code });
     const l3b = generateSpecCode('auth', 'L3', l2Code, 1);
     createSpec({ paths, code: l3b, level: 'L3', title: 'L3b', topic: 'auth', parentCode: l2Code });
 
-    updateSpec(paths, l1Code, { status: 'confirmed' });
-    updateSpec(paths, l1Code, { status: 'frozen' });
-    updateSpec(paths, l2Code, { status: 'confirmed' });
     updateSpec(paths, l2Code, { status: 'frozen' });
     updateSpec(paths, l3a, { status: 'confirmed' });
     updateSpec(paths, l3a, { status: 'frozen' });
     updateSpec(paths, l3b, { status: 'confirmed' });
     updateSpec(paths, l3b, { status: 'frozen' });
 
+    const planJson = planFor(l3a);
     const { task: taskA } = createTask({
       paths,
       specCode: l3a,
       autoConfirm: false,
-      planJson: { steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'do it' }] },
+      planJson,
     });
     startTask(paths, taskA.id);
-    markPlanSucceeded(paths, l3a, { steps: [{ stepNo: 1 }] }, taskA.id);
+    markPlanSucceeded(paths, l3a, planJson, taskA.id);
     const result = completeTask({ paths, taskId: taskA.id });
     expect(result.cascadedL1Specs).toEqual([]);
     expect(result.skippedSpecs.some(s => s.code === l2Code)).toBe(true);
@@ -97,28 +119,17 @@ describe('completeTask cascade → cascadedL1Specs', () => {
 
 describe('audit hit R18 联动 (P0 闭环)', () => {
   it('task complete 后手动 audit hit R18 落库', () => {
-    const l1Code = generateSpecCode('auth', 'L1');
-    createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
-    const l2Code = generateSpecCode('auth', 'L2', l1Code);
-    createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    const l3Code = generateSpecCode('auth', 'L3', l2Code);
-    createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
+    const { l1Code, l3Code } = createFrozenHierarchy('auth');
 
-    updateSpec(paths, l1Code, { status: 'confirmed' });
-    updateSpec(paths, l1Code, { status: 'frozen' });
-    updateSpec(paths, l2Code, { status: 'confirmed' });
-    updateSpec(paths, l2Code, { status: 'frozen' });
-    updateSpec(paths, l3Code, { status: 'confirmed' });
-    updateSpec(paths, l3Code, { status: 'frozen' });
-
+    const planJson = planFor(l3Code);
     const { task } = createTask({
       paths,
       specCode: l3Code,
       autoConfirm: false,
-      planJson: { steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'do it' }] },
+      planJson,
     });
     startTask(paths, task.id);
-    markPlanSucceeded(paths, l3Code, { steps: [{ stepNo: 1 }] }, task.id);
+    markPlanSucceeded(paths, l3Code, planJson, task.id);
     completeTask({ paths, taskId: task.id });
 
     auditHit({ paths, ruleId: 'R18', specCode: l1Code });
@@ -130,66 +141,81 @@ describe('audit hit R18 联动 (P0 闭环)', () => {
 
 describe('R5 跳步检测 (P1 修复)', () => {
   it('有 pending 步骤时 completeTask 拒绝', () => {
-    const l1Code = generateSpecCode('auth', 'L1');
-    createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
-    const l2Code = generateSpecCode('auth', 'L2', l1Code);
-    createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    const l3Code = generateSpecCode('auth', 'L3', l2Code);
-    createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
-    updateSpec(paths, l3Code, { status: 'frozen' });
+    const { l3Code } = createFrozenHierarchy('auth');
 
+    const planJson = planFor(l3Code, [
+      { stepNo: 1, stepType: 'mcp_tool' as const, name: 'inspect source files' },
+      { stepNo: 2, stepType: 'mcp_tool' as const, name: 'run verify test' },
+    ]);
     const { task } = createTask({
       paths,
       specCode: l3Code,
       autoConfirm: false,
-      planJson: { steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'do A' },
-        { stepNo: 2, stepType: 'mcp_tool', name: 'do B' },
-      ] },
+      planJson,
     });
     startTask(paths, task.id);
     reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"a"}' });
-    expect(() => completeTask({ paths, taskId: task.id })).toThrow(/R5.*1 个步骤未完成/);
+    expect(() => completeTask({ paths, taskId: task.id })).toThrow(/R5.*1 个步骤未成功/);
   });
 
-  it('skipped 步视为完成,允许 completeTask', () => {
-    const l1Code = generateSpecCode('auth', 'L1');
-    createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
-    const l2Code = generateSpecCode('auth', 'L2', l1Code);
-    createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    const l3Code = generateSpecCode('auth', 'L3', l2Code);
-    createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
-    updateSpec(paths, l3Code, { status: 'frozen' });
+  it('skipped 步视为跳步,completeTask 拒绝', () => {
+    const { l3Code } = createFrozenHierarchy('auth');
 
+    const planJson = planFor(l3Code, [
+      { stepNo: 1, stepType: 'mcp_tool' as const, name: 'inspect source files' },
+      { stepNo: 2, stepType: 'mcp_tool' as const, name: 'run verify test' },
+    ]);
     const { task } = createTask({
       paths,
       specCode: l3Code,
       autoConfirm: false,
-      planJson: { steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'do A' },
-        { stepNo: 2, stepType: 'mcp_tool', name: 'do B' },
-      ] },
+      planJson,
     });
     startTask(paths, task.id);
     reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"a"}' });
     reportStep({ paths, taskId: task.id, stepNo: 2, status: 'skipped' });
-    expect(() => completeTask({ paths, taskId: task.id })).not.toThrow();
+    expect(() => completeTask({ paths, taskId: task.id })).toThrow(/R5/);
+  });
+});
+
+describe('R15 step outputJson warning', () => {
+  it('succeeded step 缺 outputJson 时返回 warning', () => {
+    const { l3Code } = createFrozenHierarchy('auth');
+
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+    });
+    startTask(paths, task.id);
+    const result = reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded' });
+    expect(result.warnings.some(w => w.includes('R15'))).toBe(true);
+  });
+
+  it('outputJson 缺 summary 时返回 warning', () => {
+    const { l3Code } = createFrozenHierarchy('billing');
+
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+    });
+    startTask(paths, task.id);
+    const result = reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"ok":true}' });
+    expect(result.warnings.some(w => w.includes('summary'))).toBe(true);
   });
 });
 
 describe('R3 / R7 audit hit (P1 修复)', () => {
   it('非 frozen L3 建 task 触发 R3 audit hit', () => {
-    const l1Code = generateSpecCode('auth', 'L1');
-    createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic: 'auth', parentCode: null });
-    const l2Code = generateSpecCode('auth', 'L2', l1Code);
-    createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    const l3Code = generateSpecCode('auth', 'L3', l2Code);
-    createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic: 'auth', parentCode: l2Code });
+    const { l3Code } = createDraftL3Hierarchy('auth');
     expect(() => createTask({
       paths,
       specCode: l3Code,
       autoConfirm: false,
-      planJson: { steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'do' }] },
+      planJson: planFor(l3Code),
     })).toThrow(/R3/);
     const audit = readAudit(paths);
     expect(audit.rules.R3).toBe(1);
@@ -217,6 +243,55 @@ describe('R3 / R7 audit hit (P1 修复)', () => {
   });
 });
 
+describe('R10 / R12 planJson 门禁', () => {
+  it('末步不是验证步骤时 createTask 拒绝并记录 R10', () => {
+    const { l3Code } = createFrozenHierarchy('auth');
+    expect(() => createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: [l3Code],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'edit source files' }],
+      },
+    })).toThrow(/R10/);
+    const audit = readAudit(paths);
+    expect(audit.rules.R10).toBe(1);
+  });
+
+  it('coveredSpecs 缺当前 L3 时 createTask 拒绝并记录 R12', () => {
+    const { l3Code } = createFrozenHierarchy('auth');
+    expect(() => createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: ['other-L3.1.1'],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      },
+    })).toThrow(/R12/);
+    const audit = readAudit(paths);
+    expect(audit.rules.R12).toBe(1);
+  });
+
+  it('超过 20 步时 createTask 拒绝并记录 R11', () => {
+    const { l3Code } = createFrozenHierarchy('auth');
+    const steps = Array.from({ length: 21 }, (_, i) => ({
+      stepNo: i + 1,
+      stepType: 'mcp_tool' as const,
+      name: i === 20 ? 'run verify test' : `inspect file ${i + 1}`,
+    }));
+    expect(() => createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: { coveredSpecs: [l3Code], steps },
+    })).toThrow(/R11/);
+    const audit = readAudit(paths);
+    expect(audit.rules.R11).toBe(1);
+  });
+});
+
 describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
   /**
    * 两个不同 L3 spec 各建一个 T-001，验证:
@@ -225,29 +300,16 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
    * - completeTask({ paths, taskId: 'T-001', specCode }) 能区分
    */
   function setupTwoL3sWithT001() {
-    const l1a = generateSpecCode('auth', 'L1');
-    createSpec({ paths, code: l1a, level: 'L1', title: 'Auth L1', topic: 'auth', parentCode: null });
-    const l2a = generateSpecCode('auth', 'L2', l1a);
-    createSpec({ paths, code: l2a, level: 'L2', title: 'Auth L2', topic: 'auth', parentCode: l1a });
-    const l3a = generateSpecCode('auth', 'L3', l2a);
-    createSpec({ paths, code: l3a, level: 'L3', title: 'Auth L3', topic: 'auth', parentCode: l2a });
-    updateSpec(paths, l3a, { status: 'frozen' });
-
-    const l1b = generateSpecCode('billing', 'L1');
-    createSpec({ paths, code: l1b, level: 'L1', title: 'Billing L1', topic: 'billing', parentCode: null });
-    const l2b = generateSpecCode('billing', 'L2', l1b);
-    createSpec({ paths, code: l2b, level: 'L2', title: 'Billing L2', topic: 'billing', parentCode: l1b });
-    const l3b = generateSpecCode('billing', 'L3', l2b);
-    createSpec({ paths, code: l3b, level: 'L3', title: 'Billing L3', topic: 'billing', parentCode: l2b });
-    updateSpec(paths, l3b, { status: 'frozen' });
+    const { l3Code: l3a } = createFrozenHierarchy('auth');
+    const { l3Code: l3b } = createFrozenHierarchy('billing');
 
     const { task: taskA } = createTask({
       paths, specCode: l3a, autoConfirm: false,
-      planJson: { steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'auth step' }] },
+      planJson: planFor(l3a),
     });
     const { task: taskB } = createTask({
       paths, specCode: l3b, autoConfirm: false,
-      planJson: { steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'billing step' }] },
+      planJson: planFor(l3b),
     });
 
     return { l3a, l3b, taskA, taskB };
@@ -292,6 +354,16 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
     const { l3a, l3b } = setupTwoL3sWithT001();
     const authTasks = listTasks(paths, { specCode: l3a });
     const billingTasks = listTasks(paths, { specCode: l3b });
+    expect(authTasks).toHaveLength(1);
+    expect(billingTasks).toHaveLength(1);
+    expect(authTasks[0].specCode).toBe(l3a);
+    expect(billingTasks[0].specCode).toBe(l3b);
+  });
+
+  it('listTasks 按 topic 过滤', () => {
+    const { l3a, l3b } = setupTwoL3sWithT001();
+    const authTasks = listTasks(paths, { topic: 'auth' });
+    const billingTasks = listTasks(paths, { topic: 'billing' });
     expect(authTasks).toHaveLength(1);
     expect(billingTasks).toHaveLength(1);
     expect(authTasks[0].specCode).toBe(l3a);

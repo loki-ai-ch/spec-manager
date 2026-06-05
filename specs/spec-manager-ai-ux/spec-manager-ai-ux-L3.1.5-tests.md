@@ -7,14 +7,14 @@ parentCode: spec-manager-ai-ux-L2.1
 status: implemented
 aiSummary: 6 个新测试文件：spec-io/validate/frontmatter/status/audit/delta
 created: '2026-06-05T04:30:24.887Z'
-updated: '2026-06-05T04:33:01.425Z'
-changeSummary: confirmed → frozen
+updated: '2026-06-05T17:55:22+08:00'
+changeSummary: 同步方法论 R12：planJson coveredSpecs 使用 canonical specCode
 ---
 # 核心模块测试补全 — 实施规格
 
 ## 目标
 
-实施 2026-06-05-159dad 的测试补全：为核心模块新增测试文件，覆盖 spec-io/validate/frontmatter/status/audit/delta。
+实施 spec-manager-ai-ux-L2.1 的测试补全：为核心模块新增测试文件，覆盖 spec-io/validate/frontmatter/status/audit/delta。
 
 **前置依赖**: 无
 
@@ -139,6 +139,7 @@ pnpm test
 
 ```json
 {
+  "coveredSpecs": ["spec-manager-ai-ux-L3.1.5-tests"],
   "steps": [
     {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 现有测试 + validate.ts + frontmatter.ts + status.ts + audit.ts"},
     {"stepNo": 2, "stepType": "mcp_tool", "name": "编写 spec-io.test.ts"},

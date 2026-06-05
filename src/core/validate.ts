@@ -4,12 +4,14 @@
  *
  * 必填段定义:
  *   L1: 背景 / 用户故事 / 验收标准 / 范围边界
- *   L2: 方案概述 / 受影响模块 / 接口契约 / L3 裂变计划
+ *   L2: 方案概述 / 技术决策 / 受影响模块 / 接口契约 / L3 裂变计划
  *   L3: 目标 / 实施步骤 / 验证命令
  *
  * 同时校验 RFC 2119 关键字（如果 L1/L2 内容包含"验收标准"段，则该段每条 AC 应含
  * SHALL/MUST/SHOULD 之一）。这是 OpenSpec 风格的强化。
  */
+
+const SPEC_CODE_INLINE_RE = /\b[a-z0-9][a-z0-9-]*-L[0-3](?:\.\d+)*(?:-(?!\d{8}\b)[a-z0-9][a-z0-9-]*)?\b/;
 
 export type SpecLevel = 'L0' | 'L1' | 'L2' | 'L3';
 
@@ -23,7 +25,7 @@ export interface ValidationWarning {
 const REQUIRED_SECTIONS: Record<SpecLevel, string[]> = {
   L0: ['愿景', '路线图'],
   L1: ['背景', '用户故事', '验收标准', '范围边界'],
-  L2: ['方案概述', '受影响模块', '接口契约', 'L3 裂变计划'],
+  L2: ['方案概述', '技术决策', '受影响模块', '接口契约', 'L3 裂变计划'],
   L3: ['目标', '实施步骤', '验证命令'],
 };
 
@@ -68,6 +70,53 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
           });
         }
       }
+    }
+  }
+
+  // R17: L2 是架构拆解,不是任务清单。这里做 warning-only 的结构味道检查。
+  if (level === 'L2') {
+    const checklistLines = content.split('\n').filter(l => /^\s*[-*]\s+\[[ xX]\]/.test(l)).length;
+    const todoLines = content.split('\n').filter(l => /\b(TODO|todo)\b|待办|任务清单/.test(l)).length;
+    if (checklistLines + todoLines >= 3) {
+      warnings.push({
+        rule: 'R17',
+        level: 'warn',
+        message: 'R17: L2 应描述架构拆解、技术决策和接口契约，不应退化为 todolist',
+      });
+    }
+
+    if (/scope-split|scope split|范围拆分/.test(content)) {
+      const splitPlan = sections.find(s => s.heading === 'L3 裂变计划');
+      const plannedChildren = splitPlan?.body.match(/\bL3[-\s.]\d*/g)?.length ?? 0;
+      if (plannedChildren < 2) {
+        warnings.push({
+          rule: 'R20',
+          level: 'warn',
+          message: 'R20: scope-split L2 必须在 L3 裂变计划中批量列出子 L3',
+          section: 'L3 裂变计划',
+        });
+      }
+    }
+  }
+
+  const crossLayerLines = content.split('\n').filter(l => /(父\s*L[0-3]|父级|上层|下层|based_on|implements|references|supersedes)/i.test(l));
+  const crossLayerWithoutCode = crossLayerLines.filter(l => !SPEC_CODE_INLINE_RE.test(l));
+  if (crossLayerWithoutCode.length > 0) {
+    warnings.push({
+      rule: 'R14',
+      level: 'warn',
+      message: `R14: ${crossLayerWithoutCode.length} 行跨层引用未使用 spec code，跨层引用只写 code 不复述正文`,
+    });
+  }
+
+  if (level === 'L2' || level === 'L3') {
+    const hasCodeEvidence = /`(?:src|app|lib|frontend|backend|tests?|specs?)\/[^`]+`|(?:src|app|lib|frontend|backend|tests?|specs?)\/[\w./-]+|代码调查|实际代码|现有代码|复用清单/.test(content);
+    if (!hasCodeEvidence) {
+      warnings.push({
+        rule: 'R23',
+        level: 'warn',
+        message: 'R23: Spec 写作前必须基于实际代码；正文应包含代码调查、现有代码路径或复用清单',
+      });
     }
   }
 
@@ -129,6 +178,17 @@ export function validatePlanJson(plan: unknown): ValidationWarning[] {
       if (n.length < 5) {
         warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}].name 长度 <5，建议含 verb+object+file` });
       }
+    }
+  }
+  const mutatingStep = steps.find(s => /(edit|write|create|modify|implement|fix|patch|修改|创建|实现|修复|写入|编辑)/i.test(String(s.name ?? '')));
+  if (mutatingStep) {
+    const firstTwo = steps.slice(0, 2).map(s => String(s.name ?? '')).join(' ');
+    if (!/(read|inspect|research|survey|grep|rg|调研|读取|走读|检查|搜索)/i.test(firstTwo)) {
+      warnings.push({
+        rule: 'R8',
+        level: 'warn',
+        message: 'R8: 改代码前必须调研；含修改类步骤的 planJson 前两步应包含读取/搜索/调研',
+      });
     }
   }
   // R10: 末步建议是验证

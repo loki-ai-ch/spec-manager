@@ -10,6 +10,8 @@ import { Command } from 'commander';
 import { getPaths } from '../core/paths.js';
 import { createIncident, listIncidents, findIncident, updateIncidentStatus, type Severity, type IncidentStatus } from '../core/incident.js';
 
+const INCIDENT_STATUSES: IncidentStatus[] = ['open', 'mitigated', 'resolved', 'closed'];
+
 export function registerIncidentCommands(program: Command): void {
   const inc = program
     .command('incident')
@@ -61,6 +63,10 @@ export function registerIncidentCommands(program: Command): void {
     .option('--json', '以 JSON 格式输出', false)
     .action((opts: { status?: string; relatedDecision?: string; json: boolean }) => {
       const paths = getPaths();
+      if (opts.status && !INCIDENT_STATUSES.includes(opts.status as IncidentStatus)) {
+        console.error(`✗ --status 非法: ${opts.status}（必须 ${INCIDENT_STATUSES.join('|')}）`);
+        process.exit(2);
+      }
       const all = listIncidents(paths, {
         status: opts.status as IncidentStatus | undefined,
         relatedDecision: opts.relatedDecision,

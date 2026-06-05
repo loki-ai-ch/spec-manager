@@ -166,7 +166,7 @@ spec-manager project init --name my-project
 
 ```bash
 spec-manager spec new L1 --topic auth --title "用户认证"
-# → 输出: code auth-L1,文件 specs/auth/auth-L1-20260605.md
+# → 输出: code auth-L1,文件 specs/auth/auth-L1.md
 ```
 
 写正文前,先回答 3-4 个 PRE-WRITE 问题(见 `templates/L1-prd.md`):谁的用户、成功指标、明确不做的事 —— 如果该 topic 有 active 决策卡片,还要先查一下 `spec-manager decision list --topic auth`,确认新 L1 与历史决策是否一致。
