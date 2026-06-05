@@ -38,7 +38,9 @@ npx spec-manager <command>
 
 ## AI Agent 配置
 
-spec-manager 不绑定单一 AI 工具：CLI 负责把规格、任务、决策和审计数据落到本地文件；AI 工具只需要项目级指令来遵循流程。内置安装器支持 Claude Code、Codex、OpenCode、CodeBuddy，以及其他兼容 `AGENTS.md` 的 agent。
+spec-manager 不绑定单一 AI 工具：CLI 负责把规格、任务、决策和审计数据落到本地文件；AI 工具只需要一个能强制执行同一套规则的工作流入口。内置安装器支持 Claude Code、Codex、OpenCode、CodeBuddy，以及其他兼容 `AGENTS.md` 的 agent。
+
+不是每个工具都有原生的 "skills" 目录。spec-manager 会按平台安装最接近的形式：平台支持 skill 时安装真实 skill；平台不支持时，用项目级 `AGENTS.md` 作为类 skill 的工作流胶囊。
 
 ### 推荐安装
 
@@ -50,12 +52,12 @@ spec-manager project agents --provider all
 
 会写入：
 
-| Provider | 文件 |
-|---|---|
-| Claude Code | `CLAUDE.md`, `.claude/skills/spec-manager/` |
-| Codex | `AGENTS.md` |
-| OpenCode | `AGENTS.md` |
-| CodeBuddy | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+| Provider | spec-manager 入口 | 文件 |
+|---|---|---|
+| Claude Code | 原生 skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| Codex | `AGENTS.md` 工作流胶囊，不是原生 skill | `AGENTS.md` |
+| OpenCode | `AGENTS.md` 工作流胶囊，不是原生 skill | `AGENTS.md` |
+| CodeBuddy | 原生 skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
 
 也可以只安装部分入口：
 
@@ -70,12 +72,14 @@ spec-manager project agents --provider codebuddy --force
 
 参考：[Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md)、[OpenCode rules](https://opencode.ai/docs/rules/)、[CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills)。
 
+对 Codex CLI 来说，不需要找 `skills` 命令或目录。只要在项目根目录运行 Codex，它会读取 `AGENTS.md`。你让它 "Use spec-manager ..." 时，这个文件就相当于 spec-manager 的工作流入口。
+
 ### 手动安装
 
 如果不使用安装器，也可以直接复制模板：
 
 ```bash
-# Codex / OpenCode / AGENTS.md 兼容工具
+# Codex / OpenCode / AGENTS.md 兼容工具（类 skill 工作流胶囊）
 cp path/to/spec-manager/templates/agents/AGENTS.md my-project/AGENTS.md
 
 # Claude Code

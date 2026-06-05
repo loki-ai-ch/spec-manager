@@ -38,7 +38,9 @@ npx spec-manager <command>
 
 ## AI Agent Setup
 
-spec-manager is agent-agnostic: the CLI stores the source of truth locally, and AI tools only need project instructions that enforce the workflow. Built-in setup supports Claude Code, Codex, OpenCode, CodeBuddy, and other `AGENTS.md`-compatible agents.
+spec-manager is agent-agnostic: the CLI stores the source of truth locally, and AI tools only need a workflow entrypoint that enforces the same rules. Built-in setup supports Claude Code, Codex, OpenCode, CodeBuddy, and other `AGENTS.md`-compatible agents.
+
+Not every tool has a native "skills" directory. spec-manager installs the closest equivalent for each platform: real skills where the platform supports them, and a project-level `AGENTS.md` workflow capsule where it does not.
 
 ### Recommended
 
@@ -50,12 +52,12 @@ spec-manager project agents --provider all
 
 This writes:
 
-| Provider | Files |
-|---|---|
-| Claude Code | `CLAUDE.md`, `.claude/skills/spec-manager/` |
-| Codex | `AGENTS.md` |
-| OpenCode | `AGENTS.md` |
-| CodeBuddy | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+| Provider | spec-manager entrypoint | Files |
+|---|---|---|
+| Claude Code | Native skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| Codex | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
+| OpenCode | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
+| CodeBuddy | Native skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
 
 Use a narrower install when needed:
 
@@ -70,12 +72,14 @@ Use `--dry-run` to preview created, overwritten, and skipped files before touchi
 
 References: [Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md), [OpenCode rules](https://opencode.ai/docs/rules/), [CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills).
 
+For Codex CLI, do not look for a `skills` command or directory. Run Codex from the project root and it will read `AGENTS.md`. Ask it to "Use spec-manager ..." and the file acts as the spec-manager workflow entrypoint.
+
 ### Manual install
 
 If you do not want to use the installer, copy the templates directly:
 
 ```bash
-# Codex / OpenCode / AGENTS.md-compatible tools
+# Codex / OpenCode / AGENTS.md-compatible tools (skill-like workflow capsule)
 cp path/to/spec-manager/templates/agents/AGENTS.md my-project/AGENTS.md
 
 # Claude Code

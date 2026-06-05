@@ -1,28 +1,27 @@
-# Spec-Driven Development
+# spec-manager Workflow Capsule
 
-This repository uses `spec-manager` for local-first spec-driven development.
+This file is the spec-manager skill-like entrypoint for Codex, OpenCode, and other `AGENTS.md`-compatible tools. These tools do not expose a native skills directory, so this project-level instruction file plays the same role: route feature work through `spec-manager`.
 
-- All feature work should go through `spec-manager`; avoid direct code changes for non-trivial work.
-- New work follows L1 PRD -> L2 Design -> L3 Impl -> Agent Task.
-- Never write implementation code without a frozen L3 spec.
-- `confirm` and `freeze` are user review actions. Stop after writing spec content and wait for explicit approval.
+This project uses `spec-manager` for local-first spec-driven development. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
 
-## Build & Test
+## Mandatory Workflow
+
+- Feature work MUST go through `spec-manager`; do not jump directly from a user request to implementation code.
+- New or non-trivial work follows L1 PRD -> L2 Design -> L3 Impl -> Agent Task.
+- Never write implementation code unless the relevant L3 spec is `frozen`.
+- `draft -> confirmed` and `confirmed -> frozen` are user review actions. After writing spec content, stop and wait for explicit user approval.
+- Before creating a new spec, inspect existing specs and decisions with `spec-manager spec list` and `spec-manager decision list --topic <topic>`.
+- Before code edits, read the relevant frozen L3 spec and create/start an Agent Task.
+- Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
+
+## Common Commands
 
 ```bash
-npm run build
-npm run lint
-npm test
-npx vitest run src/core/__tests__/validate.test.ts
+spec-manager project status
+spec-manager spec list
+spec-manager spec show <code> --include-content
+spec-manager decision list --topic <topic>
+spec-manager task list --topic <topic>
 ```
 
-The project requires Node >= 18, ESM, TypeScript ES2022, and strict mode.
-
-## Layout
-
-- `src/cli/` - Commander.js command registrations
-- `src/core/` - spec IO, validation, status machine, audit, paths
-- `src/schemas/` - Zod schemas
-- `templates/` - spec and agent instruction templates
-- `rules/` - governance rules
-- `skill/` - Claude/CodeBuddy-compatible spec-manager skill content
+When the user asks for `/spec-manager <request>` or asks to use spec-manager, treat it as a request to follow this workflow.

@@ -36,7 +36,15 @@
       "WebFetch(domain:www.openspec.pro)",
       "Bash(git checkout *)",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git branch *)",
+      "Bash(git push *)",
+      "WebFetch(domain:www.clawhup.com)",
+      "Bash(curl -s 'https://www.clawhup.com/methodology' -H 'User-Agent: Mozilla/5.0')",
+      "Bash(curl -s 'https://www.clawhup.com/assets/api-CNDZuEer.js')",
+      "Bash(curl -s 'https://www.clawhup.com/assets/index-B0V1c8Nt.js')",
+      "Bash(python3 -c ' *)",
+      "Bash(git commit *)"
     ]
   }
 }
