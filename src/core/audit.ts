@@ -27,6 +27,12 @@ import type { ProjectPaths } from './paths.js';
 export const RULE_ID_RE = /^R([1-9]|1[0-9]|2[0-4])$/;
 export const ALL_RULE_IDS = Array.from({ length: 24 }, (_, i) => `R${i + 1}`);
 
+/** 最低合规基线：这些规则的 hit 计数必须 ≥1 */
+export const COMPLIANCE_BASELINE: readonly string[] = ['R1', 'R4', 'R13', 'R22'];
+for (const id of COMPLIANCE_BASELINE) {
+  if (!RULE_ID_RE.test(id)) throw new Error(`COMPLIANCE_BASELINE contains invalid ruleId: ${id}`);
+}
+
 export interface PendingEntry {
   ruleId: string;
   timestamp: string;
@@ -167,5 +173,28 @@ export function showSummary(paths: ProjectPaths, opts?: { ruleId?: string }): st
   lines.push('');
   const unreported = state.pending.filter(e => !e.reported);
   lines.push(`pending: ${state.pending.length}（未 report: ${unreported.length}）`);
+
+  // 合规基线检查
+  const baseline = checkCompliance(state);
+  lines.push('');
+  lines.push(`compliance: ${baseline.pass ? '✓ PASS' : '✗ FAIL'}`);
+  for (const item of baseline.details) {
+    lines.push(`  ${item.pass ? '✓' : '✗'} ${item.ruleId}: ${item.count} (min ${item.min})`);
+  }
+
   return lines.join('\n');
+}
+
+export interface ComplianceResult {
+  pass: boolean;
+  details: Array<{ ruleId: string; count: number; min: number; pass: boolean }>;
+}
+
+/** 检查最低合规基线：R1≥1, R4≥1, R13≥1, R22≥1 */
+export function checkCompliance(state: AuditState): ComplianceResult {
+  const details = COMPLIANCE_BASELINE.map(ruleId => {
+    const count = state.rules[ruleId] ?? 0;
+    return { ruleId, count, min: 1, pass: count >= 1 };
+  });
+  return { pass: details.every(d => d.pass), details };
 }

@@ -8,7 +8,8 @@
 
 ## What it does
 
-- **L0/L1/L2/L3 spec hierarchy**
+- **Four-layer funnel** — Requirements → Design → Implementation → Continuity, with human review gates at each layer
+- **L0/L1/L2/L3 spec hierarchy** — vision / PRD / design / implementation spec
 - **24 rules** with `applies_to` filtering — no need to load all 24 every time
 - **Status machine** `draft → confirmed → frozen → implemented`
 - **Agent Task lifecycle** — `create → start → step → complete`, steps in spec frontmatter; R5 blocks complete if steps are skipped
@@ -17,6 +18,8 @@
 - **Delta specs** (OpenSpec-style `changes/<name>/` with ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
 - **RFC 2119** keywords (SHALL/MUST/SHOULD) validation in acceptance criteria
 - **Incident tracking** — rule violations drive rule evolution
+
+> Full methodology: [docs/methodology.md](docs/methodology.md)
 
 ## Install
 

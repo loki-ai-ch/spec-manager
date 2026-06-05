@@ -8,7 +8,8 @@
 
 ## 功能特性
 
-- **L0/L1/L2/L3 spec 层级**
+- **四层漏斗** — 需求 → 设计 → 实施 → 连续性，每层有人工审核门禁
+- **L0/L1/L2/L3 spec 层级** — 愿景 / PRD / 技术设计 / 实施规格
 - **24 条规则** + `applies_to` 过滤 — 无需每次加载全部 24 条
 - **状态机** `draft → confirmed → frozen → implemented`
 - **Agent Task 生命周期** — `create → start → step → complete`,步骤写在 spec frontmatter;R5 阻止跳步 complete
@@ -17,6 +18,8 @@
 - **Delta specs** (OpenSpec 风格 `changes/<name>/`,含 ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
 - **RFC 2119** 关键字(SHALL/MUST/SHOULD)在验收标准中校验
 - **事故追踪** — 规则违规驱动规则迭代
+
+> 完整方法论：[docs/methodology.md](docs/methodology.md)
 
 ## 安装
 

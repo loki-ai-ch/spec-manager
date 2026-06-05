@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync, existsSync, readFileSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getPaths, type ProjectPaths } from '../paths.js';
-import { hit, readAudit, startSession, report, showSummary, RULE_ID_RE, ALL_RULE_IDS } from '../audit.js';
+import { hit, readAudit, startSession, report, showSummary, RULE_ID_RE, ALL_RULE_IDS, checkCompliance, COMPLIANCE_BASELINE } from '../audit.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -155,5 +155,59 @@ describe('showSummary — 文本摘要', () => {
     const summary = showSummary(paths, { ruleId: 'R3' });
     expect(summary).toContain('R3: 1');
     expect(summary).not.toContain('R7');
+  });
+
+  it('包含合规基线检查结果', () => {
+    hit({ paths, ruleId: 'R1' });
+    hit({ paths, ruleId: 'R4' });
+    hit({ paths, ruleId: 'R13' });
+    hit({ paths, ruleId: 'R22' });
+    const summary = showSummary(paths);
+    expect(summary).toContain('compliance: ✓ PASS');
+  });
+
+  it('合规基线未满足时显示 FAIL', () => {
+    hit({ paths, ruleId: 'R1' });
+    const summary = showSummary(paths);
+    expect(summary).toContain('compliance: ✗ FAIL');
+    expect(summary).toContain('✗ R4: 0 (min 1)');
+  });
+});
+
+describe('checkCompliance — 合规基线检查', () => {
+  it('COMPLIANCE_BASELINE 包含 R1/R4/R13/R22', () => {
+    expect(COMPLIANCE_BASELINE).toEqual(['R1', 'R4', 'R13', 'R22']);
+  });
+
+  it('全部满足时 pass=true', () => {
+    const state = readAudit(paths);
+    state.rules.R1 = 1;
+    state.rules.R4 = 1;
+    state.rules.R13 = 1;
+    state.rules.R22 = 1;
+    const result = checkCompliance(state);
+    expect(result.pass).toBe(true);
+    expect(result.details.every(d => d.pass)).toBe(true);
+  });
+
+  it('任一未满足时 pass=false', () => {
+    const state = readAudit(paths);
+    state.rules.R1 = 1;
+    state.rules.R4 = 0;
+    state.rules.R13 = 1;
+    state.rules.R22 = 1;
+    const result = checkCompliance(state);
+    expect(result.pass).toBe(false);
+    expect(result.details.find(d => d.ruleId === 'R4')!.pass).toBe(false);
+  });
+
+  it('计数大于1也算通过', () => {
+    const state = readAudit(paths);
+    state.rules.R1 = 5;
+    state.rules.R4 = 3;
+    state.rules.R13 = 2;
+    state.rules.R22 = 10;
+    const result = checkCompliance(state);
+    expect(result.pass).toBe(true);
   });
 });

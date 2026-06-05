@@ -10,6 +10,27 @@
 
 **人工 vs AI 的边界** — AI 负责起草、对比、查重；人负责批准、推进、决定。
 
+## 核心原则
+
+1. **Spec 是单一真相源** — L1/L2/L3 三层文档是"为什么 / 怎么做 / 做什么"的独立档案，跨会话 AI 通过 `spec show` 读 Spec 而不是凭记忆。R12 禁止凭记忆写代码，R14 跨层引用只写 code 不复述。
+2. **每层独立审核** — L1 confirmed 才能写 L2，L2 confirmed 才能写 L3，L3 frozen 才能建 Agent Task。R1 写完必停，R2 状态推进归用户，R4 每层独立 STOP。AI 不能自行推进。
+3. **代码变更必经 Agent Task** — R8：任何 Edit/Write 都必须在 running Agent Task 内，绑定 frozen L3 spec（或 quick 文档）。执行中每步 step_report 留痕，R15 要求 outputJson 必含 summary。
+4. **决策必落库** — R18：L1 implemented 后必须创建 ≥1 张决策卡片（what/why），沉淀到 decisions/ 目录。下次同 topic 创建 L1 时先查历史决策，杜绝无视历史。
+5. **RESOLVER 路由意图** — 用户说"需求 / 计划 / 测试 / 复盘 / 修 typo / 查历史"时，SKILL.md 路由表自动匹配到 12 种路径（10 种 doc.type + quick + research），不再强套 spec 三层。
+
+## 四层漏斗
+
+把业务需求可靠地交付为上线功能，按四层拆解：需求 → 设计 → 实施 → 连续性。每层有明确的交付物和审核门禁。
+
+| 层 | 名称 | 交付物 | 审核门禁 |
+|---|---|---|---|
+| 1 | 需求层 | PRD + L1 Spec | 明确技术边界和验收标准，用户 confirmed |
+| 2 | 设计层 | L2 Spec | 数据模型、API、状态机，用户 confirmed |
+| 3 | 实施层 | L3 Spec + Agent Task | ≤20 步原子任务，用户 frozen |
+| 4 | 连续性层 | 决策卡片 + 历史任务 | Agent Task 执行前先读历史任务，避免重复踩坑 |
+
+**第四层 · 连续性**是容易被忽略的一层：每个 Agent Task 开始前先 `spec-manager task list --topic <topic>` 查同主题历史任务，了解已有实现模式，复用成功的步骤顺序。L1 implemented 后必须建决策卡片（R18），下次同 topic 创建 L1 时先查决策历史。
+
 ## 层级
 
 ```
@@ -94,6 +115,29 @@ draft → confirmed → frozen → implemented
 8. 部署           /deploy skill
 ```
 
+## Context 优化
+
+每层 Spec 审核通过（L1 confirmed / L2 confirmed / L3 frozen）后，**建议 `/clear` 开新会话**再进下一层。Spec 已是跨会话 memory store，下一层启动只需 `spec show <code>` 读元数据，不需要把前一层的对话历史带过来。
+
+**为什么要拆会话**：
+- 超过临界 token 数后 recall 下降（context rot）
+- 20 步 Agent Task 的 tool_result 会线性累积，单会话容易打满
+- 跨层信息已落文件，"全流程串在一个 session" 是反模式
+
+**何时必须拆**：
+- Agent Task 即将执行 ≥10 步时
+- 已连续跨 2 层（L1→L2→L3 全在一个 session）
+- 看到剩余 token budget < 30%
+
+## 规则审计合规基线
+
+每次执行 `/spec-manager` 时，规则审计实时记录到本地 `audit.json`。
+
+- **最低合规**：R1(≥1) + R4(≥1) + R13(≥1) + R22(≥1)
+- **完整合规**：所有 applicable rules 的计数 > 0
+
+审计记录在 `task complete` 时自动上报。无 Agent Task 场景（research / L0 单独创建）的 hits 写入 pending queue，绑定到后续 Task 后上报。
+
 ## 与传统开发的差异
 
 | 维度 | 传统开发 | spec-manager |
@@ -104,6 +148,26 @@ draft → confirmed → frozen → implemented
 | 执行追踪 | 无 | step_report + 规则审计 |
 | 规则执行 | 团队公约（口头） | 24 条 machine-readable + 事故驱动演进 |
 | 上下文管理 | 全量 | R19 优先 aiSummary + 窄视图 |
+
+## AI 视角的价值
+
+| 价值 | 说明 |
+|---|---|
+| 跨会话记忆不丢失 | Spec 是持久化到文件的档案，AI 重新会话时 `spec show` 即可还原上下文。不再出现"上次说过的约束，这次 AI 又忘了" |
+| 边界锁定不跑偏 | L1 的"范围边界 · 不做"章节明确告诉 AI 什么不能改。R16 去重防止 AI 重新发明轮子 |
+| 结构化输入 → 稳定输出 | planJson 字段名（stepNo/stepType/name）+ PRE-WRITE 问答强制 AI 走模板，而不是每次凭直觉写 spec |
+| 历史决策自动复用 | decisions/ 目录 + topic 查询。AI 无法绕过过往结论，必须先读决策卡片 |
+| 行为全量可审计 | Agent Task 每步 step_report 带 outputJson.summary，异常时能精确定位是哪个 AI 在哪一步改了什么 |
+
+## 开发者视角的价值
+
+| 价值 | 说明 |
+|---|---|
+| 可预测：知道 AI 在干嘛 | R1 "写完必停"让 AI 每完成一层就等人审。开发者不用守着屏幕，可以异步介入每个审核点 |
+| 可追溯：出问题找得到人 | Agent Task 有 specCode / taskId / 每步 latency / error。incident → rule 演进时能反查是哪个决策环节缺了约束 |
+| 可协作：多人 / 多 AI 共享 | 所有 Spec 都是 markdown 文件，不依赖特定人的 IDE 或 Claude 会话。团队成员 + 不同 AI 工具看到同一份真相 |
+| 可复盘：事故驱动演进 | incidents/ 目录记录违规事件，"事故 → 规则"是规则演进的单向箭头 —— 无据不加规则 |
+| 可量化：度量驱动迭代 | 每个 L1 有度量指标（基线 / 目标 / 测量方式）。上线后直接验证是否达标，不靠"感觉变好了" |
 
 ## 适用场景
 
