@@ -29,15 +29,11 @@
 ## 安装
 
 ```bash
-# 克隆并全局安装
-git clone https://github.com/loki-ai-ch/spec-manager.git
-cd spec-manager
-npm install
-npm run build
-npm install -g .
-
-# 或不安装直接用
+# 直接运行（推荐）
 npx spec-manager <command>
+
+# 或全局安装
+npm install -g spec-manager
 ```
 
 ## AI Agent 配置
