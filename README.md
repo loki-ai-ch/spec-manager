@@ -1,5 +1,9 @@
 # spec-manager
 
+[![npm version](https://img.shields.io/npm/v/spec-manager)](https://www.npmjs.com/package/spec-manager)
+[![CI](https://github.com/loki-ai-ch/spec-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/loki-ai-ch/spec-manager/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [Chinese version](readme_zh.md)
 
 **Local-first spec-driven development platform.** Pure markdown + git storage. No network, no MCP, no backend.
@@ -26,7 +30,7 @@
 
 ```bash
 # Clone and install globally
-git clone https://github.com/loki/spec-manager.git
+git clone https://github.com/loki-ai-ch/spec-manager.git
 cd spec-manager
 npm install
 npm run build
@@ -497,7 +501,6 @@ Spec codes follow `<topic>-L<N>[.<M>][-desc]` (e.g. `auth-L1`, `auth-L2.1`, `aut
 ## Documentation
 
 - [docs/methodology.md](docs/methodology.md) — the public-facing methodology
-- [docs/commands.md](docs/commands.md) — full CLI reference
 
 ## Architecture
 

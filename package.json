@@ -56,8 +56,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/loki/spec-manager.git"
+    "url": "git+https://github.com/loki-ai-ch/spec-manager.git"
+  },
+  "bugs": {
+    "url": "https://github.com/loki-ai-ch/spec-manager/issues"
   },
   "author": "loki",
-  "homepage": "https://github.com/loki/spec-manager"
+  "homepage": "https://github.com/loki-ai-ch/spec-manager"
 }

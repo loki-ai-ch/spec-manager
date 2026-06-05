@@ -1,5 +1,9 @@
 # spec-manager
 
+[![npm version](https://img.shields.io/npm/v/spec-manager)](https://www.npmjs.com/package/spec-manager)
+[![CI](https://github.com/loki-ai-ch/spec-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/loki-ai-ch/spec-manager/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 [English](README.md)
 
 **本地优先的规格驱动开发平台。** 纯 markdown + git 存储。无网络、无 MCP、无后端。
@@ -26,7 +30,7 @@
 
 ```bash
 # 克隆并全局安装
-git clone https://github.com/loki/spec-manager.git
+git clone https://github.com/loki-ai-ch/spec-manager.git
 cd spec-manager
 npm install
 npm run build
@@ -497,7 +501,6 @@ Spec 编码采用 `<topic>-L<N>[.<M>][-desc]` 格式(例:`auth-L1`、`auth-L2.1`
 ## 文档
 
 - [docs/methodology.md](docs/methodology.md) — 公开方法论
-- [docs/commands.md](docs/commands.md) — 完整 CLI 参考
 
 ## 架构
 
