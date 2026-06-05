@@ -44,7 +44,13 @@
       "Bash(curl -s 'https://www.clawhup.com/assets/api-CNDZuEer.js')",
       "Bash(curl -s 'https://www.clawhup.com/assets/index-B0V1c8Nt.js')",
       "Bash(python3 -c ' *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npm view *)",
+      "Bash(npm publish *)",
+      "Bash(npm pkg *)",
+      "Bash(npm set *)",
+      "Bash(gh release *)",
+      "Bash(gh auth *)"
     ]
   }
 }
