@@ -1,5 +1,8 @@
 import { Command } from 'commander';
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { installAgentSupport, parseAgentProviders } from '../core/agents.js';
 import { getPaths } from '../core/paths.js';
 import { listAllSpecs } from '../core/spec-io.js';
 
@@ -41,6 +44,32 @@ export function registerProject(program: Command): void {
       console.log(`  - changes:   ${paths.changesDir}/`);
       console.log(`  - archive:   ${paths.archiveDir}/`);
       console.log(`\n下一步：spec-manager spec new L1 --topic <topic> --code <CODE> --title "..."`);
+      console.log(`AI 配置：spec-manager project agents --provider all`);
+    });
+
+  cmd
+    .command('agents')
+    .description('安装 AI agent 指令与 skill（claude/codex/opencode/codebuddy/all）')
+    .option('-p, --provider <provider>', 'all | claude | codex | opencode | codebuddy（可逗号组合）', 'all')
+    .option('--force', '覆盖已存在的 agent 指令文件/skill 目录')
+    .action((opts) => {
+      const paths = getPaths();
+      const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+      const report = installAgentSupport({
+        paths,
+        packageRoot,
+        providers: parseAgentProviders(opts.provider),
+        force: Boolean(opts.force),
+      });
+
+      console.log(`✓ AI agent support installed: ${report.providers.join(', ')}`);
+      printPathGroup('created', report.created);
+      printPathGroup('overwritten', report.overwritten);
+      printPathGroup('skipped', report.skipped);
+      if (report.notes.length > 0) {
+        console.log('notes:');
+        for (const note of report.notes) console.log(`  - ${note}`);
+      }
     });
 
   cmd
@@ -72,6 +101,12 @@ export function registerProject(program: Command): void {
         console.log('\n(尚无 spec)');
       }
     });
+}
+
+function printPathGroup(label: string, paths: string[]): void {
+  if (paths.length === 0) return;
+  console.log(`${label}:`);
+  for (const p of paths) console.log(`  - ${p}`);
 }
 
 function initAuditJson(): string {

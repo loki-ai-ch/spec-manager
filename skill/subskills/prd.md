@@ -7,7 +7,7 @@
 
 ## 模板
 
-- [templates/L1-prd.md](../../templates/L1-prd.md)（项目根）
+- [templates/L1-prd.md](../templates/L1-prd.md)
 - skill 内 Read 该文件获取完整模板
 
 ## 流程
@@ -18,9 +18,9 @@
    ```bash
    spec-manager decision list --topic <topic>
    ```
-   若返回非空 → 在 AskUserQuestion Q4 中展示决策摘要,让用户确认新 L1 是否与历史一致或有意覆盖。
+   若返回非空 → 向用户展示决策摘要,让用户确认新 L1 是否与历史一致或有意覆盖。
    > ☑ **R18** — 流程规则:新 L1 创建前查历史决策,避免与已实现 L1 的决策冲突
-2. **PRE-WRITE Q1-Q3**（必做）：用 `AskUserQuestion` 一次性问 3 个问题
+2. **PRE-WRITE Q1-Q3**（必做）：用当前工具的用户提问能力一次性问 3 个问题
    - Q1 核心痛点（量化）
    - Q2 范围边界（做/不做/推迟）
    - Q3 成功指标（基线 + 目标 + 测量方式）
@@ -62,11 +62,11 @@ R1 / R2 / R4 / R7 / R13 / R14 / R16 / R17 / R19 / R22 / R23
 
 | 规则 ID | 文件 | 适用场景 | 类型 |
 |---|---|---|---|
-| R1/R2/R4 | [rules/flow-control.md](../../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
-| R7 | [rules/doc-governance.md](../../rules/doc-governance.md) | 层级绑定（虽 L1 无父,但确认子层要绑） | 代码 |
-| R13/R21 | [rules/doc-governance.md](../../rules/doc-governance.md) | aiSummary 必传 + ≤300 字符 | 代码 |
-| R14 | [rules/doc-governance.md](../../rules/doc-governance.md) | 跨层引用 — L1 不复述上层 | 流程 |
-| R16 | [rules/doc-governance.md](../../rules/doc-governance.md) | L1 去重搜索 | 流程 |
-| R19 | [rules/doc-governance.md](../../rules/doc-governance.md) | 研究期读 aiSummary 而非全文 | 流程 |
-| R22 | [rules/doc-governance.md](../../rules/doc-governance.md) | 创建后立即写正文 | 代码（CLI 在 `confirm` 时强制） |
-| R23 | [rules/codebase-survey.md](../../rules/codebase-survey.md) | 写 L1 前 Level 1 架构概览 | 流程 |
+| R1/R2/R4 | [rules/flow-control.md](../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
+| R7 | [rules/doc-governance.md](../rules/doc-governance.md) | 层级绑定（虽 L1 无父,但确认子层要绑） | 代码 |
+| R13/R21 | [rules/doc-governance.md](../rules/doc-governance.md) | aiSummary 必传 + ≤300 字符 | 代码 |
+| R14 | [rules/doc-governance.md](../rules/doc-governance.md) | 跨层引用 — L1 不复述上层 | 流程 |
+| R16 | [rules/doc-governance.md](../rules/doc-governance.md) | L1 去重搜索 | 流程 |
+| R19 | [rules/doc-governance.md](../rules/doc-governance.md) | 研究期读 aiSummary 而非全文 | 流程 |
+| R22 | [rules/doc-governance.md](../rules/doc-governance.md) | 创建后立即写正文 | 代码（CLI 在 `confirm` 时强制） |
+| R23 | [rules/codebase-survey.md](../rules/codebase-survey.md) | 写 L1 前 Level 1 架构概览 | 流程 |

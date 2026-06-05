@@ -45,7 +45,7 @@ Task  执行            小时-天级  1 per L3
 |---|---|---|---|---|
 | L1 | 业务档案 | ≥1 年 | 产品/业务方 | 背景/用户故事/AC/范围边界/度量指标 |
 | L2 | 技术契约 | 模块演进 | L3 写作者 | 方案概述/技术决策/受影响模块/接口契约 |
-| L3 | 执行日志 | 实施完成 | Claude 自己 | 目标/实施步骤/验证命令/planJson/回滚 |
+| L3 | 执行日志 | 实施完成 | AI agent / 代码审核者 | 目标/实施步骤/验证命令/planJson/回滚 |
 | Task | 操作记录 | 单次 | 审计 | step 列表 + step_report 上报 |
 
 ## 状态机
@@ -53,10 +53,10 @@ Task  执行            小时-天级  1 per L3
 ```
 draft → confirmed → frozen → implemented
   ↑        ↑         ↑          ↑
- Claude   用户      用户     task complete
+AI agent  用户      用户     task complete
 ```
 
-**规则：状态推进是用户行为，不是 Claude 行为**。Claude 拥有上下文≠有权跳过流程。
+**规则：状态推进是用户行为，不是 AI 行为**。AI 拥有上下文≠有权跳过流程。
 
 ## 24 条规则（按主题分组）
 
@@ -106,8 +106,8 @@ draft → confirmed → frozen → implemented
 
 ```
 1. 需求理解       用户描述需求
-2. 方案研究       Claude 读历史决策 + 现有 spec
-3. PRE-WRITE Q1-Q4  Claude 问用户 4 个澄清问题
+2. 方案研究       AI 读历史决策 + 现有 spec
+3. PRE-WRITE Q1-Q4  AI 问用户 4 个澄清问题
 4. 设计文档       写 L1 / L2 / L3 spec
 5. 用户确认       用户审核 + 状态推进
 6. 实施编码       Agent Task 逐步执行
@@ -165,7 +165,7 @@ draft → confirmed → frozen → implemented
 |---|---|
 | 可预测：知道 AI 在干嘛 | R1 "写完必停"让 AI 每完成一层就等人审。开发者不用守着屏幕，可以异步介入每个审核点 |
 | 可追溯：出问题找得到人 | Agent Task 有 specCode / taskId / 每步 latency / error。incident → rule 演进时能反查是哪个决策环节缺了约束 |
-| 可协作：多人 / 多 AI 共享 | 所有 Spec 都是 markdown 文件，不依赖特定人的 IDE 或 Claude 会话。团队成员 + 不同 AI 工具看到同一份真相 |
+| 可协作：多人 / 多 AI 共享 | 所有 Spec 都是 markdown 文件，不依赖特定人的 IDE 或单一 AI 会话。团队成员 + 不同 AI 工具看到同一份真相 |
 | 可复盘：事故驱动演进 | incidents/ 目录记录违规事件，"事故 → 规则"是规则演进的单向箭头 —— 无据不加规则 |
 | 可量化：度量驱动迭代 | 每个 L1 有度量指标（基线 / 目标 / 测量方式）。上线后直接验证是否达标，不靠"感觉变好了" |
 

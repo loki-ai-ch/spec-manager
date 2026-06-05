@@ -16,6 +16,7 @@
 - **决策卡片** 带 `what/why/affectedCriteria` 三段 + topic 查询
 - **规则审计** at-least-once 本地 JSON 累加器
 - **Delta specs** (OpenSpec 风格 `changes/<name>/`,含 ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
+- **多 Agent 配置** — 一个命令安装 Claude Code、Codex、OpenCode、CodeBuddy 指令
 - **RFC 2119** 关键字(SHALL/MUST/SHOULD)在验收标准中校验
 - **事故追踪** — 规则违规驱动规则迭代
 
@@ -35,36 +36,68 @@ npm install -g .
 npx spec-manager <command>
 ```
 
-## AI 配置（Claude Code）
+## AI Agent 配置
 
-spec-manager 通过内置 skill 与 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 配合使用。迭代项目前，先配置 AI 遵循规格驱动开发 —— **禁止 vibe coding**。
+spec-manager 不绑定单一 AI 工具：CLI 负责把规格、任务、决策和审计数据落到本地文件；AI 工具只需要项目级指令来遵循流程。内置安装器支持 Claude Code、Codex、OpenCode、CodeBuddy，以及其他兼容 `AGENTS.md` 的 agent。
 
-### 1. 安装 skill
-
-```bash
-cp -r path/to/spec-manager/skill/ my-project/.claude/skills/spec-manager/
-```
-
-### 2. 在项目根目录创建 `CLAUDE.md`
-
-这个文件告诉 AI 如何工作。复制以下模板：
-
-```markdown
-## 规格驱动开发 — 禁止 Vibe Coding
-
-本项目通过 `/spec-manager` 实行规格驱动开发。
-
-- 所有功能开发必须走 `/spec-manager`，禁止直接改代码
-- 没有 frozen 的 L3 spec 禁止写实现代码
-- 禁止跳过人工审核关卡 — 每层（L1/L2/L3）都需要用户明确批准
-- 状态推进（confirm/freeze）是用户行为，不是 AI 行为
-```
-
-### 3. 开始迭代
+### 推荐安装
 
 ```bash
-# 在 Claude Code 中：
+cd my-project
+spec-manager project init --name my-project
+spec-manager project agents --provider all
+```
+
+会写入：
+
+| Provider | 文件 |
+|---|---|
+| Claude Code | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| Codex | `AGENTS.md` |
+| OpenCode | `AGENTS.md` |
+| CodeBuddy | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+
+也可以只安装部分入口：
+
+```bash
+spec-manager project agents --provider codex,opencode
+spec-manager project agents --provider codebuddy --force
+```
+
+参考：[Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md)、[OpenCode rules](https://opencode.ai/docs/rules/)、[CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills)。
+
+### 手动安装
+
+如果不使用安装器，也可以直接复制模板：
+
+```bash
+# Codex / OpenCode / AGENTS.md 兼容工具
+cp path/to/spec-manager/templates/agents/AGENTS.md my-project/AGENTS.md
+
+# Claude Code
+mkdir -p my-project/.claude/skills/spec-manager
+cp -r path/to/spec-manager/skill/* my-project/.claude/skills/spec-manager/
+cp -r path/to/spec-manager/rules my-project/.claude/skills/spec-manager/rules
+cp -r path/to/spec-manager/templates my-project/.claude/skills/spec-manager/templates
+cp path/to/spec-manager/templates/agents/CLAUDE.md my-project/CLAUDE.md
+
+# CodeBuddy
+mkdir -p my-project/.codebuddy/skills/spec-manager
+cp -r path/to/spec-manager/skill/subskills my-project/.codebuddy/skills/spec-manager/subskills
+cp -r path/to/spec-manager/rules my-project/.codebuddy/skills/spec-manager/rules
+cp -r path/to/spec-manager/templates my-project/.codebuddy/skills/spec-manager/templates
+cp path/to/spec-manager/templates/agents/CODEBUDDY.md my-project/CODEBUDDY.md
+cp path/to/spec-manager/templates/agents/codebuddy-skill/SKILL.md my-project/.codebuddy/skills/spec-manager/SKILL.md
+```
+
+### 开始迭代
+
+```bash
+# Claude Code / CodeBuddy skill:
 /spec-manager 新增用户认证功能
+
+# Codex / OpenCode / 其他 AGENTS.md agent:
+使用 spec-manager 新增用户认证功能。
 ```
 
 AI 会按 L1→L2→L3→Task 管线推进，每层都有人工审核关卡。完整 24 条规则见 [rules/](rules/)。
@@ -74,6 +107,7 @@ AI 会按 L1→L2→L3→Task 管线推进，每层都有人工审核关卡。�
 ```bash
 cd my-project
 spec-manager project init --name my-project
+spec-manager project agents --provider all
 spec-manager spec new L1 --topic auth --title "用户认证"  # 自动生成 auth-L1
 # 写正文到 ./l1.md，然后：
 spec-manager spec update auth-L1 --content ./l1.md \
@@ -83,11 +117,9 @@ spec-manager spec confirm <code>
 # L2/L3 类似：spec new L2 --parent <L1 code>
 ```
 
-或使用 Claude Code skill:
+或使用已配置的 AI agent:
 
 ```bash
-cp -r path/to/spec-manager/skill/ my-project/.claude/skills/spec-manager/
-# 然后在 Claude Code 中:
 /spec-manager 新增用户认证功能
 ```
 
@@ -434,7 +466,7 @@ spec-manager/
 │   └── schemas/            Zod schemas
 ├── templates/              L0/L1/L2/L3/proposal/decision/incident markdown 模板
 ├── rules/                  24 条 markdown 规则,带 YAML frontmatter
-├── skill/                  Claude Code skill (SKILL.md + 12 个 subskills)
+├── skill/                  Agent skill 内容 (SKILL.md + 12 个 subskills)
 ├── docs/                   公开文档
 └── examples/               迁移示例
 ```

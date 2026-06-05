@@ -1,7 +1,7 @@
 <!-- ========== Stage Charter: Decision Card ==========
 Value: 知识沉淀 — 回答"为什么这么做/不这么做",支撑后续 L1 的 Q4 历史决策查询
 Time horizon: 长期(直到被 supersede)
-Target reader: 未来 Claude 在做类似需求时的参照(尤其 L1 PRE-WRITE Q4)
+Target reader: 未来 AI agent 在做类似需求时的参照(尤其 L1 PRE-WRITE Q4)
 Must NOT have:
   - 文件路径 / DDL / planJson → 不属于本层
   - 详细 trade-off / 备选方案 → 走 ADR

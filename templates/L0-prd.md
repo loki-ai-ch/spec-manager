@@ -1,7 +1,7 @@
 <!-- ========== Stage Charter: L0 Vision ==========
 Value: 长期方向档案 — 回答"3-5 年后这个产品要变成什么"
 Time horizon: 极长期(3-5 年,只在大方向变化时更新)
-Target reader: 高层/投资人/产品负责人、未来 Claude 在评估某 L1 是否符合产品方向时的参照
+Target reader: 高层/投资人/产品负责人、未来 AI agent 在评估某 L1 是否符合产品方向时的参照
 Must NOT have:
   - 用户故事 / 验收标准 → 下到 L1
   - 模块 / 接口 / 数据模型 → 下到 L2

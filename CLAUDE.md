@@ -32,9 +32,9 @@ Local-first spec-driven development CLI. Pure markdown + YAML frontmatter storag
 - `src/cli/` — Commander.js command registrations (one file per domain: spec, task, decision, audit, change, incident, dict, project)
 - `src/core/` — Business logic: spec IO, validation, status machine, frontmatter parsing, audit, paths, constants
 - `src/schemas/` — Zod schemas for spec frontmatter, plan JSON, decision input
-- `templates/` — Markdown templates for L0/L1/L2/L3 specs, proposals, decisions, incidents
+- `templates/` — Markdown templates for specs, proposals, decisions, incidents, and AI agent setup
 - `rules/` — 24 governance rules as markdown with YAML frontmatter (`applies_to` filtering)
-- `skill/` — Claude Code skill (`SKILL.md` + 12 subskills in `subskills/`)
+- `skill/` — spec-manager skill content shared by Claude Code and CodeBuddy installers
 
 ### Key Patterns
 

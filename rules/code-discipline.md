@@ -1,7 +1,7 @@
 # 代码纪律规则
 
 > 本文件管辖:R8 R9 R12
-> 主题:改代码前自检、批准必须走 Skill、禁凭记忆
+> 主题:改代码前自检、批准必须走 spec-manager 入口、禁凭记忆
 
 ## R8 — 改代码前必须调研
 
@@ -20,16 +20,16 @@ applies_to: [pre_code_change, L3_write]
 
 **禁止**：凭记忆写文件路径 / 函数名。
 
-## R9 — 批准必须走 Skill，不能凭上下文
+## R9 — 批准必须走 spec-manager 入口，不能凭上下文
 
 ---
 id: R9
-title: 批准必须走 Skill，不能凭上下文
+title: 批准必须走 spec-manager 入口，不能凭上下文
 added: 0.1.0
 applies_to: [user_approve]
 ---
 
-当用户在迭代上下文中说出"批准"/"已确认"/"通过"等信号时，Claude **必须**调用 `Skill("spec-manager")`，由 skill 触发后续状态推进。
+当用户在迭代上下文中说出"批准"/"已确认"/"通过"等信号时，AI agent **必须**重新进入 spec-manager workflow（skill、`AGENTS.md` 指令入口或同等项目指令），由该入口触发后续状态推进。
 
 **禁止**：凭上下文理解直接调用 `spec-manager spec confirm` / `freeze` / `implement`。
 

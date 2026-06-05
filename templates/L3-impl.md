@@ -1,7 +1,7 @@
 <!-- ========== Stage Charter: L3 Impl ==========
 Value: 执行日志 — 回答"具体改哪些文件/函数,怎么验证"
 Time horizon: 短期(实施完成即沉淀,后续仅供审计)
-Target reader: Agent Task 执行者(Claude 自己)、代码审核者
+Target reader: Agent Task 执行者(AI agent)、代码审核者
 Must NOT have:
   - 业务背景论证 / 用户故事 → 上到 L1
   - 架构选型对比 / 多方案比较 → 上到 L2

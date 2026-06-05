@@ -1,7 +1,7 @@
 {
   "name": "spec-manager",
   "version": "0.1.0",
-  "description": "spec-manager: local-first spec-driven development platform. Pure markdown storage, no network, no MCP. Portable CLI + Claude Code skill.",
+  "description": "spec-manager: local-first spec-driven development platform. Pure markdown storage, no network, no MCP. Portable CLI + multi-agent instructions.",
   "type": "module",
   "license": "MIT",
   "engines": {
@@ -16,6 +16,9 @@
     "dist",
     "skill",
     "templates",
+    "rules",
+    "AGENTS.md",
+    "CODEBUDDY.md",
     "README.md",
     "LICENSE"
   ],
@@ -31,6 +34,10 @@
     "spec",
     "methodology",
     "claude-code",
+    "codex",
+    "opencode",
+    "codebuddy",
+    "agents-md",
     "skill",
     "ai-coding",
     "agent",

@@ -16,26 +16,26 @@ applies_to: [L1_create, L2_create, L3_create]
 
 **严禁一口气做**：`new L1 → update --content → confirm → new L2 → update → confirm → new L3 → freeze → task create → start`。
 
-## R2 — 状态推进是用户行为,不是 Claude 行为
+## R2 — 状态推进是用户行为,不是 AI 行为
 
 ---
 id: R2
-title: 状态推进是用户行为,不是 Claude 行为
+title: 状态推进是用户行为,不是 AI 行为
 added: 0.1.0
 applies_to: [L1_confirm, L2_confirm, L3_confirm, L3_freeze, user_approve]
 ---
 
-`draft → confirmed` 和 `confirmed → frozen` 都是用户审核意见的体现。Claude **不能**在未获用户明确批准前主动调用 `spec-manager spec confirm` / `freeze`。
+`draft → confirmed` 和 `confirmed → frozen` 都是用户审核意见的体现。AI agent **不能**在未获用户明确批准前主动调用 `spec-manager spec confirm` / `freeze`。
 
-**唯一例外**：`frozen → implemented` 由 `spec-manager task complete` 自动触发，允许 Claude 执行。
+**唯一例外**：`frozen → implemented` 由 `spec-manager task complete` 自动触发，允许 AI agent 执行。
 
-**用户批准信号必须通过 Skill 响应**：当用户在迭代上下文中说出批准信号（"继续"/"已审批"/"通过"/"批准"/"ok"/"确认"等），Claude **必须立即调用 `Skill("spec-manager")` 工具**，不能凭已有上下文自行推进。
+**用户批准信号必须通过 spec-manager 入口响应**：当用户在迭代上下文中说出批准信号（"继续"/"已审批"/"通过"/"批准"/"ok"/"确认"等），AI agent **必须重新进入 spec-manager workflow**（Claude/CodeBuddy skill、Codex/OpenCode 的 `AGENTS.md` 指令入口等），不能凭已有上下文自行推进。
 
-**原因**：Claude 拥有上下文≠有权跳过流程。上下文只是信息，流程管控的是质量和可追溯性。
+**原因**：AI 拥有上下文≠有权跳过流程。上下文只是信息，流程管控的是质量和可追溯性。
 
 ```
-✅ 正确：用户说"已审批" → Claude 调用 Skill("spec-manager") → skill 继续下一步
-❌ 错误：用户说"已审批" → Claude 直接读文件、建 Task、动代码
+正确：用户说"已审批" → AI 进入 spec-manager workflow → 执行下一步状态推进
+错误：用户说"已审批" → AI 凭上下文直接读文件、建 Task、动代码
 ```
 
 ## R3 — 创建 Agent Task 前必须 spec 已 frozen

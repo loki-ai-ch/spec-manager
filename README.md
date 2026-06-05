@@ -16,6 +16,7 @@
 - **Decision cards** with `what/why/affectedCriteria` + topic query
 - **Rule audit** with at-least-once local JSON accumulator
 - **Delta specs** (OpenSpec-style `changes/<name>/` with ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
+- **Multi-agent setup** — one command installs Claude Code, Codex, OpenCode, and CodeBuddy instructions
 - **RFC 2119** keywords (SHALL/MUST/SHOULD) validation in acceptance criteria
 - **Incident tracking** — rule violations drive rule evolution
 
@@ -35,36 +36,68 @@ npm install -g .
 npx spec-manager <command>
 ```
 
-## AI Setup (Claude Code)
+## AI Agent Setup
 
-spec-manager works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) via a built-in skill. Before iterating on a project, set up the AI to follow spec-driven development — **no vibe coding**.
+spec-manager is agent-agnostic: the CLI stores the source of truth locally, and AI tools only need project instructions that enforce the workflow. Built-in setup supports Claude Code, Codex, OpenCode, CodeBuddy, and other `AGENTS.md`-compatible agents.
 
-### 1. Install the skill
-
-```bash
-cp -r path/to/spec-manager/skill/ my-project/.claude/skills/spec-manager/
-```
-
-### 2. Create `CLAUDE.md` in your project root
-
-This file tells the AI how to behave. Copy this template:
-
-```markdown
-## Spec-Driven Development — No Vibe Coding
-
-This project uses spec-driven development via `/spec-manager`.
-
-- All feature work MUST go through `/spec-manager` — no direct code changes
-- Never write implementation code without a frozen L3 spec
-- Never skip human review gates — each layer (L1/L2/L3) requires explicit user approval
-- Status transitions (confirm/freeze) are user actions, not AI actions
-```
-
-### 3. Start iterating
+### Recommended
 
 ```bash
-# In Claude Code:
+cd my-project
+spec-manager project init --name my-project
+spec-manager project agents --provider all
+```
+
+This writes:
+
+| Provider | Files |
+|---|---|
+| Claude Code | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| Codex | `AGENTS.md` |
+| OpenCode | `AGENTS.md` |
+| CodeBuddy | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+
+Use a narrower install when needed:
+
+```bash
+spec-manager project agents --provider codex,opencode
+spec-manager project agents --provider codebuddy --force
+```
+
+References: [Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md), [OpenCode rules](https://opencode.ai/docs/rules/), [CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills).
+
+### Manual install
+
+If you do not want to use the installer, copy the templates directly:
+
+```bash
+# Codex / OpenCode / AGENTS.md-compatible tools
+cp path/to/spec-manager/templates/agents/AGENTS.md my-project/AGENTS.md
+
+# Claude Code
+mkdir -p my-project/.claude/skills/spec-manager
+cp -r path/to/spec-manager/skill/* my-project/.claude/skills/spec-manager/
+cp -r path/to/spec-manager/rules my-project/.claude/skills/spec-manager/rules
+cp -r path/to/spec-manager/templates my-project/.claude/skills/spec-manager/templates
+cp path/to/spec-manager/templates/agents/CLAUDE.md my-project/CLAUDE.md
+
+# CodeBuddy
+mkdir -p my-project/.codebuddy/skills/spec-manager
+cp -r path/to/spec-manager/skill/subskills my-project/.codebuddy/skills/spec-manager/subskills
+cp -r path/to/spec-manager/rules my-project/.codebuddy/skills/spec-manager/rules
+cp -r path/to/spec-manager/templates my-project/.codebuddy/skills/spec-manager/templates
+cp path/to/spec-manager/templates/agents/CODEBUDDY.md my-project/CODEBUDDY.md
+cp path/to/spec-manager/templates/agents/codebuddy-skill/SKILL.md my-project/.codebuddy/skills/spec-manager/SKILL.md
+```
+
+### Start iterating
+
+```bash
+# Claude Code / CodeBuddy skill:
 /spec-manager add user authentication feature
+
+# Codex / OpenCode / other AGENTS.md agents:
+Use spec-manager to add user authentication feature.
 ```
 
 The AI will follow the L1→L2→L3→Task pipeline with human review gates at each layer. See [rules/](rules/) for the full 24-rule set.
@@ -74,6 +107,7 @@ The AI will follow the L1→L2→L3→Task pipeline with human review gates at e
 ```bash
 cd my-project
 spec-manager project init --name my-project
+spec-manager project agents --provider all
 spec-manager spec new L1 --topic auth --title "User authentication"  # auto-generates auth-L1
 # write the body to ./l1.md, then:
 spec-manager spec update auth-L1 --content ./l1.md \
@@ -83,11 +117,9 @@ spec-manager spec confirm <code>
 # L2/L3 follow the same shape: spec new L2 --parent <L1 code>
 ```
 
-Or use the Claude Code skill:
+Or use an AI agent configured with spec-manager:
 
 ```bash
-cp -r path/to/spec-manager/skill/ my-project/.claude/skills/spec-manager/
-# then in Claude Code:
 /spec-manager add user authentication feature
 ```
 
@@ -434,7 +466,7 @@ spec-manager/
 │   └── schemas/            Zod schemas
 ├── templates/              L0/L1/L2/L3/proposal/decision/incident markdown
 ├── rules/                  24 markdown rules with YAML frontmatter
-├── skill/                  Claude Code skill (SKILL.md + 12 subskills)
+├── skill/                  Agent skill content (SKILL.md + 12 subskills)
 ├── docs/                   public docs
 └── examples/               migration examples
 ```

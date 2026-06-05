@@ -14,7 +14,7 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 
 ## 入口路由
 
-收到 `/spec-manager <用户输入>` 时，按下表匹配子 skill；不确定时用 `AskUserQuestion` 澄清。关键词重叠按 # 小者优先。
+收到 `/spec-manager <用户输入>` 时，按下表匹配子 skill；不确定时用当前工具的用户提问能力澄清。关键词重叠按 # 小者优先。
 
 | # | 关键词 | 子 skill | 产出 |
 |---|---|---|---|
@@ -31,7 +31,7 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 | 11 | ADR / 为什么选 X | [subskills/adr.md](subskills/adr.md) | decision |
 | 12 | delta / change / 增量 | [subskills/change.md](subskills/change.md) | change |
 
-**消歧规则**: 关键词重叠时小 # 优先；看不懂意图不要猜，用 AskUserQuestion 问用户；2 次仍无法定位则停止走 /spec-manager。
+**消歧规则**: 关键词重叠时小 # 优先；看不懂意图不要猜，先问用户；2 次仍无法定位则停止走 /spec-manager。
 
 ## 方法论
 
@@ -56,7 +56,7 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 
 ```
 draft → confirmed → frozen → implemented
-  Claude   用户      用户     task_complete
+ AI agent 用户      用户     task_complete
 ```
 
 ## CLI 概要

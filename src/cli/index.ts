@@ -12,7 +12,7 @@ import { registerDictCommands } from './dict.js';
 const program = new Command();
 program
   .name('spec-manager')
-  .description('spec-manager: local-first spec-driven development platform. Portable CLI + Claude Code skill.')
+  .description('spec-manager: local-first spec-driven development platform. Portable CLI + multi-agent instructions.')
   .version('0.1.0');
 
 registerProject(program);

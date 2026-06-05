@@ -1,7 +1,7 @@
 <!-- ========== Stage Charter: L1 PRD ==========
 Value: 业务档案馆 — 回答"为什么做这个功能"
 Time horizon: 长期(≥1 年,功能下线前都有效)
-Target reader: 产品/业务方、未来 Claude 在做类似需求时的参照
+Target reader: 产品/业务方、未来 AI agent 在做类似需求时的参照
 Must NOT have:
   - 文件路径 / DDL / planJson / bash 命令 → 下到 L3
   - 具体技术选型 / API 签名 / 函数名 → 下到 L2
@@ -18,9 +18,9 @@ Expert guidelines:
   - 问题归类先于用户故事,确保需求来源可追溯
 
 PRE-WRITE INTERACTION (mandatory):
-  在写 L1 正文之前,Claude 必须先用 AskUserQuestion 工具向用户确认以下 3 个问题。
-  Q4 历史决策查询（执行于 Q1-Q3 之前）: Claude 必须先调 `spec-manager decision list --topic <topic>`。
-    若存在 active 决策卡片,将决策摘要以 option description 形式展示在 AskUserQuestion 的 Q4 中。
+  在写 L1 正文之前,AI agent 必须先用当前工具的用户提问能力向用户确认以下 3 个问题。
+  Q4 历史决策查询（执行于 Q1-Q3 之前）: AI agent 必须先调 `spec-manager decision list --topic <topic>`。
+    若存在 active 决策卡片,将决策摘要展示给用户。
     让用户确认新 L1 是否与历史决策一致或有意覆盖。
 ========== -->
 

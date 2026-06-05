@@ -7,8 +7,8 @@
 
 ## 模板
 
-- [templates/L3-impl.md](../../templates/L3-impl.md)
-- [templates/agent-plan.json](../../templates/agent-plan.json)（planJson 字段名 stepNo/stepType/name）
+- [templates/L3-impl.md](../templates/L3-impl.md)
+- [templates/agent-plan.json](../templates/agent-plan.json)（planJson 字段名 stepNo/stepType/name）
 
 ## 流程
 
@@ -87,13 +87,13 @@ R1 / R2 / R3 / R4 / R5 / R6 / R7 / R8 / R10 / R11 / R12 / R13 / R14 / R15 / R18 
 
 | 规则 ID | 文件 | 适用场景 | 类型 |
 |---|---|---|---|
-| R1/R2/R4 | [rules/flow-control.md](../../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
-| R3/R5/R6 | [rules/flow-control.md](../../rules/flow-control.md) + [rules/quality-gate.md](../../rules/quality-gate.md) | frozen 才建 Task / 不跳步 / task 后校验 | 流程 + 代码 |
-| R7/R11/R13/R14/R22 | [rules/doc-governance.md](../../rules/doc-governance.md) | 层级绑定 / 粒度 / aiSummary / 跨层引用 / 创建即写正文 | 代码 + 流程 |
-| R8/R12 | [rules/code-discipline.md](../../rules/code-discipline.md) | 改代码前自检 / 禁凭记忆 | 流程 |
-| R10/R15/R18 | [rules/quality-gate.md](../../rules/quality-gate.md) | planJson 必含验证 / step 必含 summary / 决策卡片 | 代码 |
-| R20 | [rules/doc-governance.md](../../rules/doc-governance.md) | scope-split 批量建齐 | 流程 |
-| R23 | [rules/codebase-survey.md](../../rules/codebase-survey.md) | Level 3 文件级分析 | 流程 |
+| R1/R2/R4 | [rules/flow-control.md](../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
+| R3/R5/R6 | [rules/flow-control.md](../rules/flow-control.md) + [rules/quality-gate.md](../rules/quality-gate.md) | frozen 才建 Task / 不跳步 / task 后校验 | 流程 + 代码 |
+| R7/R11/R13/R14/R22 | [rules/doc-governance.md](../rules/doc-governance.md) | 层级绑定 / 粒度 / aiSummary / 跨层引用 / 创建即写正文 | 代码 + 流程 |
+| R8/R12 | [rules/code-discipline.md](../rules/code-discipline.md) | 改代码前自检 / 禁凭记忆 | 流程 |
+| R10/R15/R18 | [rules/quality-gate.md](../rules/quality-gate.md) | planJson 必含验证 / step 必含 summary / 决策卡片 | 代码 |
+| R20 | [rules/doc-governance.md](../rules/doc-governance.md) | scope-split 批量建齐 | 流程 |
+| R23 | [rules/codebase-survey.md](../rules/codebase-survey.md) | Level 3 文件级分析 | 流程 |
 
 **类型说明**:
 - **代码**:违反时 CLI 自动抛错或 audit hit
