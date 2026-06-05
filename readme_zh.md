@@ -60,9 +60,13 @@ spec-manager project agents --provider all
 也可以只安装部分入口：
 
 ```bash
+spec-manager project agents --provider list
+spec-manager project agents --provider all --dry-run
 spec-manager project agents --provider codex,opencode
 spec-manager project agents --provider codebuddy --force
 ```
+
+使用 `--dry-run` 可以在实际写入前预览会创建、覆盖和跳过哪些文件。
 
 参考：[Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md)、[OpenCode rules](https://opencode.ai/docs/rules/)、[CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills)。
 
@@ -121,6 +125,41 @@ spec-manager spec confirm <code>
 
 ```bash
 /spec-manager 新增用户认证功能
+```
+
+## 更易用的工作流
+
+日常使用时，可以用这些辅助命令减少记忆成本：
+
+```bash
+spec-manager project doctor                 # 检查初始化、agent 文件、skill 资产、占位 spec、audit
+spec-manager flow status --topic auth       # 展示 L1/L2/L3/Task 进度和下一条命令
+spec-manager guide "新增用户认证"            # 根据请求给出下一步
+spec-manager new feature --topic auth "用户认证"
+spec-manager approve auth-L1                # draft→confirmed，或 L3 confirmed→frozen
+spec-manager run auth-L3.1.1 --plan ./plan.json
+spec-manager template L1 --title "用户认证" > l1.md
+```
+
+原有长命令仍然可用；这些快捷入口只是封装同一套规则和状态机。
+
+| 命令 | 什么时候用 | 它会给你什么 |
+|---|---|---|
+| `project doctor` | 不确定项目是否配置完整时 | 初始化、agent 文件、skill 资产、占位 spec、audit 检查和修复命令 |
+| `flow status` | 想知道某个 topic 卡在哪一步时 | L1/L2/L3/Task 状态和下一条命令 |
+| `guide` | 有需求但不知道从哪条命令开始时 | 不改文件，只给出下一步 |
+| `new feature` | 想快速安全地启动一个 L1 时 | 创建 L1 壳并打印后续 update 命令 |
+| `approve` | 用户已经明确批准某个 spec 时 | 推进 `draft→confirmed` 或 `L3 confirmed→frozen` |
+| `run` | frozen L3 已准备执行时 | 根据 plan 文件创建并启动 task |
+| `template` | 需要 L1/L2/L3 或 `agent-plan` 草稿时 | 输出或写入内置模板 |
+
+示例：
+
+```bash
+spec-manager project doctor
+spec-manager flow status --topic auth
+spec-manager template L2 --title "发票模块" --output l2.md
+spec-manager guide "新增账单导出"
 ```
 
 ## 使用场景

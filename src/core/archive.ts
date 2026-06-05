@@ -12,12 +12,12 @@
  *   - 写入 audit：R24 命中
  */
 
-import { existsSync, mkdirSync, renameSync, rmSync, unlinkSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, unlinkSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { readFrontmatter, writeFrontmatter, writeAtomic } from './frontmatter.js';
 import { parseDeltaSpec, getChangeDir } from './delta.js';
 import { findSpecByCode, readSpec, writeSpec, createSpec, invalidateSpecCache, listAllSpecs, type SpecRecord } from './spec-io.js';
-import { hit } from './audit.js';
+import { recordAuditHit, type AuditSink } from './audit-events.js';
 import { assertSafeSpecCode, assertSafeTopic, type ProjectPaths } from './paths.js';
 import { ProposalSchema, type ChangeEntry, type ChangeOpT } from '../schemas/change.js';
 
@@ -28,8 +28,8 @@ export interface ArchiveResult {
   archivedTo: string;
 }
 
-export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult {
-  validateChangeProposal(paths, name);
+export function archiveChange(paths: ProjectPaths, name: string, opts?: { auditSink?: AuditSink }): ArchiveResult {
+  validateChangeProposal(paths, name, opts?.auditSink);
 
   // 1. 解析 delta
   const delta = parseDeltaSpec(paths, name);
@@ -43,6 +43,7 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
     return order.indexOf(a.op) - order.indexOf(b.op);
   });
   preflightArchive(paths, name, sortedEntries);
+  const tx = new ArchiveApplyTransaction();
 
   for (const e of sortedEntries) {
     try {
@@ -52,6 +53,8 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
           const spec = findSpecByCode(paths, e.code);
           if (!spec) throw new Error(`Spec not found: ${e.code}`);
           const newFilePath = renamedFilePath(spec, e.newCode);
+          tx.snapshot(spec.filePath);
+          if (spec.filePath !== newFilePath) tx.trackCreated(newFilePath);
           const newSpec: SpecRecord = {
             ...spec,
             filePath: newFilePath,
@@ -68,11 +71,13 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
         case 'REMOVED': {
           const spec = findSpecByCode(paths, e.code);
           if (!spec) throw new Error(`Spec not found: ${e.code}`);
+          tx.snapshot(spec.filePath);
           // 移到 archive/<name>/<relative-path>
           const archivePath = join(paths.archiveDir, name);
           mkdirSync(archivePath, { recursive: true });
           const relativePath = spec.filePath.replace(paths.root + '/', '');
           const targetPath = join(archivePath, relativePath);
+          tx.trackCreated(targetPath);
           writeAtomic(targetPath, writeFrontmatter({ ...spec.fm, status: 'archived' } as unknown as Record<string, unknown>, spec.content));
           // 删主 spec
           unlinkSync(spec.filePath);
@@ -84,6 +89,7 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
           const spec = findSpecByCode(paths, e.code);
           if (!spec) throw new Error(`Spec not found: ${e.code}`);
           if (!e.content) throw new Error('MODIFIED 缺 content');
+          tx.snapshot(spec.filePath);
           // 简单策略：追加 delta 内容到主 spec 的正文末尾（带 ## Delta 段标识）
           const marker = `## Delta (${name})`;
           let newContent = spec.content;
@@ -138,7 +144,9 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
             topic,
             parentCode: finalParent,
             parentRecord,
+            auditSink: opts?.auditSink,
           });
+          tx.trackCreated(newSpec.filePath);
           if (e.content) {
             const updated: SpecRecord = {
               ...newSpec,
@@ -159,6 +167,7 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
   }
 
   if (skipped.length > 0) {
+    tx.rollback();
     throw new Error(renderArchiveError(name, skipped, 'Change 应用失败，已停止归档'));
   }
 
@@ -171,28 +180,55 @@ export function archiveChange(paths: ProjectPaths, name: string): ArchiveResult 
     const finalTarget = join(paths.archiveDir, `${name}-${stamp}`);
     mkdirSync(dirname(finalTarget), { recursive: true });
     renameSync(changeRoot, finalTarget);
-    hit({ paths, ruleId: 'R24' });
+    recordAuditHit({ paths, ruleId: 'R24' }, opts?.auditSink);
     return { changeName: name, applied, skipped, archivedTo: finalTarget };
   } else {
     mkdirSync(paths.archiveDir, { recursive: true });
     renameSync(changeRoot, archiveTarget);
-    hit({ paths, ruleId: 'R24' });
+    recordAuditHit({ paths, ruleId: 'R24' }, opts?.auditSink);
     return { changeName: name, applied, skipped, archivedTo: archiveTarget };
   }
 }
 
-function validateChangeProposal(paths: ProjectPaths, name: string): void {
+class ArchiveApplyTransaction {
+  private readonly snapshots = new Map<string, string>();
+  private readonly created = new Set<string>();
+
+  snapshot(filePath: string): void {
+    if (!this.snapshots.has(filePath) && existsSync(filePath)) {
+      this.snapshots.set(filePath, readFileSync(filePath, 'utf8'));
+    }
+  }
+
+  trackCreated(filePath: string): void {
+    if (!this.snapshots.has(filePath)) {
+      this.created.add(filePath);
+    }
+  }
+
+  rollback(): void {
+    for (const filePath of [...this.created].reverse()) {
+      if (existsSync(filePath)) rmSync(filePath, { force: true });
+    }
+    for (const [filePath, content] of [...this.snapshots].reverse()) {
+      writeAtomic(filePath, content);
+    }
+    invalidateSpecCache();
+  }
+}
+
+function validateChangeProposal(paths: ProjectPaths, name: string, auditSink?: AuditSink): void {
   const dir = getChangeDir(paths, name);
   if (!dir) throw new Error(`Change not found: ${name}`);
   if (!existsSync(dir.proposal)) {
-    hit({ paths, ruleId: 'R24' });
+    recordAuditHit({ paths, ruleId: 'R24' }, auditSink);
     throw new Error(`R24: delta change 必须包含 proposal.md`);
   }
   try {
     const { data } = readFrontmatter(dir.proposal);
     ProposalSchema.parse(data);
   } catch (err) {
-    hit({ paths, ruleId: 'R24' });
+    recordAuditHit({ paths, ruleId: 'R24' }, auditSink);
     const reason = err instanceof Error ? err.message : String(err);
     throw new Error(`R24: proposal.md 必须填写 why/scope 并通过 schema 校验: ${reason}`);
   }

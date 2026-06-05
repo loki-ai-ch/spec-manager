@@ -2,9 +2,11 @@ import { Command } from 'commander';
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { installAgentSupport, parseAgentProviders } from '../core/agents.js';
+import { installAgentSupport, listAgentProviders, parseAgentProviders } from '../core/agents.js';
 import { getPaths } from '../core/paths.js';
 import { listAllSpecs } from '../core/spec-io.js';
+import { runProjectDoctor } from '../core/usability.js';
+import { printPathGroup, requireInitialized } from './common.js';
 
 export function registerProject(program: Command): void {
   const cmd = program.command('project').description('项目管理（init/status）');
@@ -50,9 +52,15 @@ export function registerProject(program: Command): void {
   cmd
     .command('agents')
     .description('安装 AI agent 指令与 skill（claude/codex/opencode/codebuddy/all）')
-    .option('-p, --provider <provider>', 'all | claude | codex | opencode | codebuddy（可逗号组合）', 'all')
+    .option('-p, --provider <provider>', 'list | all | claude | codex | opencode | codebuddy（可逗号组合）', 'all')
+    .option('--dry-run', '只显示将写入/覆盖/跳过的文件，不实际落盘')
     .option('--force', '覆盖已存在的 agent 指令文件/skill 目录')
     .action((opts) => {
+      if (String(opts.provider).trim().toLowerCase() === 'list') {
+        printAgentProviderList();
+        return;
+      }
+
       const paths = getPaths();
       const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
       const report = installAgentSupport({
@@ -60,16 +68,41 @@ export function registerProject(program: Command): void {
         packageRoot,
         providers: parseAgentProviders(opts.provider),
         force: Boolean(opts.force),
+        dryRun: Boolean(opts.dryRun),
       });
 
-      console.log(`✓ AI agent support installed: ${report.providers.join(', ')}`);
-      printPathGroup('created', report.created);
-      printPathGroup('overwritten', report.overwritten);
+      const verb = report.dryRun ? 'planned' : 'installed';
+      console.log(`✓ AI agent support ${verb}: ${report.providers.join(', ')}`);
+      printPathGroup(report.dryRun ? 'would create' : 'created', report.created);
+      printPathGroup(report.dryRun ? 'would overwrite' : 'overwritten', report.overwritten);
       printPathGroup('skipped', report.skipped);
       if (report.notes.length > 0) {
         console.log('notes:');
         for (const note of report.notes) console.log(`  - ${note}`);
       }
+      if (!report.dryRun) {
+        console.log('');
+        console.log('Next:');
+        console.log('  Claude / CodeBuddy: /spec-manager add user authentication feature');
+        console.log('  Codex / OpenCode: Ask "Use spec-manager to add user authentication feature."');
+        console.log('  Verify: spec-manager project doctor');
+      }
+    });
+
+  cmd
+    .command('doctor')
+    .description('检查项目初始化、agent 指令、skill 资产、占位 spec 和 audit 状态')
+    .action(() => {
+      const paths = getPaths();
+      const checks = runProjectDoctor(paths);
+      for (const check of checks) {
+        const mark = check.status === 'ok' ? '✓' : check.status === 'warn' ? '⚠' : '✗';
+        console.log(`${mark} ${check.label}: ${check.detail}`);
+        if (check.action) console.log(`  Next: ${check.action}`);
+      }
+      const hasFail = checks.some((c) => c.status === 'fail');
+      const hasWarn = checks.some((c) => c.status === 'warn');
+      console.log(hasFail ? '\nProject doctor: failed' : hasWarn ? '\nProject doctor: warnings' : '\nProject doctor: ok');
     });
 
   cmd
@@ -77,10 +110,7 @@ export function registerProject(program: Command): void {
     .description('项目状态总览：spec 状态分布 / topic 列表 / 任务数')
     .action(() => {
       const paths = getPaths();
-      if (!paths.isInitialized) {
-        console.error('✗ 项目未初始化。先跑: spec-manager project init');
-        process.exit(1);
-      }
+      requireInitialized(paths);
       const specs = listAllSpecs(paths);
       const byStatus: Record<string, number> = {};
       const byTopic: Record<string, number> = {};
@@ -103,10 +133,14 @@ export function registerProject(program: Command): void {
     });
 }
 
-function printPathGroup(label: string, paths: string[]): void {
-  if (paths.length === 0) return;
-  console.log(`${label}:`);
-  for (const p of paths) console.log(`  - ${p}`);
+function printAgentProviderList(): void {
+  console.log('Supported AI agent providers:');
+  for (const provider of listAgentProviders()) {
+    console.log(`  - ${provider.provider}`);
+    console.log(`    aliases: ${provider.aliases.join(', ')}`);
+    console.log(`    files: ${provider.files.join(', ')}`);
+    console.log(`    ${provider.description}`);
+  }
 }
 
 function initAuditJson(): string {

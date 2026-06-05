@@ -15,6 +15,8 @@ import { canTransition, isActiveStatus, nextStatuses } from '../core/status.js';
 import { validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
 import { hit } from '../core/audit.js';
 import { listDecisions } from '../core/decision.js';
+import { suggestAfterSpecCommand } from '../core/usability.js';
+import { fail, requireInitialized } from './common.js';
 
 export function registerSpec(program: Command): void {
   const cmd = program.command('spec').description('Spec 增删改查');
@@ -31,26 +33,19 @@ export function registerSpec(program: Command): void {
     .option('--allow-duplicate-topic', '允许同 topic 下创建额外 L1（已确认不是重复需求）', false)
     .action((level: string, opts) => {
       if (!['L0', 'L1', 'L2', 'L3'].includes(level)) {
-        console.error(`✗ level 必须是 L0/L1/L2/L3，收到 "${level}"`);
-        process.exit(2);
+        fail(`✗ level 必须是 L0/L1/L2/L3，收到 "${level}"`, 2);
       }
       const paths = getPaths();
-      if (!paths.isInitialized) {
-        console.error(`✗ 项目未初始化。先跑: spec-manager project init`);
-        process.exit(1);
-      }
+      requireInitialized(paths);
       if ((level === 'L2' || level === 'L3') && !opts.parent) {
-        console.error(`✗ R7: ${level} 必须有 --parent 指向父 spec code`);
-        process.exit(2);
+        fail(`✗ R7: ${level} 必须有 --parent 指向父 spec code`, 2);
       }
       if (opts.desc) {
         if (opts.desc.length > DESC_MAX_LEN) {
-          console.error(`✗ --desc 超过 ${DESC_MAX_LEN} 字符（当前 ${opts.desc.length}）`);
-          process.exit(2);
+          fail(`✗ --desc 超过 ${DESC_MAX_LEN} 字符（当前 ${opts.desc.length}）`, 2);
         }
         if (!/^[a-z0-9-]+$/.test(opts.desc)) {
-          console.error(`✗ --desc 只允许小写字母、数字、连字符`);
-          process.exit(2);
+          fail(`✗ --desc 只允许小写字母、数字、连字符`, 2);
         }
       }
       // 点分编号：统计同父的已有子 spec 数量，用于生成下一个索引
@@ -61,8 +56,7 @@ export function registerSpec(program: Command): void {
       }
       const code = opts.code ?? generateSpecCode(opts.topic, level as SpecLevel, opts.parent, siblingCount, opts.desc);
       if (findSpecByCode(paths, code)) {
-        console.error(`✗ code 重复: ${code}`);
-        process.exit(2);
+        fail(`✗ code 重复: ${code}`, 2);
       }
       if (level === 'L1') {
         hit({ paths, ruleId: 'R16', specCode: code });
@@ -70,11 +64,11 @@ export function registerSpec(program: Command): void {
           .filter(s => s.fm.level === 'L1' && s.fm.topic === opts.topic && isActiveStatus(s.fm.status));
         if (existingL1.length > 0 && !opts.allowDuplicateTopic) {
           const decisions = listDecisions(paths, { topic: opts.topic, includeAll: true });
-          console.error(`✗ R16: topic=${opts.topic} 已有 active L1，创建新 L1 前必须先查重`);
-          for (const s of existingL1) console.error(`  - ${s.fm.code} (${s.fm.status}) ${s.fm.title}`);
-          console.error(`  历史决策: ${decisions.length} 张`);
-          console.error(`  若确认不是重复需求，请加 --allow-duplicate-topic`);
-          process.exit(2);
+          const lines = [`✗ R16: topic=${opts.topic} 已有 active L1，创建新 L1 前必须先查重`];
+          for (const s of existingL1) lines.push(`  - ${s.fm.code} (${s.fm.status}) ${s.fm.title}`);
+          lines.push(`  历史决策: ${decisions.length} 张`);
+          lines.push(`  若确认不是重复需求，请加 --allow-duplicate-topic`);
+          fail(lines.join('\n'), 2);
         }
       }
       const rec = createSpec({
@@ -91,7 +85,7 @@ export function registerSpec(program: Command): void {
       console.log(`  file:     ${rec.filePath}`);
       console.log(`  status:   ${rec.fm.status}`);
       if (rec.fm.milestone) console.log(`  milestone:${rec.fm.milestone}`);
-      console.log(`\n下一步：spec-manager spec update ${rec.fm.code} --content ./draft.md --ai-summary "..." --change-summary "init"`);
+      console.log(`\nNext: ${suggestAfterSpecCommand(rec)}`);
     });
 
   cmd
@@ -103,10 +97,7 @@ export function registerSpec(program: Command): void {
     .option('--include-archived', '包含 archived')
     .action((opts) => {
       const paths = getPaths();
-      if (!paths.isInitialized) {
-        console.error('✗ 项目未初始化');
-        process.exit(1);
-      }
+      requireInitialized(paths);
       let specs = listAllSpecs(paths);
       if (opts.level) specs = specs.filter(s => s.fm.level === opts.level);
       if (opts.topic) specs = specs.filter(s => s.fm.topic === opts.topic);
@@ -135,8 +126,7 @@ export function registerSpec(program: Command): void {
       const paths = getPaths();
       const rec = findSpecByCode(paths, code);
       if (!rec) {
-        console.error(`✗ 未找到: ${code}`);
-        process.exit(1);
+        fail(`✗ 未找到: ${code}`);
       }
       const fm = rec.fm;
       console.log('--- metadata ---');
@@ -169,8 +159,7 @@ export function registerSpec(program: Command): void {
       const paths = getPaths();
       const rec = findSpecByCode(paths, code);
       if (!rec) {
-        console.error(`✗ 未找到: ${code}`);
-        process.exit(1);
+        fail(`✗ 未找到: ${code}`);
       }
       const patch: Parameters<typeof updateSpec>[2] = {};
       if (opts.content) {
@@ -188,6 +177,7 @@ export function registerSpec(program: Command): void {
         console.log(`${sym} [${w.rule}] ${w.message}`);
       }
       console.log(`✓ 已更新 ${code}（status: ${result.record.fm.status}）`);
+      console.log(`Next: ${suggestAfterSpecCommand(result.record)}`);
     });
 
   // 状态推进命令
@@ -204,30 +194,32 @@ export function registerSpec(program: Command): void {
         const paths = getPaths();
         const rec = findSpecByCode(paths, code);
         if (!rec) {
-          console.error(`✗ 未找到: ${code}`);
-          process.exit(1);
+          fail(`✗ 未找到: ${code}`);
         }
         // R22: 推进到 confirmed/frozen 之前,contentTemplate 不能只有占位
         if ((target === 'confirmed' || target === 'frozen') && isPlaceholderContent(rec.content)) {
-          console.error(`✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）`);
-          console.error(`  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`);
-          process.exit(2);
+          fail(
+            `✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）\n` +
+            `  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`,
+            2,
+          );
         }
         if (!canTransition(rec.fm.status, target)) {
-          console.error(`✗ 状态非法: ${rec.fm.status} → ${target}`);
-          console.error(`  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`);
-          process.exit(2);
+          fail(`✗ 状态非法: ${rec.fm.status} → ${target}\n  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`, 2);
         }
         // R3: L3 的 implemented 应由 task cascade 触发，手动推进需 --force
         if (target === 'implemented' && rec.fm.level === 'L3' && rec.fm.status === 'frozen' && !opts.force) {
-          console.error(`⚠ R3: L3 spec ${code} 的 implemented 应由 task complete 自动 cascade`);
-          console.error(`  如确需手动推进，请用: spec-manager spec implement ${code} --force`);
-          process.exit(2);
+          fail(
+            `⚠ R3: L3 spec ${code} 的 implemented 应由 task complete 自动 cascade\n` +
+            `  如确需手动推进，请用: spec-manager spec implement ${code} --force`,
+            2,
+          );
         }
         hit({ paths, ruleId: 'R2', specCode: code });
         hit({ paths, ruleId: 'R9', specCode: code });
-        updateSpec(paths, code, { status: target, changeSummary: `${rec.fm.status} → ${target}` });
+        const { record } = updateSpec(paths, code, { status: target, changeSummary: `${rec.fm.status} → ${target}` });
         console.log(`✓ ${code}: ${rec.fm.status} → ${target}`);
+        console.log(`Next: ${suggestAfterSpecCommand(record)}`);
       });
   }
 
@@ -238,8 +230,7 @@ export function registerSpec(program: Command): void {
       const paths = getPaths();
       const rec = findSpecByCode(paths, code);
       if (!rec) {
-        console.error(`✗ 未找到: ${code}`);
-        process.exit(1);
+        fail(`✗ 未找到: ${code}`);
       }
       const warnings = validateSpecContent(rec.fm.level, rec.content);
       if (warnings.length === 0) {
@@ -260,8 +251,7 @@ export function registerSpec(program: Command): void {
     .action((code, opts) => {
       const paths = getPaths();
       if (!['based_on', 'supersedes', 'implements', 'references'].includes(opts.type)) {
-        console.error(`✗ type 必须是 based_on | supersedes | implements | references`);
-        process.exit(2);
+        fail(`✗ type 必须是 based_on | supersedes | implements | references`, 2);
       }
       updateSpec(paths, code, { addRelation: { type: opts.type, target: opts.target } });
       console.log(`✓ ${code} --[${opts.type}]--> ${opts.target}`);
@@ -273,10 +263,7 @@ export function registerSpec(program: Command): void {
     .option('--dry-run', '只显示迁移计划，不改文件', false)
     .action((opts: { dryRun: boolean }) => {
       const paths = getPaths();
-      if (!paths.isInitialized) {
-        console.error('✗ 项目未初始化');
-        process.exit(1);
-      }
+      requireInitialized(paths);
       const result = migrateSpecPaths(paths, { dryRun: opts.dryRun });
       if (result.migrated.length === 0) {
         console.log('✓ 无需迁移，active spec 文件名已是 canonical 格式');

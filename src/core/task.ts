@@ -15,14 +15,17 @@ import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
 import { validatePlanJson } from './validate.js';
 import { ID_PAD_WIDTH, TASK_FILE_EXT, TASK_ID_PREFIX } from './constants.js';
-import { hit } from './audit.js';
+import { recordAuditHit, type AuditSink } from './audit-events.js';
+import { listTopicMetaFiles } from './repository.js';
+import { assertTaskTransition, type TaskStatus } from './status.js';
 
-export type TaskStatus = 'draft' | 'running' | 'waiting' | 'completed' | 'failed';
+export type { TaskStatus } from './status.js';
 
 export interface TaskRecord {
   id: string;
   specCode: string;
   status: TaskStatus;
+  steps?: StepFrontmatter[];
   autoConfirm: boolean;
   startedAt: string | null;
   finishedAt: string | null;
@@ -32,17 +35,7 @@ export interface TaskRecord {
   errorMessage: string | null;
 }
 
-const TRANSITIONS: Record<TaskStatus, TaskStatus[]> = {
-  draft:     ['running', 'failed'],
-  running:   ['waiting', 'completed', 'failed'],
-  waiting:   ['running', 'failed', 'completed'],
-  completed: [],
-  failed:    [],
-};
-
-export function canTaskTransition(from: TaskStatus, to: TaskStatus): boolean {
-  return TRANSITIONS[from]?.includes(to) ?? false;
-}
+export { canTaskTransition } from './status.js';
 
 /**
  * 平铺布局下,tasks/ 在 topic 目录下:
@@ -107,6 +100,7 @@ export interface CreateTaskInput {
   specCode: string;
   planJson: { coveredSpecs?: string[]; steps: Array<{ stepNo: number | string; stepType: StepTypeT; name: string }> };
   autoConfirm: boolean;
+  auditSink?: AuditSink;
 }
 
 export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile: string } {
@@ -114,7 +108,7 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
   if (!spec) throw new Error(`Spec not found: ${input.specCode}`);
   if (spec.fm.level !== 'L3') throw new Error(`Agent Task 只能由 L3 spec 创建，${input.specCode} 是 ${spec.fm.level}`);
   if (spec.fm.status !== 'frozen') {
-    hit({ paths: input.paths, ruleId: 'R3', specCode: input.specCode });
+    recordAuditHit({ paths: input.paths, ruleId: 'R3', specCode: input.specCode }, input.auditSink);
     throw new Error(`R3: L3 必须 frozen 才能建 Task，当前 status=${spec.fm.status}`);
   }
 
@@ -122,18 +116,18 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
   if (!parsedPlan.success) {
     const message = parsedPlan.error.issues.map(i => i.message).join('; ');
     if (message.includes('R11')) {
-      hit({ paths: input.paths, ruleId: 'R11', specCode: input.specCode });
+      recordAuditHit({ paths: input.paths, ruleId: 'R11', specCode: input.specCode }, input.auditSink);
     }
     throw new Error(message);
   }
   const planWarnings = validatePlanJson(input.planJson);
   const r10 = planWarnings.find(w => w.rule === 'R10');
   if (r10) {
-    hit({ paths: input.paths, ruleId: 'R10', specCode: input.specCode });
+    recordAuditHit({ paths: input.paths, ruleId: 'R10', specCode: input.specCode }, input.auditSink);
     throw new Error(r10.message);
   }
   if (!input.planJson.coveredSpecs?.includes(input.specCode)) {
-    hit({ paths: input.paths, ruleId: 'R12', specCode: input.specCode });
+    recordAuditHit({ paths: input.paths, ruleId: 'R12', specCode: input.specCode }, input.auditSink);
     throw new Error(`R12: planJson.coveredSpecs 必须包含当前 L3 specCode (${input.specCode})，禁止凭记忆写 planJson`);
   }
 
@@ -142,6 +136,12 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     id: taskId,
     specCode: input.specCode,
     status: 'draft',
+    steps: input.planJson.steps.map((ps) => ({
+      stepNo: ps.stepNo,
+      stepType: ps.stepType,
+      name: ps.name,
+      status: 'pending',
+    })),
     autoConfirm: input.autoConfirm,
     startedAt: null,
     finishedAt: null,
@@ -153,20 +153,8 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
   const taskFile = taskFilePath(spec.filePath, input.specCode, taskId);
   writeTaskJSON(taskFile, task);
 
-  const existingSteps = spec.fm.steps ?? [];
-  const merged: StepFrontmatter[] = [...existingSteps];
-  for (const ps of input.planJson.steps) {
-    const idx = merged.findIndex(s => String(s.stepNo) === String(ps.stepNo));
-    const step: StepFrontmatter = {
-      stepNo: ps.stepNo,
-      stepType: ps.stepType,
-      name: ps.name,
-      status: 'pending',
-    };
-    if (idx >= 0) merged[idx] = step;
-    else merged.push(step);
-  }
-  spec.fm.steps = merged;
+  // 兼容旧 workflow: spec frontmatter 保留计划快照;运行态 step report 写入 task.steps。
+  spec.fm.steps = task.steps;
   spec.fm.updated = new Date().toISOString();
   writeSpec(spec);
 
@@ -183,26 +171,20 @@ export function findTask(paths: ProjectPaths, specCode: string, taskId: string):
 
 export function listTasks(paths: ProjectPaths, opts?: { specCode?: string; status?: TaskStatus; topic?: string }): TaskRecord[] {
   const out: TaskRecord[] = [];
-  if (!existsSync(paths.specsDir)) return out;
   const specPrefix = opts?.specCode ? `${opts.specCode}-` : null;
   const topicSpecCodes = opts?.topic
     ? new Set(listAllSpecs(paths).filter(s => s.fm.topic === opts.topic).map(s => s.fm.code))
     : null;
-  // 平铺布局: tasks/ 在每个 topic 目录下,文件名=<specCode>-<taskId>.json
-  for (const topicEntry of readdirSync(paths.specsDir, { withFileTypes: true })) {
-    if (!topicEntry.isDirectory()) continue;
-    if (opts?.topic && topicEntry.name !== opts.topic) continue;
-    const tasksDir = join(paths.specsDir, topicEntry.name, 'tasks');
-    if (!existsSync(tasksDir)) continue;
-    for (const f of readdirSync(tasksDir)) {
-      if (!f.endsWith(TASK_FILE_EXT)) continue;
-      // 按文件名前缀快速过滤，避免读取无关文件
-      if (specPrefix && !f.startsWith(specPrefix)) continue;
-      const t = JSON.parse(readFileSync(join(tasksDir, f), 'utf8')) as TaskRecord;
-      if (topicSpecCodes && !topicSpecCodes.has(t.specCode)) continue;
-      if (opts?.status && t.status !== opts.status) continue;
-      out.push(t);
-    }
+  const taskFiles = listTopicMetaFiles(paths, 'tasks', {
+    topic: opts?.topic,
+    extension: TASK_FILE_EXT,
+    filePrefix: specPrefix ?? undefined,
+  });
+  for (const file of taskFiles) {
+    const t = JSON.parse(readFileSync(file.filePath, 'utf8')) as TaskRecord;
+    if (topicSpecCodes && !topicSpecCodes.has(t.specCode)) continue;
+    if (opts?.status && t.status !== opts.status) continue;
+    out.push(t);
   }
   return out.sort((a, b) => a.created.localeCompare(b.created));
 }
@@ -215,9 +197,7 @@ function specFilePathOf(paths: ProjectPaths, specCode: string): string {
 
 export function startTask(paths: ProjectPaths, taskId: string, specCode?: string): TaskRecord {
   const t = findTaskById(paths, taskId, specCode);
-  if (!canTaskTransition(t.status, 'running')) {
-    throw new Error(`Task 状态非法: ${t.status} → running`);
-  }
+  assertTaskTransition(t.status, 'running');
   const updated: TaskRecord = { ...t, status: 'running', startedAt: t.startedAt ?? new Date().toISOString() };
   writeTaskJSON(taskFilePath(specFilePathOf(paths, t.specCode), t.specCode, taskId), updated);
   return updated;
@@ -257,10 +237,9 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
     }
   }
 
-  // 更新 spec frontmatter 的 steps[]
   const spec = findSpecByCode(input.paths, task.specCode);
   if (!spec) throw new Error(`Spec not found: ${task.specCode}`);
-  const steps = [...(spec.fm.steps ?? [])];
+  const steps = [...taskSteps(task, spec.fm.steps)];
   const idx = steps.findIndex(s => String(s.stepNo) === String(input.stepNo));
   const step: StepFrontmatter = {
     stepNo: input.stepNo,
@@ -277,17 +256,17 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   };
   if (idx >= 0) steps[idx] = step;
   else steps.push(step);
-  spec.fm.steps = steps;
-  spec.fm.updated = new Date().toISOString();
-  writeSpec(spec);
+  const updatedTask: TaskRecord = { ...task, steps };
+  writeTaskJSON(taskFilePath(spec.filePath, task.specCode, task.id), updatedTask);
 
-  return { task, spec, warnings };
+  return { task: updatedTask, spec, warnings };
 }
 
 export interface CompleteInput {
   paths: ProjectPaths;
   taskId: string;
   specCode?: string;
+  auditSink?: AuditSink;
 }
 
 export interface CompleteResult {
@@ -299,20 +278,18 @@ export interface CompleteResult {
 
 export function completeTask(input: CompleteInput): CompleteResult {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
-  if (!canTaskTransition(task.status, 'completed')) {
-    throw new Error(`Task 状态非法: ${task.status} → completed`);
-  }
+  assertTaskTransition(task.status, 'completed');
 
   // R5: 校验所有 plan 步骤都已上报(不能跳步)
   const l3 = findSpecByCode(input.paths, task.specCode);
   if (l3) {
     if (l3.fm.status !== 'frozen') {
-      hit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id });
+      recordAuditHit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id }, input.auditSink);
       throw new Error(`R6: task complete 前 L3 必须仍是 frozen，当前 status=${l3.fm.status}`);
     }
-    const unfinished = (l3.fm.steps ?? []).filter(s => s.status !== 'succeeded');
+    const unfinished = taskSteps(task, l3.fm.steps).filter(s => s.status !== 'succeeded');
     if (unfinished.length > 0) {
-      hit({ paths: input.paths, ruleId: 'R5', specCode: task.specCode });
+      recordAuditHit({ paths: input.paths, ruleId: 'R5', specCode: task.specCode }, input.auditSink);
       throw new Error(
         `R5: 仍有 ${unfinished.length} 个步骤未成功（pending/running/failed/skipped）:` +
         unfinished.map(s => `#${s.stepNo}`).join(', ') +
@@ -329,10 +306,10 @@ export function completeTask(input: CompleteInput): CompleteResult {
   const cascaded: CompleteResult['cascadedSpecs'] = [];
   const skipped: CompleteResult['skippedSpecs'] = [];
 
-  cascadeImplemented(input.paths, task.specCode, cascaded, skipped);
+  cascadeImplemented(input.paths, task.specCode, cascaded, skipped, input.auditSink);
   const implemented = findSpecByCode(input.paths, task.specCode);
   if (implemented?.fm.status !== 'implemented') {
-    hit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id });
+    recordAuditHit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id }, input.auditSink);
     throw new Error(`R6: task complete 后 ${task.specCode} 必须是 implemented，当前 status=${implemented?.fm.status ?? 'missing'}`);
   }
 
@@ -348,6 +325,7 @@ function cascadeImplemented(
   specCode: string,
   cascaded: CompleteResult['cascadedSpecs'],
   skipped: CompleteResult['skippedSpecs'],
+  auditSink?: AuditSink,
 ): void {
   const spec = findSpecByCode(paths, specCode);
   if (!spec) return;
@@ -356,7 +334,7 @@ function cascadeImplemented(
     skipped.push({ code: specCode, status: oldStatus, reason: `expected frozen, got ${oldStatus}` });
     return;
   }
-  updateSpec(paths, specCode, { status: 'implemented', changeSummary: `cascade: task complete` });
+  updateSpec(paths, specCode, { status: 'implemented', changeSummary: `cascade: task complete` }, { auditSink });
   cascaded.push({ code: specCode, oldStatus, newStatus: 'implemented', level: spec.fm.level });
 
   // 父级
@@ -366,7 +344,7 @@ function cascadeImplemented(
     if (allChildren.length === 0) {
       skipped.push({ code: spec.fm.parentCode, status: '?', reason: 'no children' });
     } else if (allImpl) {
-      cascadeImplemented(paths, spec.fm.parentCode, cascaded, skipped);
+      cascadeImplemented(paths, spec.fm.parentCode, cascaded, skipped, auditSink);
     } else {
       skipped.push({
         code: spec.fm.parentCode,
@@ -391,9 +369,7 @@ export interface FailInput {
 
 export function failTask(input: FailInput): TaskRecord {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
-  if (!canTaskTransition(task.status, 'failed')) {
-    throw new Error(`Task 状态非法: ${task.status} → failed`);
-  }
+  assertTaskTransition(task.status, 'failed');
   const updated: TaskRecord = {
     ...task,
     status: 'failed',
@@ -414,9 +390,7 @@ export interface WaitInput {
 
 export function waitTask(input: WaitInput): TaskRecord {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
-  if (!canTaskTransition(task.status, 'waiting')) {
-    throw new Error(`Task 状态非法: ${task.status} → waiting`);
-  }
+  assertTaskTransition(task.status, 'waiting');
   const updated: TaskRecord = {
     ...task,
     status: 'waiting',
@@ -443,10 +417,14 @@ export function showTask(paths: ProjectPaths, taskId: string, opts?: { full?: bo
   }
   if (!task) return null;
   const spec = findSpecByCode(paths, task.specCode);
-  const steps = spec?.fm.steps ?? [];
+  const steps = taskSteps(task, spec?.fm.steps);
   const all = [...steps].sort((a, b) => Number(a.stepNo) - Number(b.stepNo));
   if (opts?.full || all.length <= 5) {
     return { task, steps: all, truncated: false };
   }
   return { task, steps: all.slice(-5), truncated: true };
+}
+
+function taskSteps(task: TaskRecord, fallback?: StepFrontmatter[]): StepFrontmatter[] {
+  return task.steps ?? fallback ?? [];
 }

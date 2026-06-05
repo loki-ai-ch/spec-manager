@@ -5,4 +5,7 @@ export * from './core/status.js';
 export * from './core/validate.js';
 export * from './core/spec-io.js';
 export * from './core/agents.js';
+export * from './core/audit-events.js';
+export * from './core/repository.js';
+export * from './core/usability.js';
 export * from './schemas/spec.js';

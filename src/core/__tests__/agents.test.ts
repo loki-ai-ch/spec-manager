@@ -2,17 +2,20 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
-import { getPaths, type ProjectPaths } from '../paths.js';
-import { installAgentSupport, parseAgentProviders } from '../agents.js';
+import type { ProjectPaths } from '../paths.js';
+import { installAgentSupport, listAgentProviders, parseAgentProviders } from '../agents.js';
+import { createTestProject, type TestProject } from './project-fixture.js';
 
 let root: string;
 let packageRoot: string;
 let paths: ProjectPaths;
+let project: TestProject;
 
 beforeEach(() => {
-  root = mkdtempSync(join(tmpdir(), 'spec-mgr-agent-target-'));
+  project = createTestProject('spec-mgr-agent-target-', { initialized: false });
+  root = project.root;
   packageRoot = mkdtempSync(join(tmpdir(), 'spec-mgr-agent-package-'));
-  paths = getPaths(root);
+  paths = project.paths;
   writePackageAsset('templates/agents/AGENTS.md', '# AGENTS\n');
   writePackageAsset('templates/agents/CLAUDE.md', '# CLAUDE\n');
   writePackageAsset('templates/agents/CODEBUDDY.md', '# CODEBUDDY\n');
@@ -24,7 +27,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
-  rmSync(root, { recursive: true, force: true });
+  project.cleanup();
   rmSync(packageRoot, { recursive: true, force: true });
 });
 
@@ -46,6 +49,15 @@ describe('parseAgentProviders', () => {
 
   it('treats empty input as all', () => {
     expect(parseAgentProviders('')).toEqual(['all']);
+  });
+});
+
+describe('listAgentProviders', () => {
+  it('describes supported provider files and aliases', () => {
+    const providers = listAgentProviders();
+    expect(providers.map((p) => p.provider)).toEqual(['claude', 'codex', 'opencode', 'codebuddy']);
+    expect(providers.find((p) => p.provider === 'codex')?.files).toContain('AGENTS.md');
+    expect(providers.find((p) => p.provider === 'codebuddy')?.aliases).toContain('code buddy');
   });
 });
 
@@ -95,5 +107,37 @@ describe('installAgentSupport', () => {
 
     expect(report.overwritten).toContain('AGENTS.md');
     expect(readFileSync(join(root, 'AGENTS.md'), 'utf8')).toBe('# AGENTS\n');
+  });
+
+  it('plans writes without touching the filesystem in dry-run mode', () => {
+    const report = installAgentSupport({
+      paths,
+      packageRoot,
+      providers: parseAgentProviders('claude,codex'),
+      dryRun: true,
+    });
+
+    expect(report.dryRun).toBe(true);
+    expect(report.created).toContain('CLAUDE.md');
+    expect(report.created).toContain('.claude/skills/spec-manager');
+    expect(report.created).toContain('AGENTS.md');
+    expect(existsSync(join(root, 'CLAUDE.md'))).toBe(false);
+    expect(existsSync(join(root, '.claude'))).toBe(false);
+    expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
+  });
+
+  it('reports dry-run overwrites without changing existing files', () => {
+    writeFileSync(join(root, 'AGENTS.md'), '# existing\n', 'utf8');
+
+    const report = installAgentSupport({
+      paths,
+      packageRoot,
+      providers: parseAgentProviders('codex'),
+      force: true,
+      dryRun: true,
+    });
+
+    expect(report.overwritten).toContain('AGENTS.md');
+    expect(readFileSync(join(root, 'AGENTS.md'), 'utf8')).toBe('# existing\n');
   });
 });

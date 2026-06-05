@@ -122,4 +122,48 @@ code: auth-L1
     expect(() => archiveChange(paths, 'bad-proposal')).toThrow(/R24.*why\/scope/);
     expect(existsSync(join(root, 'changes', 'bad-proposal'))).toBe(true);
   });
+
+  it('apply 阶段失败时回滚已应用的 MODIFIED entry', () => {
+    const l1Code = 'auth-L1';
+    createSpec({ paths, code: l1Code, level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    updateSpec(paths, l1Code, { content: '# old\n', aiSummary: 'old' });
+
+    createChange({ paths, name: 'apply-rollback' });
+    writeValidProposal('apply-rollback');
+    mkdirSync(join(root, 'changes', 'apply-rollback', 'specs', 'auth', 'auth-L2'), { recursive: true });
+    writeFileSync(
+      join(root, 'changes', 'apply-rollback', 'specs', 'auth', 'auth-L2', 'auth-L2.md'),
+      `---
+code: auth-L2
+level: L2
+title: Auth Design
+topic: auth
+parentCode: ${l1Code}
+status: draft
+---
+# Auth Design
+`,
+      'utf8',
+    );
+    writeDelta('apply-rollback', 'auth-L1.md', `---
+code: auth-L1
+---
+
+## MODIFIED Requirements
+
+### Requirement: auth-L1
+# new
+
+## ADDED Requirements
+
+### Requirement: auth-L2
+# Auth Design
+`);
+
+    expect(() => archiveChange(paths, 'apply-rollback')).toThrow(/R4/);
+    expect(findSpecByCode(paths, l1Code)!.content).toBe('# old\n');
+    expect(findSpecByCode(paths, 'auth-L2')).toBeNull();
+    expect(existsSync(join(root, 'changes', 'apply-rollback'))).toBe(true);
+    expect(existsSync(join(root, 'archive', 'apply-rollback'))).toBe(false);
+  });
 });

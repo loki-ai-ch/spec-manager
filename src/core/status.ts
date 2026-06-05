@@ -35,3 +35,35 @@ export function isActiveStatus(s: SpecStatus): boolean {
 export function isCompleteStatus(s: SpecStatus): boolean {
   return s === 'implemented' || s === 'archived';
 }
+
+export type TaskStatus = 'draft' | 'running' | 'waiting' | 'completed' | 'failed';
+
+const TASK_TRANSITIONS: Record<TaskStatus, TaskStatus[]> = {
+  draft: ['running', 'failed'],
+  running: ['waiting', 'completed', 'failed'],
+  waiting: ['running', 'failed', 'completed'],
+  completed: [],
+  failed: [],
+};
+
+export const ALL_TASK_STATUSES: TaskStatus[] = ['draft', 'running', 'waiting', 'completed', 'failed'];
+
+export function canTaskTransition(from: TaskStatus, to: TaskStatus): boolean {
+  return TASK_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function nextTaskStatuses(from: TaskStatus): TaskStatus[] {
+  return TASK_TRANSITIONS[from] ?? [];
+}
+
+export function assertTaskTransition(from: TaskStatus, to: TaskStatus): void {
+  if (!canTaskTransition(from, to)) {
+    throw new Error(`Task 状态非法: ${from} → ${to}`);
+  }
+}
+
+export function assertSpecTransition(from: SpecStatus, to: SpecStatus): void {
+  if (!canTransition(from, to)) {
+    throw new Error(`状态非法: ${from} → ${to}`);
+  }
+}

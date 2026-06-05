@@ -60,9 +60,13 @@ This writes:
 Use a narrower install when needed:
 
 ```bash
+spec-manager project agents --provider list
+spec-manager project agents --provider all --dry-run
 spec-manager project agents --provider codex,opencode
 spec-manager project agents --provider codebuddy --force
 ```
+
+Use `--dry-run` to preview created, overwritten, and skipped files before touching the project.
 
 References: [Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md), [OpenCode rules](https://opencode.ai/docs/rules/), [CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills).
 
@@ -121,6 +125,41 @@ Or use an AI agent configured with spec-manager:
 
 ```bash
 /spec-manager add user authentication feature
+```
+
+## Easier workflows
+
+For day-to-day use, these helper commands reduce command memorization:
+
+```bash
+spec-manager project doctor                 # check setup, agent files, skill assets, placeholders, audit
+spec-manager flow status --topic auth       # show L1/L2/L3/Task progress and the next command
+spec-manager guide "add user auth"          # print the next useful step for a request
+spec-manager new feature --topic auth "User authentication"
+spec-manager approve auth-L1                # draft→confirmed, or L3 confirmed→frozen
+spec-manager run auth-L3.1.1 --plan ./plan.json
+spec-manager template L1 --title "User authentication" > l1.md
+```
+
+Long-form commands remain available; the shortcuts only wrap the same rules and state machine.
+
+| Command | Use it when | What it gives you |
+|---|---|---|
+| `project doctor` | You are unsure whether the project is ready | Setup checks plus concrete fix commands |
+| `flow status` | You need to know where a topic is blocked | L1/L2/L3/Task state and the next command |
+| `guide` | You have a request but do not know which command starts it | The next useful step without changing files |
+| `new feature` | You want the fastest safe way to start an L1 | Creates the L1 shell and prints the next update command |
+| `approve` | The user has explicitly approved a spec | Advances `draft→confirmed` or `L3 confirmed→frozen` |
+| `run` | A frozen L3 is ready to execute | Creates and starts the task from a plan file |
+| `template` | You need a draft file for L1/L2/L3 or `agent-plan` | Prints or writes the bundled template |
+
+Examples:
+
+```bash
+spec-manager project doctor
+spec-manager flow status --topic auth
+spec-manager template L2 --title "Invoice module" --output l2.md
+spec-manager guide "add billing export"
 ```
 
 ## Usage scenarios

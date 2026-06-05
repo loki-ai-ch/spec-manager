@@ -3,7 +3,7 @@ import { mkdtempSync, mkdirSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getPaths, type ProjectPaths } from '../paths.js';
-import { createSpec, updateSpec, generateSpecCode } from '../spec-io.js';
+import { createSpec, findSpecByCode, updateSpec, generateSpecCode } from '../spec-io.js';
 import { createTask, startTask, reportStep, completeTask, findTask, listTasks, failTask, waitTask, showTask } from '../task.js';
 import { hit as auditHit, readAudit } from '../audit.js';
 
@@ -205,6 +205,22 @@ describe('R15 step outputJson warning', () => {
     startTask(paths, task.id);
     const result = reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"ok":true}' });
     expect(result.warnings.some(w => w.includes('summary'))).toBe(true);
+  });
+
+  it('step report 写 task JSON,不改写 spec frontmatter 计划快照', () => {
+    const { l3Code } = createFrozenHierarchy('report-state');
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+    });
+    reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
+
+    const updatedTask = findTask(paths, l3Code, task.id);
+    const spec = findSpecByCode(paths, l3Code);
+    expect(updatedTask?.steps?.[0].status).toBe('succeeded');
+    expect(spec?.fm.steps?.[0].status).toBe('pending');
   });
 });
 

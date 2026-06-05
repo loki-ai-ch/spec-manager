@@ -74,7 +74,7 @@ export function registerTaskCommands(program: Command): void {
 
   task
     .command('step <taskId>')
-    .description('上报一个 step 的执行结果（写入 L3 spec frontmatter steps[]）')
+    .description('上报一个 step 的执行结果（写入 task JSON steps[]）')
     .requiredOption('--no <stepNo>', '步骤编号', (v) => v)
     .requiredOption('--status <status>', '状态: pending|running|succeeded|failed|skipped')
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')

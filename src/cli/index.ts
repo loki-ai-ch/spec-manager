@@ -8,6 +8,7 @@ import { registerAuditCommands } from './audit.js';
 import { registerChangeCommands } from './change.js';
 import { registerIncidentCommands } from './incident.js';
 import { registerDictCommands } from './dict.js';
+import { registerUsabilityCommands } from './usability.js';
 
 const program = new Command();
 program
@@ -23,6 +24,7 @@ registerAuditCommands(program);
 registerChangeCommands(program);
 registerIncidentCommands(program);
 registerDictCommands(program);
+registerUsabilityCommands(program);
 
 program.parseAsync(process.argv).catch((e) => {
   console.error('✗ ' + (e?.message ?? e));

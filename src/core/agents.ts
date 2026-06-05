@@ -7,20 +7,89 @@ export const AGENT_PROVIDERS = ['claude', 'codex', 'opencode', 'codebuddy'] as c
 export type AgentProvider = (typeof AGENT_PROVIDERS)[number];
 export type AgentProviderSelection = AgentProvider | 'all';
 
+export interface AgentProviderInfo {
+  provider: AgentProvider;
+  aliases: string[];
+  files: string[];
+  description: string;
+  notes: string[];
+  installSteps: AgentInstallStep[];
+}
+
+export type AgentInstallStep =
+  | { kind: 'template'; source: string; target: string }
+  | { kind: 'directory'; source: string; target: string };
+
 export interface InstallAgentSupportOptions {
   paths: ProjectPaths;
   packageRoot: string;
   providers: AgentProviderSelection[];
   force?: boolean;
+  dryRun?: boolean;
 }
 
 export interface AgentInstallReport {
   providers: AgentProvider[];
+  dryRun: boolean;
   created: string[];
   overwritten: string[];
   skipped: string[];
   notes: string[];
 }
+
+export const AGENT_PROVIDER_INFO: AgentProviderInfo[] = [
+  {
+    provider: 'claude',
+    aliases: ['claude', 'claude-code'],
+    files: ['CLAUDE.md', '.claude/skills/spec-manager/'],
+    description: 'Claude Code project instructions and spec-manager skill.',
+    notes: ['Claude Code can invoke the spec-manager skill with /spec-manager.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/CLAUDE.md', target: 'CLAUDE.md' },
+      { kind: 'directory', source: 'skill', target: '.claude/skills/spec-manager' },
+      { kind: 'directory', source: 'rules', target: '.claude/skills/spec-manager/rules' },
+      { kind: 'directory', source: 'templates', target: '.claude/skills/spec-manager/templates' },
+    ],
+  },
+  {
+    provider: 'codex',
+    aliases: ['codex', 'openai-codex'],
+    files: ['AGENTS.md'],
+    description: 'Codex project instructions via AGENTS.md.',
+    notes: ['Codex reads project instructions from AGENTS.md.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/AGENTS.md', target: 'AGENTS.md' },
+    ],
+  },
+  {
+    provider: 'opencode',
+    aliases: ['opencode', 'open-code', 'open code'],
+    files: ['AGENTS.md'],
+    description: 'OpenCode project instructions via AGENTS.md.',
+    notes: ['OpenCode reads AGENTS.md and also falls back to CLAUDE.md when AGENTS.md is absent.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/AGENTS.md', target: 'AGENTS.md' },
+    ],
+  },
+  {
+    provider: 'codebuddy',
+    aliases: ['codebuddy', 'code-buddy', 'code buddy', 'cbc'],
+    files: ['CODEBUDDY.md', '.codebuddy/skills/spec-manager/'],
+    description: 'CodeBuddy project instructions and spec-manager skill.',
+    notes: ['CodeBuddy reads CODEBUDDY.md and auto-discovers .codebuddy/skills/spec-manager.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/CODEBUDDY.md', target: 'CODEBUDDY.md' },
+      {
+        kind: 'template',
+        source: 'templates/agents/codebuddy-skill/SKILL.md',
+        target: '.codebuddy/skills/spec-manager/SKILL.md',
+      },
+      { kind: 'directory', source: 'skill/subskills', target: '.codebuddy/skills/spec-manager/subskills' },
+      { kind: 'directory', source: 'rules', target: '.codebuddy/skills/spec-manager/rules' },
+      { kind: 'directory', source: 'templates', target: '.codebuddy/skills/spec-manager/templates' },
+    ],
+  },
+];
 
 export function parseAgentProviders(input: string): AgentProviderSelection[] {
   const parts = input
@@ -34,28 +103,14 @@ export function parseAgentProviders(input: string): AgentProviderSelection[] {
 
 export function normalizeAgentProvider(input: string): AgentProviderSelection {
   const key = input.toLowerCase().trim().replace(/[\s_-]+/g, '-');
-  switch (key) {
-    case 'all':
-    case '*':
-      return 'all';
-    case 'claude':
-    case 'claude-code':
-      return 'claude';
-    case 'codex':
-    case 'openai-codex':
-      return 'codex';
-    case 'opencode':
-    case 'open-code':
-      return 'opencode';
-    case 'codebuddy':
-    case 'code-buddy':
-    case 'cbc':
-      return 'codebuddy';
-    default:
-      throw new Error(
-        `unsupported AI provider: ${input}. Use one of: all, claude, codex, opencode, codebuddy`,
-      );
-  }
+  if (key === 'all' || key === '*') return 'all';
+  const provider = AGENT_PROVIDER_INFO.find((info) =>
+    info.aliases.map((alias) => alias.toLowerCase().replace(/[\s_-]+/g, '-')).includes(key),
+  );
+  if (provider) return provider.provider;
+  throw new Error(
+    `unsupported AI provider: ${input}. Use one of: all, ${AGENT_PROVIDERS.join(', ')}`,
+  );
 }
 
 export function expandAgentProviders(providers: AgentProviderSelection[]): AgentProvider[] {
@@ -68,62 +123,56 @@ export function expandAgentProviders(providers: AgentProviderSelection[]): Agent
   return out;
 }
 
+export function listAgentProviders(): AgentProviderInfo[] {
+  return AGENT_PROVIDER_INFO;
+}
+
 export function installAgentSupport(options: InstallAgentSupportOptions): AgentInstallReport {
   const providers = expandAgentProviders(options.providers);
   const report: AgentInstallReport = {
     providers,
+    dryRun: Boolean(options.dryRun),
     created: [],
     overwritten: [],
     skipped: [],
     notes: [],
   };
 
-  let agentsMdWritten = false;
+  const installedTargets = new Set<string>();
   for (const provider of providers) {
-    switch (provider) {
-      case 'claude':
-        installClaudeSupport(options, report);
-        break;
-      case 'codex':
-        if (!agentsMdWritten) {
-          writeTemplate(options, report, 'templates/agents/AGENTS.md', 'AGENTS.md');
-          agentsMdWritten = true;
-        }
-        report.notes.push('Codex reads project instructions from AGENTS.md.');
-        break;
-      case 'opencode':
-        if (!agentsMdWritten) {
-          writeTemplate(options, report, 'templates/agents/AGENTS.md', 'AGENTS.md');
-          agentsMdWritten = true;
-        }
-        report.notes.push('OpenCode reads AGENTS.md and also falls back to CLAUDE.md when AGENTS.md is absent.');
-        break;
-      case 'codebuddy':
-        installCodeBuddySupport(options, report);
-        break;
+    const config = providerConfig(provider);
+    for (const step of config.installSteps) {
+      if (installedTargets.has(step.target)) continue;
+      installedTargets.add(step.target);
+      applyInstallStep(options, report, step);
     }
+    report.notes.push(...config.notes);
   }
 
   return report;
 }
 
-function installClaudeSupport(options: InstallAgentSupportOptions, report: AgentInstallReport): void {
-  writeTemplate(options, report, 'templates/agents/CLAUDE.md', 'CLAUDE.md');
-  const skillTarget = join(options.paths.root, '.claude', 'skills', 'spec-manager');
-  copyDirectory(options, report, join(options.packageRoot, 'skill'), skillTarget);
-  copyDirectory(options, report, join(options.packageRoot, 'rules'), join(skillTarget, 'rules'));
-  copyDirectory(options, report, join(options.packageRoot, 'templates'), join(skillTarget, 'templates'));
-  report.notes.push('Claude Code can invoke the spec-manager skill with /spec-manager.');
+function providerConfig(provider: AgentProvider): AgentProviderInfo {
+  const config = AGENT_PROVIDER_INFO.find((p) => p.provider === provider);
+  if (!config) throw new Error(`unsupported AI provider: ${provider}`);
+  return config;
 }
 
-function installCodeBuddySupport(options: InstallAgentSupportOptions, report: AgentInstallReport): void {
-  writeTemplate(options, report, 'templates/agents/CODEBUDDY.md', 'CODEBUDDY.md');
-  const skillTarget = join(options.paths.root, '.codebuddy', 'skills', 'spec-manager');
-  writeTemplate(options, report, 'templates/agents/codebuddy-skill/SKILL.md', '.codebuddy/skills/spec-manager/SKILL.md');
-  copyDirectory(options, report, join(options.packageRoot, 'skill', 'subskills'), join(skillTarget, 'subskills'));
-  copyDirectory(options, report, join(options.packageRoot, 'rules'), join(skillTarget, 'rules'));
-  copyDirectory(options, report, join(options.packageRoot, 'templates'), join(skillTarget, 'templates'));
-  report.notes.push('CodeBuddy reads CODEBUDDY.md and auto-discovers .codebuddy/skills/spec-manager.');
+function applyInstallStep(
+  options: InstallAgentSupportOptions,
+  report: AgentInstallReport,
+  step: AgentInstallStep,
+): void {
+  if (step.kind === 'template') {
+    writeTemplate(options, report, step.source, step.target);
+  } else {
+    copyDirectory(
+      options,
+      report,
+      join(options.packageRoot, ...step.source.split('/')),
+      join(options.paths.root, ...step.target.split('/')),
+    );
+  }
 }
 
 function writeTemplate(
@@ -150,6 +199,14 @@ function writeManagedFile(
     report.skipped.push(path);
     return;
   }
+  if (options.dryRun) {
+    if (existed) {
+      report.overwritten.push(path);
+    } else {
+      report.created.push(path);
+    }
+    return;
+  }
   mkdirSync(dirname(target), { recursive: true });
   writeFileSync(target, content, 'utf8');
   if (existed && options.force) {
@@ -172,6 +229,14 @@ function copyDirectory(
   }
   if (existsSync(target) && !options.force) {
     report.skipped.push(path);
+    return;
+  }
+  if (options.dryRun) {
+    if (existsSync(target)) {
+      report.overwritten.push(path);
+    } else {
+      report.created.push(path);
+    }
     return;
   }
   mkdirSync(dirname(target), { recursive: true });

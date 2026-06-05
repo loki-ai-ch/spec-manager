@@ -4,12 +4,13 @@
  * 一决策一文件，frontmatter 索引元数据，正文可读详情。
  */
 
-import { existsSync, readdirSync, unlinkSync } from 'node:fs';
+import { unlinkSync } from 'node:fs';
 import { join } from 'node:path';
 import { readFrontmatter, writeFrontmatterAtomic } from './frontmatter.js';
 import { siblingMetaDir, type ProjectPaths } from './paths.js';
-import { findSpecByCode, listAllSpecs } from './spec-io.js';
+import { findSpecByCode } from './spec-io.js';
 import { DECISION_WHAT_MAX, DECISION_WHY_MAX, ID_PAD_WIDTH } from './constants.js';
+import { listTopicMetaFiles } from './repository.js';
 
 export type DecisionStatus = 'active' | 'superseded' | 'partial';
 
@@ -39,26 +40,16 @@ export function listDecisions(
   opts?: { topic?: string; docCode?: string; includeAll?: boolean; criteria?: string | string[] },
 ): DecisionRecord[] {
   const out: DecisionRecord[] = [];
-  const l1Specs = listAllSpecs(paths).filter(s => s.fm.level === 'L1' || s.fm.level === 'L0');
   const criteriaFilter = normalizeCriteriaFilter(opts?.criteria);
-  const scannedTopics = new Set<string>();
-  for (const spec of l1Specs) {
-    if (opts?.topic && spec.fm.topic !== opts.topic) continue;
-    if (scannedTopics.has(spec.fm.topic)) continue;
-    scannedTopics.add(spec.fm.topic);
-    const decDir = siblingMetaDir(spec.filePath, 'decisions');
-    if (!existsSync(decDir)) continue;
-    for (const f of readdirSync(decDir)) {
-      if (!f.endsWith('.md')) continue;
-      const filePath = join(decDir, f);
-      const { data, content } = readFrontmatter(filePath);
-      const fm = data as unknown as DecisionRecord['fm'];
-      if (opts?.topic && fm.topic !== opts.topic) continue;
-      if (opts?.docCode && fm.docCode !== opts.docCode) continue;
-      if (!opts?.includeAll && fm.status !== 'active') continue;
-      if (criteriaFilter && !decisionAffectsAny(fm.affectedCriteria, criteriaFilter)) continue;
-      out.push({ id: fm.id, fm, content, filePath });
-    }
+  const files = listTopicMetaFiles(paths, 'decisions', { topic: opts?.topic, extension: '.md' });
+  for (const file of files) {
+    const { data, content } = readFrontmatter(file.filePath);
+    const fm = data as unknown as DecisionRecord['fm'];
+    if (opts?.topic && fm.topic !== opts.topic) continue;
+    if (opts?.docCode && fm.docCode !== opts.docCode) continue;
+    if (!opts?.includeAll && fm.status !== 'active') continue;
+    if (criteriaFilter && !decisionAffectsAny(fm.affectedCriteria, criteriaFilter)) continue;
+    out.push({ id: fm.id, fm, content, filePath: file.filePath });
   }
   out.sort((a, b) => a.fm.created.localeCompare(b.fm.created));
   return out;
@@ -85,15 +76,10 @@ export function findDecision(paths: ProjectPaths, id: string): DecisionRecord | 
 }
 
 export function nextDecisionId(paths: ProjectPaths, topic: string): string {
-  const l1Specs = listAllSpecs(paths).filter(s => (s.fm.level === 'L1' || s.fm.level === 'L0') && s.fm.topic === topic);
   let max = 0;
-  for (const spec of l1Specs) {
-    const decDir = siblingMetaDir(spec.filePath, 'decisions');
-    if (!existsSync(decDir)) continue;
-    for (const f of readdirSync(decDir)) {
-      const m = f.match(/^DC-(\d+)\.md$/);
-      if (m) max = Math.max(max, Number(m[1]));
-    }
+  for (const file of listTopicMetaFiles(paths, 'decisions', { topic, extension: '.md' })) {
+    const m = file.fileName.match(/^DC-(\d+)\.md$/);
+    if (m) max = Math.max(max, Number(m[1]));
   }
   return `DC-${String(max + 1).padStart(ID_PAD_WIDTH, '0')}`;
 }

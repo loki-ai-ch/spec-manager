@@ -18,7 +18,7 @@ import {
   type SpecFileEntry,
 } from './paths.js';
 import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER, PLACEHOLDER_CONTENT_MAX } from './constants.js';
-import { hit } from './audit.js';
+import { recordAuditHit, type AuditSink } from './audit-events.js';
 
 export interface SpecFrontmatter {
   id?: string;
@@ -168,6 +168,7 @@ export function createSpec(args: {
   parentCode: string | null;
   parentRecord?: SpecRecord | null;
   milestone?: string;
+  auditSink?: AuditSink;
 }): SpecRecord {
   let parentFilePath: string | null = null;
   if (args.parentCode) {
@@ -182,23 +183,23 @@ export function createSpec(args: {
       L3: ['L2'],
     };
     if (!expectedParentLevels[args.level].includes(parent.fm.level)) {
-      hit({ paths: args.paths, ruleId: 'R7', specCode: args.code });
+      recordAuditHit({ paths: args.paths, ruleId: 'R7', specCode: args.code }, args.auditSink);
       throw new Error(
         `R7: ${args.level} 的 parent 必须是 ${expectedParentLevels[args.level].join('/')}, ` +
         `实际是 ${parent.fm.level} (${args.parentCode})`,
       );
     }
     if ((args.level === 'L2' || args.level === 'L3') && parent.fm.status === 'draft') {
-      hit({ paths: args.paths, ruleId: 'R4', specCode: args.code });
+      recordAuditHit({ paths: args.paths, ruleId: 'R4', specCode: args.code }, args.auditSink);
       throw new Error(
         `R4: 创建 ${args.level} 前父级 ${args.parentCode} 必须先通过独立审核（confirmed/frozen/implemented），` +
         `当前 status=${parent.fm.status}`,
       );
     }
-    hit({ paths: args.paths, ruleId: 'R4', specCode: args.code });
+    recordAuditHit({ paths: args.paths, ruleId: 'R4', specCode: args.code }, args.auditSink);
     parentFilePath = parent.filePath;
   } else if (args.level === 'L2' || args.level === 'L3') {
-    hit({ paths: args.paths, ruleId: 'R7', specCode: args.code });
+    recordAuditHit({ paths: args.paths, ruleId: 'R7', specCode: args.code }, args.auditSink);
     throw new Error(`R7: ${args.level} 必须有 parentCode`);
   }
   const filePath = specFilePath(args.paths, parentFilePath, args.code, args.topic);
@@ -217,7 +218,7 @@ export function createSpec(args: {
   const rec: SpecRecord = { fm, content: `# ${args.title}\n\n${PLACEHOLDER_MARKER}\n`, filePath };
   writeSpec(rec);
   if (args.level === 'L0' || args.level === 'L1') {
-    hit({ paths: args.paths, ruleId: 'R4', specCode: args.code });
+    recordAuditHit({ paths: args.paths, ruleId: 'R4', specCode: args.code }, args.auditSink);
   }
   return rec;
 }
@@ -243,6 +244,7 @@ export function updateSpec(
     replaceStep?: { no: number | string; step: StepFrontmatter };
     addRelation?: { type: string; target: string };
   },
+  opts?: { auditSink?: AuditSink },
 ): UpdateResult {
   const warnings: string[] = [];
   const existing = findSpecByCode(paths, code);
@@ -254,18 +256,18 @@ export function updateSpec(
 
   if (patch.content !== undefined) {
     if (patch.aiSummary === undefined || patch.aiSummary.trim().length === 0) {
-      hit({ paths, ruleId: 'R13', specCode: code });
+      recordAuditHit({ paths, ruleId: 'R13', specCode: code }, opts?.auditSink);
       throw new Error(`R13: spec update --content 必须同时提供 aiSummary，禁止写正文后没有 AI 摘要`);
     }
     if (isPlaceholderContent(patch.content)) {
-      hit({ paths, ruleId: 'R22', specCode: code });
+      recordAuditHit({ paths, ruleId: 'R22', specCode: code }, opts?.auditSink);
       throw new Error(`R22: contentTemplate 仍是占位内容，spec 创建后必须立即写正文`);
     }
     content = patch.content;
   }
   if (patch.aiSummary !== undefined) {
     if (patch.aiSummary.length > AI_SUMMARY_MAX) {
-      hit({ paths, ruleId: 'R21', specCode: code });
+      recordAuditHit({ paths, ruleId: 'R21', specCode: code }, opts?.auditSink);
       warnings.push(`aiSummary 超过 ${AI_SUMMARY_MAX} 字符，已自动截断（原长 ${patch.aiSummary.length}）`);
       fm.aiSummary = patch.aiSummary.slice(0, AI_SUMMARY_MAX);
     } else {
@@ -292,9 +294,9 @@ export function updateSpec(
   const rec: SpecRecord = { fm, content, filePath: existing.filePath };
   writeSpec(rec);
   if (patch.content !== undefined) {
-    hit({ paths, ruleId: 'R1', specCode: code });
-    hit({ paths, ruleId: 'R13', specCode: code });
-    hit({ paths, ruleId: 'R22', specCode: code });
+    recordAuditHit({ paths, ruleId: 'R1', specCode: code }, opts?.auditSink);
+    recordAuditHit({ paths, ruleId: 'R13', specCode: code }, opts?.auditSink);
+    recordAuditHit({ paths, ruleId: 'R22', specCode: code }, opts?.auditSink);
   }
   return { record: rec, warnings };
 }
