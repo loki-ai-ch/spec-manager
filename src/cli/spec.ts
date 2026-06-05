@@ -1,0 +1,278 @@
+import { Command } from 'commander';
+import { readFileSync } from 'node:fs';
+import { getPaths } from '../core/paths.js';
+import {
+  createSpec,
+  findSpecByCode,
+  generateSpecCode,
+  isPlaceholderContent,
+  listAllSpecs,
+  updateSpec,
+  DESC_MAX_LEN,
+} from '../core/spec-io.js';
+import { canTransition, isActiveStatus, nextStatuses } from '../core/status.js';
+import { validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
+import { hit } from '../core/audit.js';
+
+export function registerSpec(program: Command): void {
+  const cmd = program.command('spec').description('Spec 增删改查');
+
+  cmd
+    .command('new <level>')
+    .description('创建 Spec（L0/L1/L2/L3）。L2/L3 需 --parent。--code 可选,不传自动生成 <topic>-<level>')
+    .requiredOption('--topic <topic>', 'topic 名（如 auth）')
+    .option('--code <code>', 'spec code（如 auth-L1）；不传则自动生成 <topic>-<level>')
+    .requiredOption('--title <title>', 'spec 标题')
+    .option('--parent <parentCode>', '父 spec code（L2→L1, L3→L2）')
+    .option('--desc <desc>', `描述后缀（≤${DESC_MAX_LEN} 字符，如 readme/batch/tests），追加到 code 末尾`)
+    .option('--milestone <milestone>', '迭代版本号（如 v1.0 / v1.0-beta）')
+    .action((level: string, opts) => {
+      if (!['L0', 'L1', 'L2', 'L3'].includes(level)) {
+        console.error(`✗ level 必须是 L0/L1/L2/L3，收到 "${level}"`);
+        process.exit(2);
+      }
+      const paths = getPaths();
+      if (!paths.isInitialized) {
+        console.error(`✗ 项目未初始化。先跑: spec-manager project init`);
+        process.exit(1);
+      }
+      if ((level === 'L2' || level === 'L3') && !opts.parent) {
+        console.error(`✗ R7: ${level} 必须有 --parent 指向父 spec code`);
+        process.exit(2);
+      }
+      if (opts.desc) {
+        if (opts.desc.length > DESC_MAX_LEN) {
+          console.error(`✗ --desc 超过 ${DESC_MAX_LEN} 字符（当前 ${opts.desc.length}）`);
+          process.exit(2);
+        }
+        if (!/^[a-z0-9-]+$/.test(opts.desc)) {
+          console.error(`✗ --desc 只允许小写字母、数字、连字符`);
+          process.exit(2);
+        }
+      }
+      // 点分编号：统计同父的已有子 spec 数量，用于生成下一个索引
+      let siblingCount = 0;
+      if (opts.parent) {
+        const allSpecs = listAllSpecs(paths);
+        siblingCount = allSpecs.filter(s => s.fm.parentCode === opts.parent).length;
+      }
+      const code = opts.code ?? generateSpecCode(opts.topic, level as SpecLevel, opts.parent, siblingCount, opts.desc);
+      if (findSpecByCode(paths, code)) {
+        console.error(`✗ code 重复: ${code}`);
+        process.exit(2);
+      }
+      const rec = createSpec({
+        paths,
+        code,
+        level: level as SpecLevel,
+        title: opts.title,
+        topic: opts.topic,
+        parentCode: opts.parent ?? null,
+        milestone: opts.milestone,
+      });
+      console.log(`✓ 已创建 ${level} spec`);
+      console.log(`  code:     ${rec.fm.code}`);
+      console.log(`  file:     ${rec.filePath}`);
+      console.log(`  status:   ${rec.fm.status}`);
+      if (rec.fm.milestone) console.log(`  milestone:${rec.fm.milestone}`);
+      console.log(`\n下一步：spec-manager spec update ${rec.fm.code} --content ./draft.md --ai-summary "..." --change-summary "init"`);
+    });
+
+  cmd
+    .command('list')
+    .description('列出 specs（默认隐藏 archived）')
+    .option('--level <level>', '按层过滤 L0/L1/L2/L3')
+    .option('--topic <topic>', '按 topic 过滤')
+    .option('--status <status>', '按状态过滤 draft/confirmed/frozen/implemented/archived')
+    .option('--include-archived', '包含 archived')
+    .action((opts) => {
+      const paths = getPaths();
+      if (!paths.isInitialized) {
+        console.error('✗ 项目未初始化');
+        process.exit(1);
+      }
+      let specs = listAllSpecs(paths);
+      if (opts.level) specs = specs.filter(s => s.fm.level === opts.level);
+      if (opts.topic) specs = specs.filter(s => s.fm.topic === opts.topic);
+      if (opts.status) specs = specs.filter(s => s.fm.status === opts.status);
+      if (!opts.includeArchived) specs = specs.filter(s => isActiveStatus(s.fm.status));
+      specs.sort((a, b) => a.fm.code.localeCompare(b.fm.code));
+      if (specs.length === 0) {
+        console.log('(无匹配 spec)');
+        return;
+      }
+      console.log(`${'CODE'.padEnd(28)}${'LEVEL'.padEnd(6)}${'STATUS'.padEnd(13)}TOPIC        TITLE`);
+      console.log('-'.repeat(100));
+      for (const s of specs) {
+        console.log(
+          `${s.fm.code.padEnd(28)}${s.fm.level.padEnd(6)}${s.fm.status.padEnd(13)}${s.fm.topic.padEnd(13)}${s.fm.title}`,
+        );
+      }
+      console.log(`\n共 ${specs.length} 条`);
+    });
+
+  cmd
+    .command('show <code>')
+    .description('查看 spec 详情。默认窄视图（R19），--include-content 才返回正文。')
+    .option('--include-content', '返回完整 contentTemplate（窄视图默认不含）')
+    .action((code, opts) => {
+      const paths = getPaths();
+      const rec = findSpecByCode(paths, code);
+      if (!rec) {
+        console.error(`✗ 未找到: ${code}`);
+        process.exit(1);
+      }
+      const fm = rec.fm;
+      console.log('--- metadata ---');
+      console.log(`code:        ${fm.code}`);
+      console.log(`level:       ${fm.level}`);
+      console.log(`title:       ${fm.title}`);
+      console.log(`topic:       ${fm.topic}`);
+      console.log(`parent:      ${fm.parentCode ?? '(null)'}`);
+      console.log(`status:      ${fm.status}`);
+      console.log(`aiSummary:   ${fm.aiSummary || '(空)'}`);
+      console.log(`created:     ${fm.created}`);
+      console.log(`updated:     ${fm.updated}`);
+      console.log(`relations:   ${fm.relations?.length ?? 0}`);
+      if (opts.includeContent) {
+        console.log('\n--- content ---');
+        console.log(rec.content);
+      } else {
+        console.log('\n(省略正文；加 --include-content 查看)');
+      }
+    });
+
+  cmd
+    .command('update <code>')
+    .description('更新 spec：--content 写正文、--ai-summary 写摘要（≤300 字符）、--change-summary 写变更说明')
+    .option('--content <file>', '从文件读 contentTemplate 内容（- 表示 stdin）')
+    .option('--ai-summary <s>', 'aiSummary（≤300 字符）')
+    .option('--change-summary <s>', '本次修改的原因说明')
+    .action((code, opts) => {
+      const paths = getPaths();
+      const rec = findSpecByCode(paths, code);
+      if (!rec) {
+        console.error(`✗ 未找到: ${code}`);
+        process.exit(1);
+      }
+      const patch: Parameters<typeof updateSpec>[2] = {};
+      if (opts.content) {
+        patch.content = opts.content === '-' ? readStdin() : readFileSync(opts.content, 'utf8');
+      }
+      if (opts.aiSummary) patch.aiSummary = opts.aiSummary;
+      if (opts.changeSummary) patch.changeSummary = opts.changeSummary;
+
+      const result = updateSpec(paths, code, patch);
+      for (const w of result.warnings) console.warn(`⚠ ${w}`);
+      // 写完自动跑一次非阻断校验
+      const warnings = validateSpecContent(result.record.fm.level, result.record.content);
+      for (const w of warnings) {
+        const sym = w.level === 'warn' ? '⚠' : 'ℹ';
+        console.log(`${sym} [${w.rule}] ${w.message}`);
+      }
+      console.log(`✓ 已更新 ${code}（status: ${result.record.fm.status}）`);
+    });
+
+  // 状态推进命令
+  for (const { cmd: sub, status: target } of [
+    { cmd: 'confirm', status: 'confirmed' as const },
+    { cmd: 'freeze', status: 'frozen' as const },
+    { cmd: 'implement', status: 'implemented' as const },
+  ]) {
+    cmd
+      .command(`${sub} <code>`)
+      .description(`推进 status 到 ${target}（R2: 仅用户/自动 cascade 触发）`)
+      .option('--force', '强制推进（跳过 R3 L3 保护）', false)
+      .action((code, opts: { force: boolean }) => {
+        const paths = getPaths();
+        const rec = findSpecByCode(paths, code);
+        if (!rec) {
+          console.error(`✗ 未找到: ${code}`);
+          process.exit(1);
+        }
+        // R22: 推进到 confirmed/frozen 之前,contentTemplate 不能只有占位
+        if ((target === 'confirmed' || target === 'frozen') && isPlaceholderContent(rec.content)) {
+          console.error(`✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）`);
+          console.error(`  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`);
+          process.exit(2);
+        }
+        if (!canTransition(rec.fm.status, target)) {
+          console.error(`✗ 状态非法: ${rec.fm.status} → ${target}`);
+          console.error(`  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`);
+          process.exit(2);
+        }
+        // R3: L3 的 implemented 应由 task cascade 触发，手动推进需 --force
+        if (target === 'implemented' && rec.fm.level === 'L3' && rec.fm.status === 'frozen' && !opts.force) {
+          console.error(`⚠ R3: L3 spec ${code} 的 implemented 应由 task complete 自动 cascade`);
+          console.error(`  如确需手动推进，请用: spec-manager spec implement ${code} --force`);
+          process.exit(2);
+        }
+        updateSpec(paths, code, { status: target, changeSummary: `${rec.fm.status} → ${target}` });
+        console.log(`✓ ${code}: ${rec.fm.status} → ${target}`);
+      });
+  }
+
+  cmd
+    .command('validate <code>')
+    .description('校验 spec 正文（必填段 + RFC 2119）。warning-only，exit 0。')
+    .action((code) => {
+      const paths = getPaths();
+      const rec = findSpecByCode(paths, code);
+      if (!rec) {
+        console.error(`✗ 未找到: ${code}`);
+        process.exit(1);
+      }
+      const warnings = validateSpecContent(rec.fm.level, rec.content);
+      if (warnings.length === 0) {
+        console.log(`✓ ${code} (${rec.fm.level}): 所有必填段齐全，无 RFC 2119 警告`);
+      } else {
+        for (const w of warnings) {
+          const sym = w.level === 'warn' ? '⚠' : 'ℹ';
+          console.log(`${sym} [${w.rule}] ${w.message}`);
+        }
+      }
+    });
+
+  cmd
+    .command('add-relation <code>')
+    .description('添加 spec 关联（基于/替代/实现/参考）')
+    .requiredOption('--target <targetCode>', '目标 spec code')
+    .requiredOption('--type <type>', '关联类型：based_on | supersedes | implements | references')
+    .action((code, opts) => {
+      const paths = getPaths();
+      if (!['based_on', 'supersedes', 'implements', 'references'].includes(opts.type)) {
+        console.error(`✗ type 必须是 based_on | supersedes | implements | references`);
+        process.exit(2);
+      }
+      updateSpec(paths, code, { addRelation: { type: opts.type, target: opts.target } });
+      console.log(`✓ ${code} --[${opts.type}]--> ${opts.target}`);
+    });
+
+  cmd
+    .command('validate-plan <file>')
+    .description('校验 planJson 格式（INC-005 字段名 / R11 步数 / R10 末步验证）')
+    .action((file) => {
+      const plan = JSON.parse(readFileSync(file, 'utf8'));
+      const warnings = validatePlanJson(plan);
+      if (warnings.length === 0) {
+        console.log(`✓ planJson 校验通过`);
+        return;
+      }
+      const paths = getPaths();
+      const hitRules = new Set<string>();
+      for (const w of warnings) {
+        console.log(`⚠ [${w.rule}] ${w.message}`);
+        // R10/R11 是规范违反:落 audit 让人 review
+        if (w.rule === 'R10' || w.rule === 'R11') {
+          hitRules.add(w.rule);
+        }
+      }
+      for (const ruleId of hitRules) {
+        hit({ paths, ruleId });
+      }
+    });
+}
+
+function readStdin(): string {
+  return readFileSync(0, 'utf8');
+}

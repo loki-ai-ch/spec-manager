@@ -1,0 +1,37 @@
+/**
+ * Spec 状态机：draft → confirmed → frozen → implemented
+ * - draft → confirmed: 用户批准
+ * - confirmed → frozen: 用户批准（仅 L3）
+ * - frozen → implemented: 仅由 task complete 触发（自动级联）
+ * - * → archived: supersede 时
+ *
+ * 严禁：confirmed → draft（回退），除非显式 supersede
+ */
+
+export type SpecStatus = 'draft' | 'confirmed' | 'frozen' | 'implemented' | 'archived';
+
+const TRANSITIONS: Record<SpecStatus, SpecStatus[]> = {
+  draft:      ['confirmed', 'archived'],
+  confirmed:  ['frozen', 'archived'],          // L1/L2 confirmed 后也可直接 archived（被取代）
+  frozen:     ['implemented', 'confirmed', 'archived'],  // frozen → confirmed 允许用户重审
+  implemented:['archived'],                    // implemented → archived（被新 spec 取代）
+  archived:   [],                              // 终态
+};
+
+export function canTransition(from: SpecStatus, to: SpecStatus): boolean {
+  return TRANSITIONS[from]?.includes(to) ?? false;
+}
+
+export function nextStatuses(from: SpecStatus): SpecStatus[] {
+  return TRANSITIONS[from] ?? [];
+}
+
+export const ALL_STATUSES: SpecStatus[] = ['draft', 'confirmed', 'frozen', 'implemented', 'archived'];
+
+export function isActiveStatus(s: SpecStatus): boolean {
+  return s !== 'archived';
+}
+
+export function isCompleteStatus(s: SpecStatus): boolean {
+  return s === 'implemented' || s === 'archived';
+}

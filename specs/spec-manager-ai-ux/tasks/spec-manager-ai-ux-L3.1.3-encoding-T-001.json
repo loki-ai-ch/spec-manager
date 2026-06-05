@@ -1,0 +1,12 @@
+{
+  "id": "T-001",
+  "specCode": "spec-manager-ai-ux-L3.1.3-encoding",
+  "status": "completed",
+  "autoConfirm": false,
+  "startedAt": "2026-06-05T04:37:00.000Z",
+  "finishedAt": null,
+  "created": "2026-06-05T04:37:00.000Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

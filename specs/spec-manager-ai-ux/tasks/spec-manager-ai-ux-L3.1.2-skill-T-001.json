@@ -1,0 +1,12 @@
+{
+  "id": "T-001",
+  "specCode": "spec-manager-ai-ux-L3.1.2-skill",
+  "status": "completed",
+  "autoConfirm": true,
+  "startedAt": "2026-06-05T04:36:30.000Z",
+  "finishedAt": null,
+  "created": "2026-06-05T04:36:09.480Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

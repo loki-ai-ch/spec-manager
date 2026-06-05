@@ -1,0 +1,12 @@
+{
+  "id": "T-001",
+  "specCode": "spec-manager-ai-ux-L3.1.5-tests",
+  "status": "completed",
+  "autoConfirm": true,
+  "startedAt": "2026-06-05T04:46:00.000Z",
+  "finishedAt": "2026-06-05T05:00:00.000Z",
+  "created": "2026-06-05T04:46:00.000Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

@@ -1,0 +1,42 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run *)",
+      "Bash(echo \"exit: $?\")",
+      "Bash(sed -n '/## Comparison/,/## Status/p' /Users/loki/code/github/spec-manager/README.md)",
+      "Bash(sed -n '/## 对比/,/## 进度/p' /Users/loki/code/github/spec-manager/readme_zh.md)",
+      "Bash(grep -rn \"spec.*路径\\\\|spec.*path\\\\|specs/<topic>\\\\|specs/\\\\${topic}\\\\|存储路径\\\\|存储规则\" /Users/loki/code/github/spec-manager/src /Users/loki/code/github/spec-manager/docs /Users/loki/code/github/spec-manager/templates)",
+      "mcp__MiniMax__understand_image",
+      "Bash(grep -rn \"specs/<topic>\\\\|specs/\\\\${topic}\\\\|specsDir\\\\|specFilePath\\\\|listSpecFiles\\\\|parentCode\\\\|specs/\" /Users/loki/code/github/spec-manager/src --include=\"*.ts\")",
+      "Bash(grep -rn \"specs/<topic>\\\\|specs/\\\\${topic}\\\\|specs/\\\\$\\\\{topic\\\\}\\\\|SPEC-[A-Z]\\\\|SPEC-AUTH\\\\|SPEC-EXAMPLE\" /Users/loki/code/github/spec-manager --include=\"*.ts\" --include=\"*.md\" --include=\"*.json\" --include=\"*.yaml\" --include=\"*.yml\")",
+      "Bash(grep -rn \"SPEC-[A-Z0-9-]\\\\{3,\\\\}\\\\|specs/.*md\\\\|specs/\\\\$\\\\|specs/\\\\${\" /Users/loki/code/github/spec-manager --include=\"*.ts\" --include=\"*.md\" --include=\"*.json\")",
+      "Bash(npm test *)",
+      "Bash(grep -rn \"SPEC-AUTH-L\\\\|SPEC-TOPIC-L\\\\|SPEC-.*-L[0-9]-\\\\|SPEC-...-L\\\\|SPEC-{TOPIC\\\\|SPEC-XXX\" skill/ rules/ docs/ README.md readme_zh.md templates/)",
+      "Bash(grep *)",
+      "Bash(npx vitest *)",
+      "Bash(npm install *)",
+      "Bash(npm whoami *)",
+      "Bash(sudo npm *)",
+      "Bash(spec-manager --version)",
+      "Bash(spec-manager --help)",
+      "WebFetch(domain:docs.anthropic.com)",
+      "Bash(mkdir -p .claude/skills/spec-manager)",
+      "Bash(mv .claude/skills/SKILL.md .claude/skills/RESOLVER.md .claude/skills/subskills .claude/skills/spec-manager/)",
+      "Bash(rm .claude/commands/spec-manager.md)",
+      "Bash(rmdir .claude/commands)",
+      "Bash(node *)",
+      "Bash(npx tsc *)",
+      "Bash(pnpm test *)",
+      "Bash(npx tsx *)",
+      "Bash(sed -i '' 's/^code: 2026-06-05-783847$/code: spec-manager-ai-ux-L1/' specs/spec-manager-ai-ux/spec-manager-ai-ux-L1/spec-manager-ai-ux-L1-20260605.md)",
+      "Bash(sed -i '' 's/^code: 2026-06-05-159dad$/code: spec-manager-ai-ux-L2/' specs/spec-manager-ai-ux/spec-manager-ai-ux-L1/spec-manager-ai-ux-L2/spec-manager-ai-ux-L2-20260605.md)",
+      "Bash(sed -i '' 's/^parentCode: 2026-06-05-783847$/parentCode: spec-manager-ai-ux-L1/' specs/spec-manager-ai-ux/spec-manager-ai-ux-L1/spec-manager-ai-ux-L2/spec-manager-ai-ux-L2-20260605.md)",
+      "mcp__MiniMax__web_search",
+      "WebFetch(domain:cloud.tencent.com)",
+      "WebFetch(domain:www.openspec.pro)",
+      "Bash(git checkout *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
+    ]
+  }
+}

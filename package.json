@@ -1,0 +1,56 @@
+{
+  "name": "spec-manager",
+  "version": "0.1.0",
+  "description": "spec-manager: local-first spec-driven development platform. Pure markdown storage, no network, no MCP. Portable CLI + Claude Code skill.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "bin": {
+    "spec-manager": "./dist/cli/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "skill",
+    "templates",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "dev": "tsc --watch",
+    "lint": "tsc --noEmit"
+  },
+  "keywords": [
+    "spec-driven",
+    "spec",
+    "methodology",
+    "claude-code",
+    "skill",
+    "ai-coding",
+    "agent",
+    "delta-spec"
+  ],
+  "dependencies": {
+    "commander": "^12.0.0",
+    "gray-matter": "^4.0.3",
+    "yaml": "^2.4.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loki/spec-manager.git"
+  },
+  "author": "loki",
+  "homepage": "https://github.com/loki/spec-manager"
+}
