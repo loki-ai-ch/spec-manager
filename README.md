@@ -32,6 +32,40 @@ npm install -g .
 npx spec-manager <command>
 ```
 
+## AI Setup (Claude Code)
+
+spec-manager works with [Claude Code](https://docs.anthropic.com/en/docs/claude-code) via a built-in skill. Before iterating on a project, set up the AI to follow spec-driven development — **no vibe coding**.
+
+### 1. Install the skill
+
+```bash
+cp -r path/to/spec-manager/skill/ my-project/.claude/skills/spec-manager/
+```
+
+### 2. Create `CLAUDE.md` in your project root
+
+This file tells the AI how to behave. Copy this template:
+
+```markdown
+## Spec-Driven Development — No Vibe Coding
+
+This project uses spec-driven development via `/spec-manager`.
+
+- All feature work MUST go through `/spec-manager` — no direct code changes
+- Never write implementation code without a frozen L3 spec
+- Never skip human review gates — each layer (L1/L2/L3) requires explicit user approval
+- Status transitions (confirm/freeze) are user actions, not AI actions
+```
+
+### 3. Start iterating
+
+```bash
+# In Claude Code:
+/spec-manager add user authentication feature
+```
+
+The AI will follow the L1→L2→L3→Task pipeline with human review gates at each layer. See [rules/](rules/) for the full 24-rule set.
+
 ## Quick start
 
 ```bash

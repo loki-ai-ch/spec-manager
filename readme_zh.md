@@ -32,6 +32,40 @@ npm install -g .
 npx spec-manager <command>
 ```
 
+## AI 配置（Claude Code）
+
+spec-manager 通过内置 skill 与 [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 配合使用。迭代项目前，先配置 AI 遵循规格驱动开发 —— **禁止 vibe coding**。
+
+### 1. 安装 skill
+
+```bash
+cp -r path/to/spec-manager/skill/ my-project/.claude/skills/spec-manager/
+```
+
+### 2. 在项目根目录创建 `CLAUDE.md`
+
+这个文件告诉 AI 如何工作。复制以下模板：
+
+```markdown
+## 规格驱动开发 — 禁止 Vibe Coding
+
+本项目通过 `/spec-manager` 实行规格驱动开发。
+
+- 所有功能开发必须走 `/spec-manager`，禁止直接改代码
+- 没有 frozen 的 L3 spec 禁止写实现代码
+- 禁止跳过人工审核关卡 — 每层（L1/L2/L3）都需要用户明确批准
+- 状态推进（confirm/freeze）是用户行为，不是 AI 行为
+```
+
+### 3. 开始迭代
+
+```bash
+# 在 Claude Code 中：
+/spec-manager 新增用户认证功能
+```
+
+AI 会按 L1→L2→L3→Task 管线推进，每层都有人工审核关卡。完整 24 条规则见 [rules/](rules/)。
+
 ## 快速开始
 
 ```bash
