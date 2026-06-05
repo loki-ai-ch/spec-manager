@@ -8,7 +8,7 @@
     "node": ">=18"
   },
   "bin": {
-    "spec-manager": "./dist/cli/index.js"
+    "spec-manager": "dist/cli/index.js"
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
