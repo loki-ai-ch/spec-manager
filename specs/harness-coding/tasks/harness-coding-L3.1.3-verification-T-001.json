@@ -1,0 +1,108 @@
+{
+  "id": "T-001",
+  "specCode": "harness-coding-L3.1.3-verification",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 harness-coding-L3.1.3-verification、harness-coding-L2.1、harness-coding-L3.1.2-report、templates/agent-plan.json 并检查 harness/task/audit/CLI 测试基线",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 L3/L2/report L3、agent-plan 与 harness/task/audit/CLI 测试基线读取\",\"files\":[]}",
+      "reportedAt": "2026-06-08T08:45:28.927Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/task.ts 扩展 TaskRecord verifications[] 并新增 addTaskVerification",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 TaskRecord verifications[] 并新增 addTaskVerification 写入 task evidence\",\"files\":[\"src/core/task.ts\"]}",
+      "reportedAt": "2026-06-08T08:45:57.833Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/harness.ts 新增 HarnessTaskVerificationPayload/Input 和 normalizeHarnessTaskVerificationPayload",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 HarnessTaskVerificationPayload/Input 和 normalizeHarnessTaskVerificationPayload 校验\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-08T08:46:27.619Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/harness.ts 新增 recordHarnessTaskVerification 写入 task verification evidence",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 recordHarnessTaskVerification 将验证结果写入 task verifications[]\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-08T08:46:37.975Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/task.ts 接入 task verify <taskId> flags/input/json 子命令",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"为 CLI task 新增 verify <taskId> 子命令，支持 flags/input/json\",\"files\":[\"src/cli/task.ts\"]}",
+      "reportedAt": "2026-06-08T08:47:21.948Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/task.ts、src/cli/task.ts、src/core/audit.ts 展示 verification 并增加 audit warning",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"在 task show 展示 verification 摘要，并为 completed task 无 verification 增加 audit warning\",\"files\":[\"src/core/task.ts\",\"src/cli/task.ts\",\"src/core/audit.ts\"]}",
+      "reportedAt": "2026-06-08T08:47:32.063Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/__tests__/harness.test.ts 和 src/core/__tests__/task-cascade.test.ts 补充 verification core 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 verification payload、recordHarnessTaskVerification 和 addTaskVerification core 测试\",\"files\":[\"src/core/__tests__/harness.test.ts\",\"src/core/__tests__/task-cascade.test.ts\"]}",
+      "reportedAt": "2026-06-08T08:49:08.590Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/__tests__/task.test.ts 和 src/core/__tests__/audit.test.ts 补充 task verify CLI/audit 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 task verify CLI flags/input/json/show 和 audit warning 测试\",\"files\":[\"src/cli/__tests__/task.test.ts\",\"src/core/__tests__/audit.test.ts\"]}",
+      "reportedAt": "2026-06-08T08:49:29.828Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "mcp_tool",
+      "name": "验证 npm test targeted、npm run build、dist CLI task verify smoke",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 task verify targeted tests、npm run build 和 dist CLI task verify smoke 验证\",\"files\":[]}",
+      "reportedAt": "2026-06-08T08:50:41.268Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T08:45:16.454Z",
+  "finishedAt": "2026-06-08T08:50:48.855Z",
+  "created": "2026-06-08T08:45:03.435Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "smoke verification",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1"
+      ],
+      "created": "2026-06-08T08:50:21.257Z"
+    }
+  ]
+}

@@ -8,13 +8,58 @@
 
 import { Command } from 'commander';
 import { getPaths } from '../core/paths.js';
-import { createChange, listChanges, getChangeDir, parseDeltaSpec } from '../core/delta.js';
+import {
+  createChange,
+  createTaskLinkedChangeProposal,
+  getChangeDir,
+  listChanges,
+  listTaskLinkedChangeProposals,
+  parseDeltaSpec,
+  readTaskLinkedChangeProposal,
+  resolveTaskLinkedChangeProposal,
+} from '../core/delta.js';
 import { archiveChange } from '../core/archive.js';
 
 export function registerChangeCommands(program: Command): void {
   const change = program
     .command('change')
     .description('Delta change 提案（OpenSpec 风格：proposal + ADDED/MODIFIED/REMOVED/RENAMED）');
+
+  change
+    .command('propose')
+    .description('创建与 task/L3 关联的 change proposal')
+    .requiredOption('--task <taskCode>', '关联 task code')
+    .requiredOption('--spec <specCode>', '关联 L3 spec code')
+    .requiredOption('--reason <reason>', '偏差原因')
+    .requiredOption('--impact <impact>', '影响范围')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { task: string; spec: string; reason: string; impact: string; json: boolean }) => {
+      const paths = getPaths();
+      try {
+        const result = createTaskLinkedChangeProposal({
+          paths,
+          taskCode: opts.task,
+          specCode: opts.spec,
+          reason: opts.reason,
+          impact: opts.impact,
+        });
+        if (opts.json) {
+          console.log(JSON.stringify(result, null, 2));
+          return;
+        }
+        console.log(`✓ Change proposal created: ${result.name}`);
+        console.log(`  status: ${result.status}`);
+        console.log(`  task: ${result.taskCode}`);
+        console.log(`  spec: ${result.specCode}`);
+        console.log(`  proposal: ${result.proposalFile}`);
+        console.log('');
+        console.log('Next:');
+        console.log(`  spec-manager change show ${result.name}`);
+        console.log(`  spec-manager change resolve ${result.name}`);
+      } catch (err) {
+        handleChangeError(err);
+      }
+    });
 
   change
     .command('new <name>')
@@ -42,15 +87,22 @@ export function registerChangeCommands(program: Command): void {
       const paths = getPaths();
       const all = listChanges(paths);
       if (opts.json) {
-        console.log(JSON.stringify(all, null, 2));
+        const taskLinked = listTaskLinkedChangeProposals(paths);
+        console.log(JSON.stringify(all.map(c => taskLinked.find(p => p.name === c.name) ?? c), null, 2));
         return;
       }
       if (all.length === 0) {
         console.log('(no active changes)');
         return;
       }
+      const taskLinkedByName = new Map(listTaskLinkedChangeProposals(paths).map(p => [p.name, p]));
       for (const c of all) {
-        console.log(`  ${c.name}  (created ${c.created || '?'})`);
+        const taskLinked = taskLinkedByName.get(c.name);
+        if (taskLinked) {
+          console.log(`  ${c.name}  ${taskLinked.status}  task=${taskLinked.taskCode}  spec=${taskLinked.specCode}`);
+        } else {
+          console.log(`  ${c.name}  (created ${c.created || '?'})`);
+        }
       }
     });
 
@@ -66,17 +118,50 @@ export function registerChangeCommands(program: Command): void {
         process.exit(1);
       }
       if (opts.json) {
+        const taskLinked = readTaskLinkedChangeProposal(paths, name);
+        if (taskLinked) {
+          console.log(JSON.stringify({ name, changes: [], proposal: taskLinked }, null, 2));
+          return;
+        }
         const delta = parseDeltaSpec(paths, name);
-        console.log(JSON.stringify(delta, null, 2));
+        console.log(JSON.stringify({ ...delta, proposal: taskLinked }, null, 2));
         return;
       }
+      const taskLinked = readTaskLinkedChangeProposal(paths, name);
       console.log(`Change: ${name}`);
       console.log(`  root: ${dir.root}`);
       console.log(`  proposal: ${dir.proposal}`);
+      if (taskLinked) {
+        console.log(`  type: task-linked`);
+        console.log(`  status: ${taskLinked.status}`);
+        console.log(`  task: ${taskLinked.taskCode}`);
+        console.log(`  spec: ${taskLinked.specCode}`);
+        console.log(`  reason: ${taskLinked.reason}`);
+        console.log(`  impact: ${taskLinked.impact}`);
+      }
       console.log(`  delta files: ${dir.deltaFiles.length}`);
       for (const f of dir.deltaFiles) console.log(`    - ${f}`);
       console.log(`  spec files: ${dir.specFiles.length}`);
       for (const f of dir.specFiles) console.log(`    - ${f}`);
+    });
+
+  change
+    .command('resolve <name>')
+    .description('将 task-linked change proposal 标记为 resolved')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((name: string, opts: { json: boolean }) => {
+      const paths = getPaths();
+      try {
+        const result = resolveTaskLinkedChangeProposal(paths, name);
+        if (opts.json) {
+          console.log(JSON.stringify(result, null, 2));
+          return;
+        }
+        console.log(`✓ Change proposal resolved: ${result.name}`);
+        console.log(`  status: ${result.status}`);
+      } catch (err) {
+        handleChangeError(err);
+      }
     });
 
   change
@@ -104,4 +189,19 @@ export function registerChangeCommands(program: Command): void {
         }
       }
     });
+}
+
+function handleChangeError(err: unknown): never {
+  const message = err instanceof Error ? err.message : String(err);
+  if (
+    message.startsWith('INVALID_CHANGE:') ||
+    message.startsWith('SPEC_NOT_FOUND:') ||
+    message.startsWith('SPEC_NOT_L3:') ||
+    message.startsWith('TASK_NOT_FOUND:') ||
+    message.startsWith('CHANGE_NOT_FOUND:')
+  ) {
+    console.error(`✗ ${message}`);
+    process.exit(2);
+  }
+  throw err;
 }

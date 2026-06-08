@@ -1,14 +1,18 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerTaskCommands } from '../task.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 import { createSpec, updateSpec } from '../../core/spec-io.js';
-import { createTask } from '../../core/task.js';
+import { createTask, findTask } from '../../core/task.js';
 
 let project: TestProject;
 let oldSpecManagerRoot: string | undefined;
 let logSpy: ReturnType<typeof vi.spyOn>;
+let writeSpy: ReturnType<typeof vi.spyOn>;
+let errorSpy: ReturnType<typeof vi.spyOn>;
+let exitSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   project = createTestProject('spec-mgr-cli-task-');
@@ -18,6 +22,11 @@ beforeEach(() => {
   oldSpecManagerRoot = process.env.SPEC_MANAGER_ROOT;
   process.env.SPEC_MANAGER_ROOT = project.root;
   logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+  writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+  errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  exitSpy = vi.spyOn(process, 'exit').mockImplementation(((code?: string | number | null) => {
+    throw new Error(`process.exit:${code}`);
+  }) as never);
 });
 
 afterEach(() => {
@@ -27,6 +36,9 @@ afterEach(() => {
     process.env.SPEC_MANAGER_ROOT = oldSpecManagerRoot;
   }
   logSpy.mockRestore();
+  writeSpy.mockRestore();
+  errorSpy.mockRestore();
+  exitSpy.mockRestore();
   project.cleanup();
 });
 
@@ -38,7 +50,14 @@ function makeProgram(): Command {
 }
 
 function output(): string {
-  return logSpy.mock.calls.map((call) => String(call[0])).join('\n');
+  return [
+    ...logSpy.mock.calls.map((call) => String(call[0])),
+    ...writeSpy.mock.calls.map((call) => String(call[0])),
+  ].join('\n');
+}
+
+function stderr(): string {
+  return errorSpy.mock.calls.map((call) => String(call[0])).join('\n');
 }
 
 function createFrozenL3WithTask(): string {
@@ -48,6 +67,26 @@ function createFrozenL3WithTask(): string {
   updateSpec(project.paths, 'auth-L2.1', { status: 'confirmed' });
   createSpec({ paths: project.paths, code: 'auth-L3.1.1-login', level: 'L3', title: 'Login', topic: 'auth', parentCode: 'auth-L2.1' });
   updateSpec(project.paths, 'auth-L3.1.1-login', { status: 'confirmed' });
+  updateSpec(project.paths, 'auth-L3.1.1-login', {
+    content: `# Login
+
+## 目标
+
+- Export context for login.
+
+## 验收标准
+
+1. **AC-1**: Given frozen L3, When context is exported, Then output SHALL contain a status gate.
+
+## 验证命令
+
+\`\`\`bash
+npm test -- --run src/cli/__tests__/task.test.ts
+\`\`\`
+`,
+    aiSummary: 'Login context summary',
+    changeSummary: 'test fixture content',
+  });
   updateSpec(project.paths, 'auth-L3.1.1-login', { status: 'frozen' });
   createTask({
     paths: project.paths,
@@ -65,6 +104,15 @@ function createFrozenL3WithTask(): string {
   return 'auth-L3.1.1-login';
 }
 
+function createDraftL3(): string {
+  createSpec({ paths: project.paths, code: 'draft-L1', level: 'L1', title: 'Draft', topic: 'draft', parentCode: null });
+  updateSpec(project.paths, 'draft-L1', { status: 'confirmed' });
+  createSpec({ paths: project.paths, code: 'draft-L2.1', level: 'L2', title: 'Draft design', topic: 'draft', parentCode: 'draft-L1' });
+  updateSpec(project.paths, 'draft-L2.1', { status: 'confirmed' });
+  createSpec({ paths: project.paths, code: 'draft-L3.1.1-work', level: 'L3', title: 'Draft work', topic: 'draft', parentCode: 'draft-L2.1' });
+  return 'draft-L3.1.1-work';
+}
+
 describe('task CLI', () => {
   it('prints shownSteps and totalSteps for truncated task show', async () => {
     const specCode = createFrozenL3WithTask();
@@ -74,5 +122,173 @@ describe('task CLI', () => {
     expect(output()).toContain('shownSteps: 5');
     expect(output()).toContain('totalSteps: 8');
     expect(output()).toContain('truncated: true');
+  });
+
+  it('prints task context as text', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await makeProgram().parseAsync(['task', 'context', specCode], { from: 'user' });
+
+    expect(output()).toContain('Task Context');
+    expect(output()).toContain('Status Gate');
+  });
+
+  it('prints task context as json', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await makeProgram().parseAsync(['task', 'context', specCode, '--format', 'json'], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed.schemaVersion).toBe('harness-context.experimental.v1');
+    expect(parsed.specCode).toBe(specCode);
+    expect(parsed.statusGate.allowed).toBe(true);
+  });
+
+  it('rejects draft L3 task context', async () => {
+    const specCode = createDraftL3();
+
+    await expect(makeProgram().parseAsync(['task', 'context', specCode], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('L3_NOT_FROZEN');
+  });
+
+  it('rejects invalid task context format', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await expect(makeProgram().parseAsync(['task', 'context', specCode, '--format', 'xml'], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('task context --format 必须是 text 或 json');
+  });
+
+  it('reports task step from flags', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await makeProgram().parseAsync([
+      'task', 'report', 'T-001',
+      '--spec', specCode,
+      '--summary', 'Implemented report command',
+      '--files', 'src/core/harness.ts,src/cli/task.ts',
+      '--tests', 'npm test',
+    ], { from: 'user' });
+
+    const task = findTask(project.paths, specCode, 'T-001');
+    expect(output()).toContain('Task T-001 report written');
+    expect(output()).toContain('step: 1');
+    expect(task?.steps?.[0].status).toBe('succeeded');
+    const payload = JSON.parse(task?.steps?.[0].outputJson ?? '{}');
+    expect(payload.files).toEqual(['src/core/harness.ts', 'src/cli/task.ts']);
+    expect(payload.tests).toEqual(['npm test']);
+  });
+
+  it('reports task step from input json', async () => {
+    const specCode = createFrozenL3WithTask();
+    const reportFile = join(project.root, 'report.json');
+    writeFileSync(reportFile, JSON.stringify({
+      summary: 'Input report',
+      stepNo: 2,
+      files: ['src/core/harness.ts'],
+      tests: ['npm test'],
+      risks: ['none'],
+    }), 'utf8');
+
+    await makeProgram().parseAsync(['task', 'report', 'T-001', '--spec', specCode, '--input', reportFile, '--json'], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed.stepNo).toBe(2);
+    expect(parsed.task.steps[1].status).toBe('succeeded');
+  });
+
+  it('rejects task report without summary', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await expect(makeProgram().parseAsync(['task', 'report', 'T-001', '--spec', specCode], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('INVALID_REPORT');
+  });
+
+  it('rejects task report input mixed with flags', async () => {
+    const specCode = createFrozenL3WithTask();
+    const reportFile = join(project.root, 'report.json');
+    writeFileSync(reportFile, JSON.stringify({ summary: 'Input report' }), 'utf8');
+
+    await expect(makeProgram().parseAsync(['task', 'report', 'T-001', '--spec', specCode, '--input', reportFile, '--summary', 'flag report'], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('--input 不能与 --summary');
+  });
+
+  it('reports specified task step from flags', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await makeProgram().parseAsync(['task', 'report', 'T-001', '--spec', specCode, '--step', '2', '--summary', 'Step 2 report'], { from: 'user' });
+
+    const task = findTask(project.paths, specCode, 'T-001');
+    expect(task?.steps?.[0].status).toBe('pending');
+    expect(task?.steps?.[1].status).toBe('succeeded');
+  });
+
+  it('records verification from flags', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await makeProgram().parseAsync([
+      'task', 'verify', 'T-001',
+      '--spec', specCode,
+      '--command', 'npm test',
+      '--exit-code', '0',
+      '--summary', 'passed',
+      '--covers-ac', 'AC-1',
+    ], { from: 'user' });
+
+    const task = findTask(project.paths, specCode, 'T-001');
+    expect(output()).toContain('verification V-001 recorded');
+    expect(output()).toContain('exitCode: 0');
+    expect(task?.verifications?.[0].coversAc).toEqual(['AC-1']);
+  });
+
+  it('records verification from input json', async () => {
+    const specCode = createFrozenL3WithTask();
+    const verificationFile = join(project.root, 'verification.json');
+    writeFileSync(verificationFile, JSON.stringify({
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+      artifacts: ['coverage/index.html'],
+      coversAc: ['AC-1'],
+    }), 'utf8');
+
+    await makeProgram().parseAsync(['task', 'verify', 'T-001', '--spec', specCode, '--input', verificationFile, '--json'], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed.verification.id).toBe('V-001');
+    expect(parsed.verification.artifacts).toEqual(['coverage/index.html']);
+  });
+
+  it('rejects invalid verification payload', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await expect(makeProgram().parseAsync(['task', 'verify', 'T-001', '--spec', specCode, '--exit-code', '0', '--summary', 'missing command'], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('INVALID_VERIFICATION');
+  });
+
+  it('rejects verification input mixed with flags', async () => {
+    const specCode = createFrozenL3WithTask();
+    const verificationFile = join(project.root, 'verification.json');
+    writeFileSync(verificationFile, JSON.stringify({ command: 'npm test', exitCode: 0, summary: 'passed' }), 'utf8');
+
+    await expect(makeProgram().parseAsync(['task', 'verify', 'T-001', '--spec', specCode, '--input', verificationFile, '--summary', 'flag summary'], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('--input 不能与 --command');
+  });
+
+  it('shows verification summary in task show', async () => {
+    const specCode = createFrozenL3WithTask();
+    await makeProgram().parseAsync(['task', 'verify', 'T-001', '--spec', specCode, '--command', 'npm test', '--exit-code', '0', '--summary', 'passed'], { from: 'user' });
+    logSpy.mockClear();
+    writeSpy.mockClear();
+
+    await makeProgram().parseAsync(['task', 'show', 'T-001', '--spec', specCode], { from: 'user' });
+
+    expect(output()).toContain('verifications: 1');
+    expect(output()).toContain('latest: V-001 exitCode=0');
   });
 });

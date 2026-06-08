@@ -1,24 +1,24 @@
 {
   "rules": {
     "R1": 8,
-    "R2": 33,
+    "R2": 39,
     "R3": 1,
-    "R4": 16,
-    "R5": 1,
+    "R4": 22,
+    "R5": 2,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 33,
+    "R9": 39,
     "R10": 0,
     "R11": 0,
     "R12": 2,
     "R13": 8,
     "R14": 0,
     "R15": 0,
-    "R16": 3,
+    "R16": 4,
     "R17": 0,
     "R18": 0,
-    "R19": 18,
+    "R19": 32,
     "R20": 0,
     "R21": 0,
     "R22": 8,
@@ -811,7 +811,211 @@
       "timestamp": "2026-06-08T03:37:00.436Z",
       "specCode": "workflow-hardening-L1",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-08T07:18:45.235Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T07:18:45.239Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:20:05.982Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T07:21:45.634Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T07:21:45.636Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:21:49.506Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T07:22:21.662Z",
+      "specCode": "harness-coding-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:24:10.099Z",
+      "specCode": "harness-coding-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:24:53.901Z",
+      "specCode": "harness-coding-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T07:38:27.373Z",
+      "specCode": "harness-coding-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T07:38:27.375Z",
+      "specCode": "harness-coding-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:38:32.568Z",
+      "specCode": "harness-coding-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T07:38:59.464Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:41:14.042Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T07:41:49.653Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T07:41:49.655Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T07:41:57.751Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-08T08:12:43.697Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T08:13:47.222Z",
+      "specCode": "harness-coding-L3.1.1-context",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T08:15:43.543Z",
+      "specCode": "harness-coding-L3.1.2-report",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T08:17:16.736Z",
+      "specCode": "harness-coding-L3.1.2-report",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T08:17:58.488Z",
+      "specCode": "harness-coding-L3.1.2-report",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T08:17:58.489Z",
+      "specCode": "harness-coding-L3.1.2-report",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T08:18:05.892Z",
+      "specCode": "harness-coding-L3.1.2-report",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T08:41:17.597Z",
+      "specCode": "harness-coding-L3.1.3-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T08:43:06.791Z",
+      "specCode": "harness-coding-L3.1.3-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T08:43:45.816Z",
+      "specCode": "harness-coding-L3.1.3-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T08:43:45.818Z",
+      "specCode": "harness-coding-L3.1.3-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T08:43:55.384Z",
+      "specCode": "harness-coding-L3.1.3-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T08:59:32.543Z",
+      "specCode": "harness-coding-L3.1.4-change",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:01:07.034Z",
+      "specCode": "harness-coding-L3.1.4-change",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:03:08.047Z",
+      "specCode": "harness-coding-L3.1.4-change",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:03:08.049Z",
+      "specCode": "harness-coding-L3.1.4-change",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:03:22.105Z",
+      "specCode": "harness-coding-L3.1.4-change",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-08T03:37:00.436Z"
+  "lastUpdated": "2026-06-08T09:03:22.105Z"
 }

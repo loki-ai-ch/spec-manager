@@ -1,0 +1,116 @@
+{
+  "id": "T-001",
+  "specCode": "harness-coding-L3.1.4-change",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 harness-coding-L3.1.4-change、harness-coding-L2.1、harness-coding-L3.1.2-report、harness-coding-L3.1.3-verification、templates/agent-plan.json 并检查 delta/change/task/audit 测试基线",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 L3/L2/report/verification、agent-plan 与 delta/change/task/audit 测试基线读取\",\"files\":[]}",
+      "reportedAt": "2026-06-08T09:05:11.850Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/delta.ts 扩展 task-linked proposal frontmatter 类型",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 change proposal frontmatter 类型以支持 task-linked proposal\",\"files\":[\"src/core/delta.ts\"]}",
+      "reportedAt": "2026-06-08T09:06:01.413Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/delta.ts 新增 create/list/resolve task-linked change proposal",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 task-linked change proposal 创建、列表和 resolve 核心函数\",\"files\":[\"src/core/delta.ts\"]}",
+      "reportedAt": "2026-06-08T09:06:09.585Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/change.ts 接入 change propose/resolve 并扩展 list/show",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"接入 change propose/resolve 并扩展 list/show 展示 task-linked metadata\",\"files\":[\"src/cli/change.ts\"]}",
+      "reportedAt": "2026-06-08T09:07:52.651Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/audit.ts 增加 unresolved task-linked proposal warning",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"将 unresolved task-linked change proposal 纳入 audit warnings，并修正 proposal 命名与 show json 行为\",\"files\":[\"src/core/audit.ts\",\"src/core/delta.ts\",\"src/cli/change.ts\"]}",
+      "reportedAt": "2026-06-08T09:08:36.886Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/__tests__/delta.test.ts 补充 task-linked proposal core 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task-linked change proposal 核心测试，覆盖创建、命名冲突、过滤、resolve 与错误路径\",\"files\":[\"src/core/__tests__/delta.test.ts\"]}",
+      "reportedAt": "2026-06-08T09:10:47.018Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/__tests__/change.test.ts 和 src/core/__tests__/audit.test.ts 补充 CLI/audit 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 change CLI 测试并扩展 audit warning 测试，覆盖 unresolved/resolved proposal 行为\",\"files\":[\"src/cli/__tests__/change.test.ts\",\"src/core/__tests__/audit.test.ts\"]}",
+      "reportedAt": "2026-06-08T09:10:52.328Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 npm test targeted、npm run build、dist CLI change propose smoke",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 targeted tests、npm run build 和 dist CLI change propose/list/show/resolve smoke 验证\",\"files\":[]}",
+      "reportedAt": "2026-06-08T09:12:52.519Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T09:05:01.552Z",
+  "finishedAt": "2026-06-08T09:12:57.073Z",
+  "created": "2026-06-08T09:04:47.206Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/delta.test.ts src/cli/__tests__/change.test.ts src/core/__tests__/audit.test.ts",
+      "exitCode": 0,
+      "summary": "targeted change proposal tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-08T09:12:38.578Z"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-08T09:12:47.966Z"
+    }
+  ]
+}

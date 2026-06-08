@@ -3,9 +3,21 @@ import { mkdtempSync, writeFileSync, mkdirSync, rmSync, existsSync } from 'node:
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getPaths, type ProjectPaths } from '../paths.js';
-import { createChange, getChangeDir, listChanges, parseDeltaFile, parseDeltaSpec, renderDeltaFile } from '../delta.js';
+import {
+  createChange,
+  createTaskLinkedChangeProposal,
+  getChangeDir,
+  listChanges,
+  listTaskLinkedChangeProposals,
+  parseDeltaFile,
+  parseDeltaSpec,
+  readTaskLinkedChangeProposal,
+  renderDeltaFile,
+  resolveTaskLinkedChangeProposal,
+} from '../delta.js';
 import { readFrontmatter } from '../frontmatter.js';
-import { createSpec, generateSpecCode, invalidateSpecCache } from '../spec-io.js';
+import { createSpec, invalidateSpecCache, updateSpec } from '../spec-io.js';
+import { createTask } from '../task.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -85,6 +97,79 @@ describe('listChanges — 列出所有 change', () => {
     const all = listChanges(paths);
     expect(all).toHaveLength(2);
     expect(all.map(c => c.name).sort()).toEqual(['add-auth', 'add-billing']);
+  });
+});
+
+describe('task-linked change proposal', () => {
+  it('creates proposal with task/spec metadata', () => {
+    const specCode = createFrozenL3WithTask();
+
+    const proposal = createTaskLinkedChangeProposal({
+      paths,
+      taskCode: 'T-001',
+      specCode,
+      reason: 'implementation needs a contract adjustment',
+      impact: 'L3 AC and tests',
+    });
+
+    expect(proposal.name).toBe('auth-l3-1-1-login-t-001-proposal');
+    expect(proposal.status).toBe('unresolved');
+    expect(proposal.taskCode).toBe('T-001');
+    expect(proposal.specCode).toBe(specCode);
+    const { data, content } = readFrontmatter(proposal.proposalFile);
+    expect(data.proposalType).toBe('task-linked');
+    expect(data.reason).toBe('implementation needs a contract adjustment');
+    expect(data.impact).toBe('L3 AC and tests');
+    expect(content).toContain('## Reason');
+  });
+
+  it('increments name on repeated proposals for same task/spec', () => {
+    const specCode = createFrozenL3WithTask();
+
+    const first = createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode, reason: 'first', impact: 'scope' });
+    const second = createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode, reason: 'second', impact: 'scope' });
+
+    expect(first.name).toBe('auth-l3-1-1-login-t-001-proposal');
+    expect(second.name).toBe('auth-l3-1-1-login-t-001-proposal-2');
+  });
+
+  it('lists only task-linked proposals and can filter unresolved', () => {
+    const specCode = createFrozenL3WithTask();
+    createChange({ paths, name: 'plain-change' });
+    const proposal = createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode, reason: 'reason', impact: 'impact' });
+    resolveTaskLinkedChangeProposal(paths, proposal.name);
+
+    expect(listTaskLinkedChangeProposals(paths)).toHaveLength(1);
+    expect(listTaskLinkedChangeProposals(paths, { status: 'unresolved' })).toEqual([]);
+    expect(listTaskLinkedChangeProposals(paths, { status: 'resolved' })[0].name).toBe(proposal.name);
+  });
+
+  it('resolves proposal status in frontmatter', () => {
+    const specCode = createFrozenL3WithTask();
+    const proposal = createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode, reason: 'reason', impact: 'impact' });
+
+    const resolved = resolveTaskLinkedChangeProposal(paths, proposal.name);
+
+    expect(resolved.status).toBe('resolved');
+    expect(readTaskLinkedChangeProposal(paths, proposal.name)?.status).toBe('resolved');
+  });
+
+  it('rejects missing reason or impact', () => {
+    const specCode = createFrozenL3WithTask();
+
+    expect(() => createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode, reason: '', impact: 'impact' }))
+      .toThrow('INVALID_CHANGE');
+    expect(() => createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode, reason: 'reason', impact: ' ' }))
+      .toThrow('INVALID_CHANGE');
+  });
+
+  it('rejects non-L3 specs and missing tasks', () => {
+    const specCode = createFrozenL3WithTask();
+
+    expect(() => createTaskLinkedChangeProposal({ paths, taskCode: 'T-001', specCode: 'auth-L2.1', reason: 'reason', impact: 'impact' }))
+      .toThrow('SPEC_NOT_L3');
+    expect(() => createTaskLinkedChangeProposal({ paths, taskCode: 'T-999', specCode, reason: 'reason', impact: 'impact' }))
+      .toThrow('TASK_NOT_FOUND');
   });
 });
 
@@ -284,3 +369,37 @@ describe('renderDeltaFile — 渲染 delta 文件', () => {
     expect(output).toContain('## REMOVED Requirements');
   });
 });
+
+function createFrozenL3WithTask(): string {
+  createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+  updateSpec(paths, 'auth-L1', { status: 'confirmed' });
+  createSpec({ paths, code: 'auth-L2.1', level: 'L2', title: 'Auth design', topic: 'auth', parentCode: 'auth-L1' });
+  updateSpec(paths, 'auth-L2.1', { status: 'confirmed' });
+  createSpec({ paths, code: 'auth-L3.1.1-login', level: 'L3', title: 'Login', topic: 'auth', parentCode: 'auth-L2.1' });
+  updateSpec(paths, 'auth-L3.1.1-login', { status: 'confirmed' });
+  updateSpec(paths, 'auth-L3.1.1-login', {
+    content: `# Login
+
+## 目标
+
+- Implement login.
+
+## 验收标准
+
+1. **AC-1**: Given login task, When complete, Then evidence SHALL exist.
+`,
+    aiSummary: 'Login summary',
+    changeSummary: 'test fixture content',
+  });
+  updateSpec(paths, 'auth-L3.1.1-login', { status: 'frozen' });
+  createTask({
+    paths,
+    specCode: 'auth-L3.1.1-login',
+    autoConfirm: false,
+    planJson: {
+      coveredSpecs: ['auth-L3.1.1-login'],
+      steps: [{ stepNo: 1, stepType: 'mcp_tool' as const, name: '运行验证' }],
+    },
+  });
+  return 'auth-L3.1.1-login';
+}

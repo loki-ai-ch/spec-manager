@@ -26,6 +26,7 @@ export interface TaskRecord {
   specCode: string;
   status: TaskStatus;
   steps?: StepFrontmatter[];
+  verifications?: TaskVerificationRecord[];
   autoConfirm: boolean;
   startedAt: string | null;
   finishedAt: string | null;
@@ -33,6 +34,16 @@ export interface TaskRecord {
   waitReason: string | null;
   errorCode: string | null;
   errorMessage: string | null;
+}
+
+export interface TaskVerificationRecord {
+  id: string;
+  command: string;
+  exitCode: number;
+  summary: string;
+  artifacts: string[];
+  coversAc: string[];
+  created: string;
 }
 
 export { canTaskTransition } from './status.js';
@@ -272,6 +283,37 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   return { task: updatedTask, spec, warnings };
 }
 
+export interface AddTaskVerificationInput {
+  paths: ProjectPaths;
+  taskId: string;
+  specCode?: string;
+  command: string;
+  exitCode: number;
+  summary: string;
+  artifacts?: string[];
+  coversAc?: string[];
+}
+
+export function addTaskVerification(input: AddTaskVerificationInput): { task: TaskRecord; verification: TaskVerificationRecord } {
+  const task = findTaskById(input.paths, input.taskId, input.specCode);
+  const existing = task.verifications ?? [];
+  const verification: TaskVerificationRecord = {
+    id: nextVerificationId(existing),
+    command: input.command,
+    exitCode: input.exitCode,
+    summary: input.summary,
+    artifacts: input.artifacts ?? [],
+    coversAc: input.coversAc ?? [],
+    created: new Date().toISOString(),
+  };
+  const updated: TaskRecord = {
+    ...task,
+    verifications: [...existing, verification],
+  };
+  writeTaskJSON(taskFilePath(specFilePathOf(input.paths, task.specCode), task.specCode, task.id), updated);
+  return { task: updated, verification };
+}
+
 export interface CompleteInput {
   paths: ProjectPaths;
   taskId: string;
@@ -440,4 +482,14 @@ export function showTask(paths: ProjectPaths, taskId: string, opts?: { full?: bo
 
 function taskSteps(task: TaskRecord, fallback?: StepFrontmatter[]): StepFrontmatter[] {
   return task.steps ?? fallback ?? [];
+}
+
+function nextVerificationId(existing: TaskVerificationRecord[]): string {
+  const max = existing
+    .map(v => {
+      const m = v.id.match(/^V-(\d+)$/);
+      return m ? Number(m[1]) : 0;
+    })
+    .reduce((acc, n) => Math.max(acc, n), 0);
+  return `V-${String(max + 1).padStart(ID_PAD_WIDTH, '0')}`;
 }

@@ -41,12 +41,45 @@ import { join } from 'node:path';
 import { readFrontmatter, writeFrontmatter } from './frontmatter.js';
 import { DeltaSpecSchema, type ChangeEntry, type ChangeOpT, type DeltaSpec } from '../schemas/change.js';
 import type { ProjectPaths } from './paths.js';
+import { findSpecByCode } from './spec-io.js';
+import { findTask } from './task.js';
 
 export interface ChangeDir {
   root: string;        // changes/<date>-<name>/
   proposal: string;    // proposal.md
   deltaFiles: string[]; // deltas/*.md
   specFiles: string[];  // specs/<topic>/*.md
+}
+
+export type TaskLinkedChangeStatus = 'unresolved' | 'resolved';
+
+export interface TaskLinkedChangeProposal {
+  name: string;
+  root: string;
+  proposalFile: string;
+  taskCode: string;
+  specCode: string;
+  topic: string;
+  reason: string;
+  impact: string;
+  status: TaskLinkedChangeStatus;
+  created: string;
+  updated: string;
+}
+
+interface ProposalFrontmatter {
+  name?: string;
+  why?: string;
+  scope?: string;
+  created?: string;
+  updated?: string;
+  proposalType?: 'task-linked';
+  taskCode?: string;
+  specCode?: string;
+  topic?: string;
+  reason?: string;
+  impact?: string;
+  status?: TaskLinkedChangeStatus;
 }
 
 export function changeDir(paths: ProjectPaths, name: string): string {
@@ -89,11 +122,98 @@ export function listChanges(paths: ProjectPaths): Array<{ name: string; root: st
       let created = '';
       if (existsSync(proposalPath)) {
         const { data } = readFrontmatter(proposalPath);
-        created = (data as { created?: string }).created ?? '';
+        created = (data as ProposalFrontmatter).created ?? '';
       }
       return { name: f, root, created };
     })
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+export interface CreateTaskLinkedChangeProposalInput {
+  paths: ProjectPaths;
+  taskCode: string;
+  specCode: string;
+  reason: string;
+  impact: string;
+}
+
+export function createTaskLinkedChangeProposal(input: CreateTaskLinkedChangeProposalInput): TaskLinkedChangeProposal {
+  const reason = input.reason.trim();
+  const impact = input.impact.trim();
+  if (!reason) throw new Error('INVALID_CHANGE: reason is required');
+  if (!impact) throw new Error('INVALID_CHANGE: impact is required');
+
+  const spec = findSpecByCode(input.paths, input.specCode);
+  if (!spec) throw new Error(`SPEC_NOT_FOUND: ${input.specCode}`);
+  if (spec.fm.level !== 'L3') throw new Error(`SPEC_NOT_L3: ${input.specCode}`);
+  const task = findTask(input.paths, input.specCode, input.taskCode);
+  if (!task) throw new Error(`TASK_NOT_FOUND: ${input.taskCode} (in ${input.specCode})`);
+
+  const name = nextTaskLinkedChangeName(input.paths, input.specCode, input.taskCode);
+  const root = changeDir(input.paths, name);
+  mkdirSync(join(root, 'deltas'), { recursive: true });
+  mkdirSync(join(root, 'specs'), { recursive: true });
+  const now = new Date().toISOString();
+  const fm: Required<Pick<ProposalFrontmatter,
+    'name' | 'proposalType' | 'taskCode' | 'specCode' | 'topic' | 'reason' | 'impact' | 'status' | 'created' | 'updated'
+  >> & { why: string; scope: string } = {
+    name,
+    proposalType: 'task-linked',
+    taskCode: input.taskCode,
+    specCode: input.specCode,
+    topic: spec.fm.topic,
+    reason,
+    impact,
+    status: 'unresolved',
+    why: reason,
+    scope: impact,
+    created: now,
+    updated: now,
+  };
+  const proposalFile = join(root, 'proposal.md');
+  writeFileSync(proposalFile, writeFrontmatter(fm, renderTaskLinkedProposalContent(fm)), 'utf8');
+  writeFileSync(join(root, 'README.md'), `# Change: ${name}\n\nTask-linked proposal for ${input.specCode} / ${input.taskCode}\n`, 'utf8');
+
+  return proposalFromFrontmatter(name, root, proposalFile, fm);
+}
+
+export function listTaskLinkedChangeProposals(
+  paths: ProjectPaths,
+  opts?: { status?: TaskLinkedChangeStatus; specCode?: string; taskCode?: string },
+): TaskLinkedChangeProposal[] {
+  return listChanges(paths)
+    .map(c => readTaskLinkedChangeProposal(paths, c.name))
+    .filter((p): p is TaskLinkedChangeProposal => p !== null)
+    .filter(p => !opts?.status || p.status === opts.status)
+    .filter(p => !opts?.specCode || p.specCode === opts.specCode)
+    .filter(p => !opts?.taskCode || p.taskCode === opts.taskCode);
+}
+
+export function readTaskLinkedChangeProposal(paths: ProjectPaths, name: string): TaskLinkedChangeProposal | null {
+  const dir = getChangeDir(paths, name);
+  if (!dir || !existsSync(dir.proposal)) return null;
+  const { data } = readFrontmatter(dir.proposal);
+  const fm = data as ProposalFrontmatter;
+  if (fm.proposalType !== 'task-linked') return null;
+  if (!fm.taskCode || !fm.specCode || !fm.topic || !fm.reason || !fm.impact || !fm.status || !fm.created) return null;
+  return proposalFromFrontmatter(name, dir.root, dir.proposal, fm);
+}
+
+export function resolveTaskLinkedChangeProposal(paths: ProjectPaths, name: string): TaskLinkedChangeProposal {
+  const dir = getChangeDir(paths, name);
+  if (!dir || !existsSync(dir.proposal)) throw new Error(`CHANGE_NOT_FOUND: ${name}`);
+  const { data, content } = readFrontmatter(dir.proposal);
+  const fm = data as ProposalFrontmatter;
+  if (fm.proposalType !== 'task-linked') throw new Error(`CHANGE_NOT_FOUND: ${name} is not task-linked`);
+  const updated: ProposalFrontmatter = {
+    ...fm,
+    status: 'resolved',
+    updated: new Date().toISOString(),
+  };
+  writeFileSync(dir.proposal, writeFrontmatter(updated as Record<string, unknown>, content), 'utf8');
+  const proposal = readTaskLinkedChangeProposal(paths, name);
+  if (!proposal) throw new Error(`CHANGE_NOT_FOUND: ${name}`);
+  return proposal;
 }
 
 /**
@@ -246,6 +366,79 @@ function renderProposalTemplate(name: string, description: string): string {
 ## 影响的需求
 <!-- 列出 affectedCriteria -->
 `;
+}
+
+function nextTaskLinkedChangeName(paths: ProjectPaths, specCode: string, taskCode: string): string {
+  const base = `${slugPart(specCode)}-${slugPart(taskCode)}-proposal`;
+  let name = base;
+  let idx = 2;
+  while (existsSync(changeDir(paths, name))) {
+    name = `${base}-${idx}`;
+    idx += 1;
+  }
+  return name;
+}
+
+function slugPart(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function renderTaskLinkedProposalContent(fm: {
+  name: string;
+  taskCode: string;
+  specCode: string;
+  reason: string;
+  impact: string;
+  status: TaskLinkedChangeStatus;
+}): string {
+  return `# ${fm.name}
+
+> Task-linked implementation change proposal. Status: **${fm.status}**.
+
+## 关联
+
+- task: ${fm.taskCode}
+- spec: ${fm.specCode}
+
+## Reason
+
+${fm.reason}
+
+## Impact
+
+${fm.impact}
+
+## Next Options
+
+- Amend the L3 spec and freeze it again.
+- Record a decision if the implementation direction is now intentional.
+- Split follow-up work into a new task.
+- Resolve this proposal once the scope decision is handled.
+`;
+}
+
+function proposalFromFrontmatter(
+  name: string,
+  root: string,
+  proposalFile: string,
+  fm: ProposalFrontmatter,
+): TaskLinkedChangeProposal {
+  return {
+    name,
+    root,
+    proposalFile,
+    taskCode: fm.taskCode ?? '',
+    specCode: fm.specCode ?? '',
+    topic: fm.topic ?? '',
+    reason: fm.reason ?? '',
+    impact: fm.impact ?? '',
+    status: fm.status ?? 'unresolved',
+    created: fm.created ?? '',
+    updated: fm.updated ?? fm.created ?? '',
+  };
 }
 
 /**

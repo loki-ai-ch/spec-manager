@@ -24,6 +24,14 @@ import {
   listTasks,
   type TaskStatus,
 } from '../core/task.js';
+import {
+  buildHarnessTaskContext,
+  normalizeHarnessTaskReportPayload,
+  normalizeHarnessTaskVerificationPayload,
+  recordHarnessTaskVerification,
+  renderHarnessTaskContextText,
+  reportHarnessTaskStep,
+} from '../core/harness.js';
 import { listDecisions } from '../core/decision.js';
 import { findSpecByCode } from '../core/spec-io.js';
 import { hit as auditHit } from '../core/audit.js';
@@ -59,6 +67,158 @@ export function registerTaskCommands(program: Command): void {
       console.log(`  file: ${result.taskFile}`);
       console.log(`  status: ${result.task.status}`);
       console.log(`  steps: ${planJson.steps.length}`);
+    });
+
+  task
+    .command('context <l3Code>')
+    .description('从 frozen/implemented L3 生成 coding harness task context')
+    .option('--format <format>', 'text | json', 'text')
+    .action((l3Code: string, opts: { format: string }) => {
+      if (opts.format !== 'text' && opts.format !== 'json') {
+        console.error('✗ task context --format 必须是 text 或 json');
+        process.exit(2);
+      }
+      const paths = getPaths();
+      try {
+        const context = buildHarnessTaskContext(paths, l3Code);
+        if (opts.format === 'json') {
+          console.log(JSON.stringify(context, null, 2));
+          return;
+        }
+        process.stdout.write(renderHarnessTaskContextText(context));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (
+          message.startsWith('SPEC_NOT_FOUND:') ||
+          message.startsWith('SPEC_NOT_L3:') ||
+          message.startsWith('L3_NOT_FROZEN:')
+        ) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    });
+
+  task
+    .command('report <taskId>')
+    .description('用 coding harness report payload 回写 task step')
+    .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
+    .option('--step <stepNo>', '指定回写步骤')
+    .option('--summary <summary>', 'report summary（flags 模式必填）')
+    .option('--files <files>', '逗号分隔的变更文件列表')
+    .option('--tests <tests>', '逗号分隔的测试/验证列表')
+    .option('--risks <risks>', '逗号分隔的风险备注列表')
+    .option('--input <file>', '从 JSON 文件读取 report payload')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((taskId: string, opts: {
+      spec?: string;
+      step?: string;
+      summary?: string;
+      files?: string;
+      tests?: string;
+      risks?: string;
+      input?: string;
+      json: boolean;
+    }) => {
+      const hasFlags = opts.step !== undefined || opts.summary !== undefined || opts.files !== undefined || opts.tests !== undefined || opts.risks !== undefined;
+      if (opts.input && hasFlags) {
+        console.error('✗ task report --input 不能与 --summary/--files/--tests/--risks/--step 混用');
+        process.exit(2);
+      }
+      const paths = getPaths();
+      try {
+        const raw = opts.input
+          ? JSON.parse(readFileSync(opts.input, 'utf8'))
+          : {
+              summary: opts.summary,
+              stepNo: opts.step,
+              files: splitCsv(opts.files),
+              tests: splitCsv(opts.tests),
+              risks: splitCsv(opts.risks),
+            };
+        const payload = normalizeHarnessTaskReportPayload(raw);
+        const result = reportHarnessTaskStep({ paths, taskId, specCode: opts.spec, payload });
+        if (opts.json) {
+          console.log(JSON.stringify(result, null, 2));
+          return;
+        }
+        console.log(`✓ Task ${taskId} report written`);
+        console.log(`  step: ${result.stepNo}`);
+        for (const w of result.warnings) console.warn(`⚠ ${w}`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (
+          message.startsWith('INVALID_REPORT:') ||
+          message.startsWith('NO_REPORTABLE_STEP:') ||
+          message.startsWith('TASK_NOT_FOUND:') ||
+          message.startsWith('Task not found:')
+        ) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    });
+
+  task
+    .command('verify <taskId>')
+    .description('记录 task 的结构化 verification evidence')
+    .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
+    .option('--command <command>', '验证命令')
+    .option('--exit-code <code>', '验证 exit code', (v) => Number(v))
+    .option('--summary <summary>', '验证摘要')
+    .option('--artifacts <paths>', '逗号分隔的 artifact 路径')
+    .option('--covers-ac <items>', '逗号分隔的 AC 编号')
+    .option('--input <file>', '从 JSON 文件读取 verification payload')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((taskId: string, opts: {
+      spec?: string;
+      command?: string;
+      exitCode?: number;
+      summary?: string;
+      artifacts?: string;
+      coversAc?: string;
+      input?: string;
+      json: boolean;
+    }) => {
+      const hasFlags = opts.command !== undefined || opts.exitCode !== undefined || opts.summary !== undefined || opts.artifacts !== undefined || opts.coversAc !== undefined;
+      if (opts.input && hasFlags) {
+        console.error('✗ task verify --input 不能与 --command/--exit-code/--summary/--artifacts/--covers-ac 混用');
+        process.exit(2);
+      }
+      const paths = getPaths();
+      try {
+        const raw = opts.input
+          ? JSON.parse(readFileSync(opts.input, 'utf8'))
+          : {
+              command: opts.command,
+              exitCode: opts.exitCode,
+              summary: opts.summary,
+              artifacts: splitCsv(opts.artifacts),
+              coversAc: splitCsv(opts.coversAc),
+            };
+        const payload = normalizeHarnessTaskVerificationPayload(raw);
+        const result = recordHarnessTaskVerification({ paths, taskId, specCode: opts.spec, payload });
+        if (opts.json) {
+          console.log(JSON.stringify(result, null, 2));
+          return;
+        }
+        console.log(`✓ Task ${taskId} verification ${result.verification.id} recorded`);
+        console.log(`  exitCode: ${result.verification.exitCode}`);
+        console.log(`  taskStatus: ${result.task.status}`);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (
+          message.startsWith('INVALID_VERIFICATION:') ||
+          message.startsWith('TASK_NOT_FOUND:') ||
+          message.startsWith('Task not found:')
+        ) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
     });
 
   task
@@ -225,6 +385,12 @@ export function registerTaskCommands(program: Command): void {
       console.log(`  finishedAt: ${result.task.finishedAt ?? '-'}`);
       if (result.task.waitReason) console.log(`  waitReason: ${result.task.waitReason}`);
       if (result.task.errorCode) console.log(`  error: ${result.task.errorCode} — ${result.task.errorMessage}`);
+      const verifications = result.task.verifications ?? [];
+      console.log(`  verifications: ${verifications.length}`);
+      const latestVerification = verifications[verifications.length - 1];
+      if (latestVerification) {
+        console.log(`    latest: ${latestVerification.id} exitCode=${latestVerification.exitCode} — ${latestVerification.summary}`);
+      }
       console.log('  steps:');
       console.log(`    shownSteps: ${result.shownSteps}`);
       console.log(`    totalSteps: ${result.totalSteps}`);
@@ -322,4 +488,9 @@ export function registerTaskCommands(program: Command): void {
         console.log(JSON.stringify(result, null, 2));
       }
     });
+}
+
+function splitCsv(value: string | undefined): string[] | undefined {
+  if (value === undefined) return undefined;
+  return value.split(',').map(item => item.trim()).filter(Boolean);
 }

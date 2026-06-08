@@ -6,6 +6,9 @@ import { Command } from 'commander';
 import { getPaths, type ProjectPaths } from '../paths.js';
 import { hit, readAudit, startSession, report, showSummary, RULE_ID_RE, ALL_RULE_IDS, checkCompliance, COMPLIANCE_BASELINE } from '../audit.js';
 import { registerAuditCommands } from '../../cli/audit.js';
+import { createSpec, updateSpec } from '../spec-io.js';
+import { addTaskVerification, completeTask, createTask, reportStep, startTask } from '../task.js';
+import { createTaskLinkedChangeProposal, resolveTaskLinkedChangeProposal } from '../delta.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -202,6 +205,64 @@ describe('showSummary — 文本摘要', () => {
     expect(summary).toContain('compliance: ✗ FAIL');
     expect(summary).toContain('✗ R4: 0 (min 1)');
   });
+
+  it('completed task without verification emits warning', () => {
+    const specCode = createCompletedTask('audit-no-verify');
+
+    const summary = showSummary(paths);
+
+    expect(summary).toContain('warnings:');
+    expect(summary).toContain(`completed task T-001 (${specCode}) has no verification evidence`);
+    expect(summary).toContain(`spec-manager task verify T-001 --spec ${specCode}`);
+  });
+
+  it('completed task with verification does not emit missing verification warning', () => {
+    const specCode = createCompletedTask('audit-with-verify');
+    addTaskVerification({
+      paths,
+      taskId: 'T-001',
+      specCode,
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+    });
+
+    const summary = showSummary(paths);
+
+    expect(summary).not.toContain(`completed task T-001 (${specCode}) has no verification evidence`);
+  });
+
+  it('unresolved task-linked change proposal emits warning', () => {
+    const specCode = createCompletedTask('audit-change-open');
+    createTaskLinkedChangeProposal({
+      paths,
+      taskCode: 'T-001',
+      specCode,
+      reason: 'implementation drift',
+      impact: 'L3 AC',
+    });
+
+    const summary = showSummary(paths);
+
+    expect(summary).toContain('unresolved change proposal audit-change-open-l3-1-1-work-t-001-proposal');
+    expect(summary).toContain('spec-manager change resolve audit-change-open-l3-1-1-work-t-001-proposal');
+  });
+
+  it('resolved task-linked change proposal does not emit warning', () => {
+    const specCode = createCompletedTask('audit-change-resolved');
+    const proposal = createTaskLinkedChangeProposal({
+      paths,
+      taskCode: 'T-001',
+      specCode,
+      reason: 'implementation drift',
+      impact: 'L3 AC',
+    });
+    resolveTaskLinkedChangeProposal(paths, proposal.name);
+
+    const summary = showSummary(paths);
+
+    expect(summary).not.toContain(`unresolved change proposal ${proposal.name}`);
+  });
 });
 
 describe('checkCompliance — 合规基线检查', () => {
@@ -241,3 +302,29 @@ describe('checkCompliance — 合规基线检查', () => {
     expect(result.pass).toBe(true);
   });
 });
+
+function createCompletedTask(topic: string): string {
+  const l1Code = `${topic}-L1`;
+  createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic, parentCode: null });
+  updateSpec(paths, l1Code, { status: 'confirmed' });
+  const l2Code = `${topic}-L2.1`;
+  createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic, parentCode: l1Code });
+  updateSpec(paths, l2Code, { status: 'confirmed' });
+  const l3Code = `${topic}-L3.1.1-work`;
+  createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic, parentCode: l2Code });
+  updateSpec(paths, l3Code, { status: 'confirmed' });
+  updateSpec(paths, l3Code, { status: 'frozen' });
+  createTask({
+    paths,
+    specCode: l3Code,
+    autoConfirm: false,
+    planJson: {
+      coveredSpecs: [l3Code],
+      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+    },
+  });
+  startTask(paths, 'T-001', l3Code);
+  reportStep({ paths, taskId: 'T-001', specCode: l3Code, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
+  completeTask({ paths, taskId: 'T-001', specCode: l3Code });
+  return l3Code;
+}

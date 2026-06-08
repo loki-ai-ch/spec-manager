@@ -1,0 +1,95 @@
+{
+  "id": "T-001",
+  "specCode": "harness-coding-L3.1.1-context",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 harness-coding-L3.1.1-context、harness-coding-L2.1、templates/agent-plan.json 并检查 spec-io/task/decision/CLI task 测试基线",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 L3/L2、agent-plan 与 spec-io/task/decision/CLI task 测试基线读取\",\"files\":[]}",
+      "reportedAt": "2026-06-08T08:08:50.936Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 src/core/harness.ts 定义 HarnessTaskContext、buildHarnessTaskContext、renderHarnessTaskContextText",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 harness task context 类型、构建器和 text renderer 骨架\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-08T08:10:06.208Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "实现 L3 frozen/implemented 准入、summary、关联 spec 与 decision 读取",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 L3 frozen/implemented 准入、summary、关联 spec 与 decision 读取\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-08T08:10:06.463Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "实现 objectives、nonGoals、acceptanceCriteria、suggestedVerification 的 markdown 提取",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现目标、非目标、验收标准和验证命令的 markdown 提取规则\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-08T08:13:01.360Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "实现 task context text/json 输出格式和 nextCommands",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 task context text/json 输出格式和 nextCommands\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-08T08:13:10.107Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/task.ts 接入 task context <l3Code> --format text|json",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"为 CLI task 新增 context <l3Code> --format text|json 子命令\",\"files\":[\"src/cli/task.ts\"]}",
+      "reportedAt": "2026-06-08T08:10:35.624Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "新增 src/core/__tests__/harness.test.ts 覆盖 context 构建与 renderer",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 harness context core 测试覆盖准入、提取和 text renderer\",\"files\":[\"src/core/__tests__/harness.test.ts\"]}",
+      "reportedAt": "2026-06-08T08:11:52.052Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/__tests__/task.test.ts 覆盖 task context CLI text/json/错误场景",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 task context CLI text/json 与错误场景测试\",\"files\":[\"src/cli/__tests__/task.test.ts\"]}",
+      "reportedAt": "2026-06-08T08:13:21.833Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "mcp_tool",
+      "name": "验证 targeted tests、npm run build、dist CLI text/json smoke",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 targeted tests、npm run build、dist CLI text/json smoke 验证\",\"files\":[]}",
+      "reportedAt": "2026-06-08T08:12:34.341Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T08:08:34.000Z",
+  "finishedAt": "2026-06-08T08:13:32.110Z",
+  "created": "2026-06-08T08:08:20.375Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

@@ -4,7 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { getPaths, type ProjectPaths } from '../paths.js';
 import { createSpec, findSpecByCode, updateSpec, generateSpecCode } from '../spec-io.js';
-import { createTask, startTask, reportStep, completeTask, findTask, listTasks, failTask, waitTask, showTask } from '../task.js';
+import { addTaskVerification, createTask, startTask, reportStep, completeTask, findTask, listTasks, failTask, waitTask, showTask } from '../task.js';
 import { hit as auditHit, readAudit } from '../audit.js';
 
 let root: string;
@@ -449,5 +449,42 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
     const b = findTask(paths, l3b, 'T-001');
     expect(a!.status).toBe('waiting');
     expect(b!.status).toBe('draft');
+  });
+});
+
+describe('task verification evidence', () => {
+  it('addTaskVerification appends V ids and supports old tasks without verifications', () => {
+    const { l3Code } = createFrozenHierarchy('verify-evidence');
+    createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+    });
+
+    const first = addTaskVerification({
+      paths,
+      taskId: 'T-001',
+      specCode: l3Code,
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+      artifacts: [],
+      coversAc: ['AC-1'],
+    });
+    const second = addTaskVerification({
+      paths,
+      taskId: 'T-001',
+      specCode: l3Code,
+      command: 'npm run build',
+      exitCode: 0,
+      summary: 'built',
+    });
+
+    expect(first.verification.id).toBe('V-001');
+    expect(second.verification.id).toBe('V-002');
+    expect(second.task.verifications).toHaveLength(2);
+    expect(second.task.verifications?.[0].coversAc).toEqual(['AC-1']);
+    expect(second.task.verifications?.[1].artifacts).toEqual([]);
   });
 });

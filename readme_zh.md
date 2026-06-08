@@ -17,6 +17,7 @@
 - **24 条规则** + `applies_to` 过滤 — 无需每次加载全部 24 条
 - **状态机** `draft → confirmed → frozen → implemented`
 - **Agent Task 生命周期** — `create → start → step → complete`,步骤写在 spec frontmatter;R5 阻止跳步 complete
+- **Coding harness 桥接** — 导出任务上下文、回写进度、记录验证证据，并从 CLI 创建实现偏差提案
 - **决策卡片** 带 `what/why/affectedCriteria` 三段 + topic 查询
 - **规则审计** at-least-once 本地 JSON 累加器
 - **Delta specs** (OpenSpec 风格 `changes/<name>/`,含 ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
@@ -198,8 +199,7 @@ spec-manager spec confirm <l2-code>
 
 spec-manager spec new L3 --topic billing --title "PDF 生成" --parent <l2-code>
 spec-manager spec update <l3-code> --content ./l3.md --ai-summary "..." --change-summary "init"
-spec-manager spec confirm <l3-code>
-spec-manager spec freeze <l3-code>                    # frozen 后可建 task
+spec-manager spec confirm <l3-code>                   # L3 一次确认后进入 frozen
 
 spec-manager task create <l3-code> --plan ./plan.json --auto-confirm
 spec-manager task start T-001
@@ -360,10 +360,28 @@ spec-manager task create auth-L3.1.1-jwt --plan /tmp/jwt-plan.json --auto-confir
 # → 输出: taskId T-001,文件 specs/auth/tasks/auth-L3.1.1-jwt-T-001.json
 
 spec-manager task start T-001 --spec auth-L3.1.1-jwt
+
+# 可选:给 coding harness / agent 导出紧凑上下文包
+spec-manager task context auth-L3.1.1-jwt --format text
+spec-manager task context auth-L3.1.1-jwt --format json
+
 # 第 1 步
 spec-manager task step T-001 --spec auth-L3.1.1-jwt --no 1 --type mcp_tool --name "上下文收集" \
   --status succeeded --output-json '{"summary":"read L2 + L1","read":["auth-L2.1"]}' --latency 1200
 # ... 每步重复
+
+# harness 友好入口:把结构化进度写入下一步或指定步骤
+spec-manager task report T-001 --spec auth-L3.1.1-jwt \
+  --summary "已实现 JWT 签发" \
+  --files "src/auth/jwt.ts,src/auth/__tests__/jwt.test.ts" \
+  --tests "npm test -- --run src/auth/__tests__/jwt.test.ts"
+
+# complete 前记录验证证据
+spec-manager task verify T-001 --spec auth-L3.1.1-jwt \
+  --command "npm test -- --run src/auth/__tests__/jwt.test.ts" \
+  --exit-code 0 \
+  --summary "JWT 测试通过" \
+  --covers-ac AC-1,AC-2
 
 spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 # → L3 status: frozen → implemented
@@ -371,7 +389,7 @@ spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 # → 若 L1 所有子 L2 都 implemented:L1 级联到 implemented
 ```
 
-`task step` 是每步的上报(R15 要求带 `outputJson`);`task complete` 触发级联 —— 不会反向(R2)。
+`task context` 面向 coding harness 和 agent,用于在编辑前获取有边界的工作包。`task step` 是每步的上报(R15 要求带 `outputJson`);`task report` 是同一套 step 记录模型的紧凑封装。`task verify` 会把命令、退出码、摘要、产物和覆盖 AC 写入 task。`task complete` 触发级联 —— 不会反向(R2)。
 
 ### 7. 记录决策卡片(R18:L1 implemented)
 
@@ -447,6 +465,24 @@ spec-manager change archive add-2fa
 
 留下完整审计轨迹:谁、何时、提议了什么,改动前 spec 长什么样。
 
+如果实现过程中发现 frozen L3 与现实不一致,用 task-linked proposal 把偏差显式挂到当前 task:
+
+```bash
+spec-manager change propose \
+  --task T-001 \
+  --spec auth-L3.1.1-jwt \
+  --reason "依赖库只暴露异步 key loading,但 L3 写的是同步加载" \
+  --impact "合并前需要更新 AC-2 和验证命令"
+
+spec-manager change list
+spec-manager change show auth-l3-1-1-jwt-t-001-proposal
+
+# 修订 L3、记录决策或拆 follow-up 后
+spec-manager change resolve auth-l3-1-1-jwt-t-001-proposal
+```
+
+task-linked proposal 存在 `changes/<name>/proposal.md`,状态为 `unresolved|resolved`。`audit show` 会提示 unresolved proposal,避免实现偏差静默丢失。
+
 ## 常用命令速查
 
 | 命令 | 作用 |
@@ -459,9 +495,9 @@ spec-manager change archive add-2fa
 | `spec-manager spec confirm \| freeze \| implement <code>` | 推进 status(用户触发) |
 | `spec-manager spec validate <code>` | 重跑必填段校验 |
 | `spec-manager spec add-relation <code> --target T --type based_on\|supersedes\|implements\|references` | 加跨 spec 引用 |
-| `spec-manager task create \| start \| step \| complete \| fail \| list \| show` | Agent Task 生命周期 |
+| `spec-manager task create \| start \| step \| report \| verify \| complete \| fail \| list \| show \| context` | Agent Task 生命周期和 coding harness 桥接 |
 | `spec-manager decision create \| list \| show \| update \| set-partial \| supersede \| delete` | 决策卡片(R18) |
-| `spec-manager change new \| archive \| list \| show` | Delta spec 工作流 |
+| `spec-manager change new \| propose \| resolve \| archive \| list \| show` | Delta spec 工作流和 task-linked 实现变更提案 |
 | `spec-manager incident new \| list` | 规则违规追踪 |
 | `spec-manager audit hit \| report \| show` | 本地规则审计 |
 
@@ -486,7 +522,7 @@ my-project/
 │   └── tasks/                   # R3: L3 frozen 后挂 Agent Task
 │       └── <specCode>-T-001.json
 ├── changes/<name>/
-│   ├── proposal.md
+│   ├── proposal.md              # 普通 delta 提案或 task-linked 实现提案
 │   ├── deltas/<code>.md
 │   └── specs/<topic>/<code>/<code>.md  # ADDED 占位文件
 └── archive/<name>/               # 已合并的 change

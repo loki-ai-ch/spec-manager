@@ -23,6 +23,8 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { ProjectPaths } from './paths.js';
+import { listTaskLinkedChangeProposals } from './delta.js';
+import { listTasks } from './task.js';
 
 export const RULE_ID_RE = /^R([1-9]|1[0-9]|2[0-4])$/;
 export const ALL_RULE_IDS = Array.from({ length: 24 }, (_, i) => `R${i + 1}`);
@@ -182,6 +184,13 @@ export function showSummary(paths: ProjectPaths, opts?: { ruleId?: string }): st
     lines.push(`  ${item.pass ? '✓' : '✗'} ${item.ruleId}: ${item.count} (min ${item.min})`);
   }
 
+  const warnings = collectAuditWarnings(paths);
+  if (warnings.length > 0) {
+    lines.push('');
+    lines.push('warnings:');
+    for (const warning of warnings) lines.push(`  ⚠ ${warning}`);
+  }
+
   return lines.join('\n');
 }
 
@@ -197,4 +206,20 @@ export function checkCompliance(state: AuditState): ComplianceResult {
     return { ruleId, count, min: 1, pass: count >= 1 };
   });
   return { pass: details.every(d => d.pass), details };
+}
+
+export function collectAuditWarnings(paths: ProjectPaths): string[] {
+  const warnings = listTasks(paths, { status: 'completed' })
+    .filter(task => (task.verifications?.length ?? 0) === 0)
+    .map(task =>
+      `completed task ${task.id} (${task.specCode}) has no verification evidence; ` +
+      `run: spec-manager task verify ${task.id} --spec ${task.specCode} --command "..." --exit-code 0 --summary "..."`,
+    );
+  for (const proposal of listTaskLinkedChangeProposals(paths, { status: 'unresolved' })) {
+    warnings.push(
+      `unresolved change proposal ${proposal.name} for task ${proposal.taskCode} (${proposal.specCode}); ` +
+      `run: spec-manager change resolve ${proposal.name}`,
+    );
+  }
+  return warnings;
 }

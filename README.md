@@ -17,6 +17,7 @@
 - **24 rules** with `applies_to` filtering — no need to load all 24 every time
 - **Status machine** L1/L2 use `draft → confirmed`; L3 uses `draft → frozen → implemented`
 - **Agent Task lifecycle** — `create → start → step → complete`, steps in spec frontmatter; R5 blocks complete if steps are skipped
+- **Coding harness bridge** — export task context, report task progress, record verification evidence, and propose implementation-scope changes from CLI-friendly commands
 - **Decision cards** with `what/why/affectedCriteria` + topic query
 - **Rule audit** with at-least-once local JSON accumulator
 - **Delta specs** (OpenSpec-style `changes/<name>/` with ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
@@ -375,10 +376,28 @@ spec-manager task create auth-L3.1.1-jwt --plan /tmp/jwt-plan.json --auto-confir
 # → outputs: taskId T-001, file specs/auth/tasks/auth-L3.1.1-jwt-T-001.json
 
 spec-manager task start T-001 --spec auth-L3.1.1-jwt
+
+# optional: export a compact context packet for a coding harness / agent
+spec-manager task context auth-L3.1.1-jwt --format text
+spec-manager task context auth-L3.1.1-jwt --format json
+
 # step 1
 spec-manager task step T-001 --spec auth-L3.1.1-jwt --no 1 --type mcp_tool --name "Context gathering" \
   --status succeeded --output-json '{"summary":"read L2 + L1","read":["auth-L2.1"]}' --latency 1200
 # ... repeat for each step
+
+# shorthand for harnesses: write a structured progress report into the next/picked task step
+spec-manager task report T-001 --spec auth-L3.1.1-jwt \
+  --summary "Implemented JWT signing" \
+  --files "src/auth/jwt.ts,src/auth/__tests__/jwt.test.ts" \
+  --tests "npm test -- --run src/auth/__tests__/jwt.test.ts"
+
+# record verification evidence before completion
+spec-manager task verify T-001 --spec auth-L3.1.1-jwt \
+  --command "npm test -- --run src/auth/__tests__/jwt.test.ts" \
+  --exit-code 0 \
+  --summary "JWT tests passed" \
+  --covers-ac AC-1,AC-2
 
 spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 # → L3 status: frozen → implemented
@@ -386,7 +405,7 @@ spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 # → if all L2 children of L1 are implemented: L1 cascades to implemented
 ```
 
-`task step` is the per-step report (with required `outputJson` per R15); `task complete` triggers the cascade — it never goes the other way (R2).
+`task context` is designed for coding harnesses and agents that need a bounded work packet before editing. `task step` is the per-step report (with required `outputJson` per R15); `task report` is a compact harness-friendly wrapper around the same step recording model. `task verify` stores command, exit code, summary, artifacts, and covered ACs on the task. `task complete` triggers the cascade — it never goes the other way (R2).
 
 ### 7. Record a decision card (R18: L1 implemented)
 
@@ -462,6 +481,24 @@ spec-manager change archive add-2fa
 
 This gives you a full audit trail: who proposed what, when, and what the spec looked like before the change.
 
+When an implementation discovers that the frozen L3 no longer matches reality, keep that deviation explicit and task-linked:
+
+```bash
+spec-manager change propose \
+  --task T-001 \
+  --spec auth-L3.1.1-jwt \
+  --reason "The library exposes async key loading, but the L3 specified sync loading" \
+  --impact "Update AC-2 and the verification command before merging"
+
+spec-manager change list
+spec-manager change show auth-l3-1-1-jwt-t-001-proposal
+
+# after amending the L3, recording a decision, or splitting follow-up work
+spec-manager change resolve auth-l3-1-1-jwt-t-001-proposal
+```
+
+Task-linked proposals live in `changes/<name>/proposal.md` with `status: unresolved|resolved`. `audit show` warns on unresolved task-linked proposals so implementation drift cannot disappear silently.
+
 ## Common commands
 
 | Command | What it does |
@@ -478,9 +515,9 @@ This gives you a full audit trail: who proposed what, when, and what the spec lo
 | `spec-manager spec validate <code>` | Re-run warning-only validation |
 | `spec-manager spec validate-plan [file] [--from-spec <code>]` | Validate planJson from a file or L3 spec |
 | `spec-manager spec add-relation <code> --target T --type based_on\|supersedes\|implements\|references` | Cross-spec reference |
-| `spec-manager task create \| start \| step \| complete \| fail \| list \| show` | Agent Task lifecycle |
+| `spec-manager task create \| start \| step \| report \| verify \| complete \| fail \| list \| show \| context` | Agent Task lifecycle and coding harness bridge |
 | `spec-manager decision create \| list \| show \| update \| set-partial \| supersede \| delete` | Decision cards (R18) |
-| `spec-manager change new \| archive \| list \| show` | Delta spec workflow |
+| `spec-manager change new \| propose \| resolve \| archive \| list \| show` | Delta spec workflow and task-linked implementation change proposals |
 | `spec-manager incident new \| list` | Rule violation tracking |
 | `spec-manager audit hit \| report \| show` | Local rule audit |
 
@@ -505,7 +542,7 @@ my-project/
 │   └── tasks/                   # R3: L3 frozen → agent tasks
 │       └── <specCode>-T-001.json
 ├── changes/<name>/
-│   ├── proposal.md
+│   ├── proposal.md              # regular delta proposal or task-linked implementation proposal
 │   ├── deltas/<code>.md
 │   └── specs/<topic>/<code>/<code>.md  # ADDED placeholder
 └── archive/<name>/               # merged changes
