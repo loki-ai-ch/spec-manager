@@ -20,7 +20,9 @@
 - **Decision cards** with `what/why/affectedCriteria` + topic query
 - **Rule audit** with at-least-once local JSON accumulator
 - **Delta specs** (OpenSpec-style `changes/<name>/` with ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
-- **Multi-agent setup** — one command installs Claude Code, Codex, OpenCode, and CodeBuddy instructions
+- **Multi-agent setup** — auto-detect or explicitly install instructions for Claude Code, Codex, OpenCode, CodeBuddy, Cursor, and Windsurf
+- **Interactive workflow view** — browse topics, specs, tasks, and next-step suggestions from one terminal UI
+- **Shell completion** — install dynamic zsh/bash/fish completion for commands and spec codes
 - **RFC 2119** keywords (SHALL/MUST/SHOULD) validation in acceptance criteria
 - **Incident tracking** — rule violations drive rule evolution
 
@@ -47,7 +49,8 @@ Not every tool has a native "skills" directory. spec-manager installs the closes
 ```bash
 cd my-project
 spec-manager project init --name my-project
-spec-manager project agents --provider all
+spec-manager project agents                 # auto-detect installed/configured agents
+spec-manager project agents --provider all  # or install every supported provider
 ```
 
 This writes:
@@ -58,13 +61,16 @@ This writes:
 | Codex | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
 | OpenCode | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
 | CodeBuddy | Native skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+| Cursor | Project rules | `.cursor/rules/spec-manager.mdc` |
+| Windsurf | Project rules | `.windsurf/rules/spec-manager.md` |
 
 Use a narrower install when needed:
 
 ```bash
 spec-manager project agents --provider list
+spec-manager project agents --dry-run
 spec-manager project agents --provider all --dry-run
-spec-manager project agents --provider codex,opencode
+spec-manager project agents --provider codex,cursor,windsurf
 spec-manager project agents --provider codebuddy --force
 ```
 
@@ -138,6 +144,7 @@ For day-to-day use, these helper commands reduce command memorization:
 ```bash
 spec-manager project doctor                 # check setup, agent files, skill assets, placeholders, audit
 spec-manager flow status --topic auth       # show L1/L2/L3/Task progress and the next command
+spec-manager view --topic auth              # interactively browse specs, tasks, and next steps
 spec-manager guide "add user auth"          # print the next useful step for a request
 spec-manager new feature --topic auth "User authentication"
 spec-manager approve auth-L1                # L1/L2 draft→confirmed; L3 draft/confirmed→frozen
@@ -153,6 +160,7 @@ Long-form commands remain available; the shortcuts only wrap the same rules and 
 |---|---|---|
 | `project doctor` | You are unsure whether the project is ready | Setup checks plus concrete fix commands |
 | `flow status` | You need to know where a topic is blocked | L1/L2/L3/Task state and the next command |
+| `view` | You want to explore workflow state interactively | Topic/spec/task browser with next-step suggestions |
 | `guide` | You have a request but do not know which command starts it | The next useful step without changing files |
 | `new feature` | You want the fastest safe way to start an L1 | Creates the L1 shell and prints the next update command |
 | `approve` | The user has explicitly approved a spec | Advances L1/L2 `draft→confirmed` or L3 `draft/confirmed→frozen` |
@@ -335,8 +343,11 @@ cat > /tmp/jwt-plan.json <<'EOF'
 }
 EOF
 
-# validate the planJson before committing to the L3
+# validate a plan file before committing it to the L3
 spec-manager spec validate-plan /tmp/jwt-plan.json
+
+# after the L3 contains planJson, validate directly from the spec
+spec-manager spec validate-plan --from-spec auth-L3.1.1-jwt
 
 # write L3 body referencing the plan
 cat > /tmp/jwt-l3.md <<'EOF'
@@ -457,11 +468,15 @@ This gives you a full audit trail: who proposed what, when, and what the spec lo
 |---|---|
 | `spec-manager project init --name X` | Initialize `.spec-manager/` |
 | `spec-manager project status` | Project overview (specs by level, recent activity) |
+| `spec-manager project agents [--provider P] [--dry-run]` | Auto-detect or install agent workflow files |
+| `spec-manager view [--topic X]` | Interactive topic/spec/task browser |
+| `spec-manager completion install zsh\|bash\|fish` | Install shell and spec-code completion |
 | `spec-manager spec list [--level L1] [--topic X] [--status draft]` | List specs (filterable) |
 | `spec-manager spec show <code> [--include-content]` | View spec; default is narrow (metadata only, R19) |
 | `spec-manager spec update <code> --content F --ai-summary S --change-summary R` | Write spec body |
 | `spec-manager spec confirm \| freeze \| implement <code>` | Advance status (human-triggered) |
 | `spec-manager spec validate <code>` | Re-run warning-only validation |
+| `spec-manager spec validate-plan [file] [--from-spec <code>]` | Validate planJson from a file or L3 spec |
 | `spec-manager spec add-relation <code> --target T --type based_on\|supersedes\|implements\|references` | Cross-spec reference |
 | `spec-manager task create \| start \| step \| complete \| fail \| list \| show` | Agent Task lifecycle |
 | `spec-manager decision create \| list \| show \| update \| set-partial \| supersede \| delete` | Decision cards (R18) |
@@ -482,9 +497,9 @@ my-project/
 │   ├── audit.json
 │   └── incidents/
 ├── specs/<topic>/
-│   ├── <L1-code>-<date>.md
-│   ├── <L2-code>-<date>.md
-│   ├── <L3-code>[-desc]-<date>.md
+│   ├── <L1-code>.md
+│   ├── <L2-code>.md
+│   ├── <L3-code>[-desc].md
 │   ├── decisions/               # R18: L1 implemented → decision cards
 │   │   └── DC-001.md
 │   └── tasks/                   # R3: L3 frozen → agent tasks
