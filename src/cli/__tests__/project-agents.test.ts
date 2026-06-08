@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { existsSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerProject } from '../project.js';
@@ -48,6 +48,8 @@ describe('project agents CLI', () => {
     expect(output()).toContain('codex');
     expect(output()).toContain('opencode');
     expect(output()).toContain('codebuddy');
+    expect(output()).toContain('cursor');
+    expect(output()).toContain('windsurf');
     expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
   });
 
@@ -58,5 +60,44 @@ describe('project agents CLI', () => {
     expect(output()).toContain('would create:');
     expect(output()).toContain('AGENTS.md');
     expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
+  });
+
+  it('auto-detects AGENTS.md when provider is omitted', async () => {
+    writeFileSync(join(root, 'AGENTS.md'), '# existing\n', 'utf8');
+
+    await makeProgram().parseAsync(['project', 'agents', '--dry-run'], { from: 'user' });
+
+    expect(output()).toContain('AI agent support planned: codex, opencode');
+    expect(output()).toContain('detected:');
+    expect(output()).toContain('AGENTS.md -> codex');
+    expect(output()).toContain('AGENTS.md -> opencode');
+    expect(output()).toContain('skipped:');
+    expect(existsSync(join(root, '.cursorrules'))).toBe(false);
+  });
+
+  it('auto-detects cursor and windsurf rules when provider is omitted', async () => {
+    writeFileSync(join(root, '.cursorrules'), '# cursor\n', 'utf8');
+    writeFileSync(join(root, '.windsurfrules'), '# windsurf\n', 'utf8');
+
+    await makeProgram().parseAsync(['project', 'agents', '--dry-run'], { from: 'user' });
+
+    expect(output()).toContain('AI agent support planned: cursor, windsurf');
+    expect(output()).toContain('.cursorrules -> cursor');
+    expect(output()).toContain('.windsurfrules -> windsurf');
+  });
+
+  it('keeps explicit all behavior separate from auto-detection', async () => {
+    await makeProgram().parseAsync(['project', 'agents', '--provider', 'all', '--dry-run'], { from: 'user' });
+
+    expect(output()).toContain('AI agent support planned: claude, codex, opencode, codebuddy, cursor, windsurf');
+    expect(output()).not.toContain('detected:');
+    expect(output()).toContain('CLAUDE.md');
+    expect(output()).toContain('.windsurfrules');
+  });
+
+  it('fails with a provider hint when no marker is detected', async () => {
+    await expect(
+      makeProgram().parseAsync(['project', 'agents', '--dry-run'], { from: 'user' }),
+    ).rejects.toThrow('--provider all');
   });
 });

@@ -13,6 +13,17 @@ Use this skill when the user invokes `/spec-manager`, asks for a new feature, PR
 - `/spec-manager <request>` — start from the user's requirement and route to the right subskill.
 - `/spec-manager run <taskId>` — execute an existing Agent Task.
 
+## Unified Rules
+
+- Feature work MUST go through `spec-manager`.
+- New or non-trivial work follows L1 -> L2 -> L3 -> Agent Task.
+- Never write implementation code without a frozen L3 spec.
+- L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
+- Before code edits, read the frozen L3 spec and create/start an Agent Task.
+- planJson `coveredSpecs` MUST include the current L3 specCode.
+- Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
+- Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
+
 ## Route Table
 
 | Signal | Subskill |
@@ -36,7 +47,7 @@ If intent is unclear, ask the user one concise clarification question before tak
 
 - Do not write implementation code without a frozen L3 spec.
 - Stop after writing L1/L2/L3 content and wait for explicit user approval.
-- Status transitions (`confirm` and `freeze`) are user actions.
+- Status transitions are user actions; one L3 `confirm` approval advances directly to frozen.
 - Agent Tasks can only be created from frozen L3 specs.
 - Before code edits, read the relevant spec and inspect the actual source files.
 

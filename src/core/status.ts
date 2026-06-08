@@ -1,7 +1,8 @@
 /**
- * Spec 状态机：draft → confirmed → frozen → implemented
- * - draft → confirmed: 用户批准
- * - confirmed → frozen: 用户批准（仅 L3）
+ * Spec 状态机：
+ * - L1/L2 draft → confirmed: 用户批准
+ * - L3 draft → frozen: 用户一次批准后可执行
+ * - confirmed → frozen: 历史 L3 兼容或上游级联准备
  * - frozen → implemented: 仅由 task complete 触发（自动级联）
  * - * → archived: supersede 时
  *
@@ -11,7 +12,7 @@
 export type SpecStatus = 'draft' | 'confirmed' | 'frozen' | 'implemented' | 'archived';
 
 const TRANSITIONS: Record<SpecStatus, SpecStatus[]> = {
-  draft:      ['confirmed', 'archived'],
+  draft:      ['confirmed', 'frozen', 'archived'],
   confirmed:  ['frozen', 'archived'],          // L1/L2 confirmed 后也可直接 archived（被取代）
   frozen:     ['implemented', 'confirmed', 'archived'],  // frozen → confirmed 允许用户重审
   implemented:['archived'],                    // implemented → archived（被新 spec 取代）

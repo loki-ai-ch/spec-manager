@@ -2,15 +2,17 @@
 
 This project uses `spec-manager` for local-first spec-driven development. CodeBuddy should use the project skill at `.codebuddy/skills/spec-manager/` when the user asks for `/spec-manager` or asks to follow the spec-manager workflow.
 
-## Rules
+## Unified Rules
 
-- Feature work MUST go through `spec-manager`; avoid direct code edits for non-trivial work.
-- New or non-trivial work follows L1 PRD -> L2 Design -> L3 Impl -> Agent Task.
-- Never write implementation code unless the relevant L3 spec is `frozen`.
-- `confirm` and `freeze` are user review actions. Stop after writing spec content and wait for explicit approval.
+- Feature work MUST go through `spec-manager`.
+- New or non-trivial work follows L1 -> L2 -> L3 -> Agent Task.
+- Never write implementation code without a frozen L3 spec.
+- L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
 - Before creating a new spec, inspect existing specs and decisions.
-- Before code edits, read the relevant frozen L3 spec and create/start an Agent Task.
-- Record each execution step with `spec-manager task step`; complete with `spec-manager task complete`.
+- Before code edits, read the frozen L3 spec and create/start an Agent Task.
+- planJson `coveredSpecs` MUST include the current L3 specCode.
+- Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
+- Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
 
 ## Useful Commands
 

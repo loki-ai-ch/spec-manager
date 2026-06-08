@@ -11,6 +11,8 @@
  * SHALL/MUST/SHOULD 之一）。这是 OpenSpec 风格的强化。
  */
 
+import { isPlaceholderContent } from './placeholder.js';
+
 const SPEC_CODE_INLINE_RE = /\b[a-z0-9][a-z0-9-]*-L[0-3](?:\.\d+)*(?:-(?!\d{8}\b)[a-z0-9][a-z0-9-]*)?\b/;
 
 export type SpecLevel = 'L0' | 'L1' | 'L2' | 'L3';
@@ -22,7 +24,7 @@ export interface ValidationWarning {
   section?: string;
 }
 
-const REQUIRED_SECTIONS: Record<SpecLevel, string[]> = {
+export const REQUIRED_SECTIONS: Record<SpecLevel, string[]> = {
   L0: ['愿景', '路线图'],
   L1: ['背景', '用户故事', '验收标准', '范围边界'],
   L2: ['方案概述', '技术决策', '受影响模块', '接口契约', 'L3 裂变计划'],
@@ -35,6 +37,14 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
   const warnings: ValidationWarning[] = [];
   const required = REQUIRED_SECTIONS[level] ?? [];
   const sections = parseSections(content);
+
+  if (isPlaceholderContent(content)) {
+    warnings.push({
+      rule: 'placeholder_marker',
+      level: 'warn',
+      message: 'contentTemplate 仍包含占位标记，请使用 spec-manager spec update <code> --content <file> --ai-summary "..."',
+    });
+  }
 
   for (const r of required) {
     if (!sections.some(s => s.heading === r)) {
@@ -204,6 +214,28 @@ export function validatePlanJson(plan: unknown): ValidationWarning[] {
     }
   }
   return warnings;
+}
+
+export function extractPlanJsonFromSpecContent(content: string): unknown {
+  const heading = content.match(/^##\s+planJson \(final\)\s*$/im);
+  if (!heading || heading.index === undefined) {
+    throw new Error('PLAN_JSON_MISSING: 未找到 ## planJson (final) 段');
+  }
+
+  const afterHeading = content.slice(heading.index + heading[0].length);
+  const nextHeading = afterHeading.search(/^##\s+/m);
+  const section = nextHeading >= 0 ? afterHeading.slice(0, nextHeading) : afterHeading;
+  const block = section.match(/```json\s*([\s\S]*?)\s*```/i);
+  if (!block) {
+    throw new Error('PLAN_JSON_MISSING: ## planJson (final) 段缺少 ```json 代码块');
+  }
+
+  try {
+    return JSON.parse(block[1]);
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    throw new Error(`PLAN_JSON_INVALID: ${detail}`);
+  }
 }
 
 interface Section { heading: string; body: string; }

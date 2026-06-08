@@ -128,7 +128,17 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
   }
   if (!input.planJson.coveredSpecs?.includes(input.specCode)) {
     recordAuditHit({ paths: input.paths, ruleId: 'R12', specCode: input.specCode }, input.auditSink);
-    throw new Error(`R12: planJson.coveredSpecs 必须包含当前 L3 specCode (${input.specCode})，禁止凭记忆写 planJson`);
+    throw new Error(
+      `R12: planJson.coveredSpecs 必须包含当前 L3 specCode (${input.specCode})，禁止凭记忆写 planJson\n` +
+      `Example:\n` +
+      `{\n` +
+      `  "coveredSpecs": ["${input.specCode}"],\n` +
+      `  "steps": [\n` +
+      `    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 ${input.specCode} 并检查 templates/agent-plan.json"},\n` +
+      `    {"stepNo": "N", "stepType": "mcp_tool", "name": "验证 npm test"}\n` +
+      `  ]\n` +
+      `}`,
+    );
   }
 
   const taskId = generateTaskId(spec.filePath, input.specCode);
@@ -403,6 +413,8 @@ export function waitTask(input: WaitInput): TaskRecord {
 export function showTask(paths: ProjectPaths, taskId: string, opts?: { full?: boolean; specCode?: string }): {
   task: TaskRecord;
   steps: StepFrontmatter[];
+  shownSteps: number;
+  totalSteps: number;
   truncated: boolean;
 } | null {
   let task: TaskRecord | undefined;
@@ -420,9 +432,10 @@ export function showTask(paths: ProjectPaths, taskId: string, opts?: { full?: bo
   const steps = taskSteps(task, spec?.fm.steps);
   const all = [...steps].sort((a, b) => Number(a.stepNo) - Number(b.stepNo));
   if (opts?.full || all.length <= 5) {
-    return { task, steps: all, truncated: false };
+    return { task, steps: all, shownSteps: all.length, totalSteps: all.length, truncated: false };
   }
-  return { task, steps: all.slice(-5), truncated: true };
+  const shown = all.slice(-5);
+  return { task, steps: shown, shownSteps: shown.length, totalSteps: all.length, truncated: true };
 }
 
 function taskSteps(task: TaskRecord, fallback?: StepFrontmatter[]): StepFrontmatter[] {

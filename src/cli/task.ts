@@ -225,7 +225,10 @@ export function registerTaskCommands(program: Command): void {
       console.log(`  finishedAt: ${result.task.finishedAt ?? '-'}`);
       if (result.task.waitReason) console.log(`  waitReason: ${result.task.waitReason}`);
       if (result.task.errorCode) console.log(`  error: ${result.task.errorCode} — ${result.task.errorMessage}`);
-      console.log(`  steps: ${result.steps.length} (totalSteps: ${result.steps.length}${result.truncated ? ', truncated' : ''})`);
+      console.log('  steps:');
+      console.log(`    shownSteps: ${result.shownSteps}`);
+      console.log(`    totalSteps: ${result.totalSteps}`);
+      console.log(`    truncated: ${result.truncated}`);
       if (result.steps.length > 0) {
         for (const s of result.steps) {
           const lat = s.latencyMs != null ? ` (${s.latencyMs}ms)` : '';

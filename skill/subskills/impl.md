@@ -40,9 +40,9 @@
    > ☑ **R13** / **R21** — `--ai-summary` ≤300 字符（CLI 截断,>300 自动 warn）
    > ☑ **R14** / **R22** — 流程规则,人工把关
 6. 🛑 **等用户审核**（R1）— 流程规则,停下等用户信号
-7. 用户批准 → `spec-manager spec confirm <code>` → 用户再批准 → `spec-manager spec freeze <code>`
+7. 用户一次批准 → `spec-manager spec confirm <code>`，L3 直接进入 `frozen`
    > ☑ **R2** / **R4** — 流程规则:状态由用户推进,每层独立审核
-   > CLI 在 `confirm`/`freeze` 之前会校验 R22（contentTemplate 非空）
+   > CLI 在批准进入 `frozen` 之前会校验 R22（contentTemplate 非空）
 
 ### Agent Task 执行
 

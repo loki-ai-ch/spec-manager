@@ -15,7 +15,7 @@
 - **Four-layer funnel** — Requirements → Design → Implementation → Continuity, with human review gates at each layer
 - **L0/L1/L2/L3 spec hierarchy** — vision / PRD / design / implementation spec
 - **24 rules** with `applies_to` filtering — no need to load all 24 every time
-- **Status machine** `draft → confirmed → frozen → implemented`
+- **Status machine** L1/L2 use `draft → confirmed`; L3 uses `draft → frozen → implemented`
 - **Agent Task lifecycle** — `create → start → step → complete`, steps in spec frontmatter; R5 blocks complete if steps are skipped
 - **Decision cards** with `what/why/affectedCriteria` + topic query
 - **Rule audit** with at-least-once local JSON accumulator
@@ -140,9 +140,11 @@ spec-manager project doctor                 # check setup, agent files, skill as
 spec-manager flow status --topic auth       # show L1/L2/L3/Task progress and the next command
 spec-manager guide "add user auth"          # print the next useful step for a request
 spec-manager new feature --topic auth "User authentication"
-spec-manager approve auth-L1                # draft→confirmed, or L3 confirmed→frozen
+spec-manager approve auth-L1                # L1/L2 draft→confirmed; L3 draft/confirmed→frozen
 spec-manager run auth-L3.1.1 --plan ./plan.json
 spec-manager template L1 --title "User authentication" > l1.md
+spec-manager completion install zsh         # also supports bash and fish
+spec-manager completion uninstall           # removes all installed completion scripts
 ```
 
 Long-form commands remain available; the shortcuts only wrap the same rules and state machine.
@@ -153,9 +155,10 @@ Long-form commands remain available; the shortcuts only wrap the same rules and 
 | `flow status` | You need to know where a topic is blocked | L1/L2/L3/Task state and the next command |
 | `guide` | You have a request but do not know which command starts it | The next useful step without changing files |
 | `new feature` | You want the fastest safe way to start an L1 | Creates the L1 shell and prints the next update command |
-| `approve` | The user has explicitly approved a spec | Advances `draft→confirmed` or `L3 confirmed→frozen` |
+| `approve` | The user has explicitly approved a spec | Advances L1/L2 `draft→confirmed` or L3 `draft/confirmed→frozen` |
 | `run` | A frozen L3 is ready to execute | Creates and starts the task from a plan file |
 | `template` | You need a draft file for L1/L2/L3 or `agent-plan` | Prints or writes the bundled template |
+| `completion install/uninstall` | You want shell command and spec-code completion | Installs or removes zsh/bash/fish completion scripts |
 
 Examples:
 
@@ -165,6 +168,8 @@ spec-manager flow status --topic auth
 spec-manager template L2 --title "Invoice module" --output l2.md
 spec-manager guide "add billing export"
 ```
+
+After `completion install`, start a new shell session or reload that shell's completion configuration using the printed hint.
 
 ## Usage scenarios
 
@@ -198,8 +203,7 @@ spec-manager spec confirm <l2-code>
 
 spec-manager spec new L3 --topic billing --title "PDF generation" --parent <l2-code>
 spec-manager spec update <l3-code> --content ./l3.md --ai-summary "..." --change-summary "init"
-spec-manager spec confirm <l3-code>
-spec-manager spec freeze <l3-code>                    # frozen → can create task
+spec-manager spec confirm <l3-code>                   # one approval: draft → frozen
 
 spec-manager task create <l3-code> --plan ./plan.json --auto-confirm
 spec-manager task start T-001
@@ -351,7 +355,7 @@ spec-manager spec update auth-L3.1.1-jwt \
   --change-summary "Initial L3"
 ```
 
-L3 needs two confirmations: `spec confirm auth-L3.1.1-jwt`, then `spec freeze auth-L3.1.1-jwt`. `frozen` is the prerequisite for creating an Agent Task.
+L3 needs one explicit user approval: `spec confirm auth-L3.1.1-jwt` advances it directly from `draft` to `frozen`. Historical L3 specs already in `confirmed` can still use `spec freeze`. `frozen` remains the prerequisite for creating an Agent Task.
 
 ### 6. Create and run the Agent Task
 

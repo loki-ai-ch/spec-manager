@@ -2,7 +2,13 @@ import { Command } from 'commander';
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { installAgentSupport, listAgentProviders, parseAgentProviders } from '../core/agents.js';
+import {
+  detectAgentProviders,
+  installAgentSupport,
+  listAgentProviders,
+  parseAgentProviders,
+  type AgentProviderDetection,
+} from '../core/agents.js';
 import { getPaths } from '../core/paths.js';
 import { listAllSpecs } from '../core/spec-io.js';
 import { runProjectDoctor } from '../core/usability.js';
@@ -51,28 +57,36 @@ export function registerProject(program: Command): void {
 
   cmd
     .command('agents')
-    .description('安装 AI agent 指令与 skill（claude/codex/opencode/codebuddy/all）')
-    .option('-p, --provider <provider>', 'list | all | claude | codex | opencode | codebuddy（可逗号组合）', 'all')
+    .description('安装 AI agent 指令与 skill（不传 provider 自动检测；显式 all 安装全部）')
+    .option('-p, --provider <provider>', 'list | all | claude | codex | opencode | codebuddy | cursor | windsurf（可逗号组合）')
     .option('--dry-run', '只显示将写入/覆盖/跳过的文件，不实际落盘')
     .option('--force', '覆盖已存在的 agent 指令文件/skill 目录')
     .action((opts) => {
-      if (String(opts.provider).trim().toLowerCase() === 'list') {
+      const providerInput = opts.provider === undefined ? undefined : String(opts.provider);
+      if (providerInput?.trim().toLowerCase() === 'list') {
         printAgentProviderList();
         return;
       }
 
       const paths = getPaths();
       const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+      const detection = providerInput === undefined ? detectAgentProviders(paths) : undefined;
+      if (detection && detection.providers.length === 0) {
+        throw new Error(
+          'NO_PROVIDER_DETECTED: no AI agent provider marker found. Use --provider all or pass an explicit provider.',
+        );
+      }
       const report = installAgentSupport({
         paths,
         packageRoot,
-        providers: parseAgentProviders(opts.provider),
+        providers: detection?.providers ?? parseAgentProviders(providerInput ?? ''),
         force: Boolean(opts.force),
         dryRun: Boolean(opts.dryRun),
       });
 
       const verb = report.dryRun ? 'planned' : 'installed';
       console.log(`✓ AI agent support ${verb}: ${report.providers.join(', ')}`);
+      if (detection) printAgentDetection(detection);
       printPathGroup(report.dryRun ? 'would create' : 'created', report.created);
       printPathGroup(report.dryRun ? 'would overwrite' : 'overwritten', report.overwritten);
       printPathGroup('skipped', report.skipped);
@@ -83,8 +97,7 @@ export function registerProject(program: Command): void {
       if (!report.dryRun) {
         console.log('');
         console.log('Next:');
-        console.log('  Claude / CodeBuddy: /spec-manager add user authentication feature');
-        console.log('  Codex / OpenCode: Ask "Use spec-manager to add user authentication feature."');
+        console.log('  Use spec-manager to add user authentication feature.');
         console.log('  Verify: spec-manager project doctor');
       }
     });
@@ -131,6 +144,15 @@ export function registerProject(program: Command): void {
         console.log('\n(尚无 spec)');
       }
     });
+}
+
+function printAgentDetection(detection: AgentProviderDetection): void {
+  console.log('detected:');
+  for (const provider of detection.providers) {
+    for (const reason of detection.reasons[provider] ?? []) {
+      console.log(`  - ${reason} -> ${provider}`);
+    }
+  }
 }
 
 function printAgentProviderList(): void {

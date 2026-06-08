@@ -1,0 +1,84 @@
+{
+  "id": "T-001",
+  "specCode": "roadmap-openspec-L3.1.2-agents",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 roadmap-openspec-L3.1.2-agents 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"完成 L3/L2/agent-plan 与 agents CLI/test 基线读取\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:28:37.264Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/agents.ts 新增 detectAgentProviders",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"新增 detectAgentProviders 核心检测函数\",\"files\":[\"src/core/agents.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:29:10.881Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/project.ts 调整 project agents 默认检测",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"调整 project agents 默认 provider 自动检测行为\",\"files\":[\"src/cli/project.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:29:33.110Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/__tests__/agents.test.ts 补充 provider 检测测试",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"补充 provider 自动检测核心单元测试\",\"files\":[\"src/core/__tests__/agents.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:29:57.264Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/__tests__/project-agents.test.ts 补充 CLI 自动检测测试",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"补充 project agents CLI 自动检测和显式 provider 测试\",\"files\":[\"src/cli/__tests__/project-agents.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:30:19.544Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/project.ts 更新 project agents help",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"更新 project agents help 并准备自动检测 smoke\",\"files\":[\"src/cli/project.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:30:24.664Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证 agents targeted tests、npm run build、完整 npm test 和 auto-detect smoke",
+      "status": "succeeded",
+      "toolName": "mcp_tool",
+      "outputJson": "{\"summary\":\"完成 targeted tests、build、完整 npm test 和 provider auto-detect smoke 验证\",\"files\":[]}",
+      "latencyMs": 30000,
+      "reportedAt": "2026-06-08T02:31:44.615Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T02:28:29.852Z",
+  "finishedAt": "2026-06-08T02:31:56.516Z",
+  "created": "2026-06-08T02:28:24.418Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

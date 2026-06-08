@@ -1,0 +1,94 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-hardening-L3.1.1-cli",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 workflow-hardening-L3.1.1-cli 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 L3/L2/agent-plan 与 validate/spec/task/template 测试基线读取\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:16:46.643Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/validate.ts 新增 extractPlanJsonFromSpecContent",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 extractPlanJsonFromSpecContent 从 L3 markdown 抽取 planJson\",\"files\":[\"src/core/validate.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:17:31.579Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/validate.ts 新增 placeholder_marker warning",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"validateSpecContent 新增 placeholder_marker warning\",\"files\":[\"src/core/validate.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:17:31.581Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/spec.ts 接入 validate-plan --from-spec",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"spec validate-plan 支持 --from-spec 并保留文件模式\",\"files\":[\"src/cli/spec.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:17:56.045Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/task.ts 与 templates/L3-impl.md 和 templates/agent-plan.json 统一 coveredSpecs",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"统一 coveredSpecs 必填规则、L3 模板和 R12 错误示例\",\"files\":[\"src/core/task.ts\",\"templates/L3-impl.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:18:18.476Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/__tests__/validate.test.ts 补充 planJson 抽取和 placeholder 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 planJson 抽取和 placeholder warning 单元测试\",\"files\":[\"src/core/__tests__/validate.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:19:29.069Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/__tests__/task-cascade.test.ts 与 CLI 测试补充 coveredSpecs 和 validate-plan 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 coveredSpecs 错误消息与 validate-plan CLI 测试\",\"files\":[\"src/core/__tests__/task-cascade.test.ts\",\"src/cli/__tests__/spec.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T01:22:21.366Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 npm test targeted、npm run build、validate-plan from-spec 和 R12 smoke",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 targeted tests、npm run build、validate-plan from-spec、placeholder validate、R12 smoke，并额外通过完整 npm test\",\"files\":[]}",
+      "latencyMs": 30000,
+      "reportedAt": "2026-06-08T01:21:49.248Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T01:16:46.621Z",
+  "finishedAt": "2026-06-08T01:22:30.454Z",
+  "created": "2026-06-08T01:16:32.057Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

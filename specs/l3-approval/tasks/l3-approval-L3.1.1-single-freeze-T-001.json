@@ -1,0 +1,78 @@
+{
+  "id": "T-001",
+  "specCode": "l3-approval-L3.1.1-single-freeze",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 l3-approval-L3.1.1-single-freeze、l3-approval-L2.1 和 templates/agent-plan.json 并完成文件级分析",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"完成 L3/L2/agent-plan 与相关代码、规则、文档和测试基线读取\",\"files\":[]}",
+      "reportedAt": "2026-06-08T03:03:50.665Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/status.ts 和 status.test.ts 扩展 draft 到 frozen 转换",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"允许 draft 到 frozen 状态转换并更新状态机测试\",\"files\":[\"src/core/status.ts\",\"src/core/__tests__/status.test.ts\"]}",
+      "reportedAt": "2026-06-08T03:03:57.341Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/spec.ts 和 src/cli/usability.ts 统一 L3 单次批准目标状态",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"统一 spec confirm 和 approve 的 L3 单次批准目标，并为 approve 补齐 R22 校验\",\"files\":[\"src/cli/spec.ts\",\"src/cli/usability.ts\"]}",
+      "reportedAt": "2026-06-08T03:04:06.654Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/usability.ts 和 usability.test.ts 更新 flow guide 建议",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"更新 flow 和 guide 的 L3 单次批准结果提示\",\"files\":[\"src/core/usability.ts\",\"src/core/__tests__/usability.test.ts\"]}",
+      "reportedAt": "2026-06-08T03:04:17.461Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 CLI spec task 测试覆盖单次批准和门禁兼容",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"补充 L3 单次批准、历史兼容、L1/L2 语义和 R22 门禁 CLI 测试\",\"files\":[\"src/cli/__tests__/spec.test.ts\",\"src/cli/__tests__/usability.test.ts\"]}",
+      "reportedAt": "2026-06-08T03:04:25.001Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 flow-control README skill 同步 L3 单次批准规则",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"同步 flow-control、README 和 skill 的 L3 单次批准规则\",\"files\":[\"rules/flow-control.md\",\"README.md\",\"skill/SKILL.md\",\"skill/subskills/impl.md\"]}",
+      "reportedAt": "2026-06-08T03:04:35.505Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "编辑根 AGENTS agent 模板和 agents.test.ts 同步统一规则",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"同步根 AGENTS 和多工具 agent 模板的 L3 单次批准规则并增加一致性测试\",\"files\":[\"AGENTS.md\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"templates/agents/codebuddy-skill/SKILL.md\",\"src/core/__tests__/agents.test.ts\"]}",
+      "reportedAt": "2026-06-08T03:06:08.785Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "运行 targeted tests build 完整测试 CLI smoke 和残留检查",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"构建通过，19 个测试文件共 305 个测试通过，L3 和 planJson 校验通过，双批准要求无残留\",\"files\":[]}",
+      "reportedAt": "2026-06-08T03:06:14.548Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T03:00:00.482Z",
+  "finishedAt": "2026-06-08T03:06:19.179Z",
+  "created": "2026-06-08T02:59:56.853Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

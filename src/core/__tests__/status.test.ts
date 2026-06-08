@@ -53,8 +53,8 @@ describe('canTransition — 状态转移校验', () => {
     expect(canTransition('implemented', 'draft')).toBe(false);
   });
 
-  it('禁止跳步: draft → frozen', () => {
-    expect(canTransition('draft', 'frozen')).toBe(false);
+  it('允许 L3 批准入口使用 draft → frozen', () => {
+    expect(canTransition('draft', 'frozen')).toBe(true);
   });
 
   it('禁止跳步: draft → implemented', () => {
@@ -67,9 +67,9 @@ describe('canTransition — 状态转移校验', () => {
 });
 
 describe('nextStatuses — 可达状态列表', () => {
-  it('draft 可达 confirmed, archived', () => {
-    expect(nextStatuses('draft')).toEqual(expect.arrayContaining(['confirmed', 'archived']));
-    expect(nextStatuses('draft')).toHaveLength(2);
+  it('draft 可达 confirmed, frozen, archived', () => {
+    expect(nextStatuses('draft')).toEqual(expect.arrayContaining(['confirmed', 'frozen', 'archived']));
+    expect(nextStatuses('draft')).toHaveLength(3);
   });
 
   it('confirmed 可达 frozen, archived', () => {

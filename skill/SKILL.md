@@ -41,6 +41,17 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 | L2 Design | 技术设计 | confirmed 才能进实施 |
 | L3 Impl | 实施规格 | ≤20 步，frozen 后建 Task |
 
+## Unified Rules
+
+- Feature work MUST go through `spec-manager`.
+- New or non-trivial work follows L1 -> L2 -> L3 -> Agent Task.
+- Never write implementation code without a frozen L3 spec.
+- L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
+- Before code edits, read the frozen L3 spec and create/start an Agent Task.
+- planJson `coveredSpecs` MUST include the current L3 specCode.
+- Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
+- Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
+
 ## 规则（24 条，按 applies_to 过滤）
 
 | 主题 | 规则 | 文件 |
@@ -55,8 +66,9 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 ## Spec 状态流
 
 ```
-draft → confirmed → frozen → implemented
- AI agent 用户      用户     task_complete
+L1/L2: draft → confirmed
+L3:    draft → frozen → implemented
+        AI agent  用户      task_complete
 ```
 
 ## CLI 概要

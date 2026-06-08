@@ -285,9 +285,21 @@ describe('R10 / R12 planJson 门禁', () => {
         coveredSpecs: ['other-L3.1.1'],
         steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
       },
-    })).toThrow(/R12/);
+    })).toThrow(new RegExp(`R12[\\s\\S]*coveredSpecs[\\s\\S]*${l3Code}[\\s\\S]*Example`));
     const audit = readAudit(paths);
     expect(audit.rules.R12).toBe(1);
+  });
+
+  it('coveredSpecs 缺失时 createTask 错误包含可复制 JSON 示例', () => {
+    const { l3Code } = createFrozenHierarchy('missing-covered');
+    expect(() => createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: {
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      },
+    })).toThrow(new RegExp(`"coveredSpecs": \\["${l3Code}"\\]`));
   });
 
   it('超过 20 步时 createTask 拒绝并记录 R11', () => {
@@ -394,6 +406,29 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
     expect(shownB).not.toBeNull();
     expect(shownA!.task.specCode).toBe(l3a);
     expect(shownB!.task.specCode).toBe(l3b);
+  });
+
+  it('showTask reports shownSteps and totalSteps when truncated', () => {
+    const { l3Code } = createFrozenHierarchy('shown-total');
+    const planJson = planFor(
+      l3Code,
+      Array.from({ length: 8 }, (_, i) => ({
+        stepNo: i + 1,
+        stepType: 'mcp_tool' as const,
+        name: i === 7 ? 'run verify test' : `inspect file ${i + 1}`,
+      })),
+    );
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson });
+
+    const truncated = showTask(paths, task.id, { specCode: l3Code });
+    expect(truncated?.shownSteps).toBe(5);
+    expect(truncated?.totalSteps).toBe(8);
+    expect(truncated?.truncated).toBe(true);
+
+    const full = showTask(paths, task.id, { specCode: l3Code, full: true });
+    expect(full?.shownSteps).toBe(8);
+    expect(full?.totalSteps).toBe(8);
+    expect(full?.truncated).toBe(false);
   });
 
   it('failTask 用 specCode 区分同名 T-001', () => {

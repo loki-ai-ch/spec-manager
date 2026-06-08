@@ -3,10 +3,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { getPaths } from '../core/paths.js';
-import { createSpec, findSpecByCode, generateSpecCode, updateSpec } from '../core/spec-io.js';
+import { createSpec, findSpecByCode, generateSpecCode, isPlaceholderContent, updateSpec } from '../core/spec-io.js';
 import { canTransition, type SpecStatus } from '../core/status.js';
 import { createTask, startTask } from '../core/task.js';
-import { getFlowStatus, renderTemplate, runProjectDoctor, suggestAfterSpecCommand } from '../core/usability.js';
+import { getFlowStatus, isBlockingDoctorCheck, renderRichGuide, renderTemplate, runProjectDoctor, suggestAfterSpecCommand } from '../core/usability.js';
 import type { SpecLevel } from '../core/validate.js';
 import { fail, requireInitialized } from './common.js';
 
@@ -46,15 +46,24 @@ export function registerUsabilityCommands(program: Command): void {
   program
     .command('guide [request...]')
     .description('新手向导：检查项目状态并给出下一步')
-    .action((requestParts: string[]) => {
+    .option('--format <format>', 'text | rich', 'text')
+    .action((requestParts: string[], opts: { format: string }) => {
       const request = requestParts.join(' ').trim();
       const paths = getPaths();
       if (!paths.isInitialized) {
         console.log('Next: spec-manager project init --name <project-name>');
         return;
       }
+      if (opts.format !== 'text' && opts.format !== 'rich') {
+        fail('✗ guide --format 必须是 text 或 rich', 2);
+      }
+      if (opts.format === 'rich') {
+        const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+        process.stdout.write(renderRichGuide(paths, packageRoot, request) + '\n');
+        return;
+      }
       const doctor = runProjectDoctor(paths);
-      const blocking = doctor.find((c) => c.status === 'fail' || c.status === 'warn');
+      const blocking = doctor.find((c) => isBlockingDoctorCheck(c) && c.action);
       if (blocking?.action) {
         console.log(`Next: ${blocking.action}`);
         return;
@@ -63,6 +72,14 @@ export function registerUsabilityCommands(program: Command): void {
       const flow = getFlowStatus(paths, { topic })[0];
       console.log(`Request: ${request || '(none)'}`);
       console.log(`Next: ${flow?.nextAction ?? `spec-manager spec new L1 --topic ${topic} --title "..."`}`);
+      const advisory = doctor.filter((c) => c.status !== 'ok' && !isBlockingDoctorCheck(c));
+      if (advisory.length > 0) {
+        console.log('Advisory:');
+        for (const check of advisory) {
+          console.log(`  - ${check.label}: ${check.detail}`);
+          if (check.action) console.log(`    Next: ${check.action}`);
+        }
+      }
     });
 
   program
@@ -90,24 +107,33 @@ export function registerUsabilityCommands(program: Command): void {
       });
       console.log(`✓ Created feature L1: ${rec.fm.code}`);
       console.log(`  file: ${rec.filePath}`);
-      console.log(`Next: ${suggestAfterSpecCommand(rec)}`);
+      console.log(`Next: ${suggestAfterSpecCommand(rec, paths)}`);
     });
 
   program
     .command('approve <code>')
-    .description('快捷批准当前 spec：draft→confirmed，L3 confirmed→frozen')
+    .description('快捷批准当前 spec：L1/L2 draft→confirmed，L3 draft/confirmed→frozen')
     .action((code: string) => {
       const paths = getPaths();
       requireInitialized(paths);
       const rec = findSpecByCode(paths, code);
       if (!rec) fail(`✗ 未找到: ${code}`, 1);
-      const target: SpecStatus = rec.fm.level === 'L3' && rec.fm.status === 'confirmed' ? 'frozen' : 'confirmed';
+      const target: SpecStatus = rec.fm.level === 'L3' && (rec.fm.status === 'draft' || rec.fm.status === 'confirmed')
+        ? 'frozen'
+        : 'confirmed';
+      if ((target === 'confirmed' || target === 'frozen') && isPlaceholderContent(rec.content)) {
+        fail(
+          `✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）\n` +
+          `  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`,
+          2,
+        );
+      }
       if (!canTransition(rec.fm.status, target)) {
         fail(`✗ 状态非法: ${rec.fm.status} → ${target}\nNext: spec-manager flow status --topic ${rec.fm.topic}`, 2);
       }
       const { record } = updateSpec(paths, code, { status: target, changeSummary: `${rec.fm.status} → ${target}` });
       console.log(`✓ ${code}: ${rec.fm.status} → ${target}`);
-      console.log(`Next: ${suggestAfterSpecCommand(record)}`);
+      console.log(`Next: ${suggestAfterSpecCommand(record, paths)}`);
     });
 
   program

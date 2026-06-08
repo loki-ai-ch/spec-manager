@@ -11,6 +11,7 @@ import {
   listAllSpecs,
   generateSpecCode,
   invalidateSpecCache,
+  isPlaceholderContent,
   writeSpec,
   type SpecRecord,
 } from '../spec-io.js';
@@ -268,6 +269,30 @@ describe('updateSpec — 更新 spec', () => {
     const before = findSpecByCode(paths, 'auth-L1')!.fm.updated;
     const { record } = updateSpec(paths, 'auth-L1', { content: 'new', aiSummary: 'new' });
     expect(record.fm.updated >= before).toBe(true);
+  });
+});
+
+describe('isPlaceholderContent — placeholder 判定', () => {
+  it('识别 createSpec 的真实占位正文', () => {
+    expect(isPlaceholderContent('# Auth\n\n<!-- 在此粘贴正文 -->\n')).toBe(true);
+  });
+
+  it('完整正文引用 marker 示例时不判为占位', () => {
+    const content = `# Placeholder validation
+
+## 背景
+This complete specification documents how placeholder validation behaves across validate, guide, flow, and doctor.
+
+## 用户故事
+As a maintainer, I want examples such as <!-- 在此粘贴正文 --> to remain valid documentation.
+
+## 验收标准
+1. **AC-1**: Given a complete specification, When it references the marker, Then validation SHALL not report a placeholder.
+
+## 范围边界
+The real scaffold marker in a short, otherwise empty specification remains blocked by R22.
+`;
+    expect(isPlaceholderContent(content)).toBe(false);
   });
 });
 

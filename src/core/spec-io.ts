@@ -17,8 +17,10 @@ import {
   type ProjectPaths,
   type SpecFileEntry,
 } from './paths.js';
-import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER, PLACEHOLDER_CONTENT_MAX } from './constants.js';
+import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER } from './constants.js';
 import { recordAuditHit, type AuditSink } from './audit-events.js';
+import { isPlaceholderContent } from './placeholder.js';
+export { isPlaceholderContent } from './placeholder.js';
 
 export interface SpecFrontmatter {
   id?: string;
@@ -299,16 +301,6 @@ export function updateSpec(
     recordAuditHit({ paths, ruleId: 'R22', specCode: code }, opts?.auditSink);
   }
   return { record: rec, warnings };
-}
-
-/**
- * R22: contentTemplate 是不是只剩 createSpec 写出的占位?
- * 占位 = 文件里有 marker 行,且去掉 marker 后正文长度 < PLACEHOLDER_CONTENT_MAX。
- */
-export function isPlaceholderContent(content: string): boolean {
-  if (!content || !content.includes(PLACEHOLDER_MARKER)) return false;
-  const stripped = content.replace(PLACEHOLDER_MARKER, '').trim();
-  return stripped.length < PLACEHOLDER_CONTENT_MAX;
 }
 
 function validateSpecFileIdentity(entry: SpecFileEntry, record: SpecRecord): void {

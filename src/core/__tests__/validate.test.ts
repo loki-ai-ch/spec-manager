@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { validateSpecContent, validatePlanJson } from '../validate.js';
+import { extractPlanJsonFromSpecContent, validateSpecContent, validatePlanJson } from '../validate.js';
 
 describe('validateSpecContent — 必填段校验', () => {
   it('L1 完整正文无 warning', () => {
@@ -218,6 +218,92 @@ scope
 `;
     const warnings = validateSpecContent('L1', content);
     expect(warnings.some(w => w.rule === 'no_ac_items')).toBe(true);
+  });
+
+  it('正文包含 placeholder marker 时返回 warning', () => {
+    const content = `# Auth
+
+## 背景
+bg
+
+## 用户故事
+story
+
+## 验收标准
+1. **AC-1**: 系统 SHALL 支持登录
+
+## 范围边界
+scope
+
+<!-- 在此粘贴正文 -->
+`;
+    const warnings = validateSpecContent('L1', content);
+    expect(warnings.some(w => w.rule === 'placeholder_marker')).toBe(true);
+  });
+
+  it('完整正文引用 placeholder marker 示例时不返回 warning', () => {
+    const content = `# Placeholder validation
+
+## 背景
+This complete specification documents placeholder validation behavior across validate, guide, flow, and doctor.
+
+## 用户故事
+As a maintainer, I want examples such as <!-- 在此粘贴正文 --> to remain valid documentation.
+
+## 验收标准
+1. **AC-1**: Given a complete specification, When it references the marker, Then validation SHALL not report a placeholder.
+
+## 范围边界
+The real scaffold marker in a short, otherwise empty specification remains blocked by R22.
+`;
+    const warnings = validateSpecContent('L1', content);
+    expect(warnings.some(w => w.rule === 'placeholder_marker')).toBe(false);
+  });
+});
+
+describe('extractPlanJsonFromSpecContent', () => {
+  it('extracts planJson from the final plan section', () => {
+    const plan = extractPlanJsonFromSpecContent(`# Impl
+
+## step_report 模板
+
+\`\`\`json
+{"taskId":"T-001"}
+\`\`\`
+
+## planJson (final)
+
+\`\`\`json
+{
+  "coveredSpecs": ["auth-L3.1.1-login"],
+  "steps": [
+    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 auth-L3.1.1-login 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "mcp_tool", "name": "验证 npm test"}
+  ]
+}
+\`\`\`
+`);
+
+    expect(plan).toEqual({
+      coveredSpecs: ['auth-L3.1.1-login'],
+      steps: [
+        { stepNo: 1, stepType: 'mcp_tool', name: '读取 auth-L3.1.1-login 并检查 templates/agent-plan.json' },
+        { stepNo: 2, stepType: 'mcp_tool', name: '验证 npm test' },
+      ],
+    });
+  });
+
+  it('throws PLAN_JSON_MISSING when the final plan section is absent', () => {
+    expect(() => extractPlanJsonFromSpecContent('# Impl\n')).toThrow(/PLAN_JSON_MISSING/);
+  });
+
+  it('throws PLAN_JSON_INVALID when the json block cannot be parsed', () => {
+    expect(() => extractPlanJsonFromSpecContent(`## planJson (final)
+
+\`\`\`json
+{ invalid
+\`\`\`
+`)).toThrow(/PLAN_JSON_INVALID/);
   });
 });
 

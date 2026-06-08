@@ -4,14 +4,16 @@ This file is the spec-manager skill-like entrypoint for Codex, OpenCode, and oth
 
 This project uses `spec-manager` for local-first spec-driven development. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
 
-## Mandatory Workflow
+## Unified Rules
 
-- Feature work MUST go through `spec-manager`; do not jump directly from a user request to implementation code.
-- New or non-trivial work follows L1 PRD -> L2 Design -> L3 Impl -> Agent Task.
-- Never write implementation code unless the relevant L3 spec is `frozen`.
-- `draft -> confirmed` and `confirmed -> frozen` are user review actions. After writing spec content, stop and wait for explicit user approval.
+- Feature work MUST go through `spec-manager`.
+- New or non-trivial work follows L1 -> L2 -> L3 -> Agent Task.
+- Never write implementation code without a frozen L3 spec.
+- L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
 - Before creating a new spec, inspect existing specs and decisions with `spec-manager spec list` and `spec-manager decision list --topic <topic>`.
-- Before code edits, read the relevant frozen L3 spec and create/start an Agent Task.
+- Before code edits, read the frozen L3 spec and create/start an Agent Task.
+- planJson `coveredSpecs` MUST include the current L3 specCode.
+- Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
 - Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
 
 ## Common Commands

@@ -2,7 +2,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } fr
 import { dirname, join, relative } from 'node:path';
 import type { ProjectPaths } from './paths.js';
 
-export const AGENT_PROVIDERS = ['claude', 'codex', 'opencode', 'codebuddy'] as const;
+export const AGENT_PROVIDERS = ['claude', 'codex', 'opencode', 'codebuddy', 'cursor', 'windsurf'] as const;
 
 export type AgentProvider = (typeof AGENT_PROVIDERS)[number];
 export type AgentProviderSelection = AgentProvider | 'all';
@@ -35,6 +35,11 @@ export interface AgentInstallReport {
   overwritten: string[];
   skipped: string[];
   notes: string[];
+}
+
+export interface AgentProviderDetection {
+  providers: AgentProvider[];
+  reasons: Partial<Record<AgentProvider, string[]>>;
 }
 
 export const AGENT_PROVIDER_INFO: AgentProviderInfo[] = [
@@ -89,6 +94,26 @@ export const AGENT_PROVIDER_INFO: AgentProviderInfo[] = [
       { kind: 'directory', source: 'templates', target: '.codebuddy/skills/spec-manager/templates' },
     ],
   },
+  {
+    provider: 'cursor',
+    aliases: ['cursor'],
+    files: ['.cursorrules'],
+    description: 'Cursor project rules via .cursorrules.',
+    notes: ['Cursor reads project rules from .cursorrules.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/CURSOR.md', target: '.cursorrules' },
+    ],
+  },
+  {
+    provider: 'windsurf',
+    aliases: ['windsurf'],
+    files: ['.windsurfrules'],
+    description: 'Windsurf project rules via .windsurfrules.',
+    notes: ['Windsurf reads project rules from .windsurfrules.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/WINDSURF.md', target: '.windsurfrules' },
+    ],
+  },
 ];
 
 export function parseAgentProviders(input: string): AgentProviderSelection[] {
@@ -125,6 +150,26 @@ export function expandAgentProviders(providers: AgentProviderSelection[]): Agent
 
 export function listAgentProviders(): AgentProviderInfo[] {
   return AGENT_PROVIDER_INFO;
+}
+
+export function detectAgentProviders(paths: ProjectPaths): AgentProviderDetection {
+  const reasons: Partial<Record<AgentProvider, string[]>> = {};
+
+  for (const info of AGENT_PROVIDER_INFO) {
+    for (const file of info.files) {
+      const relPath = file.replace(/\/+$/, '');
+      if (!existsSync(join(paths.root, ...relPath.split('/')))) continue;
+      reasons[info.provider] = reasons[info.provider] ?? [];
+      if (!reasons[info.provider]?.includes(relPath)) {
+        reasons[info.provider]?.push(relPath);
+      }
+    }
+  }
+
+  return {
+    providers: AGENT_PROVIDERS.filter((provider) => (reasons[provider]?.length ?? 0) > 0),
+    reasons,
+  };
 }
 
 export function installAgentSupport(options: InstallAgentSupportOptions): AgentInstallReport {

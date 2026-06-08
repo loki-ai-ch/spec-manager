@@ -1,0 +1,94 @@
+{
+  "id": "T-001",
+  "specCode": "roadmap-openspec-L3.1.1-guide",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 roadmap-openspec-L3.1.1-guide 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 L3 + L2 + agent-plan + usability/validate/spec-io 测试基线读取\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:46:37.994Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/validate.ts 导出 REQUIRED_SECTIONS",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"导出 REQUIRED_SECTIONS 供 rich guide 渲染必填段\",\"files\":[\"src/core/validate.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:47:06.190Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/usability.ts 新增 readProjectContext",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 readProjectContext 从 config.yaml 读取可选 context\",\"files\":[\"src/core/usability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:47:48.799Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/usability.ts 新增 renderRichGuide",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 renderRichGuide 输出结构化 AI prompt 段\",\"files\":[\"src/core/usability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:47:53.554Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/usability.ts 接入 guide --format text|rich",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"为 CLI guide 接入 --format text|rich 并保持默认 text 行为\",\"files\":[\"src/cli/usability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:48:11.915Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/__tests__/usability.test.ts 补充 rich guide 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 rich guide 与 project context core 测试\",\"files\":[\"src/core/__tests__/usability.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:49:05.373Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/__tests__/usability.test.ts 补充 guide format CLI 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 guide CLI 默认 text、rich 和非法 format 测试\",\"files\":[\"src/cli/__tests__/usability.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-06T02:49:05.404Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 npm test targeted、npm run build、node dist/cli/index.js guide smoke",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 targeted tests、npm run build、rich guide smoke、非法 format smoke，并额外通过完整 npm test\",\"files\":[]}",
+      "latencyMs": 30000,
+      "reportedAt": "2026-06-06T02:50:10.468Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-06T02:46:37.894Z",
+  "finishedAt": "2026-06-06T02:50:14.374Z",
+  "created": "2026-06-06T02:46:29.205Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

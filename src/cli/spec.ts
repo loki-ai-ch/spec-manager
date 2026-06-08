@@ -12,7 +12,7 @@ import {
   DESC_MAX_LEN,
 } from '../core/spec-io.js';
 import { canTransition, isActiveStatus, nextStatuses } from '../core/status.js';
-import { validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
+import { extractPlanJsonFromSpecContent, validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
 import { hit } from '../core/audit.js';
 import { listDecisions } from '../core/decision.js';
 import { suggestAfterSpecCommand } from '../core/usability.js';
@@ -85,7 +85,7 @@ export function registerSpec(program: Command): void {
       console.log(`  file:     ${rec.filePath}`);
       console.log(`  status:   ${rec.fm.status}`);
       if (rec.fm.milestone) console.log(`  milestone:${rec.fm.milestone}`);
-      console.log(`\nNext: ${suggestAfterSpecCommand(rec)}`);
+      console.log(`\nNext: ${suggestAfterSpecCommand(rec, paths)}`);
     });
 
   cmd
@@ -177,7 +177,7 @@ export function registerSpec(program: Command): void {
         console.log(`${sym} [${w.rule}] ${w.message}`);
       }
       console.log(`✓ 已更新 ${code}（status: ${result.record.fm.status}）`);
-      console.log(`Next: ${suggestAfterSpecCommand(result.record)}`);
+      console.log(`Next: ${suggestAfterSpecCommand(result.record, paths)}`);
     });
 
   // 状态推进命令
@@ -196,19 +196,26 @@ export function registerSpec(program: Command): void {
         if (!rec) {
           fail(`✗ 未找到: ${code}`);
         }
+        const actualTarget =
+          sub === 'confirm' && rec.fm.level === 'L3' && rec.fm.status === 'draft'
+            ? 'frozen'
+            : target;
+        if (actualTarget === 'frozen' && rec.fm.status === 'draft' && rec.fm.level !== 'L3') {
+          fail(`✗ 状态非法: ${rec.fm.level} ${rec.fm.status} → ${actualTarget}\n  L1/L2 请先使用 spec-manager spec confirm ${code}`, 2);
+        }
         // R22: 推进到 confirmed/frozen 之前,contentTemplate 不能只有占位
-        if ((target === 'confirmed' || target === 'frozen') && isPlaceholderContent(rec.content)) {
+        if ((actualTarget === 'confirmed' || actualTarget === 'frozen') && isPlaceholderContent(rec.content)) {
           fail(
             `✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）\n` +
             `  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`,
             2,
           );
         }
-        if (!canTransition(rec.fm.status, target)) {
-          fail(`✗ 状态非法: ${rec.fm.status} → ${target}\n  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`, 2);
+        if (!canTransition(rec.fm.status, actualTarget)) {
+          fail(`✗ 状态非法: ${rec.fm.status} → ${actualTarget}\n  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`, 2);
         }
         // R3: L3 的 implemented 应由 task cascade 触发，手动推进需 --force
-        if (target === 'implemented' && rec.fm.level === 'L3' && rec.fm.status === 'frozen' && !opts.force) {
+        if (actualTarget === 'implemented' && rec.fm.level === 'L3' && rec.fm.status === 'frozen' && !opts.force) {
           fail(
             `⚠ R3: L3 spec ${code} 的 implemented 应由 task complete 自动 cascade\n` +
             `  如确需手动推进，请用: spec-manager spec implement ${code} --force`,
@@ -217,9 +224,9 @@ export function registerSpec(program: Command): void {
         }
         hit({ paths, ruleId: 'R2', specCode: code });
         hit({ paths, ruleId: 'R9', specCode: code });
-        const { record } = updateSpec(paths, code, { status: target, changeSummary: `${rec.fm.status} → ${target}` });
-        console.log(`✓ ${code}: ${rec.fm.status} → ${target}`);
-        console.log(`Next: ${suggestAfterSpecCommand(record)}`);
+        const { record } = updateSpec(paths, code, { status: actualTarget, changeSummary: `${rec.fm.status} → ${actualTarget}` });
+        console.log(`✓ ${code}: ${rec.fm.status} → ${actualTarget}`);
+        console.log(`Next: ${suggestAfterSpecCommand(record, paths)}`);
       });
   }
 
@@ -278,16 +285,25 @@ export function registerSpec(program: Command): void {
     });
 
   cmd
-    .command('validate-plan <file>')
+    .command('validate-plan [file]')
     .description('校验 planJson 格式（INC-005 字段名 / R11 步数 / R10 末步验证）')
-    .action((file) => {
-      const plan = JSON.parse(readFileSync(file, 'utf8'));
+    .option('--from-spec <code>', '从 L3 spec markdown 的 planJson (final) 代码块抽取并校验')
+    .action((file: string | undefined, opts: { fromSpec?: string }) => {
+      const paths = getPaths();
+      if (file && opts.fromSpec) {
+        fail('✗ validate-plan 只能二选一：<file> 或 --from-spec <code>', 2);
+      }
+      if (!file && !opts.fromSpec) {
+        fail('✗ validate-plan 需要 <file> 或 --from-spec <code>', 2);
+      }
+      const plan = opts.fromSpec
+        ? readPlanJsonFromSpec(paths, opts.fromSpec)
+        : JSON.parse(readFileSync(file as string, 'utf8'));
       const warnings = validatePlanJson(plan);
       if (warnings.length === 0) {
         console.log(`✓ planJson 校验通过`);
         return;
       }
-      const paths = getPaths();
       const hitRules = new Set<string>();
       for (const w of warnings) {
         console.log(`⚠ [${w.rule}] ${w.message}`);
@@ -300,6 +316,17 @@ export function registerSpec(program: Command): void {
         hit({ paths, ruleId });
       }
     });
+}
+
+function readPlanJsonFromSpec(paths: ReturnType<typeof getPaths>, code: string): unknown {
+  const rec = findSpecByCode(paths, code);
+  if (!rec) fail(`✗ SPEC_NOT_FOUND: ${code}`, 1);
+  if (rec.fm.level !== 'L3') fail(`✗ --from-spec 只能指向 L3 spec，${code} 是 ${rec.fm.level}`, 2);
+  try {
+    return extractPlanJsonFromSpecContent(rec.content);
+  } catch (err) {
+    fail(`✗ ${err instanceof Error ? err.message : String(err)}`, 2);
+  }
 }
 
 function readStdin(): string {

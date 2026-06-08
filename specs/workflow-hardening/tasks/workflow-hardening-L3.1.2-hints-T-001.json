@@ -1,0 +1,94 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-hardening-L3.1.2-hints",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 workflow-hardening-L3.1.2-hints 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 L3/L2/agent-plan 与 usability/task/CLI 测试基线读取\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:08:24.144Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/usability.ts 增加 DoctorCheck blocking 分层",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"DoctorCheck 增加 blocking/advisory 分层 helper\",\"files\":[\"src/core/usability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:10:12.874Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/usability.ts 输出 guide advisory",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"default guide 改为关键检查 blocking、非关键检查 advisory\",\"files\":[\"src/cli/usability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:10:19.367Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/usability.ts 增加 upstream frozen advice",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 L3 上游 frozen 状态提示并接入下一步建议\",\"files\":[\"src/core/usability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:10:32.445Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/task.ts 与 src/cli/task.ts 修正 task show shownSteps totalSteps",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"task show 返回并输出 shownSteps/totalSteps/truncated\",\"files\":[\"src/core/task.ts\",\"src/cli/task.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:10:40.559Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "编辑 usability core 和 CLI 测试补充 guide advisory 与 upstream advice",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 upstream advice 与 guide advisory 测试\",\"files\":[\"src/core/__tests__/usability.test.ts\",\"src/cli/__tests__/usability.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:12:31.302Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "编辑 task core 和 CLI 测试补充 shown total 断言",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 task show shown/total core 和 CLI 测试\",\"files\":[\"src/core/__tests__/task-cascade.test.ts\",\"src/cli/__tests__/task.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-08T02:12:39.963Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 npm test targeted、npm run build、guide advisory 和 task show smoke",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 targeted tests、npm run build、guide advisory smoke、task show smoke，并额外通过完整 npm test\",\"files\":[]}",
+      "latencyMs": 30000,
+      "reportedAt": "2026-06-08T02:14:15.572Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T02:08:15.963Z",
+  "finishedAt": "2026-06-08T02:14:21.129Z",
+  "created": "2026-06-08T02:08:09.041Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null
+}

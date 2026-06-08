@@ -13,7 +13,7 @@ Expert guidelines:
   - 每步实施必须精确到函数/方法级别,禁止"修改相关代码"等模糊表述
   - planJson 字段名必须从 templates/agent-plan.json 读取,禁止凭记忆(R12/INC-005)
   - step_report 每步必须携带 outputJson(R15),格式见下方模板
-  - coveredSpecs: 若本 Task 实际覆盖多条 L3,必须在 planJson 中声明
+  - coveredSpecs: 必须包含当前 L3 specCode；若本 Task 实际覆盖多条 L3,列出所有 specCode
   - 验证命令必须可直接粘贴执行,含预期输出的精确匹配串
   - 回滚方案不是可选项,每个 L3 必须说明"改坏了怎么恢复"
   - 写 L3 前必须执行 Level 3 文件级分析(R23,见 rules/codebase-survey.md)
@@ -95,7 +95,7 @@ Expert guidelines:
 
 ```json
 {
-  "coveredSpecs": ["<若覆盖多条 L3,列出所有 specCode;单条则省略此字段>"],
+  "coveredSpecs": ["<本 L3 specCode>"],
   "steps": [
     {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: spec-manager spec show(L3 + 父 L2)"},
     {"stepNo": 2, "stepType": "mcp_tool", "name": "<动词+宾语+文件>"},
