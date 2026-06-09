@@ -27,6 +27,7 @@ function markPlanSucceeded(paths: ProjectPaths, specCode: string, planJson: { st
   for (const s of planJson.steps) {
     reportStep({ paths, taskId, stepNo: s.stepNo, status: 'succeeded', outputJson: '{"summary":"ok"}' });
   }
+  addTaskVerification({ paths, taskId, specCode, command: 'npm test', exitCode: 0, summary: 'passed' });
 }
 
 function planFor(specCode: string, steps = [{ stepNo: 1, stepType: 'mcp_tool' as const, name: 'run verify test' }]) {
@@ -39,11 +40,9 @@ function createFrozenHierarchy(topic = 'auth'): { l1Code: string; l2Code: string
   updateSpec(paths, l1Code, { status: 'confirmed' });
   const l2Code = generateSpecCode(topic, 'L2', l1Code);
   createSpec({ paths, code: l2Code, level: 'L2', title: `${topic} L2`, topic, parentCode: l1Code });
-  updateSpec(paths, l1Code, { status: 'frozen' });
   updateSpec(paths, l2Code, { status: 'confirmed' });
   const l3Code = generateSpecCode(topic, 'L3', l2Code);
   createSpec({ paths, code: l3Code, level: 'L3', title: `${topic} L3`, topic, parentCode: l2Code });
-  updateSpec(paths, l2Code, { status: 'frozen' });
   updateSpec(paths, l3Code, { status: 'confirmed' });
   updateSpec(paths, l3Code, { status: 'frozen' });
   return { l1Code, l2Code, l3Code };
@@ -88,14 +87,12 @@ describe('completeTask cascade → cascadedL1Specs', () => {
     updateSpec(paths, l1Code, { status: 'confirmed' });
     const l2Code = generateSpecCode('auth', 'L2', l1Code);
     createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
-    updateSpec(paths, l1Code, { status: 'frozen' });
     updateSpec(paths, l2Code, { status: 'confirmed' });
     const l3a = generateSpecCode('auth', 'L3', l2Code, 0);
     createSpec({ paths, code: l3a, level: 'L3', title: 'L3a', topic: 'auth', parentCode: l2Code });
     const l3b = generateSpecCode('auth', 'L3', l2Code, 1);
     createSpec({ paths, code: l3b, level: 'L3', title: 'L3b', topic: 'auth', parentCode: l2Code });
 
-    updateSpec(paths, l2Code, { status: 'frozen' });
     updateSpec(paths, l3a, { status: 'confirmed' });
     updateSpec(paths, l3a, { status: 'frozen' });
     updateSpec(paths, l3b, { status: 'confirmed' });
@@ -215,6 +212,7 @@ describe('R15 step outputJson warning', () => {
       autoConfirm: false,
       planJson: planFor(l3Code),
     });
+    startTask(paths, task.id, l3Code);
     reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
 
     const updatedTask = findTask(paths, l3Code, task.id);
@@ -370,6 +368,7 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
     const { l3a, l3b } = setupTwoL3sWithT001();
     startTask(paths, 'T-001', l3a);
     reportStep({ paths, taskId: 'T-001', specCode: l3a, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
+    addTaskVerification({ paths, taskId: 'T-001', specCode: l3a, command: 'npm test', exitCode: 0, summary: 'passed' });
     completeTask({ paths, taskId: 'T-001', specCode: l3a });
     // l3a's T-001 completed, l3b's T-001 still draft
     const a = findTask(paths, l3a, 'T-001');
@@ -461,6 +460,7 @@ describe('task verification evidence', () => {
       autoConfirm: false,
       planJson: planFor(l3Code),
     });
+    startTask(paths, 'T-001', l3Code);
 
     const first = addTaskVerification({
       paths,
@@ -486,5 +486,32 @@ describe('task verification evidence', () => {
     expect(second.task.verifications).toHaveLength(2);
     expect(second.task.verifications?.[0].coversAc).toEqual(['AC-1']);
     expect(second.task.verifications?.[1].artifacts).toEqual([]);
+  });
+});
+
+describe('task lifecycle hardening', () => {
+  it('requires successful verification before completion', () => {
+    const { l3Code } = createFrozenHierarchy('verification-required');
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) });
+    startTask(paths, task.id, l3Code);
+    reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
+    expect(() => completeTask({ paths, taskId: task.id, specCode: l3Code })).toThrow(/VERIFICATION_REQUIRED/);
+  });
+
+  it('keeps completed task history immutable', () => {
+    const { l3Code } = createFrozenHierarchy('immutable-task');
+    const planJson = planFor(l3Code);
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson });
+    startTask(paths, task.id, l3Code);
+    markPlanSucceeded(paths, l3Code, planJson, task.id);
+    completeTask({ paths, taskId: task.id, specCode: l3Code });
+    expect(() => reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: 1, status: 'failed' })).toThrow(/TASK_IMMUTABLE/);
+    expect(() => addTaskVerification({ paths, taskId: task.id, specCode: l3Code, command: 'false', exitCode: 1, summary: 'late' })).toThrow(/TASK_IMMUTABLE/);
+  });
+
+  it('rejects a second active task for the same L3', () => {
+    const { l3Code } = createFrozenHierarchy('active-task');
+    createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) });
+    expect(() => createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) })).toThrow(/TASK_ALREADY_ACTIVE/);
   });
 });

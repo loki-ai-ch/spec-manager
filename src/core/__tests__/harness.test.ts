@@ -10,7 +10,7 @@ import {
   reportHarnessTaskStep,
 } from '../harness.js';
 import { createSpec, updateSpec } from '../spec-io.js';
-import { createTask } from '../task.js';
+import { createTask, startTask } from '../task.js';
 
 let project: TestProject;
 
@@ -75,6 +75,7 @@ function createTaskForReport(): string {
       ],
     },
   });
+  startTask(project.paths, 'T-001', specCode);
   return specCode;
 }
 
@@ -263,6 +264,6 @@ describe('harness task verification', () => {
     });
 
     expect(result.verification.exitCode).toBe(1);
-    expect(result.task.status).toBe('draft');
+    expect(result.task.status).toBe('running');
   });
 });

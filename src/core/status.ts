@@ -10,6 +10,7 @@
  */
 
 export type SpecStatus = 'draft' | 'confirmed' | 'frozen' | 'implemented' | 'archived';
+export type ImplementationAuthority = 'task-complete' | 'project-reconcile';
 
 const TRANSITIONS: Record<SpecStatus, SpecStatus[]> = {
   draft:      ['confirmed', 'frozen', 'archived'],
@@ -67,4 +68,15 @@ export function assertSpecTransition(from: SpecStatus, to: SpecStatus): void {
   if (!canTransition(from, to)) {
     throw new Error(`状态非法: ${from} → ${to}`);
   }
+}
+
+export function isAuthorizedImplementationTransition(
+  level: 'L0' | 'L1' | 'L2' | 'L3',
+  from: SpecStatus,
+  to: SpecStatus,
+  authority?: ImplementationAuthority,
+): boolean {
+  if (!authority || to !== 'implemented') return false;
+  if (level === 'L3') return authority === 'task-complete' && from === 'frozen';
+  return (level === 'L1' || level === 'L2') && from === 'confirmed';
 }

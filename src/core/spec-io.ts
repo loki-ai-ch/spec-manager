@@ -20,6 +20,8 @@ import {
 import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER } from './constants.js';
 import { recordAuditHit, type AuditSink } from './audit-events.js';
 import { isPlaceholderContent } from './placeholder.js';
+import { SpecFrontmatterSchema } from '../schemas/spec.js';
+import { assertSpecTransition, isAuthorizedImplementationTransition, type ImplementationAuthority } from './status.js';
 export { isPlaceholderContent } from './placeholder.js';
 
 export interface SpecFrontmatter {
@@ -92,11 +94,21 @@ export function generateSpecCode(
 export function readSpec(filePath: string): SpecRecord | null {
   try {
     const { data, content } = readFrontmatter(filePath);
-    return { fm: data as unknown as SpecFrontmatter, content, filePath };
+    const normalized = {
+      ...data,
+      created: normalizeDateValue(data.created),
+      updated: normalizeDateValue(data.updated),
+    };
+    const parsed = SpecFrontmatterSchema.parse(normalized);
+    return { fm: parsed as SpecFrontmatter, content, filePath };
   } catch (err) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
     throw err;
   }
+}
+
+function normalizeDateValue(value: unknown): unknown {
+  return value instanceof Date ? value.toISOString() : value;
 }
 
 export function findSpecByCode(paths: ProjectPaths, code: string): SpecRecord | null {
@@ -246,7 +258,7 @@ export function updateSpec(
     replaceStep?: { no: number | string; step: StepFrontmatter };
     addRelation?: { type: string; target: string };
   },
-  opts?: { auditSink?: AuditSink },
+  opts?: { auditSink?: AuditSink; transitionAuthority?: ImplementationAuthority },
 ): UpdateResult {
   const warnings: string[] = [];
   const existing = findSpecByCode(paths, code);
@@ -277,7 +289,12 @@ export function updateSpec(
     }
   }
   if (patch.changeSummary !== undefined) fm.changeSummary = patch.changeSummary;
-  if (patch.status !== undefined) fm.status = patch.status;
+  if (patch.status !== undefined) {
+    if (!isAuthorizedImplementationTransition(fm.level, fm.status, patch.status, opts?.transitionAuthority)) {
+      assertSpecTransition(fm.status, patch.status);
+    }
+    fm.status = patch.status;
+  }
   if (patch.appendStep) {
     fm.steps = [...(fm.steps ?? []), patch.appendStep];
   }
@@ -289,6 +306,12 @@ export function updateSpec(
     fm.steps = steps;
   }
   if (patch.addRelation) {
+    if (!['based_on', 'supersedes', 'implements', 'references'].includes(patch.addRelation.type)) {
+      throw new Error(`RELATION_INVALID: unsupported relation type ${patch.addRelation.type}`);
+    }
+    if (!findSpecByCode(paths, patch.addRelation.target)) {
+      throw new Error(`RELATION_TARGET_NOT_FOUND: ${patch.addRelation.target}`);
+    }
     fm.relations = [...(fm.relations ?? []), patch.addRelation];
   }
   fm.updated = new Date().toISOString();

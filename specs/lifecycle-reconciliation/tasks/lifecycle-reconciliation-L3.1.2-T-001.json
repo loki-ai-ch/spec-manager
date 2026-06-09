@@ -1,0 +1,90 @@
+{
+  "id": "T-001",
+  "specCode": "lifecycle-reconciliation-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集 flow、guide、doctor 与 readiness 调用上下文",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"已分析 flow、guide、doctor、integrity 与 lifecycle readiness 调用关系\",\"files\":[\"src/core/usability.ts\",\"src/core/integrity.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:32:23.678Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "修改 usability.ts 修正 flow 下一步判断",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"flow 现在区分无子规格、部分完成与全部完成待对账状态\",\"files\":[\"src/core/usability.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:32:23.805Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "修改 usability.ts 修正 upstream advice",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"upstream advice 已改为 confirmed L1/L2 合法级联语义\",\"files\":[\"src/core/usability.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:32:23.923Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "修改 integrity.ts 新增滞留 confirmed 诊断",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"完整性扫描新增 stale-confirmed-parent 诊断\",\"files\":[\"src/core/integrity.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:32:24.046Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增 flow、doctor 与完整性只读测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 flow、upstream advice 与滞留状态诊断测试，32 个定向测试通过\",\"files\":[\"src/core/__tests__/usability.test.ts\",\"src/core/__tests__/integrity.test.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:32:24.169Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证测试构建与只读命令零写入",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"399 tests、lint、build、diff check 通过；flow 正确建议 reconcile，doctor 暴露 3 个待对账 L2\",\"files\":[]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:33:02.453Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-09T01:30:17.641Z",
+  "finishedAt": "2026-06-09T01:33:02.703Z",
+  "created": "2026-06-09T01:30:17.519Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && git diff --check",
+      "exitCode": 0,
+      "summary": "399 tests passed; flow reconciliation advice and stale parent diagnostics verified",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5",
+        "AC-8",
+        "AC-9",
+        "AC-10"
+      ],
+      "created": "2026-06-09T01:33:02.576Z"
+    }
+  ]
+}

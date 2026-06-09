@@ -1,0 +1,18 @@
+{
+  "_comment": "agent planJson 模板。字段名 stepNo / stepType / name,禁止用 no / type / desc (INC-005)。",
+  "_constraints": [
+    "step 1 必须是上下文收集(读 L3 spec + 父 L2 + 历史任务)",
+    "末步必须是可执行的验证命令(R10)",
+    "coveredSpecs 必须包含当前 L3 specCode；若覆盖多条 L3,列出所有 specCode",
+    "单 Agent Task = 单 L3 spec,步数 ≤ 20(R11);超 16 步必拆 L3",
+    "每步 name 必须含 verb+object+file,禁止'优化/改进/处理'等模糊动词",
+    "stepType 仅限 llm_call / mcp_tool / human_gate"
+  ],
+  "coveredSpecs": ["<current-L3-specCode>"],
+  "steps": [
+    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: spec-manager spec show L3 + 父 L2 + 读 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 <ServiceName>.java 新增方法 <verb>"},
+    {"stepNo": "N-1", "stepType": "mcp_tool", "name": "部署后端 JAR (如涉及)"},
+    {"stepNo": "N", "stepType": "mcp_tool", "name": "验证: curl http://... 返回 200 + 预期 body"}
+  ]
+}

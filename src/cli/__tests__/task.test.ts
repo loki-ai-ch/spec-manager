@@ -5,7 +5,7 @@ import { Command } from 'commander';
 import { registerTaskCommands } from '../task.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 import { createSpec, updateSpec } from '../../core/spec-io.js';
-import { createTask, findTask } from '../../core/task.js';
+import { createTask, findTask, startTask } from '../../core/task.js';
 
 let project: TestProject;
 let oldSpecManagerRoot: string | undefined;
@@ -101,6 +101,7 @@ npm test -- --run src/cli/__tests__/task.test.ts
       })),
     },
   });
+  startTask(project.paths, 'T-001', 'auth-L3.1.1-login');
   return 'auth-L3.1.1-login';
 }
 

@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import type { ProjectPaths } from './paths.js';
 
@@ -40,6 +40,25 @@ export interface AgentInstallReport {
 export interface AgentProviderDetection {
   providers: AgentProvider[];
   reasons: Partial<Record<AgentProvider, string[]>>;
+}
+
+export interface MergeMissingDirectory {
+  source: string;
+  target: string;
+}
+
+export interface MergeMissingDirectoryOptions {
+  paths: ProjectPaths;
+  packageRoot: string;
+  directories: MergeMissingDirectory[];
+  dryRun?: boolean;
+  write?: (target: string, content: string) => void;
+}
+
+export interface MergeMissingDirectoryReport {
+  created: string[];
+  skipped: string[];
+  notes: string[];
 }
 
 export const AGENT_PROVIDER_INFO: AgentProviderInfo[] = [
@@ -197,6 +216,36 @@ export function installAgentSupport(options: InstallAgentSupportOptions): AgentI
   return report;
 }
 
+export function mergeMissingDirectories(options: MergeMissingDirectoryOptions): MergeMissingDirectoryReport {
+  const report: MergeMissingDirectoryReport = { created: [], skipped: [], notes: [] };
+  for (const directory of options.directories) {
+    const sourceRoot = join(options.packageRoot, ...directory.source.split('/'));
+    const targetRoot = join(options.paths.root, ...directory.target.split('/'));
+    if (!existsSync(sourceRoot)) {
+      report.notes.push(`missing bundled asset: ${sourceRoot}`);
+      continue;
+    }
+    for (const sourceFile of listDirectoryFiles(sourceRoot)) {
+      const rel = relative(sourceRoot, sourceFile);
+      const target = join(targetRoot, rel);
+      const displayed = displayPath(options.paths, target);
+      if (existsSync(target)) {
+        report.skipped.push(displayed);
+        continue;
+      }
+      report.created.push(displayed);
+      if (options.dryRun) continue;
+      const content = readFileSync(sourceFile, 'utf8');
+      if (options.write) options.write(target, content);
+      else {
+        mkdirSync(dirname(target), { recursive: true });
+        writeFileSync(target, content, 'utf8');
+      }
+    }
+  }
+  return report;
+}
+
 function providerConfig(provider: AgentProvider): AgentProviderInfo {
   const config = AGENT_PROVIDER_INFO.find((p) => p.provider === provider);
   if (!config) throw new Error(`unsupported AI provider: ${provider}`);
@@ -298,4 +347,14 @@ function copyDirectory(
 function displayPath(paths: ProjectPaths, target: string): string {
   const rel = relative(paths.root, target);
   return rel.length > 0 ? rel : target;
+}
+
+function listDirectoryFiles(root: string): string[] {
+  const files: string[] = [];
+  for (const entry of readdirSync(root, { withFileTypes: true })) {
+    const path = join(root, entry.name);
+    if (entry.isDirectory()) files.push(...listDirectoryFiles(path));
+    else if (entry.isFile()) files.push(path);
+  }
+  return files.sort();
 }

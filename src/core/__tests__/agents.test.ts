@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import type { ProjectPaths } from '../paths.js';
-import { detectAgentProviders, installAgentSupport, listAgentProviders, parseAgentProviders } from '../agents.js';
+import { detectAgentProviders, installAgentSupport, listAgentProviders, mergeMissingDirectories, parseAgentProviders } from '../agents.js';
 import { createTestProject, type TestProject } from './project-fixture.js';
 
 let root: string;
@@ -158,6 +158,35 @@ describe('installAgentSupport', () => {
 
     expect(report.overwritten).toContain('AGENTS.md');
     expect(readFileSync(join(root, 'AGENTS.md'), 'utf8')).toBe('# existing\n');
+  });
+});
+
+describe('mergeMissingDirectories', () => {
+  it('creates only missing files and preserves existing files', () => {
+    writePackageAsset('rules/quality-gate.md', '# Quality\n');
+    mkdirSync(join(root, '.claude', 'skills', 'spec-manager', 'rules'), { recursive: true });
+    writeFileSync(join(root, '.claude', 'skills', 'spec-manager', 'rules', 'flow-control.md'), '# custom\n', 'utf8');
+
+    const report = mergeMissingDirectories({
+      paths,
+      packageRoot,
+      directories: [{ source: 'rules', target: '.claude/skills/spec-manager/rules' }],
+    });
+
+    expect(report.skipped).toContain('.claude/skills/spec-manager/rules/flow-control.md');
+    expect(readFileSync(join(root, '.claude', 'skills', 'spec-manager', 'rules', 'flow-control.md'), 'utf8')).toBe('# custom\n');
+    expect(existsSync(join(root, '.claude', 'skills', 'spec-manager', 'rules', 'quality-gate.md'))).toBe(true);
+  });
+
+  it('dry-runs per-file creates without writing', () => {
+    const report = mergeMissingDirectories({
+      paths,
+      packageRoot,
+      directories: [{ source: 'templates', target: '.claude/skills/spec-manager/templates' }],
+      dryRun: true,
+    });
+    expect(report.created).toContain('.claude/skills/spec-manager/templates/L1-prd.md');
+    expect(existsSync(join(root, '.claude', 'skills', 'spec-manager', 'templates'))).toBe(false);
   });
 });
 

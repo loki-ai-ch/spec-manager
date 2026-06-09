@@ -253,6 +253,7 @@ describe('updateSpec — 更新 spec', () => {
 
   it('添加 relation', () => {
     createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    createSpec({ paths, code: 'billing-L1', level: 'L1', title: 'Billing', topic: 'billing', parentCode: null });
     const { record } = updateSpec(paths, 'auth-L1', {
       addRelation: { type: 'references', target: 'billing-L1' },
     });

@@ -4,13 +4,13 @@ level: L2
 title: 技术方案：Coding Harness 集成路线落地
 topic: harness-coding
 parentCode: harness-coding-L1
-status: confirmed
-created: '2026-06-08T07:22:21.663Z'
-updated: '2026-06-08T07:38:27.375Z'
+status: implemented
 aiSummary: >-
   技术方案将 coding harness 集成拆为 task context、task report、verification、change
   proposal、schema/docs 五个 L3；优先交付 frozen L3 到 text/json context，再逐步接入执行回写和审计
-changeSummary: draft → confirmed
+created: '2026-06-08T07:22:21.663Z'
+updated: '2026-06-09T01:36:43.893Z'
+changeSummary: 'cascade: project-reconcile'
 ---
 # 技术方案：Coding Harness 集成路线落地
 

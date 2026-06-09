@@ -4,13 +4,13 @@ level: L1
 title: Coding Harness 集成路线
 topic: harness-coding
 parentCode: null
-status: confirmed
-created: '2026-06-08T07:18:45.238Z'
-updated: '2026-06-08T07:21:45.636Z'
+status: implemented
 aiSummary: >-
   将 spec-manager 定位为 coding harness 的任务控制层，规划 frozen L3 到 task
   context、执行回写、验证归档、变更闭环和多工具集成的长期路线
-changeSummary: draft → confirmed
+created: '2026-06-08T07:18:45.238Z'
+updated: '2026-06-09T01:36:43.895Z'
+changeSummary: 'cascade: project-reconcile'
 ---
 # Coding Harness 集成路线
 

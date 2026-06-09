@@ -12,14 +12,16 @@
  *   - 写入 audit：R24 命中
  */
 
-import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, unlinkSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, readdirSync, renameSync, rmSync, unlinkSync } from 'node:fs';
 import { dirname, join, basename } from 'node:path';
 import { readFrontmatter, writeFrontmatter, writeAtomic } from './frontmatter.js';
-import { parseDeltaSpec, getChangeDir } from './delta.js';
+import { parseDeltaSpec, getChangeDir, listChanges } from './delta.js';
 import { findSpecByCode, readSpec, writeSpec, createSpec, invalidateSpecCache, listAllSpecs, type SpecRecord } from './spec-io.js';
 import { recordAuditHit, type AuditSink } from './audit-events.js';
 import { assertSafeSpecCode, assertSafeTopic, type ProjectPaths } from './paths.js';
 import { ProposalSchema, type ChangeEntry, type ChangeOpT } from '../schemas/change.js';
+import { withProjectTransaction } from './transaction.js';
+import { listTopicMetaFiles } from './repository.js';
 
 export interface ArchiveResult {
   changeName: string;
@@ -29,6 +31,15 @@ export interface ArchiveResult {
 }
 
 export function archiveChange(paths: ProjectPaths, name: string, opts?: { auditSink?: AuditSink }): ArchiveResult {
+  return withProjectTransaction(paths, `archive change ${name}`, tx => {
+    for (const spec of listAllSpecs(paths)) tx.snapshot(spec.filePath);
+    for (const file of listTopicMetaFiles(paths, 'tasks', { extension: '.json' })) tx.snapshot(file.filePath);
+    for (const file of listTopicMetaFiles(paths, 'decisions', { extension: '.md' })) tx.snapshot(file.filePath);
+    return archiveChangeUnlocked(paths, name, opts);
+  });
+}
+
+function archiveChangeUnlocked(paths: ProjectPaths, name: string, opts?: { auditSink?: AuditSink }): ArchiveResult {
   validateChangeProposal(paths, name, opts?.auditSink);
 
   // 1. 解析 delta
@@ -61,6 +72,7 @@ export function archiveChange(paths: ProjectPaths, name: string, opts?: { auditS
             fm: { ...spec.fm, code: e.newCode, updated: new Date().toISOString(), changeSummary: `delta RENAMED: ${e.code} → ${e.newCode}` },
           };
           writeSpec(newSpec);
+          migrateStructuredSpecReferences(paths, e.code, e.newCode, tx);
           // 平铺布局下旧文件已被 writeSpec 覆盖（同 topic 目录），需显式删除旧文件
           if (spec.filePath !== newFilePath && existsSync(spec.filePath)) {
             rmSync(spec.filePath, { force: true });
@@ -188,6 +200,68 @@ export function archiveChange(paths: ProjectPaths, name: string, opts?: { auditS
     recordAuditHit({ paths, ruleId: 'R24' }, opts?.auditSink);
     return { changeName: name, applied, skipped, archivedTo: archiveTarget };
   }
+}
+
+function migrateStructuredSpecReferences(
+  paths: ProjectPaths,
+  oldCode: string,
+  newCode: string,
+  tx: ArchiveApplyTransaction,
+): void {
+  for (const spec of listAllSpecs(paths)) {
+    let changed = false;
+    const fm = { ...spec.fm };
+    if (fm.parentCode === oldCode) {
+      fm.parentCode = newCode;
+      changed = true;
+    }
+    if (fm.relations?.some(relation => relation.target === oldCode)) {
+      fm.relations = fm.relations.map(relation => relation.target === oldCode ? { ...relation, target: newCode } : relation);
+      changed = true;
+    }
+    if (changed) {
+      tx.snapshot(spec.filePath);
+      writeSpec({ ...spec, fm });
+    }
+  }
+
+  for (const file of listTopicMetaFiles(paths, 'tasks', { extension: '.json' })) {
+    const task = JSON.parse(readFileSync(file.filePath, 'utf8')) as { specCode?: string };
+    if (task.specCode !== oldCode) continue;
+    tx.snapshot(file.filePath);
+    task.specCode = newCode;
+    const newPath = join(dirname(file.filePath), file.fileName.replace(`${oldCode}-`, `${newCode}-`));
+    tx.trackCreated(newPath);
+    writeAtomic(newPath, JSON.stringify(task, null, 2));
+    if (newPath !== file.filePath) rmSync(file.filePath, { force: true });
+  }
+
+  for (const file of listTopicMetaFiles(paths, 'decisions', { extension: '.md' })) {
+    const { data, content } = readFrontmatter(file.filePath);
+    if (data.docCode !== oldCode) continue;
+    tx.snapshot(file.filePath);
+    writeAtomic(file.filePath, writeFrontmatter({ ...data, docCode: newCode }, content));
+  }
+
+  if (existsSync(paths.incidentsDir)) {
+    for (const fileName of readdirSync(paths.incidentsDir).filter(file => file.endsWith('.md'))) {
+      const filePath = join(paths.incidentsDir, fileName);
+      const { data, content } = readFrontmatter(filePath);
+      if (data.specCode !== oldCode) continue;
+      tx.snapshot(filePath);
+      writeAtomic(filePath, writeFrontmatter({ ...data, specCode: newCode }, content));
+    }
+  }
+
+  for (const change of listChanges(paths)) {
+    const proposal = join(change.root, 'proposal.md');
+    if (!existsSync(proposal)) continue;
+    const { data, content } = readFrontmatter(proposal);
+    if (data.specCode !== oldCode) continue;
+    tx.snapshot(proposal);
+    writeAtomic(proposal, writeFrontmatter({ ...data, specCode: newCode }, content));
+  }
+  invalidateSpecCache();
 }
 
 class ArchiveApplyTransaction {

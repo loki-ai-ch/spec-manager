@@ -1,0 +1,94 @@
+{
+  "id": "T-001",
+  "specCode": "repository-remediation-L3.1.3",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集资产上下文并记录人工文件与历史 Task 摘要",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"已核对 bundled 资产并记录 CLAUDE.md、settings 与历史 Task 摘要\",\"files\":[\"/private/tmp/repository-remediation-manual-shas-before.txt\",\"/private/tmp/repository-remediation-legacy-task-shas-before-l313.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:15:09.653Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "修改 agents.ts 实现目录 merge-missing",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现逐文件 merge-missing、dry-run 与事务写入回调\",\"files\":[\"src/core/agents.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:15:09.778Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "接入 remediation.ts 资产计划执行与 doctor 指引",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"迁移计划接入 Claude 资产并更新 doctor 显式修复指引\",\"files\":[\"src/core/remediation.ts\",\"src/core/usability.ts\",\"src/cli/project.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:15:09.901Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "新增 merge-missing 与端到端迁移测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 merge-missing、资产迁移与 doctor 指引测试，47 个定向测试通过\",\"files\":[\"src/core/__tests__/agents.test.ts\",\"src/core/__tests__/remediation.test.ts\",\"src/core/__tests__/usability.test.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:15:10.032Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "预览并执行 repository-remediation-v1 当前仓库迁移",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"dry-run 核对后执行固定迁移；创建 4 个 Decision、16 个豁免及缺失 Claude 资产；人工文件与历史 Task 字节不变\",\"files\":[\".spec-manager/integrity-exemptions.json\",\".claude/skills/spec-manager/rules\",\".claude/skills/spec-manager/templates\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:15:55.078Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证完整测试、doctor 归零与迁移幂等",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"392 tests、lint、build、diff check 通过；doctor ok；重复迁移全部 skip；人工文件与历史 Task 字节不变\",\"files\":[\".spec-manager/integrity-exemptions.json\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:16:32.215Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-09T01:13:14.093Z",
+  "finishedAt": "2026-06-09T01:16:32.457Z",
+  "created": "2026-06-09T01:13:13.974Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && git diff --check && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "392 tests passed; doctor ok; remediation idempotent; manual files and legacy Task bytes unchanged",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-09T01:16:32.333Z"
+    }
+  ]
+}

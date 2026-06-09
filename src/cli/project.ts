@@ -12,6 +12,8 @@ import {
 import { getPaths } from '../core/paths.js';
 import { listAllSpecs } from '../core/spec-io.js';
 import { runProjectDoctor } from '../core/usability.js';
+import { applyRepositoryRemediation, planRepositoryRemediation } from '../core/remediation.js';
+import { applyLifecycleReconciliation, planLifecycleReconciliation } from '../core/reconciliation.js';
 import { printPathGroup, requireInitialized } from './common.js';
 
 export function registerProject(program: Command): void {
@@ -103,6 +105,45 @@ export function registerProject(program: Command): void {
     });
 
   cmd
+    .command('reconcile')
+    .description('预览或执行已审阅范围内的历史规格状态对账')
+    .option('--dry-run', '仅预览对账计划，不写入文件')
+    .action((opts) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const report = opts.dryRun ? planLifecycleReconciliation(paths) : applyLifecycleReconciliation(paths);
+      console.log(`✓ Lifecycle reconciliation ${opts.dryRun ? 'planned' : 'applied'}`);
+      printRemediationGroup('implementations', report.implementationActions);
+      printRemediationGroup('decisions', report.decisionActions);
+      if (report.conflicts.length > 0) {
+        console.log('blocked:');
+        for (const conflict of report.conflicts) console.log(`  - ${conflict.target}: ${conflict.message}`);
+      }
+    });
+
+  cmd
+    .command('remediate')
+    .description('执行显式、版本化的仓库修复迁移')
+    .requiredOption('--migration <id>', '迁移 ID')
+    .option('--dry-run', '仅预览迁移计划，不写入文件')
+    .action((opts) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+      const report = opts.dryRun
+        ? planRepositoryRemediation({ paths, packageRoot, migrationId: String(opts.migration) })
+        : applyRepositoryRemediation({ paths, packageRoot, migrationId: String(opts.migration) });
+      console.log(`✓ Repository remediation ${opts.dryRun ? 'planned' : 'applied'}: ${report.migrationId}`);
+      printRemediationGroup('decisions', report.decisions);
+      printRemediationGroup('exemptions', report.exemptions);
+      printRemediationGroup('agent assets', report.agentAssets);
+      if (report.conflicts.length > 0) {
+        console.log('conflicts:');
+        for (const conflict of report.conflicts) console.log(`  - ${conflict.target}: ${conflict.message}`);
+      }
+    });
+
+  cmd
     .command('doctor')
     .description('检查项目初始化、agent 指令、skill 资产、占位 spec 和 audit 状态')
     .action(() => {
@@ -144,6 +185,15 @@ export function registerProject(program: Command): void {
         console.log('\n(尚无 spec)');
       }
     });
+}
+
+function printRemediationGroup(label: string, actions: Array<{ action: string; target: string; detail: string }>): void {
+  console.log(`${label}:`);
+  if (actions.length === 0) {
+    console.log('  (none)');
+    return;
+  }
+  for (const action of actions) console.log(`  - ${action.action}: ${action.target} (${action.detail})`);
 }
 
 function printAgentDetection(detection: AgentProviderDetection): void {

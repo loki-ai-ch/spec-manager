@@ -13,7 +13,7 @@ const TOP_LEVEL_COMMANDS = [
 const SUBCOMMANDS: Record<string, string[]> = {
   project: ['init', 'agents', 'doctor', 'status'],
   spec: ['new', 'list', 'show', 'update', 'confirm', 'freeze', 'implement', 'validate', 'add-relation', 'migrate-paths', 'validate-plan'],
-  task: ['create', 'start', 'step', 'complete', 'fail', 'wait', 'show', 'list', 'batch'],
+  task: ['create', 'start', 'step', 'report', 'verify', 'complete', 'fail', 'wait', 'show', 'list', 'context'],
   decision: ['create', 'list', 'show', 'supersede', 'update', 'set-partial', 'delete'],
   change: ['new', 'list', 'show', 'archive'],
   incident: ['new', 'list', 'show', 'update'],

@@ -1,0 +1,80 @@
+{
+  "id": "T-001",
+  "specCode": "repository-remediation-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集上下文并记录历史 Task 字节摘要",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"已读取冻结 L3、父 L2、相关核心模块与测试，并记录全部 Task 文件摘要\",\"files\":[\"/private/tmp/repository-remediation-task-shas-before.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:03:20.461Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 integrity-exemptions.ts 登记读取与严格合并",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增完整性豁免登记模型、严格读取、双键合并与写入能力\",\"files\":[\"src/core/integrity-exemptions.ts\",\"src/core/paths.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:03:28.473Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "修改 integrity.ts 接入有效豁免与无效登记报告",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"完整性扫描已识别有效精确豁免并报告无效登记\",\"files\":[\"src/core/integrity.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:03:35.386Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "新增完整性豁免单元测试与公共导出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增豁免和扫描测试并导出公共接口\",\"files\":[\"src/core/__tests__/integrity-exemptions.test.ts\",\"src/core/__tests__/integrity.test.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:03:40.874Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "验证测试构建并比较历史 Task 字节摘要",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"383 tests、lint、build、diff check 通过，历史 Task 字节摘要一致\",\"files\":[\"/private/tmp/repository-remediation-legacy-task-shas-before.txt\",\"/private/tmp/repository-remediation-legacy-task-shas-after-l311.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:04:15.942Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T10:01:33.367Z",
+  "finishedAt": "2026-06-08T10:04:16.188Z",
+  "created": "2026-06-08T10:01:28.728Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && git diff --check",
+      "exitCode": 0,
+      "summary": "383 tests passed; lint, build, diff check passed; legacy Task bytes unchanged",
+      "artifacts": [],
+      "coversAc": [
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-8"
+      ],
+      "created": "2026-06-08T10:04:16.063Z"
+    }
+  ]
+}

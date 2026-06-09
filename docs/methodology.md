@@ -58,6 +58,8 @@ AI agent  用户      用户     task complete
 
 **规则：状态推进是用户行为，不是 AI 行为**。AI 拥有上下文≠有权跳过流程。
 
+Task 的终态历史不可变。`task complete` 前必须完成全部计划步骤，并记录至少一条成功的结构化 verification；需要修正终态历史时，应创建新的 Task 或 change proposal。
+
 ## 24 条规则（按主题分组）
 
 ### 流程控制（R1-R4）

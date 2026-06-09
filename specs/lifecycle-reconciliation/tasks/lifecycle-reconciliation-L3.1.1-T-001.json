@@ -1,0 +1,92 @@
+{
+  "id": "T-001",
+  "specCode": "lifecycle-reconciliation-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集生命周期调用关系并记录 completed Task 摘要",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"已分析状态存储、Task 级联和事务调用关系，并记录 Task 摘要\",\"files\":[\"/private/tmp/lifecycle-completed-tasks-before-l311.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:28:48.655Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 lifecycle.ts 分层 readiness 判断",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增分层 readiness 与统一递归级联服务\",\"files\":[\"src/core/lifecycle.ts\",\"src/core/status.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:28:48.768Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "修改 spec-io.ts 实现受控 transition authority",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"为 updateSpec 增加内部受控 transition authority，普通状态机保持拒绝\",\"files\":[\"src/core/spec-io.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:28:48.882Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "修改 task.ts 使用统一递归生命周期级联",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Task complete 已改用统一 lifecycle 级联并保持输出契约\",\"files\":[\"src/core/task.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:28:48.996Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增生命周期和 Task 级联自动化测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 lifecycle 测试并更新 confirmed L1/L2 Task 级联测试，32 个定向测试通过\",\"files\":[\"src/core/__tests__/lifecycle.test.ts\",\"src/core/__tests__/task-cascade.test.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:28:49.107Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证测试构建与 completed Task 字节不变",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"396 tests、lint、build、diff check 通过，既有 Task 字节不变\",\"files\":[\"/private/tmp/lifecycle-existing-tasks-after-l311.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-09T01:29:11.730Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-09T01:26:41.829Z",
+  "finishedAt": "2026-06-09T01:29:11.965Z",
+  "created": "2026-06-09T01:26:41.707Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && git diff --check",
+      "exitCode": 0,
+      "summary": "396 tests passed; lifecycle cascade and authority verified; existing Task bytes unchanged",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-7",
+        "AC-10"
+      ],
+      "created": "2026-06-09T01:29:11.842Z"
+    }
+  ]
+}

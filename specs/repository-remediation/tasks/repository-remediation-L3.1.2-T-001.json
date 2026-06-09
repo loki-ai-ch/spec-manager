@@ -1,0 +1,91 @@
+{
+  "id": "T-001",
+  "specCode": "repository-remediation-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集迁移上下文并记录历史 Task 字节摘要",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"已核对四个 implemented L1、16 个历史 Task、事务与 CLI 测试结构，并记录历史 Task 摘要\",\"files\":[\"/private/tmp/repository-remediation-legacy-task-shas-before-l312.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:06:59.054Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 remediation.ts 固定清单与计划器",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增固定 repository-remediation-v1 清单与确定性计划器\",\"files\":[\"src/core/remediation.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:06:59.171Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "实现事务化决策与豁免迁移执行器",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现事务化 Decision 与豁免执行并验证收敛幂等\",\"files\":[\"src/core/remediation.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:06:59.284Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "新增 project remediate CLI 与公共导出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 project remediate 显式 CLI 与公共导出\",\"files\":[\"src/cli/project.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:06:59.400Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增迁移核心与 CLI 自动化测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增迁移核心与 CLI dry-run、冲突、幂等及 Task 不可变测试\",\"files\":[\"src/core/__tests__/remediation.test.ts\",\"src/cli/__tests__/project-remediate.test.ts\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:06:59.516Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证测试构建并确认当前仓库未真实迁移",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"389 tests、lint、build、diff check 通过；当前仓库未真实迁移且历史 Task 字节一致\",\"files\":[\"/private/tmp/repository-remediation-legacy-task-shas-after-l312.txt\"]}",
+      "latencyMs": 1,
+      "reportedAt": "2026-06-08T10:07:26.006Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T10:04:37.800Z",
+  "finishedAt": "2026-06-08T10:07:26.239Z",
+  "created": "2026-06-08T10:04:37.686Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && git diff --check",
+      "exitCode": 0,
+      "summary": "389 tests passed; migration dry-run and idempotency covered; current repository not migrated",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-4",
+        "AC-5",
+        "AC-8"
+      ],
+      "created": "2026-06-08T10:07:26.121Z"
+    }
+  ]
+}

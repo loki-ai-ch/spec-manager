@@ -10,7 +10,7 @@
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { siblingMetaDir, type ProjectPaths } from './paths.js';
-import { findSpecByCode, updateSpec, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
+import { findSpecByCode, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
 import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
 import { validatePlanJson } from './validate.js';
@@ -18,6 +18,13 @@ import { ID_PAD_WIDTH, TASK_FILE_EXT, TASK_ID_PREFIX } from './constants.js';
 import { recordAuditHit, type AuditSink } from './audit-events.js';
 import { listTopicMetaFiles } from './repository.js';
 import { assertTaskTransition, type TaskStatus } from './status.js';
+import {
+  assertNoActiveTaskForSpec,
+  assertTaskHasSuccessfulVerification,
+  assertTaskMutable,
+} from './invariants.js';
+import { withProjectTransaction } from './transaction.js';
+import { cascadeImplementedHierarchy } from './lifecycle.js';
 
 export type { TaskStatus } from './status.js';
 
@@ -122,6 +129,7 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     recordAuditHit({ paths: input.paths, ruleId: 'R3', specCode: input.specCode }, input.auditSink);
     throw new Error(`R3: L3 必须 frozen 才能建 Task，当前 status=${spec.fm.status}`);
   }
+  assertNoActiveTaskForSpec(listTasks(input.paths, { specCode: input.specCode }), input.specCode);
 
   const parsedPlan = PlanJsonSchema.safeParse(input.planJson);
   if (!parsedPlan.success) {
@@ -240,6 +248,7 @@ export interface StepInput {
 
 export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnType<typeof findSpecByCode>; warnings: string[] } {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
+  assertTaskMutable(task, 'report step');
 
   // R15: outputJson 必含 summary（warning 而非 throw）
   const warnings: string[] = [];
@@ -262,6 +271,9 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   if (!spec) throw new Error(`Spec not found: ${task.specCode}`);
   const steps = [...taskSteps(task, spec.fm.steps)];
   const idx = steps.findIndex(s => String(s.stepNo) === String(input.stepNo));
+  if (idx < 0) {
+    throw new Error(`STEP_NOT_PLANNED: step ${input.stepNo} is not in task ${task.id}`);
+  }
   const step: StepFrontmatter = {
     stepNo: input.stepNo,
     stepType: (steps[idx]?.stepType ?? 'mcp_tool') as StepTypeT,
@@ -275,8 +287,7 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
     latencyMs: input.latencyMs,
     reportedAt: new Date().toISOString(),
   };
-  if (idx >= 0) steps[idx] = step;
-  else steps.push(step);
+  steps[idx] = step;
   const updatedTask: TaskRecord = { ...task, steps };
   writeTaskJSON(taskFilePath(spec.filePath, task.specCode, task.id), updatedTask);
 
@@ -296,6 +307,7 @@ export interface AddTaskVerificationInput {
 
 export function addTaskVerification(input: AddTaskVerificationInput): { task: TaskRecord; verification: TaskVerificationRecord } {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
+  assertTaskMutable(task, 'add verification');
   const existing = task.verifications ?? [];
   const verification: TaskVerificationRecord = {
     id: nextVerificationId(existing),
@@ -329,6 +341,14 @@ export interface CompleteResult {
 }
 
 export function completeTask(input: CompleteInput): CompleteResult {
+  return withProjectTransaction(input.paths, `complete task ${input.taskId}`, tx => {
+    for (const spec of listAllSpecs(input.paths)) tx.snapshot(spec.filePath);
+    for (const file of listTopicMetaFiles(input.paths, 'tasks', { extension: TASK_FILE_EXT })) tx.snapshot(file.filePath);
+    return completeTaskUnlocked(input);
+  });
+}
+
+function completeTaskUnlocked(input: CompleteInput): CompleteResult {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
   assertTaskTransition(task.status, 'completed');
 
@@ -349,66 +369,35 @@ export function completeTask(input: CompleteInput): CompleteResult {
       );
     }
   }
+  assertTaskHasSuccessfulVerification(task);
 
   // 把 task 标记为 completed
   const updated: TaskRecord = { ...task, status: 'completed', finishedAt: new Date().toISOString() };
   writeTaskJSON(taskFilePath(specFilePathOf(input.paths, task.specCode), task.specCode, task.id), updated);
 
   // L3 spec → implemented (cascade)
-  const cascaded: CompleteResult['cascadedSpecs'] = [];
-  const skipped: CompleteResult['skippedSpecs'] = [];
-
-  cascadeImplemented(input.paths, task.specCode, cascaded, skipped, input.auditSink);
+  const cascade = cascadeImplementedHierarchy({
+    paths: input.paths,
+    startSpecCode: task.specCode,
+    authority: 'task-complete',
+    auditSink: input.auditSink,
+  });
   const implemented = findSpecByCode(input.paths, task.specCode);
   if (implemented?.fm.status !== 'implemented') {
     recordAuditHit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id }, input.auditSink);
     throw new Error(`R6: task complete 后 ${task.specCode} 必须是 implemented，当前 status=${implemented?.fm.status ?? 'missing'}`);
   }
 
-  const cascadedL1Specs = cascaded
+  const cascadedL1Specs = cascade.cascadedSpecs
     .filter(c => c.level === 'L1' || c.level === 'L0')
     .map(c => c.code);
 
-  return { task: updated, cascadedSpecs: cascaded, cascadedL1Specs, skippedSpecs: skipped };
-}
-
-function cascadeImplemented(
-  paths: ProjectPaths,
-  specCode: string,
-  cascaded: CompleteResult['cascadedSpecs'],
-  skipped: CompleteResult['skippedSpecs'],
-  auditSink?: AuditSink,
-): void {
-  const spec = findSpecByCode(paths, specCode);
-  if (!spec) return;
-  const oldStatus = spec.fm.status;
-  if (oldStatus !== 'frozen') {
-    skipped.push({ code: specCode, status: oldStatus, reason: `expected frozen, got ${oldStatus}` });
-    return;
-  }
-  updateSpec(paths, specCode, { status: 'implemented', changeSummary: `cascade: task complete` }, { auditSink });
-  cascaded.push({ code: specCode, oldStatus, newStatus: 'implemented', level: spec.fm.level });
-
-  // 父级
-  if (spec.fm.parentCode) {
-    const allChildren = listAllSpecsByParent(paths, spec.fm.parentCode);
-    const allImpl = allChildren.length > 0 && allChildren.every(s => s.fm.status === 'implemented');
-    if (allChildren.length === 0) {
-      skipped.push({ code: spec.fm.parentCode, status: '?', reason: 'no children' });
-    } else if (allImpl) {
-      cascadeImplemented(paths, spec.fm.parentCode, cascaded, skipped, auditSink);
-    } else {
-      skipped.push({
-        code: spec.fm.parentCode,
-        status: '?',
-        reason: `${allChildren.filter(s => s.fm.status !== 'implemented').length}/${allChildren.length} children not implemented yet`,
-      });
-    }
-  }
-}
-
-function listAllSpecsByParent(paths: ProjectPaths, parentCode: string) {
-  return listAllSpecs(paths).filter(s => s.fm.parentCode === parentCode);
+  return {
+    task: updated,
+    cascadedSpecs: cascade.cascadedSpecs,
+    cascadedL1Specs,
+    skippedSpecs: cascade.skippedSpecs,
+  };
 }
 
 export interface FailInput {

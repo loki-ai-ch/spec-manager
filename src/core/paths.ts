@@ -1,5 +1,5 @@
 import { existsSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { SPEC_CODE_RE, TOPIC_RE } from './constants.js';
 
 /**
@@ -26,6 +26,7 @@ export interface ProjectPaths {
   configDir: string;       // .spec-manager/
   configFile: string;      // .spec-manager/config.yaml
   auditFile: string;       // .spec-manager/audit.json
+  integrityExemptionsFile: string; // .spec-manager/integrity-exemptions.json
   incidentsDir: string;    // .spec-manager/incidents/
   dictFile: string;        // .spec-manager/dict.yaml
   specsDir: string;        // specs/
@@ -42,6 +43,7 @@ export function getPaths(root: string = resolveProjectRoot()): ProjectPaths {
     configDir,
     configFile: join(configDir, 'config.yaml'),
     auditFile: join(configDir, 'audit.json'),
+    integrityExemptionsFile: join(configDir, 'integrity-exemptions.json'),
     incidentsDir: join(configDir, 'incidents'),
     dictFile: join(configDir, 'dict.yaml'),
     specsDir: join(root, 'specs'),
@@ -100,6 +102,25 @@ export function assertSafeSpecCode(code: string): void {
   if (!SPEC_CODE_RE.test(code)) {
     throw new Error(`spec code 非法: ${code}（必须匹配 ${SPEC_CODE_RE.source}，且不能包含路径分隔符）`);
   }
+}
+
+export function assertSafeChangeName(name: string): void {
+  if (!/^[a-z0-9-]+$/.test(name)) {
+    throw new Error(`PATH_OUTSIDE_PROJECT: change name 非法: ${name}`);
+  }
+}
+
+export function resolveWithin(baseDir: string, ...segments: string[]): string {
+  if (segments.some(segment => isAbsolute(segment))) {
+    throw new Error(`PATH_OUTSIDE_PROJECT: absolute path is not allowed`);
+  }
+  const base = resolve(baseDir);
+  const target = resolve(base, ...segments);
+  const rel = relative(base, target);
+  if (rel === '..' || rel.startsWith(`..${process.platform === 'win32' ? '\\' : '/'}`) || isAbsolute(rel)) {
+    throw new Error(`PATH_OUTSIDE_PROJECT: ${target} is outside ${base}`);
+  }
+  return target;
 }
 
 /**

@@ -18,6 +18,11 @@
 - **状态机** `draft → confirmed → frozen → implemented`
 - **Agent Task 生命周期** — `create → start → step → complete`,步骤写在 spec frontmatter;R5 阻止跳步 complete
 - **Coding harness 桥接** — 导出任务上下文、回写进度、记录验证证据，并从 CLI 创建实现偏差提案
+- **项目完整性检查** — 扫描悬空引用、冲突的活跃 task、缺失的验证/决策记录和过期的已确认父 spec;通过 `project doctor` 展示
+- **生命周期对账** — dry-run/apply 计划,将历史 L1/L2 spec 标记为 `implemented` 并补建缺失的决策记录
+- **仓库修复** — 版本化迁移:补建决策记录、完整性豁免和缺失的 agent 资产目录
+- **文件事务** — 原子性、可回滚的多文件写入,带快照恢复语义
+- **Task 不变量** — 硬性安全检查:每个 spec 同时只有一个活跃 task,只有运行中的 task 接受步骤,完成前必须有成功的验证
 - **决策卡片** 带 `what/why/affectedCriteria` 三段 + topic 查询
 - **规则审计** at-least-once 本地 JSON 累加器
 - **Delta specs** (OpenSpec 风格 `changes/<name>/`,含 ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
@@ -137,7 +142,9 @@ spec-manager spec confirm <code>
 日常使用时，可以用这些辅助命令减少记忆成本：
 
 ```bash
-spec-manager project doctor                 # 检查初始化、agent 文件、skill 资产、占位 spec、audit
+spec-manager project doctor                 # 检查初始化、agent 文件、skill 资产、占位 spec、audit、完整性
+spec-manager project reconcile              # dry-run:将历史 spec 标记为 implemented 并补建缺失决策
+spec-manager project remediate              # 版本化迁移:决策记录、完整性豁免、缺失 agent 资产
 spec-manager flow status --topic auth       # 展示 L1/L2/L3/Task 进度和下一条命令
 spec-manager guide "新增用户认证"            # 根据请求给出下一步
 spec-manager new feature --topic auth "用户认证"
@@ -150,7 +157,9 @@ spec-manager template L1 --title "用户认证" > l1.md
 
 | 命令 | 什么时候用 | 它会给你什么 |
 |---|---|---|
-| `project doctor` | 不确定项目是否配置完整时 | 初始化、agent 文件、skill 资产、占位 spec、audit 检查和修复命令 |
+| `project doctor` | 不确定项目是否配置完整时 | 初始化、agent 文件、skill 资产、占位 spec、audit、完整性检查和修复命令 |
+| `project reconcile` | 历史 spec 需要补状态时 | dry-run/apply 计划,将 L1/L2 标记为 implemented 并补建缺失决策 |
+| `project remediate` | 项目需要版本化迁移时 | 补建决策记录、完整性豁免和缺失的 agent 资产目录 |
 | `flow status` | 想知道某个 topic 卡在哪一步时 | L1/L2/L3/Task 状态和下一条命令 |
 | `guide` | 有需求但不知道从哪条命令开始时 | 不改文件，只给出下一步 |
 | `new feature` | 想快速安全地启动一个 L1 时 | 创建 L1 壳并打印后续 update 命令 |
@@ -391,6 +400,8 @@ spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 
 `task context` 面向 coding harness 和 agent,用于在编辑前获取有边界的工作包。`task step` 是每步的上报(R15 要求带 `outputJson`);`task report` 是同一套 step 记录模型的紧凑封装。`task verify` 会把命令、退出码、摘要、产物和覆盖 AC 写入 task。`task complete` 触发级联 —— 不会反向(R2)。
 
+Task 进入 `completed` 或 `failed` 后，其步骤与验证历史不可再由普通命令修改。完成 Task 前必须全部计划步骤成功，并至少记录一条 `exitCode=0` 的 verification。已弃用的 `task batch` 不再自动生成成功执行记录。
+
 ### 7. 记录决策卡片(R18:L1 implemented)
 
 L1 走到 `implemented` 后,**必须**至少建一张决策卡片,记录关键 what/why:
@@ -489,6 +500,9 @@ task-linked proposal 存在 `changes/<name>/proposal.md`,状态为 `unresolved|r
 |---|---|
 | `spec-manager project init --name X` | 初始化 `.spec-manager/` |
 | `spec-manager project status` | 项目总览(按层统计 + 最近活动) |
+| `spec-manager project doctor` | 初始化 + 完整性检查和修复命令 |
+| `spec-manager project reconcile [--dry-run]` | 将历史 L1/L2 标记为 implemented 并补建缺失决策 |
+| `spec-manager project remediate [--dry-run]` | 版本化迁移:决策记录、完整性豁免、缺失 agent 资产 |
 | `spec-manager spec list [--level L1] [--topic X] [--status draft]` | 列 spec(可过滤) |
 | `spec-manager spec show <code> [--include-content]` | 查 spec;默认窄视图(只元数据, R19) |
 | `spec-manager spec update <code> --content F --ai-summary S --change-summary R` | 写正文 |
@@ -552,7 +566,7 @@ spec-manager/
 ## 设计取舍
 
 - **Markdown + YAML frontmatter** 而非 JSON 或 DB:git 友好、可读、可 diff
-- **原子写入** (temp + rename) 防止 spec 写一半
+- **原子写入** (temp + rename) 防止 spec 写一半;**文件事务**将此扩展到多 spec 操作并支持回滚
 - **默认 narrow 视图** (`spec show` 默认只返回元数据, R19) — 节省上下文
 - **校验只 warn 不 throw** (按 R22、R13);R22 在 confirm/freeze 时阻止占位正文
 - **本地规则审计** — JSON 文件 + at-least-once pending 队列(没有网络可失败)

@@ -18,6 +18,11 @@
 - **Status machine** L1/L2 use `draft → confirmed`; L3 uses `draft → frozen → implemented`
 - **Agent Task lifecycle** — `create → start → step → complete`, steps in spec frontmatter; R5 blocks complete if steps are skipped
 - **Coding harness bridge** — export task context, report task progress, record verification evidence, and propose implementation-scope changes from CLI-friendly commands
+- **Project integrity inspection** — scan for dangling references, conflicting active tasks, missing verifications/decisions, and stale parents; surfaced via `project doctor`
+- **Lifecycle reconciliation** — dry-run/apply plans to retroactively mark historical L1/L2 specs as `implemented` and create missing decision records
+- **Repository remediation** — versioned migrations that retroactively create decision records, integrity exemptions, and missing agent asset directories
+- **File transactions** — atomic, rollback-capable multi-file writes with snapshot-and-restore semantics
+- **Task invariants** — hard-safety checks: one active task per spec, only running tasks accept steps, successful verification required before completion
 - **Decision cards** with `what/why/affectedCriteria` + topic query
 - **Rule audit** with at-least-once local JSON accumulator
 - **Delta specs** (OpenSpec-style `changes/<name>/` with ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
@@ -143,7 +148,9 @@ Or use an AI agent configured with spec-manager:
 For day-to-day use, these helper commands reduce command memorization:
 
 ```bash
-spec-manager project doctor                 # check setup, agent files, skill assets, placeholders, audit
+spec-manager project doctor                 # check setup, agent files, skill assets, placeholders, audit, integrity
+spec-manager project reconcile              # dry-run: retroactively mark historical specs as implemented + create missing decisions
+spec-manager project remediate              # versioned migrations: decision records, integrity exemptions, missing agent assets
 spec-manager flow status --topic auth       # show L1/L2/L3/Task progress and the next command
 spec-manager view --topic auth              # interactively browse specs, tasks, and next steps
 spec-manager guide "add user auth"          # print the next useful step for a request
@@ -159,7 +166,9 @@ Long-form commands remain available; the shortcuts only wrap the same rules and 
 
 | Command | Use it when | What it gives you |
 |---|---|---|
-| `project doctor` | You are unsure whether the project is ready | Setup checks plus concrete fix commands |
+| `project doctor` | You are unsure whether the project is ready | Setup checks plus integrity scan and concrete fix commands |
+| `project reconcile` | Historical specs need retroactive status fixes | Dry-run/apply plan to mark L1/L2 as implemented + create missing decisions |
+| `project remediate` | Project needs versioned migrations | Creates decision records, integrity exemptions, and missing agent assets |
 | `flow status` | You need to know where a topic is blocked | L1/L2/L3/Task state and the next command |
 | `view` | You want to explore workflow state interactively | Topic/spec/task browser with next-step suggestions |
 | `guide` | You have a request but do not know which command starts it | The next useful step without changing files |
@@ -407,6 +416,8 @@ spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 
 `task context` is designed for coding harnesses and agents that need a bounded work packet before editing. `task step` is the per-step report (with required `outputJson` per R15); `task report` is a compact harness-friendly wrapper around the same step recording model. `task verify` stores command, exit code, summary, artifacts, and covered ACs on the task. `task complete` triggers the cascade — it never goes the other way (R2).
 
+Task history is immutable after `completed` or `failed`. A task can complete only after every planned step succeeds and at least one recorded verification has `exitCode=0`. The deprecated `task batch` command cannot synthesize successful execution records.
+
 ### 7. Record a decision card (R18: L1 implemented)
 
 Once the L1 is `implemented`, you MUST record at least one decision card capturing the key what/why:
@@ -506,6 +517,9 @@ Task-linked proposals live in `changes/<name>/proposal.md` with `status: unresol
 | `spec-manager project init --name X` | Initialize `.spec-manager/` |
 | `spec-manager project status` | Project overview (specs by level, recent activity) |
 | `spec-manager project agents [--provider P] [--dry-run]` | Auto-detect or install agent workflow files |
+| `spec-manager project doctor` | Setup + integrity checks with concrete fix commands |
+| `spec-manager project reconcile [--dry-run]` | Retroactively mark historical L1/L2 as implemented + create missing decisions |
+| `spec-manager project remediate [--dry-run]` | Versioned migrations: decisions, exemptions, missing agent assets |
 | `spec-manager view [--topic X]` | Interactive topic/spec/task browser |
 | `spec-manager completion install zsh\|bash\|fish` | Install shell and spec-code completion |
 | `spec-manager spec list [--level L1] [--topic X] [--status draft]` | List specs (filterable) |
@@ -572,7 +586,7 @@ spec-manager/
 ## Design choices
 
 - **Markdown + YAML frontmatter** over JSON or DB: git-friendly, human-readable, diff-able
-- **Atomic file writes** (temp + rename) prevent half-written specs
+- **Atomic file writes** (temp + rename) prevent half-written specs; **file transactions** extend this to multi-spec operations with rollback
 - **Narrow view by default** (`spec show` returns metadata only, R19) — saves context
 - **Warning-only validation** — never throws on content quality issues (per R22, R13); R22 blocks confirm/freeze if content is still placeholder
 - **Local rule audit** — JSON file with at-least-once pending queue (no network to fail)

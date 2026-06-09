@@ -7,6 +7,8 @@ import { findSpecByCode, isPlaceholderContent, listAllSpecs, type SpecRecord } f
 import { listTasks, type TaskRecord } from './task.js';
 import type { ProjectPaths } from './paths.js';
 import { REQUIRED_SECTIONS, type SpecLevel } from './validate.js';
+import { inspectProjectIntegrity } from './integrity.js';
+import { assessImplementationReadiness } from './lifecycle.js';
 
 export type DoctorSeverity = 'ok' | 'warn' | 'fail';
 
@@ -39,8 +41,8 @@ export function runProjectDoctor(paths: ProjectPaths): DoctorCheck[] {
 
   const claudeSkill = join(paths.root, '.claude', 'skills', 'spec-manager');
   if (existsSync(claudeSkill)) {
-    checks.push(fileCheck(existsSync(join(claudeSkill, 'rules')), '.claude/skills/spec-manager/rules', 'Claude skill rules bundled', 'spec-manager project agents --provider claude --force', false));
-    checks.push(fileCheck(existsSync(join(claudeSkill, 'templates')), '.claude/skills/spec-manager/templates', 'Claude skill templates bundled', 'spec-manager project agents --provider claude --force', false));
+    checks.push(fileCheck(existsSync(join(claudeSkill, 'rules')), '.claude/skills/spec-manager/rules', 'Claude skill rules bundled', 'spec-manager project remediate --migration repository-remediation-v1 --dry-run', false));
+    checks.push(fileCheck(existsSync(join(claudeSkill, 'templates')), '.claude/skills/spec-manager/templates', 'Claude skill templates bundled', 'spec-manager project remediate --migration repository-remediation-v1 --dry-run', false));
   }
   const codeBuddySkill = join(paths.root, '.codebuddy', 'skills', 'spec-manager');
   if (existsSync(codeBuddySkill)) {
@@ -68,6 +70,17 @@ export function runProjectDoctor(paths: ProjectPaths): DoctorCheck[] {
       detail: err instanceof Error ? err.message : String(err),
       action: 'Check .spec-manager/audit.json permissions or recreate it',
       blocking: true,
+    });
+  }
+
+  if (paths.isInitialized) {
+    const issues = inspectProjectIntegrity(paths);
+    checks.push({
+      status: issues.length === 0 ? 'ok' : 'warn',
+      label: 'Repository integrity',
+      detail: issues.length === 0 ? 'No integrity issues' : `${issues.length} issue(s): ${issues.slice(0, 3).map(issue => issue.message).join('; ')}`,
+      action: issues.length === 0 ? undefined : 'Review project doctor output and repair issues explicitly',
+      blocking: false,
     });
   }
 
@@ -146,9 +159,18 @@ export function suggestNextActionForTopic(topic: string, specs: SpecRecord[], ta
     if (task.status === 'running') return `spec-manager task step ${task.id} --spec ${task.specCode} --no <N> --status succeeded --output-json '{"summary":"..."}'`;
     if (task.status === 'waiting') return `Resolve wait reason, then spec-manager task start ${task.id} --spec ${task.specCode}`;
   }
-  const confirmedNonL3 = specs.find((s) => (s.fm.level === 'L1' || s.fm.level === 'L2') && s.fm.status === 'confirmed');
-  if (confirmedNonL3?.fm.level === 'L1') return `spec-manager spec new L2 --topic ${topic} --parent ${confirmedNonL3.fm.code} --title "..."`;
-  if (confirmedNonL3?.fm.level === 'L2') return `spec-manager spec new L3 --topic ${topic} --parent ${confirmedNonL3.fm.code} --title "..."`;
+  const confirmedNonL3 = specs.find((s) => s.fm.level === 'L2' && s.fm.status === 'confirmed')
+    ?? specs.find((s) => s.fm.level === 'L1' && s.fm.status === 'confirmed');
+  if (confirmedNonL3) {
+    const children = specs.filter(spec => spec.fm.parentCode === confirmedNonL3.fm.code);
+    if (children.length === 0) {
+      if (confirmedNonL3.fm.level === 'L1') return `spec-manager spec new L2 --topic ${topic} --parent ${confirmedNonL3.fm.code} --title "..."`;
+      return `spec-manager spec new L3 --topic ${topic} --parent ${confirmedNonL3.fm.code} --title "..."`;
+    }
+    if (assessImplementationReadinessForSpecs(specs, confirmedNonL3.fm.code)) {
+      return 'spec-manager project reconcile --dry-run';
+    }
+  }
   return 'No immediate action. Use spec-manager flow status for details.';
 }
 
@@ -172,8 +194,19 @@ export function suggestAfterSpecCommand(spec: SpecRecord, paths?: ProjectPaths):
       paths ? getUpstreamFreezeAdvice(paths, spec) : [],
     );
   }
-  if (spec.fm.level === 'L1' && spec.fm.status === 'confirmed') return `spec-manager spec new L2 --topic ${spec.fm.topic} --parent ${spec.fm.code} --title "..."`;
-  if (spec.fm.level === 'L2' && spec.fm.status === 'confirmed') return `spec-manager spec new L3 --topic ${spec.fm.topic} --parent ${spec.fm.code} --title "..."`;
+  if ((spec.fm.level === 'L1' || spec.fm.level === 'L2') && spec.fm.status === 'confirmed') {
+    if (!paths) return 'spec-manager flow status';
+    const specs = listAllSpecs(paths);
+    const children = specs.filter(child => child.fm.parentCode === spec.fm.code);
+    if (children.length === 0) {
+      return spec.fm.level === 'L1'
+        ? `spec-manager spec new L2 --topic ${spec.fm.topic} --parent ${spec.fm.code} --title "..."`
+        : `spec-manager spec new L3 --topic ${spec.fm.topic} --parent ${spec.fm.code} --title "..."`;
+    }
+    if (assessImplementationReadiness(paths, spec.fm.code, 'project-reconcile').ready) {
+      return 'spec-manager project reconcile --dry-run';
+    }
+  }
   return 'spec-manager flow status';
 }
 
@@ -188,12 +221,19 @@ function getUpstreamFreezeAdviceForSpecs(specs: SpecRecord[], spec: SpecRecord):
   while (parentCode) {
     const upstream = specs.find((s) => s.fm.code === parentCode);
     if (!upstream) break;
-    if (upstream.fm.status !== 'frozen' && upstream.fm.status !== 'implemented') {
-      advice.push(`Upstream ${upstream.fm.code} is ${upstream.fm.status}; task complete will not cascade it unless it is frozen.`);
+    if (upstream.fm.status !== 'confirmed' && upstream.fm.status !== 'implemented') {
+      advice.push(`Upstream ${upstream.fm.code} is ${upstream.fm.status}; L1/L2 must be confirmed for task completion to cascade.`);
     }
     parentCode = upstream.fm.parentCode;
   }
   return advice;
+}
+
+function assessImplementationReadinessForSpecs(specs: SpecRecord[], specCode: string): boolean {
+  const spec = specs.find(item => item.fm.code === specCode);
+  if (!spec || spec.fm.status !== 'confirmed' || (spec.fm.level !== 'L1' && spec.fm.level !== 'L2')) return false;
+  const children = specs.filter(item => item.fm.parentCode === specCode);
+  return children.length > 0 && children.every(child => child.fm.status === 'implemented');
 }
 
 function appendAdvice(command: string, advice: string[]): string {

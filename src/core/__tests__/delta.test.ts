@@ -62,6 +62,11 @@ describe('createChange — 创建 change 目录', () => {
 });
 
 describe('getChangeDir — 获取 change 目录结构', () => {
+  it('拒绝路径穿越名称', () => {
+    expect(() => getChangeDir(paths, '../../outside')).toThrow(/PATH_OUTSIDE_PROJECT/);
+    expect(() => resolveTaskLinkedChangeProposal(paths, '../../outside')).toThrow(/PATH_OUTSIDE_PROJECT/);
+  });
+
   it('不存在返回 null', () => {
     expect(getChangeDir(paths, 'nonexistent')).toBeNull();
   });

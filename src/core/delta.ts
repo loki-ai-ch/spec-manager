@@ -40,7 +40,7 @@ import { existsSync, writeFileSync, readdirSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { readFrontmatter, writeFrontmatter } from './frontmatter.js';
 import { DeltaSpecSchema, type ChangeEntry, type ChangeOpT, type DeltaSpec } from '../schemas/change.js';
-import type { ProjectPaths } from './paths.js';
+import { assertSafeChangeName, resolveWithin, type ProjectPaths } from './paths.js';
 import { findSpecByCode } from './spec-io.js';
 import { findTask } from './task.js';
 
@@ -83,7 +83,8 @@ interface ProposalFrontmatter {
 }
 
 export function changeDir(paths: ProjectPaths, name: string): string {
-  return join(paths.changesDir, name);
+  assertSafeChangeName(name);
+  return resolveWithin(paths.changesDir, name);
 }
 
 export function getChangeDir(paths: ProjectPaths, name: string): ChangeDir | null {
@@ -322,9 +323,7 @@ export interface CreateChangeInput {
 }
 
 export function createChange(input: CreateChangeInput): { name: string; root: string; proposalFile: string } {
-  if (!/^[a-z0-9-]+$/.test(input.name)) {
-    throw new Error(`change name 非法: ${input.name}（必须 ^[a-z0-9-]+$）`);
-  }
+  assertSafeChangeName(input.name);
   const root = changeDir(input.paths, input.name);
   if (existsSync(root)) throw new Error(`Change 已存在: ${input.name}`);
 

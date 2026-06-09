@@ -41,6 +41,25 @@ scope: test scope
 }
 
 describe('archiveChange — 预检与失败安全', () => {
+  it('RENAMED migrates structured child references', () => {
+    createSpec({ paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+    updateSpec(paths, 'auth-L1', { status: 'confirmed' });
+    createSpec({ paths, code: 'auth-L2.1', level: 'L2', title: 'Design', topic: 'auth', parentCode: 'auth-L1' });
+    createChange({ paths, name: 'rename-references' });
+    writeValidProposal('rename-references');
+    writeDelta('rename-references', 'auth-L1.md', `---
+code: auth-L1
+---
+
+## RENAMED Requirements
+- FROM: auth-L1 TO: auth-v2-L1
+`);
+
+    archiveChange(paths, 'rename-references');
+    expect(findSpecByCode(paths, 'auth-L2.1')?.fm.parentCode).toBe('auth-v2-L1');
+    expect(findSpecByCode(paths, 'auth-L1')).toBeNull();
+  });
+
   it('RENAMED 目标 code 已存在时拒绝覆盖且不归档', () => {
     const oldCode = 'auth-L1';
     const newCode = 'auth-v2-L1';

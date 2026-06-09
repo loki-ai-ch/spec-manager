@@ -1,0 +1,86 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-hardening-L3.1.4-transaction",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 archive task audit 与原子写实现",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 1\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.075Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "实现项目锁和文件事务模块",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 2\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.192Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "迁移 audit report 与 task complete 事务",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 3\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.310Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "实现 Spec rename 引用迁移计划",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 4\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.431Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "迁移 archive rename 到事务提交",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 5\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.551Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "补充锁冲突故障注入和 rename 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 6\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.674Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证事务 archive task audit 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed transaction step 7\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:53.796Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T09:38:22.792Z",
+  "finishedAt": "2026-06-08T09:48:16.290Z",
+  "created": "2026-06-08T09:38:22.677Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Transaction, rename, concurrency and full suite passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3",
+        "AC-4",
+        "AC-8",
+        "AC-9"
+      ],
+      "created": "2026-06-08T09:48:09.574Z"
+    }
+  ]
+}

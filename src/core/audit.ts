@@ -20,11 +20,13 @@
  *    在 report() 里加 POST 即可，pending 机制不变）
  */
 
-import { existsSync, readFileSync, writeFileSync, mkdirSync, renameSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import type { ProjectPaths } from './paths.js';
 import { listTaskLinkedChangeProposals } from './delta.js';
 import { listTasks } from './task.js';
+import { writeAtomic } from './frontmatter.js';
+import { withProjectTransaction } from './transaction.js';
 
 export const RULE_ID_RE = /^R([1-9]|1[0-9]|2[0-4])$/;
 export const ALL_RULE_IDS = Array.from({ length: 24 }, (_, i) => `R${i + 1}`);
@@ -82,12 +84,7 @@ export function readAudit(paths: ProjectPaths): AuditState {
 }
 
 export function writeAudit(paths: ProjectPaths, state: AuditState): void {
-  const dir = dirname(paths.auditFile);
-  if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
-  const tmp = join(dir, `.audit-${Date.now()}.tmp`);
-  writeFileSync(tmp, JSON.stringify(state, null, 2), 'utf8');
-  // rename 替换原文件
-  renameSync(tmp, paths.auditFile);
+  writeAtomic(paths.auditFile, JSON.stringify(state, null, 2));
 }
 
 export interface HitInput {
@@ -101,18 +98,20 @@ export function hit(input: HitInput): AuditState {
   if (!RULE_ID_RE.test(input.ruleId)) {
     throw new Error(`ruleId 格式非法: ${input.ruleId}（必须 /^R([1-9]|1[0-9]|2[0-4])$/）`);
   }
-  const state = readAudit(input.paths);
-  state.rules[input.ruleId] = (state.rules[input.ruleId] ?? 0) + 1;
-  state.pending.push({
-    ruleId: input.ruleId,
-    timestamp: new Date().toISOString(),
-    specCode: input.specCode,
-    taskCode: input.taskCode,
-    reported: false,
+  return withProjectTransaction(input.paths, `audit hit ${input.ruleId}`, tx => {
+    const state = readAudit(input.paths);
+    state.rules[input.ruleId] = (state.rules[input.ruleId] ?? 0) + 1;
+    state.pending.push({
+      ruleId: input.ruleId,
+      timestamp: new Date().toISOString(),
+      specCode: input.specCode,
+      taskCode: input.taskCode,
+      reported: false,
+    });
+    state.lastUpdated = new Date().toISOString();
+    tx.write(input.paths.auditFile, JSON.stringify(state, null, 2));
+    return state;
   });
-  state.lastUpdated = new Date().toISOString();
-  writeAudit(input.paths, state);
-  return state;
 }
 
 export function startSession(paths: ProjectPaths, opts: { sessionId: string; topic?: string }): AuditState {
@@ -124,8 +123,10 @@ export function startSession(paths: ProjectPaths, opts: { sessionId: string; top
     pending: [],
     lastUpdated: new Date().toISOString(),
   };
-  writeAudit(paths, state);
-  return state;
+  return withProjectTransaction(paths, 'audit session', tx => {
+    tx.write(paths.auditFile, JSON.stringify(state, null, 2));
+    return state;
+  });
 }
 
 export interface ReportResult {
@@ -138,26 +139,25 @@ export interface ReportResult {
  * 本地版"report"语义 = 落库到 .spec-manager/audit-archive.json
  */
 export function report(paths: ProjectPaths): ReportResult {
-  const state = readAudit(paths);
-  let marked = 0;
-  for (const e of state.pending) {
-    if (!e.reported) {
-      e.reported = true;
-      marked++;
+  return withProjectTransaction(paths, 'audit report', tx => {
+    const state = readAudit(paths);
+    let marked = 0;
+    for (const e of state.pending) {
+      if (!e.reported) {
+        e.reported = true;
+        marked++;
+      }
     }
-  }
-  // 把已 reported 的条目移到 archive（本地存档）
-  const archivePath = join(dirname(paths.auditFile), 'audit-archive.json');
-  let archive: PendingEntry[] = [];
-  if (existsSync(archivePath)) {
-    archive = JSON.parse(readFileSync(archivePath, 'utf8'));
-  }
-  archive.push(...state.pending);
-  state.pending = [];
-  state.lastUpdated = new Date().toISOString();
-  writeAudit(paths, state);
-  writeFileSync(archivePath, JSON.stringify(archive, null, 2), 'utf8');
-  return { markedReported: marked, remaining: 0 };
+    const archivePath = join(dirname(paths.auditFile), 'audit-archive.json');
+    let archive: PendingEntry[] = [];
+    if (existsSync(archivePath)) archive = JSON.parse(readFileSync(archivePath, 'utf8'));
+    archive.push(...state.pending);
+    state.pending = [];
+    state.lastUpdated = new Date().toISOString();
+    tx.write(paths.auditFile, JSON.stringify(state, null, 2));
+    tx.write(archivePath, JSON.stringify(archive, null, 2));
+    return { markedReported: marked, remaining: 0 };
+  });
 }
 
 export function showSummary(paths: ProjectPaths, opts?: { ruleId?: string }): string {
@@ -213,7 +213,7 @@ export function collectAuditWarnings(paths: ProjectPaths): string[] {
     .filter(task => (task.verifications?.length ?? 0) === 0)
     .map(task =>
       `completed task ${task.id} (${task.specCode}) has no verification evidence; ` +
-      `run: spec-manager task verify ${task.id} --spec ${task.specCode} --command "..." --exit-code 0 --summary "..."`,
+      `completed task history is immutable; create a follow-up L3/Task to record new verification`,
     );
   for (const proposal of listTaskLinkedChangeProposals(paths, { status: 'unresolved' })) {
     warnings.push(

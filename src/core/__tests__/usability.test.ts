@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { createSpec, updateSpec } from '../spec-io.js';
+import { createSpec, findSpecByCode, updateSpec, writeSpec } from '../spec-io.js';
 import { createTask } from '../task.js';
 import { getFlowStatus, getUpstreamFreezeAdvice, readProjectContext, renderRichGuide, renderTemplate, runProjectDoctor, suggestAfterSpecCommand } from '../usability.js';
 import { createTestProject, type TestProject } from './project-fixture.js';
@@ -29,6 +29,14 @@ describe('runProjectDoctor', () => {
     expect(agentCheck?.action).toBe('spec-manager project agents --provider all');
   });
 
+  it('suggests explicit remediation instead of force for incomplete Claude skill assets', () => {
+    mkdirSync(join(project.root, '.claude', 'skills', 'spec-manager'), { recursive: true });
+    const checks = runProjectDoctor(project.paths);
+    const rules = checks.find(check => check.label === 'Claude skill rules bundled');
+    expect(rules?.action).toContain('project remediate');
+    expect(rules?.action).not.toContain('--force');
+  });
+
   it('does not report a complete spec that references the marker as placeholder', () => {
     createSpec({ paths: project.paths, code: 'docs-L1', level: 'L1', title: 'Docs', topic: 'docs', parentCode: null });
     updateSpec(project.paths, 'docs-L1', {
@@ -51,6 +59,25 @@ describe('doctor blocking', () => {
 });
 
 describe('getFlowStatus', () => {
+  it('suggests reconciliation instead of duplicate child creation for a completed confirmed hierarchy', () => {
+    createSpec({ paths: project.paths, code: 'done-L1', level: 'L1', title: 'Done', topic: 'done', parentCode: null });
+    updateSpec(project.paths, 'done-L1', { content: '# Done\n', aiSummary: 'done', status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'done-L2.1', level: 'L2', title: 'Done design', topic: 'done', parentCode: 'done-L1' });
+    updateSpec(project.paths, 'done-L2.1', { content: '# Done design\n', aiSummary: 'done design' });
+    writeImplemented('done-L2.1');
+    const flow = getFlowStatus(project.paths, { topic: 'done' })[0];
+    expect(flow.nextAction).toBe('spec-manager project reconcile --dry-run');
+    expect(suggestAfterSpecCommand(flow.specs.find(spec => spec.fm.code === 'done-L1')!, project.paths)).toBe('spec-manager project reconcile --dry-run');
+  });
+
+  it('does not suggest duplicate children when a confirmed hierarchy is partially implemented', () => {
+    createSpec({ paths: project.paths, code: 'partial-L1', level: 'L1', title: 'Partial', topic: 'partial', parentCode: null });
+    updateSpec(project.paths, 'partial-L1', { content: '# Partial\n', aiSummary: 'partial', status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'partial-L2.1', level: 'L2', title: 'Partial design', topic: 'partial', parentCode: 'partial-L1' });
+    updateSpec(project.paths, 'partial-L2.1', { content: '# Partial design\n', aiSummary: 'partial design', status: 'confirmed' });
+    expect(getFlowStatus(project.paths, { topic: 'partial' })[0].nextAction).toContain('spec-manager spec new L3');
+    expect(suggestAfterSpecCommand(findSpec('partial-L1'), project.paths)).toBe('spec-manager flow status');
+  });
   it('does not let a marker example override the normal next action', () => {
     createSpec({ paths: project.paths, code: 'docs-L1', level: 'L1', title: 'Docs', topic: 'docs', parentCode: null });
     updateSpec(project.paths, 'docs-L1', {
@@ -112,6 +139,18 @@ describe('getFlowStatus', () => {
     expect(flow.nextAction).toContain('spec-manager task start T-001');
   });
 });
+
+function findSpec(code: string) {
+  const spec = findSpecByCode(project.paths, code);
+  if (!spec) throw new Error(`missing test spec ${code}`);
+  return spec;
+}
+
+function writeImplemented(code: string): void {
+  const spec = findSpecByCode(project.paths, code);
+  if (!spec) throw new Error(`missing test spec ${code}`);
+  writeSpec({ ...spec, fm: { ...spec.fm, status: 'implemented' } });
+}
 
 function completeMarkerExample(): string {
   return `# Placeholder validation
@@ -182,8 +221,8 @@ describe('renderRichGuide', () => {
   });
 });
 
-describe('upstream frozen advice', () => {
-  it('warns when an L3 upstream L2 is not frozen', () => {
+describe('upstream lifecycle advice', () => {
+  it('does not warn when L3 upstream L1/L2 are confirmed', () => {
     createSpec({ paths: project.paths, code: 'cache-L1', level: 'L1', title: 'Cache', topic: 'cache', parentCode: null });
     updateSpec(project.paths, 'cache-L1', { content: '# Cache\n', aiSummary: 'cache', status: 'confirmed' });
     createSpec({ paths: project.paths, code: 'cache-L2.1', level: 'L2', title: 'Cache design', topic: 'cache', parentCode: 'cache-L1' });
@@ -192,11 +231,11 @@ describe('upstream frozen advice', () => {
     updateSpec(project.paths, 'cache-L3.1.1-api', { content: '# Impl\n', aiSummary: 'impl', status: 'confirmed' });
     const l3 = getFlowStatus(project.paths, { topic: 'cache' })[0].specs.find((s) => s.fm.code === 'cache-L3.1.1-api')!;
 
-    expect(getUpstreamFreezeAdvice(project.paths, l3).join('\n')).toContain('Upstream cache-L2.1 is confirmed');
-    expect(suggestAfterSpecCommand(l3, project.paths)).toContain('will not cascade');
+    expect(getUpstreamFreezeAdvice(project.paths, l3)).toEqual([]);
+    expect(suggestAfterSpecCommand(l3, project.paths)).not.toContain('will not cascade');
   });
 
-  it('does not warn when L3 upstream specs are frozen', () => {
+  it('warns when legacy L1/L2 upstream specs are frozen', () => {
     createSpec({ paths: project.paths, code: 'search-L1', level: 'L1', title: 'Search', topic: 'search', parentCode: null });
     updateSpec(project.paths, 'search-L1', { content: '# Search\n', aiSummary: 'search', status: 'confirmed' });
     updateSpec(project.paths, 'search-L1', { status: 'frozen' });
@@ -207,6 +246,6 @@ describe('upstream frozen advice', () => {
     updateSpec(project.paths, 'search-L3.1.1-api', { content: '# Impl\n', aiSummary: 'impl', status: 'confirmed' });
     const l3 = getFlowStatus(project.paths, { topic: 'search' })[0].specs.find((s) => s.fm.code === 'search-L3.1.1-api')!;
 
-    expect(getUpstreamFreezeAdvice(project.paths, l3)).toEqual([]);
+    expect(getUpstreamFreezeAdvice(project.paths, l3).join('\n')).toContain('L1/L2 must be confirmed');
   });
 });

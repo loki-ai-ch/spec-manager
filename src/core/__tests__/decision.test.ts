@@ -30,6 +30,7 @@ afterEach(() => {
 function createL1Implemented(topic = 'auth', title = 'Auth L1'): string {
   const code = generateSpecCode(topic, 'L1');
   createSpec({ paths, code, level: 'L1', title, topic, parentCode: null });
+  updateSpec(paths, code, { status: 'frozen' });
   updateSpec(paths, code, { status: 'implemented' });
   return code;
 }
@@ -104,6 +105,7 @@ describe('listDecisions — topic / includeAll / docCode / criteria 过滤', () 
     const codeA = createL1Implemented('auth', 'Auth A');
     const codeB = 'auth-v2-L1';
     createSpec({ paths, code: codeB, level: 'L1', title: 'Auth B', topic: 'auth', parentCode: null });
+    updateSpec(paths, codeB, { status: 'frozen' });
     updateSpec(paths, codeB, { status: 'implemented' });
 
     createDecision({ paths, docCode: codeA, topic: 'auth', what: 'A decision' });

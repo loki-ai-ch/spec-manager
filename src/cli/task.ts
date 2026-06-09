@@ -437,56 +437,15 @@ export function registerTaskCommands(program: Command): void {
   // ── batch: 一条命令完成 create → start → step×N → complete ──
   task
     .command('batch <specCode>')
-    .description('一条命令完成 Agent Task 全生命周期（create + start + step×N + complete）')
+    .description('已弃用：禁止自动伪造 Task 成功记录')
     .requiredOption('--plan <file>', 'planJson 文件路径（含 steps[]）')
     .option('--auto-confirm', 'human_gate 自动通过', false)
     .option('--json', '以 JSON 格式输出', false)
     .action((specCode: string, opts: { plan: string; autoConfirm: boolean; json: boolean }) => {
-      const paths = getPaths();
-      const planJson = JSON.parse(readFileSync(opts.plan, 'utf8'));
-
-      // 1. create
-      const { task: created } = createTask({ paths, specCode, planJson, autoConfirm: opts.autoConfirm });
-      console.log(`✓ Task ${created.id} created for ${specCode}`);
-      console.log(`  steps: ${planJson.steps.length}`);
-
-      // 2. start
-      startTask(paths, created.id, specCode);
-      console.log(`✓ Task ${created.id} → running`);
-
-      // 3. step × N
-      for (const step of planJson.steps) {
-        const outputJson = JSON.stringify({ summary: `step ${step.stepNo}: ${step.name}` });
-        reportStep({
-          paths,
-          taskId: created.id,
-          specCode,
-          stepNo: step.stepNo,
-          status: 'succeeded',
-          outputJson,
-        });
-        console.log(`  [${step.stepNo}/${planJson.steps.length}] ${step.name}... succeeded`);
-      }
-
-      // 4. complete
-      const result = completeTask({ paths, taskId: created.id, specCode });
-      console.log(`✓ Task ${result.task.id} → completed`);
-      if (result.cascadedSpecs.length > 0) {
-        console.log('  cascaded:');
-        for (const c of result.cascadedSpecs) {
-          console.log(`    ${c.code} (${c.level}): ${c.oldStatus} → ${c.newStatus}`);
-        }
-      }
-      if (result.skippedSpecs.length > 0) {
-        console.log('  skipped:');
-        for (const s of result.skippedSpecs) {
-          console.log(`    ${s.code} (${s.reason})`);
-        }
-      }
-
-      if (opts.json) {
-        console.log(JSON.stringify(result, null, 2));
-      }
+      void specCode;
+      void opts;
+      console.error('✗ TASK_BATCH_DEPRECATED: use task create, start, report/step, verify, then complete');
+      process.exit(2);
     });
 }
 

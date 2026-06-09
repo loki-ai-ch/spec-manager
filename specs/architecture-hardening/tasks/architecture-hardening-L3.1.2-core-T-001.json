@@ -1,0 +1,78 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-hardening-L3.1.2-core",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取路径 change 和 Spec Core 实现",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 1\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:51.642Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "实现 change 名称与目录边界守卫",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 2\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:51.762Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "收口 Spec schema 状态与 relation 校验",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 3\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:51.883Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "更新公共 API 导出契约",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 4\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:52.007Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "补充路径穿越和 Core 绕过测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 5\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:52.129Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证路径 Core 测试与类型检查",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 6\",\"files\":[],\"tests\":[],\"risks\":[]}",
+      "reportedAt": "2026-06-08T09:47:52.252Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-08T09:38:22.348Z",
+  "finishedAt": "2026-06-08T09:48:16.050Z",
+  "created": "2026-06-08T09:38:22.240Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Core and path rules plus full suite passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5",
+        "AC-6",
+        "AC-8",
+        "AC-9"
+      ],
+      "created": "2026-06-08T09:48:09.337Z"
+    }
+  ]
+}

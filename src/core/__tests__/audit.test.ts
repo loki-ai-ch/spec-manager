@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { mkdtempSync, mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, rmSync, existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { Command } from 'commander';
@@ -207,25 +207,17 @@ describe('showSummary — 文本摘要', () => {
   });
 
   it('completed task without verification emits warning', () => {
-    const specCode = createCompletedTask('audit-no-verify');
+    const specCode = createCompletedTask('audit-no-verify', true);
 
     const summary = showSummary(paths);
 
     expect(summary).toContain('warnings:');
     expect(summary).toContain(`completed task T-001 (${specCode}) has no verification evidence`);
-    expect(summary).toContain(`spec-manager task verify T-001 --spec ${specCode}`);
+    expect(summary).toContain('completed task history is immutable');
   });
 
   it('completed task with verification does not emit missing verification warning', () => {
     const specCode = createCompletedTask('audit-with-verify');
-    addTaskVerification({
-      paths,
-      taskId: 'T-001',
-      specCode,
-      command: 'npm test',
-      exitCode: 0,
-      summary: 'passed',
-    });
 
     const summary = showSummary(paths);
 
@@ -303,7 +295,7 @@ describe('checkCompliance — 合规基线检查', () => {
   });
 });
 
-function createCompletedTask(topic: string): string {
+function createCompletedTask(topic: string, removeVerification = false): string {
   const l1Code = `${topic}-L1`;
   createSpec({ paths, code: l1Code, level: 'L1', title: 'L1', topic, parentCode: null });
   updateSpec(paths, l1Code, { status: 'confirmed' });
@@ -325,6 +317,13 @@ function createCompletedTask(topic: string): string {
   });
   startTask(paths, 'T-001', l3Code);
   reportStep({ paths, taskId: 'T-001', specCode: l3Code, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
+  addTaskVerification({ paths, taskId: 'T-001', specCode: l3Code, command: 'npm test', exitCode: 0, summary: 'passed' });
   completeTask({ paths, taskId: 'T-001', specCode: l3Code });
+  if (removeVerification) {
+    const taskFile = join(paths.specsDir, topic, 'tasks', `${l3Code}-T-001.json`);
+    const legacy = JSON.parse(readFileSync(taskFile, 'utf8'));
+    delete legacy.verifications;
+    writeFileSync(taskFile, JSON.stringify(legacy, null, 2), 'utf8');
+  }
   return l3Code;
 }
