@@ -1,4 +1,5 @@
 ---
+name: spec-manager
 description: "Spec-driven project iteration workflow — L1 PRD → L2 Design → L3 Impl → Agent Task → Deploy, with human review gates at each layer. Pure local markdown storage, no MCP, no network. Use when the user invokes /spec-manager or asks for: new feature/PRD, technical design, implementation spec, agent task, iteration plan, test plan, release notes, runbook, postmortem, or ADR."
 argument-hint: "<需求描述> | run <taskId>"
 ---
