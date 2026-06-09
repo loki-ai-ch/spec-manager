@@ -24,7 +24,7 @@ Expert guidelines:
 
 ## 目标
 
-<一句话 + 引用父 L2 的 deliverable 编号。形如"实施 2026-06-05-b2c3d4 的 deliverables 1/2/3">
+<一句话 + 引用父 L2 的 deliverable 编号。形如"实施 auth-L2.1 的 deliverables 1/2/3">
 
 **前置依赖**:<前序 L3 specCode 已 implemented 声明,若无则"无">
 

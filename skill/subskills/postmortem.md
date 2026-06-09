@@ -45,7 +45,7 @@ R15 是软约束（warning），缺乏 hard fail 机制
 
 ## 关联
 - incident: INC-20260604-001
-- spec: 2026-06-04-c3d4e5
+- spec: auth-L3.1.1
 - 规则: R15
 EOF
 ```

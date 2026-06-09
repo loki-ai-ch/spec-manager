@@ -20,7 +20,7 @@
 2. 必走：
 
 ```bash
-spec-manager decision create 2026-06-04-a1b2c3 \
+spec-manager decision create auth-L1 \
   --topic auth \
   --what "采用 JWT 而非 session" \
   --why "无状态扩展，便于多服务共享身份" \
@@ -63,7 +63,7 @@ JWT 有 alg=none 等已知攻击面...
 - 决策卡片：DC-002
 
 ## 关联
-- spec: 2026-06-04-a1b2c3
+- spec: auth-L1
 - decision: DC-002
 EOF
 ```

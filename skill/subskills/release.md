@@ -26,10 +26,10 @@ cat > releases/v1.2.0-release.md <<'EOF'
 # v1.2.0 — <主题>
 
 ## 新增
-- 2FA 强制登录（2026-06-04-a1b2c3 MODIFIED）
+- 2FA 强制登录（auth-L1 MODIFIED）
 
 ## 修复
-- JWT 过期返回 401 而非 500（2026-06-04-c3d4e5 bugfix）
+- JWT 过期返回 401 而非 500（auth-L3.1.1-jwt bugfix）
 
 ## 变更
 - 数据库 schema: users 表加 mfa_secret 字段（migration 2026_05_11）

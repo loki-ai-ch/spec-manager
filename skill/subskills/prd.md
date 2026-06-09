@@ -32,7 +32,7 @@
    > ☑ **R16** — 流程规则:查重确认无重复 L1
 4. **创建 L1**：
    ```bash
-   spec-manager spec new L1 --topic <topic> --title "..."  # --code 不传则自动生成 <YYYY-MM-DD>-<shortId>
+   spec-manager spec new L1 --topic <topic> --title "..."  # --code 不传则自动生成 <topic>-L1
    ```
 5. **写正文**：把 L1-prd.md 模板填好后写到文件
    ```bash
@@ -62,11 +62,11 @@ R1 / R2 / R4 / R7 / R13 / R14 / R16 / R17 / R19 / R22 / R23
 
 | 规则 ID | 文件 | 适用场景 | 类型 |
 |---|---|---|---|
-| R1/R2/R4 | [rules/flow-control.md](../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
-| R7 | [rules/doc-governance.md](../rules/doc-governance.md) | 层级绑定（虽 L1 无父,但确认子层要绑） | 代码 |
-| R13/R21 | [rules/doc-governance.md](../rules/doc-governance.md) | aiSummary 必传 + ≤300 字符 | 代码 |
-| R14 | [rules/doc-governance.md](../rules/doc-governance.md) | 跨层引用 — L1 不复述上层 | 流程 |
-| R16 | [rules/doc-governance.md](../rules/doc-governance.md) | L1 去重搜索 | 流程 |
-| R19 | [rules/doc-governance.md](../rules/doc-governance.md) | 研究期读 aiSummary 而非全文 | 流程 |
-| R22 | [rules/doc-governance.md](../rules/doc-governance.md) | 创建后立即写正文 | 代码（CLI 在 `confirm` 时强制） |
-| R23 | [rules/codebase-survey.md](../rules/codebase-survey.md) | 写 L1 前 Level 1 架构概览 | 流程 |
+| R1/R2/R4 | [rules/flow-control.md](../../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
+| R7 | [rules/doc-governance.md](../../rules/doc-governance.md) | 层级绑定（虽 L1 无父,但确认子层要绑） | 代码 |
+| R13/R21 | [rules/doc-governance.md](../../rules/doc-governance.md) | aiSummary 必传 + ≤300 字符 | 代码 |
+| R14 | [rules/doc-governance.md](../../rules/doc-governance.md) | 跨层引用 — L1 不复述上层 | 流程 |
+| R16 | [rules/doc-governance.md](../../rules/doc-governance.md) | L1 去重搜索 | 流程 |
+| R19 | [rules/doc-governance.md](../../rules/doc-governance.md) | 研究期读 aiSummary 而非全文 | 流程 |
+| R22 | [rules/doc-governance.md](../../rules/doc-governance.md) | 创建后立即写正文 | 代码（CLI 在 `confirm` 时强制） |
+| R23 | [rules/codebase-survey.md](../../rules/codebase-survey.md) | 写 L1 前 Level 1 架构概览 | 流程 |

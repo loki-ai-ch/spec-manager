@@ -19,7 +19,7 @@
 3. **Level 2 代码调查**（R23）：Read ≥3 个源文件了解模块
 4. **创建 L2**：
    ```bash
-   spec-manager spec new L2 --topic <topic> --title "..." --parent <L1 code>  # --code 不传则自动生成
+   spec-manager spec new L2 --topic <topic> --title "..." --parent <L1 code>  # --code 不传则自动生成 <topic>-L2.N
    ```
    > 🔍 **R7 自检**: L2 是否绑定了父 L1？→ `spec-manager audit hit R7`
 5. **写正文**：
@@ -48,6 +48,6 @@ R1 / R2 / R4 / R7 / R13 / R14 / R17 / R19 / R22 / R23
 
 | 规则 ID | 文件 | 适用场景 |
 |---|---|---|
-| R7/R14/R17 | [rules/doc-governance.md](../rules/doc-governance.md) | 层级绑定 / 跨层引用 / 架构拆解 |
-| R19 | [rules/doc-governance.md](../rules/doc-governance.md) | 写 L2 前必读父 L1 全文 |
-| R23 | [rules/codebase-survey.md](../rules/codebase-survey.md) | Level 2 模块深潜（≥3 源文件） |
+| R7/R14/R17 | [rules/doc-governance.md](../../rules/doc-governance.md) | 层级绑定 / 跨层引用 / 架构拆解 |
+| R19 | [rules/doc-governance.md](../../rules/doc-governance.md) | 写 L2 前必读父 L1 全文 |
+| R23 | [rules/codebase-survey.md](../../rules/codebase-survey.md) | Level 2 模块深潜（≥3 源文件） |

@@ -57,12 +57,12 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 
 | 主题 | 规则 | 文件 |
 |---|---|---|
-| 流程控制 | R1-R4 停下审核/状态归用户/frozen 才建 Task | [rules/flow-control.md](rules/flow-control.md) |
-| 质量门禁 | R5/R6/R10/R15/R18 不跳步/planJson 校验 | [rules/quality-gate.md](rules/quality-gate.md) |
-| 文档治理 | R7/R11/R13/R14/R16-R22 层级绑定/aiSummary | [rules/doc-governance.md](rules/doc-governance.md) |
-| 代码纪律 | R8/R9/R12 改代码前自检 | [rules/code-discipline.md](rules/code-discipline.md) |
-| 代码调查 | R23 Spec 前必须基于实际代码 | [rules/codebase-survey.md](rules/codebase-survey.md) |
-| Delta | R24 delta 必须含 proposal | [rules/delta.md](rules/delta.md) |
+| 流程控制 | R1-R4 停下审核/状态归用户/frozen 才建 Task | [rules/flow-control.md](../rules/flow-control.md) |
+| 质量门禁 | R5/R6/R10/R15/R18 不跳步/planJson 校验 | [rules/quality-gate.md](../rules/quality-gate.md) |
+| 文档治理 | R7/R11/R13/R14/R16-R22 层级绑定/aiSummary | [rules/doc-governance.md](../rules/doc-governance.md) |
+| 代码纪律 | R8/R9/R12 改代码前自检 | [rules/code-discipline.md](../rules/code-discipline.md) |
+| 代码调查 | R23 Spec 前必须基于实际代码 | [rules/codebase-survey.md](../rules/codebase-survey.md) |
+| Delta | R24 delta 必须含 proposal | [rules/delta.md](../rules/delta.md) |
 
 ## Spec 状态流
 
@@ -90,14 +90,16 @@ L3:    draft → frozen → implemented
 <project>/
 ├── .spec-manager/                # config + audit + incidents
 ├── specs/<topic>/                # spec 平铺（点分编号自文档化层级）
-│   ├── <L1-code>-<date>.md
-│   ├── <L2-code>-<date>.md
-│   ├── <L3-code>[-desc]-<date>.md
+│   ├── <topic>-L1.md            # 如 auth-L1.md
+│   ├── <topic>-L2.1.md          # 如 auth-L2.1.md
+│   ├── <topic>-L3.1.1[-desc].md # 如 auth-L3.1.1-jwt.md
 │   ├── decisions/               # 决策卡片（topic 级别）
 │   └── tasks/                   # Agent Task（topic 级别）
 │       └── <specCode>-<taskId>.json
 ├── changes/<name>/              # delta 提案
 └── archive/<name>/              # 已合并 change
 ```
+
+**文件命名规则**：`<topic>-L<level>[.<序号>][.<序号>][-desc].md`，点分编号自文档化层级关系，topic 前缀必填。必须通过 CLI 命令创建，不要用 Write 工具直接写文件。
 
 违反任一规则视为流程事故，参照 `.spec-manager/incidents/_TEMPLATE.md` 记录。

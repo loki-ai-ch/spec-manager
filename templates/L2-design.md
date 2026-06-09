@@ -127,8 +127,8 @@ Expert guidelines:
 
 | L3 code | 范围 | 前置依赖 |
 |---|---|---|
-| 2026-06-06-c3d4e5 | ... | 无 |
-| 2026-06-07-d4e5f6 | ... | 2026-06-06-c3d4e5 implemented |
+| auth-L3.1.1 | ... | 无 |
+| auth-L3.1.2 | ... | auth-L3.1.1 implemented |
 
 ## 关联
 

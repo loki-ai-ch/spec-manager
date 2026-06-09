@@ -14,7 +14,7 @@
 3. 写 `plan.md`：
 
 ```bash
-spec-manager spec show 2026-06-04-b2c3d4 --include-content
+spec-manager spec show auth-L2.1 --include-content
 ```
 
 4. `plan.md` 结构：

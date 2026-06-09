@@ -11,7 +11,7 @@
 1. 读 L3 spec + 父 L2
 
 ```bash
-spec-manager spec show 2026-06-04-c3d4e5 --include-content
+spec-manager spec show auth-L3.1.1 --include-content
 ```
 
 2. 创建 testplan：
@@ -19,7 +19,7 @@ spec-manager spec show 2026-06-04-c3d4e5 --include-content
 ```bash
 # 用 git 直接写，或：
 mkdir -p testplans/auth
-cat > testplans/auth/2026-06-04-c3d4e5-testplan.md <<'EOF'
+cat > testplans/auth/auth-L3.1.1-testplan.md <<'EOF'
 # <L3 title> 测试方案
 
 ## 单元测试

@@ -30,7 +30,7 @@ cat > runbooks/auth-service-down.md <<'EOF'
 - 切回上一版本：`docker compose up -d --scale auth-service=0 && git checkout v1.1.0 && docker compose up -d`
 
 ## 关联
-- 关联 spec：2026-06-04-a1b2c3
+- 关联 spec：auth-L1
 - 历史 incident：INC-20260513-001
 EOF
 ```

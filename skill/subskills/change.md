@@ -43,12 +43,12 @@ affectedCriteria:
 
 ```markdown
 ---
-code: 2026-06-04-a1b2c3
+code: auth-L1
 ---
 
 ## MODIFIED Requirements
 
-### Requirement: 2026-06-04-a1b2c3
+### Requirement: auth-L1
 ## 2FA 强制
 
 登录成功后系统 **SHALL** 要求 TOTP 二次校验。
@@ -98,8 +98,8 @@ spec-manager change archive add-2fa
 ```
 ✓ Change add-2fa archived
   applied: 2
-    [MODIFIED] 2026-06-04-a1b2c3
-    [ADDED] 2026-06-05-d4e5f6
+    [MODIFIED] auth-L1
+    [ADDED] auth-L3.1.1-new-feature
   archived to: archive/add-2fa
 ```
 

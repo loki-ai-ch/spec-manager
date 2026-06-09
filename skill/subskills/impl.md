@@ -24,7 +24,7 @@
    > ☑ **R23** / **R12** / **R8** — 流程规则,人工把关
 4. **创建 L3**：
    ```bash
-   spec-manager spec new L3 --topic <topic> --title "..." --parent <L2 code>  # --code 不传则自动生成
+   spec-manager spec new L3 --topic <topic> --title "..." --parent <L2 code>  # --code 不传则自动生成 <topic>-L3.N.M[-desc]
    ```
    > ☑ **R20** — 流程规则:scope-split L2 时所有子 L3 一次建齐
 5. **写正文**：
@@ -57,7 +57,7 @@
    ```
    > ☑ **R3** — 非 frozen 时 CLI 拒绝并 audit hit
 10. `spec-manager task start <task-id>`
-11. 逐步 `spec-manager task step <task-id> --no N --type T --name S --status ok --output-json J --latency L`
+11. 逐步 `spec-manager task step <task-id> --no N --type T --name S --status succeeded --output-json J --latency L`
     - 禁跳步（R5）
     - outputJson 必含 summary（R15）
     - step_report 必须在工作完成后才报（R15）
@@ -87,13 +87,13 @@ R1 / R2 / R3 / R4 / R5 / R6 / R7 / R8 / R10 / R11 / R12 / R13 / R14 / R15 / R18 
 
 | 规则 ID | 文件 | 适用场景 | 类型 |
 |---|---|---|---|
-| R1/R2/R4 | [rules/flow-control.md](../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
-| R3/R5/R6 | [rules/flow-control.md](../rules/flow-control.md) + [rules/quality-gate.md](../rules/quality-gate.md) | frozen 才建 Task / 不跳步 / task 后校验 | 流程 + 代码 |
-| R7/R11/R13/R14/R22 | [rules/doc-governance.md](../rules/doc-governance.md) | 层级绑定 / 粒度 / aiSummary / 跨层引用 / 创建即写正文 | 代码 + 流程 |
-| R8/R12 | [rules/code-discipline.md](../rules/code-discipline.md) | 改代码前自检 / 禁凭记忆 | 流程 |
-| R10/R15/R18 | [rules/quality-gate.md](../rules/quality-gate.md) | planJson 必含验证 / step 必含 summary / 决策卡片 | 代码 |
-| R20 | [rules/doc-governance.md](../rules/doc-governance.md) | scope-split 批量建齐 | 流程 |
-| R23 | [rules/codebase-survey.md](../rules/codebase-survey.md) | Level 3 文件级分析 | 流程 |
+| R1/R2/R4 | [rules/flow-control.md](../../rules/flow-control.md) | 停下审核 / 状态归用户 / 每层独立 | 流程 |
+| R3/R5/R6 | [rules/flow-control.md](../../rules/flow-control.md) + [rules/quality-gate.md](../../rules/quality-gate.md) | frozen 才建 Task / 不跳步 / task 后校验 | 流程 + 代码 |
+| R7/R11/R13/R14/R22 | [rules/doc-governance.md](../../rules/doc-governance.md) | 层级绑定 / 粒度 / aiSummary / 跨层引用 / 创建即写正文 | 代码 + 流程 |
+| R8/R12 | [rules/code-discipline.md](../../rules/code-discipline.md) | 改代码前自检 / 禁凭记忆 | 流程 |
+| R10/R15/R18 | [rules/quality-gate.md](../../rules/quality-gate.md) | planJson 必含验证 / step 必含 summary / 决策卡片 | 代码 |
+| R20 | [rules/doc-governance.md](../../rules/doc-governance.md) | scope-split 批量建齐 | 流程 |
+| R23 | [rules/codebase-survey.md](../../rules/codebase-survey.md) | Level 3 文件级分析 | 流程 |
 
 **类型说明**:
 - **代码**:违反时 CLI 自动抛错或 audit hit
