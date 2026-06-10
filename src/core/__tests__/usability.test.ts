@@ -228,7 +228,7 @@ describe('upstream lifecycle advice', () => {
     createSpec({ paths: project.paths, code: 'cache-L2.1', level: 'L2', title: 'Cache design', topic: 'cache', parentCode: 'cache-L1' });
     updateSpec(project.paths, 'cache-L2.1', { content: '# Design\n', aiSummary: 'design', status: 'confirmed' });
     createSpec({ paths: project.paths, code: 'cache-L3.1.1-api', level: 'L3', title: 'Cache API', topic: 'cache', parentCode: 'cache-L2.1' });
-    updateSpec(project.paths, 'cache-L3.1.1-api', { content: '# Impl\n', aiSummary: 'impl', status: 'confirmed' });
+    updateSpec(project.paths, 'cache-L3.1.1-api', { content: '# Impl\n', aiSummary: 'impl', status: 'frozen' });
     const l3 = getFlowStatus(project.paths, { topic: 'cache' })[0].specs.find((s) => s.fm.code === 'cache-L3.1.1-api')!;
 
     expect(getUpstreamFreezeAdvice(project.paths, l3)).toEqual([]);
@@ -243,7 +243,7 @@ describe('upstream lifecycle advice', () => {
     updateSpec(project.paths, 'search-L2.1', { content: '# Design\n', aiSummary: 'design', status: 'confirmed' });
     updateSpec(project.paths, 'search-L2.1', { status: 'frozen' });
     createSpec({ paths: project.paths, code: 'search-L3.1.1-api', level: 'L3', title: 'Search API', topic: 'search', parentCode: 'search-L2.1' });
-    updateSpec(project.paths, 'search-L3.1.1-api', { content: '# Impl\n', aiSummary: 'impl', status: 'confirmed' });
+    updateSpec(project.paths, 'search-L3.1.1-api', { content: '# Impl\n', aiSummary: 'impl', status: 'frozen' });
     const l3 = getFlowStatus(project.paths, { topic: 'search' })[0].specs.find((s) => s.fm.code === 'search-L3.1.1-api')!;
 
     expect(getUpstreamFreezeAdvice(project.paths, l3).join('\n')).toContain('L1/L2 must be confirmed');

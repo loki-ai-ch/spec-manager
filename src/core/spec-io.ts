@@ -290,6 +290,9 @@ export function updateSpec(
   }
   if (patch.changeSummary !== undefined) fm.changeSummary = patch.changeSummary;
   if (patch.status !== undefined) {
+    if (fm.level === 'L3' && patch.status === 'confirmed' && fm.status === 'draft') {
+      warnings.push(`L3_STATUS_WARN: L3 spec ${code} 推荐直接 draft → frozen，confirmed 是中间态。建议使用: spec-manager spec confirm ${code}`);
+    }
     if (!isAuthorizedImplementationTransition(fm.level, fm.status, patch.status, opts?.transitionAuthority)) {
       assertSpecTransition(fm.status, patch.status);
     }

@@ -97,6 +97,27 @@ describe('hit — 记录规则命中', () => {
     const state = readAudit(paths);
     expect(state.lastUpdated).toBeTruthy();
   });
+
+  it('auto-initializes session when sessionId is empty', () => {
+    const before = readAudit(paths);
+    expect(before.sessionId).toBe('');
+
+    hit({ paths, ruleId: 'R1' });
+
+    const after = readAudit(paths);
+    expect(after.sessionId).toMatch(/^sess-[a-z0-9]+$/);
+    expect(after.rules.R1).toBe(1);
+  });
+
+  it('does not reset counters when auto-initializing session', () => {
+    hit({ paths, ruleId: 'R3' });
+    hit({ paths, ruleId: 'R7' });
+
+    const after = readAudit(paths);
+    expect(after.sessionId).toBeTruthy();
+    expect(after.rules.R3).toBe(1);
+    expect(after.rules.R7).toBe(1);
+  });
 });
 
 describe('startSession — 初始化审计会话', () => {
@@ -194,6 +215,7 @@ describe('showSummary — 文本摘要', () => {
     hit({ paths, ruleId: 'R1' });
     hit({ paths, ruleId: 'R4' });
     hit({ paths, ruleId: 'R13' });
+    hit({ paths, ruleId: 'R18' });
     hit({ paths, ruleId: 'R22' });
     const summary = showSummary(paths);
     expect(summary).toContain('compliance: ✓ PASS');
@@ -258,8 +280,8 @@ describe('showSummary — 文本摘要', () => {
 });
 
 describe('checkCompliance — 合规基线检查', () => {
-  it('COMPLIANCE_BASELINE 包含 R1/R4/R13/R22', () => {
-    expect(COMPLIANCE_BASELINE).toEqual(['R1', 'R4', 'R13', 'R22']);
+  it('COMPLIANCE_BASELINE 包含 R1/R4/R13/R18/R22', () => {
+    expect(COMPLIANCE_BASELINE).toEqual(['R1', 'R4', 'R13', 'R18', 'R22']);
   });
 
   it('全部满足时 pass=true', () => {
@@ -267,6 +289,7 @@ describe('checkCompliance — 合规基线检查', () => {
     state.rules.R1 = 1;
     state.rules.R4 = 1;
     state.rules.R13 = 1;
+    state.rules.R18 = 1;
     state.rules.R22 = 1;
     const result = checkCompliance(state);
     expect(result.pass).toBe(true);
@@ -278,6 +301,7 @@ describe('checkCompliance — 合规基线检查', () => {
     state.rules.R1 = 1;
     state.rules.R4 = 0;
     state.rules.R13 = 1;
+    state.rules.R18 = 1;
     state.rules.R22 = 1;
     const result = checkCompliance(state);
     expect(result.pass).toBe(false);
@@ -289,6 +313,7 @@ describe('checkCompliance — 合规基线检查', () => {
     state.rules.R1 = 5;
     state.rules.R4 = 3;
     state.rules.R13 = 2;
+    state.rules.R18 = 1;
     state.rules.R22 = 10;
     const result = checkCompliance(state);
     expect(result.pass).toBe(true);
@@ -304,7 +329,6 @@ function createCompletedTask(topic: string, removeVerification = false): string 
   updateSpec(paths, l2Code, { status: 'confirmed' });
   const l3Code = `${topic}-L3.1.1-work`;
   createSpec({ paths, code: l3Code, level: 'L3', title: 'L3', topic, parentCode: l2Code });
-  updateSpec(paths, l3Code, { status: 'confirmed' });
   updateSpec(paths, l3Code, { status: 'frozen' });
   createTask({
     paths,
@@ -318,7 +342,7 @@ function createCompletedTask(topic: string, removeVerification = false): string 
   startTask(paths, 'T-001', l3Code);
   reportStep({ paths, taskId: 'T-001', specCode: l3Code, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
   addTaskVerification({ paths, taskId: 'T-001', specCode: l3Code, command: 'npm test', exitCode: 0, summary: 'passed' });
-  completeTask({ paths, taskId: 'T-001', specCode: l3Code });
+  completeTask({ paths, taskId: 'T-001', specCode: l3Code, skipR18Check: true });
   if (removeVerification) {
     const taskFile = join(paths.specsDir, topic, 'tasks', `${l3Code}-T-001.json`);
     const legacy = JSON.parse(readFileSync(taskFile, 'utf8'));

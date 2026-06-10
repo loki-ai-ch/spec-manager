@@ -32,7 +32,7 @@ export const RULE_ID_RE = /^R([1-9]|1[0-9]|2[0-4])$/;
 export const ALL_RULE_IDS = Array.from({ length: 24 }, (_, i) => `R${i + 1}`);
 
 /** 最低合规基线：这些规则的 hit 计数必须 ≥1 */
-export const COMPLIANCE_BASELINE: readonly string[] = ['R1', 'R4', 'R13', 'R22'];
+export const COMPLIANCE_BASELINE: readonly string[] = ['R1', 'R4', 'R13', 'R18', 'R22'];
 for (const id of COMPLIANCE_BASELINE) {
   if (!RULE_ID_RE.test(id)) throw new Error(`COMPLIANCE_BASELINE contains invalid ruleId: ${id}`);
 }
@@ -94,12 +94,19 @@ export interface HitInput {
   taskCode?: string;
 }
 
+function ensureSession(state: AuditState): void {
+  if (state.sessionId) return;
+  state.sessionId = `sess-${Date.now().toString(36)}`;
+  state.startedAt = state.startedAt || new Date().toISOString();
+}
+
 export function hit(input: HitInput): AuditState {
   if (!RULE_ID_RE.test(input.ruleId)) {
     throw new Error(`ruleId 格式非法: ${input.ruleId}（必须 /^R([1-9]|1[0-9]|2[0-4])$/）`);
   }
   return withProjectTransaction(input.paths, `audit hit ${input.ruleId}`, tx => {
     const state = readAudit(input.paths);
+    ensureSession(state);
     state.rules[input.ruleId] = (state.rules[input.ruleId] ?? 0) + 1;
     state.pending.push({
       ruleId: input.ruleId,

@@ -43,7 +43,6 @@ function createFrozenHierarchy(topic = 'auth'): { l1Code: string; l2Code: string
   updateSpec(paths, l2Code, { status: 'confirmed' });
   const l3Code = generateSpecCode(topic, 'L3', l2Code);
   createSpec({ paths, code: l3Code, level: 'L3', title: `${topic} L3`, topic, parentCode: l2Code });
-  updateSpec(paths, l3Code, { status: 'confirmed' });
   updateSpec(paths, l3Code, { status: 'frozen' });
   return { l1Code, l2Code, l3Code };
 }
@@ -76,7 +75,7 @@ describe('completeTask cascade → cascadedL1Specs', () => {
     });
     startTask(paths, task.id);
     markPlanSucceeded(paths, l3Code, planJson, task.id);
-    const result = completeTask({ paths, taskId: task.id });
+    const result = completeTask({ paths, taskId: task.id, skipR18Check: true });
     expect(result.cascadedL1Specs).toEqual([l1Code]);
     expect(result.cascadedSpecs.map(c => c.level)).toEqual(['L3', 'L2', 'L1']);
   });
@@ -93,9 +92,7 @@ describe('completeTask cascade → cascadedL1Specs', () => {
     const l3b = generateSpecCode('auth', 'L3', l2Code, 1);
     createSpec({ paths, code: l3b, level: 'L3', title: 'L3b', topic: 'auth', parentCode: l2Code });
 
-    updateSpec(paths, l3a, { status: 'confirmed' });
     updateSpec(paths, l3a, { status: 'frozen' });
-    updateSpec(paths, l3b, { status: 'confirmed' });
     updateSpec(paths, l3b, { status: 'frozen' });
 
     const planJson = planFor(l3a);
@@ -127,11 +124,12 @@ describe('audit hit R18 联动 (P0 闭环)', () => {
     });
     startTask(paths, task.id);
     markPlanSucceeded(paths, l3Code, planJson, task.id);
-    completeTask({ paths, taskId: task.id });
+    completeTask({ paths, taskId: task.id, skipR18Check: true });
 
     auditHit({ paths, ruleId: 'R18', specCode: l1Code });
     const audit = readAudit(paths);
-    expect(audit.rules.R18).toBe(1);
+    // completeTask(skipR18Check) 仍会记录 R18 audit hit,加上手动 hit 共 2 次
+    expect(audit.rules.R18).toBe(2);
     expect(audit.pending.some(p => p.ruleId === 'R18' && p.specCode === l1Code)).toBe(true);
   });
 });
@@ -152,7 +150,7 @@ describe('R5 跳步检测 (P1 修复)', () => {
     });
     startTask(paths, task.id);
     reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"a"}' });
-    expect(() => completeTask({ paths, taskId: task.id })).toThrow(/R5.*1 个步骤未成功/);
+    expect(() => completeTask({ paths, taskId: task.id, skipR18Check: true })).toThrow(/R5.*1 个步骤未成功/);
   });
 
   it('skipped 步视为跳步,completeTask 拒绝', () => {
@@ -171,7 +169,7 @@ describe('R5 跳步检测 (P1 修复)', () => {
     startTask(paths, task.id);
     reportStep({ paths, taskId: task.id, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"a"}' });
     reportStep({ paths, taskId: task.id, stepNo: 2, status: 'skipped' });
-    expect(() => completeTask({ paths, taskId: task.id })).toThrow(/R5/);
+    expect(() => completeTask({ paths, taskId: task.id, skipR18Check: true })).toThrow(/R5/);
   });
 });
 
@@ -369,7 +367,7 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
     startTask(paths, 'T-001', l3a);
     reportStep({ paths, taskId: 'T-001', specCode: l3a, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
     addTaskVerification({ paths, taskId: 'T-001', specCode: l3a, command: 'npm test', exitCode: 0, summary: 'passed' });
-    completeTask({ paths, taskId: 'T-001', specCode: l3a });
+    completeTask({ paths, taskId: 'T-001', specCode: l3a, skipR18Check: true });
     // l3a's T-001 completed, l3b's T-001 still draft
     const a = findTask(paths, l3a, 'T-001');
     const b = findTask(paths, l3b, 'T-001');
@@ -504,7 +502,7 @@ describe('task lifecycle hardening', () => {
     const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson });
     startTask(paths, task.id, l3Code);
     markPlanSucceeded(paths, l3Code, planJson, task.id);
-    completeTask({ paths, taskId: task.id, specCode: l3Code });
+    completeTask({ paths, taskId: task.id, specCode: l3Code, skipR18Check: true });
     expect(() => reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: 1, status: 'failed' })).toThrow(/TASK_IMMUTABLE/);
     expect(() => addTaskVerification({ paths, taskId: task.id, specCode: l3Code, command: 'false', exitCode: 1, summary: 'late' })).toThrow(/TASK_IMMUTABLE/);
   });
@@ -513,5 +511,32 @@ describe('task lifecycle hardening', () => {
     const { l3Code } = createFrozenHierarchy('active-task');
     createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) });
     expect(() => createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) })).toThrow(/TASK_ALREADY_ACTIVE/);
+  });
+});
+
+describe('coveredTasks auto-population', () => {
+  it('createTask adds taskId to spec.coveredTasks', () => {
+    const { l3Code } = createFrozenHierarchy('covered-tasks');
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+    });
+    const spec = findSpecByCode(paths, l3Code);
+    expect(spec?.fm.coveredTasks).toContain(task.id);
+  });
+
+  it('coveredTasks persists after task completion and cascade', () => {
+    const { l3Code } = createFrozenHierarchy('covered-persist');
+    const planJson = planFor(l3Code);
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson });
+    startTask(paths, task.id);
+    markPlanSucceeded(paths, l3Code, planJson, task.id);
+    completeTask({ paths, taskId: task.id, skipR18Check: true });
+
+    const spec = findSpecByCode(paths, l3Code);
+    expect(spec?.fm.coveredTasks).toContain(task.id);
+    expect(spec?.fm.status).toBe('implemented');
   });
 });

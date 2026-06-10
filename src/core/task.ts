@@ -11,6 +11,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { siblingMetaDir, type ProjectPaths } from './paths.js';
 import { findSpecByCode, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
+import { listDecisions } from './decision.js';
 import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
 import { validatePlanJson } from './validate.js';
@@ -182,6 +183,12 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
   const taskFile = taskFilePath(spec.filePath, input.specCode, taskId);
   writeTaskJSON(taskFile, task);
 
+  // 自动填充 spec.coveredTasks，建立 spec → task 反向关联
+  if (!spec.fm.coveredTasks) spec.fm.coveredTasks = [];
+  if (!spec.fm.coveredTasks.includes(taskId)) {
+    spec.fm.coveredTasks.push(taskId);
+  }
+
   // 兼容旧 workflow: spec frontmatter 保留计划快照;运行态 step report 写入 task.steps。
   spec.fm.steps = task.steps;
   spec.fm.updated = new Date().toISOString();
@@ -331,6 +338,7 @@ export interface CompleteInput {
   taskId: string;
   specCode?: string;
   auditSink?: AuditSink;
+  skipR18Check?: boolean;
 }
 
 export interface CompleteResult {
@@ -391,6 +399,28 @@ function completeTaskUnlocked(input: CompleteInput): CompleteResult {
   const cascadedL1Specs = cascade.cascadedSpecs
     .filter(c => c.level === 'L1' || c.level === 'L0')
     .map(c => c.code);
+
+  // R18: L1 implemented 后必须至少有 1 张决策卡片
+  if (!input.skipR18Check && cascadedL1Specs.length > 0) {
+    const missing: string[] = [];
+    for (const code of cascadedL1Specs) {
+      const decisions = listDecisions(input.paths, { docCode: code, includeAll: true });
+      if (decisions.length === 0) missing.push(code);
+    }
+    if (missing.length > 0) {
+      recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: missing[0] }, input.auditSink);
+      throw new Error(
+        `R18: 以下 L1 已 cascade 到 implemented 但缺少决策卡片: ${missing.join(', ')}\n` +
+        `请先创建决策卡片:\n` +
+        missing.map(code => `  spec-manager decision create --doc-code ${code} --topic <topic> --what "..." --why "..."`).join('\n'),
+      );
+    }
+  }
+
+  // 记录 R18 audit hit（已有决策卡片的情况）
+  for (const code of cascadedL1Specs) {
+    recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: code }, input.auditSink);
+  }
 
   return {
     task: updated,

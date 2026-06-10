@@ -33,8 +33,6 @@ import {
   reportHarnessTaskStep,
 } from '../core/harness.js';
 import { listDecisions } from '../core/decision.js';
-import { findSpecByCode } from '../core/spec-io.js';
-import { hit as auditHit } from '../core/audit.js';
 import { StepStatusSchema } from '../schemas/spec.js';
 
 const TASK_STATUSES: TaskStatus[] = ['draft', 'running', 'waiting', 'completed', 'failed'];
@@ -287,10 +285,11 @@ export function registerTaskCommands(program: Command): void {
     .command('complete <taskId>')
     .description('标记 Task 完成 → 触发 L3 spec cascade → implemented')
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
+    .option('--force', '跳过 R18 决策卡片检查', false)
     .option('--json', '以 JSON 格式输出 cascade 结果', false)
-    .action((taskId: string, opts: { spec?: string; json: boolean }) => {
+    .action((taskId: string, opts: { spec?: string; force: boolean; json: boolean }) => {
       const paths = getPaths();
-      const result = completeTask({ paths, taskId, specCode: opts.spec });
+      const result = completeTask({ paths, taskId, specCode: opts.spec, skipR18Check: opts.force });
       if (opts.json) {
         console.log(JSON.stringify(result, null, 2));
         return;
@@ -309,24 +308,14 @@ export function registerTaskCommands(program: Command): void {
           console.log(`    ${s.code} (${s.reason})`);
         }
       }
-      // R18 自检:对每个新 implemented 的 L1,检查是否已有决策卡片,自动 audit hit 落库
+      // R18: completeTask 已校验决策卡片存在性并落 audit hit,此处仅展示结果
       if (result.cascadedL1Specs.length > 0) {
         console.log('');
-        console.log('⚠ R18 (决策卡片):以下 L1 已 cascade 到 implemented');
+        console.log('R18 (决策卡片):');
         for (const code of result.cascadedL1Specs) {
           const existing = listDecisions(paths, { docCode: code, includeAll: true });
-          const spec = findSpecByCode(paths, code);
-          const topic = spec?.fm.topic ?? '?';
-          // 自动 audit hit:无论是否已建,都记录"已检查"这一事实
-          auditHit({ paths, ruleId: 'R18', specCode: code });
-          if (existing.length === 0) {
-            console.log(`  ✗ ${code} [${topic}] — 待建 (audit hit R18 已落库)`);
-            console.log(`    spec-manager decision create ${code} \\`);
-            console.log(`      --topic ${topic} --what "..." --why "..." --criteria AC-1,AC-2`);
-          } else {
-            const active = existing.filter(d => d.fm.status === 'active');
-            console.log(`  ✓ ${code} [${topic}] — 已有 ${existing.length} 张 (active: ${active.length}, audit hit R18 已落库)`);
-          }
+          const active = existing.filter(d => d.fm.status === 'active');
+          console.log(`  ✓ ${code} — ${existing.length} 张 (active: ${active.length})`);
         }
       }
     });

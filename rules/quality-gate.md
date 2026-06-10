@@ -70,4 +70,6 @@ L1 spec 状态推进到 `implemented`（通常通过 L3 cascade）后，**必须
 spec-manager decision create <L1 code> --topic <topic> --what "..." --why "..." --criteria AC-1,AC-2
 ```
 
+**执行机制**：`task complete` 在 cascade 到 L1 implemented 后自动检查决策卡片存在性，缺失则抛出 R18 错误拒绝完成。`--force` 可跳过检查（用于历史补建场景）。R18 已纳入合规基线（`audit show` 检查）。
+
 新 L1 创建前（PRE-WRITE Q4）必须 `spec-manager decision list --topic <topic>` 查询历史决策。

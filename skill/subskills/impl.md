@@ -66,9 +66,13 @@
 12. `spec-manager task complete <task-id>`
     > 完成后看 `cascadedL1Specs`,对每个 L1 用 `decision list --doc-code <L1>` 查是否已建决策卡
     > ☑ **R6** — 流程规则:确认 cascade 后再标 implemented
+    > ☑ **R18** — L1 cascade 到 implemented 后自动校验决策卡片，缺失则拒绝完成
 13. 若仍 frozen,手动 `spec-manager spec implement <L3 code>`
-14. L1 implemented 后必须 ≥1 张决策卡片（R18）
-    > ☑ **R18** — task complete 触发 L1 cascade 时 CLI 自动 audit hit,提示待建决策卡
+14. R18 决策卡片：task complete 会自动检查。若因历史原因缺少决策卡，用 `--force` 跳过检查后补建：
+    ```bash
+    spec-manager task complete <task-id> --force  # 跳过 R18
+    spec-manager decision create --doc-code <L1-code> --topic <topic> --what "..." --why "..."
+    ```
 15. 规则审计合规检查：
     ```bash
     spec-manager audit show

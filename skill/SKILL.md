@@ -52,6 +52,9 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 - planJson `coveredSpecs` MUST include the current L3 specCode.
 - Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
 - Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
+- ALL spec/task operations MUST go through `spec-manager` CLI. Never write raw markdown to spec files or JSON to task files — raw writes bypass status machine, audit hits, and cascade logic.
+- Before marking any L3 as implemented, an Agent Task MUST be created and completed via `spec-manager task create/start/step/complete`. Direct `spec implement` is forbidden for L3 (R3).
+- After creating any spec, establish relations: `spec-manager spec add-relation <code> --type based_on --target <parentCode>`. L3 MUST have at least `based_on` to its parent L2.
 
 ## 规则（24 条，按 applies_to 过滤）
 
@@ -69,7 +72,9 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 ```
 L1/L2: draft → confirmed
 L3:    draft → frozen → implemented
-        AI agent  用户      task_complete
+        AI agent  用户批准    task_complete cascade
+  ⚠️ L3 没有 `confirmed` 状态。`spec confirm <L3>` 直接进入 `frozen`。
+  ⚠️ 禁止绕过 CLI — 直接写文件会跳过 frozen 强制校验。
 ```
 
 ## CLI 概要
@@ -83,6 +88,15 @@ L3:    draft → frozen → implemented
 - `change new|archive|list|show` — Delta spec
 - `incident new|list` — 事故记录
 - `audit hit|report|show` — 规则审计
+
+### Relations 工作流
+
+创建 spec 后立即建立关联：
+```bash
+spec-manager spec add-relation <code> --type based_on --target <parentCode>
+spec-manager spec add-relation <code> --type references --target <relatedCode>  # 若有跨 spec 引用
+```
+L3 必须有至少一条 `based_on` 关联指向父 L2。L1/L2 关联可选但推荐。
 
 ## 数据布局
 

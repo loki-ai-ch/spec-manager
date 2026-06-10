@@ -381,7 +381,6 @@ function createFrozenL3WithTask(): string {
   createSpec({ paths, code: 'auth-L2.1', level: 'L2', title: 'Auth design', topic: 'auth', parentCode: 'auth-L1' });
   updateSpec(paths, 'auth-L2.1', { status: 'confirmed' });
   createSpec({ paths, code: 'auth-L3.1.1-login', level: 'L3', title: 'Login', topic: 'auth', parentCode: 'auth-L2.1' });
-  updateSpec(paths, 'auth-L3.1.1-login', { status: 'confirmed' });
   updateSpec(paths, 'auth-L3.1.1-login', {
     content: `# Login
 

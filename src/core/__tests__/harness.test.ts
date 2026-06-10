@@ -54,7 +54,6 @@ npm run build
     aiSummary: 'Login context summary',
     changeSummary: 'test fixture content',
   });
-  updateSpec(project.paths, 'auth-L3.1.1-login', { status: 'confirmed' });
   if (opts?.frozen ?? true) {
     updateSpec(project.paths, 'auth-L3.1.1-login', { status: 'frozen' });
   }

@@ -123,3 +123,13 @@ Expert guidelines:
 | 风险 | 应对 |
 |---|---|
 | ... | ... |
+
+## 关联
+
+<使用 `spec-manager spec add-relation <本L3 code> --type <type> --target <targetCode>` 建立关联>
+
+| 关联类型 | 目标 specCode | 说明 |
+|---|---|---|
+| based_on | <父 L2 code> | 必填：引用父 L2 |
+| implements | <父 L2 code> | 可选：明确实现关系 |
+| references | <相关 specCode> | 可选：跨 spec 引用 |
