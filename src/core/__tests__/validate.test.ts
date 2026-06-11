@@ -261,6 +261,149 @@ The real scaffold marker in a short, otherwise empty specification remains block
   });
 });
 
+describe('validateSpecContent — @verify 语法校验', () => {
+  it('L3 合法 @verify 行无 warning', () => {
+    const content = `# Impl
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+
+## 验收标准
+1. **AC-1**: 用户 SHALL 能创建 spec
+2. @verify: file-exists(src/core/verify.ts)
+3. @verify: export-exists(src/core/verify.ts, parseVerifyRules)
+4. @verify: command(npm test)
+
+## 代码调查
+\`src/core/verify.ts\`
+`;
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.filter(w => w.rule.startsWith('verify_'))).toEqual([]);
+  });
+
+  it('L3 未知 @verify 类型返回 unknown_verify_type warning', () => {
+    const content = `# Impl
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+
+## 验收标准
+1. @verify: unknown-type(arg)
+
+## 代码调查
+\`src/core/verify.ts\`
+`;
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.some(w => w.rule === 'unknown_verify_type')).toBe(true);
+  });
+
+  it('L3 @verify 参数数量错误返回 verify_arity_mismatch warning', () => {
+    const content = `# Impl
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+
+## 验收标准
+1. @verify: file-exists(a, b)
+
+## 代码调查
+\`src/core/verify.ts\`
+`;
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.some(w => w.rule === 'verify_arity_mismatch')).toBe(true);
+  });
+
+  it('L3 @verify 格式错误返回 verify_syntax_error warning', () => {
+    const content = `# Impl
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+
+## 验收标准
+1. @verify: bad format here
+
+## 代码调查
+\`src/core/verify.ts\`
+`;
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.some(w => w.rule === 'verify_syntax_error')).toBe(true);
+  });
+
+  it('L1/L2 spec 含 @verify 行不触发校验', () => {
+    const l1 = `# Auth
+
+## 背景
+bg
+
+## 用户故事
+story
+
+## 验收标准
+1. @verify: file-exists(x.ts)
+
+## 范围边界
+scope
+`;
+    const warnings = validateSpecContent('L1', l1);
+    expect(warnings.some(w => w.rule === 'verify_syntax_error' || w.rule === 'unknown_verify_type')).toBe(false);
+
+    const l2 = `# Design
+
+## 方案概述
+overview
+
+## 技术决策
+decisions
+
+## 受影响模块
+modules
+
+## 接口契约
+contract
+
+## L3 裂变计划
+plan
+
+## 验收标准
+1. @verify: file-exists(x.ts)
+`;
+    const warnings2 = validateSpecContent('L2', l2);
+    expect(warnings2.some(w => w.rule === 'verify_syntax_error' || w.rule === 'unknown_verify_type')).toBe(false);
+  });
+});
+
 describe('extractPlanJsonFromSpecContent', () => {
   it('extracts planJson from the final plan section', () => {
     const plan = extractPlanJsonFromSpecContent(`# Impl

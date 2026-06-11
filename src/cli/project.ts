@@ -63,6 +63,7 @@ export function registerProject(program: Command): void {
     .option('-p, --provider <provider>', 'list | all | claude | codex | opencode | codebuddy | cursor | windsurf（可逗号组合）')
     .option('--dry-run', '只显示将写入/覆盖/跳过的文件，不实际落盘')
     .option('--force', '覆盖已存在的 agent 指令文件/skill 目录')
+    .option('--sync-managed', '逐文件同步托管 agent 资产；保留目标中的额外自定义文件')
     .action((opts) => {
       const providerInput = opts.provider === undefined ? undefined : String(opts.provider);
       if (providerInput?.trim().toLowerCase() === 'list') {
@@ -83,6 +84,7 @@ export function registerProject(program: Command): void {
         packageRoot,
         providers: detection?.providers ?? parseAgentProviders(providerInput ?? ''),
         force: Boolean(opts.force),
+        syncManaged: Boolean(opts.syncManaged),
         dryRun: Boolean(opts.dryRun),
       });
 
@@ -148,7 +150,8 @@ export function registerProject(program: Command): void {
     .description('检查项目初始化、agent 指令、skill 资产、占位 spec 和 audit 状态')
     .action(() => {
       const paths = getPaths();
-      const checks = runProjectDoctor(paths);
+      const packageRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
+      const checks = runProjectDoctor(paths, packageRoot);
       for (const check of checks) {
         const mark = check.status === 'ok' ? '✓' : check.status === 'warn' ? '⚠' : '✗';
         console.log(`${mark} ${check.label}: ${check.detail}`);

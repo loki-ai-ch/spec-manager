@@ -1,7 +1,7 @@
 import type { ProjectPaths } from './paths.js';
 import { listAllSpecs } from './spec-io.js';
 import { listTasks, type TaskRecord } from './task.js';
-import { listDecisions } from './decision.js';
+import { isActiveDecision, listDecisions } from './decision.js';
 import { listIncidents } from './incident.js';
 import { listTaskLinkedChangeProposals } from './delta.js';
 import { exemptionTaskKey, readIntegrityExemptions } from './integrity-exemptions.js';
@@ -72,12 +72,12 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
         issues.push(dangling(spec.filePath, spec.fm.code, relation.target, `relation ${relation.type}`));
       }
     }
-    if (spec.fm.level === 'L1' && spec.fm.status === 'implemented' && !decisions.some(d => d.fm.docCode === spec.fm.code)) {
+    if (spec.fm.level === 'L1' && spec.fm.status === 'implemented' && !decisions.some(d => d.fm.docCode === spec.fm.code && isActiveDecision(d))) {
       issues.push({
         kind: 'missing-decision',
         sourceFile: spec.filePath,
         sourceId: spec.fm.code,
-        message: `implemented L1 ${spec.fm.code} has no decision card`,
+        message: `implemented L1 ${spec.fm.code} has no active decision card`,
         remediation: `spec-manager decision create ${spec.fm.code} --topic ${spec.fm.topic} --what "..."`,
       });
     }

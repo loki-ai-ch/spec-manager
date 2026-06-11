@@ -11,7 +11,7 @@
  *   lastUpdated: string (ISO)
  * }
  *
- * PendingEntry 字段：{ ruleId, timestamp, specCode?, taskCode? }
+ * PendingEntry 字段：{ ruleId, timestamp, specCode?, taskCode?, metadata?, countRule? }
  *
  * at-least-once 语义：
  * - hit() 永远 append pending 队列（即使已 session-bound）
@@ -42,6 +42,8 @@ export interface PendingEntry {
   timestamp: string;
   specCode?: string;
   taskCode?: string;
+  metadata?: Record<string, unknown>;
+  countRule?: boolean;
   reported: boolean;
 }
 
@@ -92,6 +94,8 @@ export interface HitInput {
   ruleId: string;
   specCode?: string;
   taskCode?: string;
+  metadata?: Record<string, unknown>;
+  countRule?: boolean;
 }
 
 function ensureSession(state: AuditState): void {
@@ -107,12 +111,16 @@ export function hit(input: HitInput): AuditState {
   return withProjectTransaction(input.paths, `audit hit ${input.ruleId}`, tx => {
     const state = readAudit(input.paths);
     ensureSession(state);
-    state.rules[input.ruleId] = (state.rules[input.ruleId] ?? 0) + 1;
+    if (input.countRule !== false) {
+      state.rules[input.ruleId] = (state.rules[input.ruleId] ?? 0) + 1;
+    }
     state.pending.push({
       ruleId: input.ruleId,
       timestamp: new Date().toISOString(),
       specCode: input.specCode,
       taskCode: input.taskCode,
+      metadata: input.metadata,
+      countRule: input.countRule,
       reported: false,
     });
     state.lastUpdated = new Date().toISOString();
@@ -186,7 +194,7 @@ export function showSummary(paths: ProjectPaths, opts?: { ruleId?: string }): st
   // 合规基线检查
   const baseline = checkCompliance(state);
   lines.push('');
-  lines.push(`compliance: ${baseline.pass ? '✓ PASS' : '✗ FAIL'}`);
+  lines.push(`compliance: ${baseline.pass ? 'PASS' : 'FAIL'}`);
   for (const item of baseline.details) {
     lines.push(`  ${item.pass ? '✓' : '✗'} ${item.ruleId}: ${item.count} (min ${item.min})`);
   }

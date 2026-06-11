@@ -1,74 +1,71 @@
 ---
 code: lifecycle-guidance-sync-L1
 level: L1
-title: 生命周期规则与文档语义同步
+title: 方法论落地与分发一致性加固
 topic: lifecycle-guidance-sync
 parentCode: null
-status: draft
-aiSummary: >-
-  同步分层生命周期语义到 R2、CLAUDE、skill、README、methodology 和状态机注释，并校验 bundled 与已安装 Claude
-  flow-control rule 一致，防止 frozen-only 旧指引回归。
+status: implemented
+aiSummary: 统一方法论、生命周期、R18、完成绕过和 Agent 资产语义；让 doctor 检测托管资产漂移，并以行为契约和发布验证保证实际 CLI 与仓库实现一致。
 created: '2026-06-09T01:38:47.121Z'
-updated: '2026-06-09T01:39:18.641Z'
-changeSummary: 记录生命周期实现后残留的规则与文档语义冲突
+updated: '2026-06-11T02:29:14.083Z'
+changeSummary: 'cascade: task-complete'
 ---
-# 生命周期规则与文档语义同步
+# 方法论落地与分发一致性加固
 
 ## 背景
 
-`lifecycle-reconciliation-L1` 已实现分层生命周期语义：
+核心代码已实现分层生命周期、Task 完成门禁和 R18 决策卡片闭环，但代码走读发现方法论尚未端到端落地：
 
-- L3 在 Task 完成后由 `frozen` 进入 `implemented`。
-- L2/L1 在全部直接子规格 implemented 后，由 `confirmed` 受控级联进入 `implemented`。
-- 历史滞留状态通过显式 `project reconcile` 对账。
-
-但当前规则与文档仍存在 frozen-only 旧表述：
-
-- `rules/flow-control.md` 声明唯一例外只有 `frozen → implemented`。
-- `CLAUDE.md` 声明只有 Task complete 能触发 `frozen → implemented`。
-- `src/core/status.ts` 注释仍把 frozen → implemented 描述为唯一自动级联。
-- `README.md`、`readme_zh.md`、`docs/methodology.md` 和 `skill/SKILL.md` 未完整描述 L1/L2 confirmed 自动级联。
-- 已安装的 `.claude/skills/spec-manager/rules/flow-control.md` 需要与 bundled rules 保持一致。
-
-这些文本会使 Agent 错误地要求冻结 L1/L2，重新制造已经修复的生命周期矛盾。
+- 实际执行的全局 `spec-manager` 可能落后于仓库源码与本地构建，导致 R18 正常路径不可用。
+- 已安装 `.claude/skills/spec-manager` 可能保留旧规则，而 `project doctor` 只检查目录存在，无法发现内容漂移。
+- README、中文 README、规则、Skill 和方法论对生命周期、R18 与 `--force` 的描述不一致。
+- `--force` 同时绕过 R18 与 verification commands，范围过宽且缺少结构化原因。
+- 方法论契约测试只检查关键词，不能证明门禁行为、分发资产和公开文档一致。
+- R18 当前接受只有 superseded/partial 的历史卡片，不能保证存在当前有效决策。
 
 ## 用户故事
 
-1. 作为 Agent 使用者，我希望所有入口文件对 L1/L2/L3 生命周期给出一致描述。
-2. 作为规则维护者，我希望 R2 明确区分用户审批推进和受控自动级联。
-3. 作为项目维护者，我希望 bundled rules 与当前仓库已安装的 Claude skill rules 保持一致。
-4. 作为代码维护者，我希望状态机注释准确描述普通转换与 authority 特殊转换。
+1. 作为 Agent 使用者，我希望从任一入口获得与实际代码一致的方法论与生命周期指引。
+2. 作为项目维护者，我希望 doctor 能发现托管 Agent 资产缺失或内容漂移，并给出安全修复命令。
+3. 作为任务执行者，我希望异常绕过按能力拆分、必须说明原因并留下审计记录。
+4. 作为规则维护者，我希望 R18 保证存在当前有效决策，而不只是任意历史卡片。
+5. 作为发布者，我希望能验证用户实际调用的 CLI 与当前仓库构建一致。
+6. 作为代码维护者，我希望行为契约测试能阻止方法论与实现再次漂移。
 
 ## 验收标准
 
-1. **AC-1**: R2 MUST 明确：用户负责 L1/L2 draft → confirmed 与 L3 draft → frozen；Task complete 可推进 frozen L3，并在子规格全部完成时级联 confirmed L2/L1。
-2. **AC-2**: 规则 MUST 明确 `project reconcile` 只能执行已审阅范围内的历史状态对账，不是通用人工状态绕过。
-3. **AC-3**: `CLAUDE.md`、`skill/SKILL.md`、README 和方法论文档 MUST 使用一致的分层生命周期描述。
-4. **AC-4**: `src/core/status.ts` 注释 MUST 区分普通状态机与受控 implementation authority。
-5. **AC-5**: `.claude/skills/spec-manager/rules/flow-control.md` MUST 与 `rules/flow-control.md` 内容一致。
-6. **AC-6**: 文档 MUST NOT 建议冻结 L1/L2 或使用 `spec implement --force` 完成正常级联。
-7. **AC-7**: 自动化检查 MUST 扫描关键入口，阻止 frozen-only 旧表述再次出现。
-8. **AC-8**: 更新后 `project doctor`、全量测试、lint、build 和 `git diff --check` MUST 通过。
+1. **AC-1**: 规则、README、中文 README、Skill、方法论与状态机注释 MUST 使用一致的分层生命周期和 R18 正常路径描述。
+2. **AC-2**: `project doctor` MUST 对已安装的托管 Agent 资产逐文件检测 missing 与 drift；检测不得静默覆盖用户文件。
+3. **AC-3**: doctor MUST 为 drift 提供显式、可预览的同步动作，且同步动作 MUST 保持 dry-run、幂等与可审计。
+4. **AC-4**: Task complete 的异常绕过 MUST 拆分为独立能力；每次绕过 MUST 要求非空原因并写入审计。
+5. **AC-5**: 旧 `--force` MUST 不再作为无理由的全量绕过入口；兼容处理 MUST 明确报错或迁移指引。
+6. **AC-6**: R18 正常完成 MUST 至少存在一张非 superseded、非 partial 的当前有效决策卡片。
+7. **AC-7**: 自动化测试 MUST 覆盖生命周期级联、R18 活跃决策、完成绕过、doctor 资产漂移和公开文档契约。
+8. **AC-8**: 发布验证 MUST 能比较实际 `spec-manager` 命令与当前仓库构建的版本或行为，并在不一致时失败。
+9. **AC-9**: 更新后本地构建、实际 CLI 发布验证、`project doctor`、全量测试、lint、build 和 `git diff --check` MUST 通过。
 
 ## 范围边界
 
 ### 必须包含
 
-- 更新 R2 生命周期与 authority 说明。
-- 同步 `CLAUDE.md`、README、中文 README、methodology、skill 和状态机注释。
-- 同步当前仓库 Claude skill 的 bundled rule 副本。
-- 增加关键文本一致性自动化检查。
+- 同步生命周期、R18、verification 和异常绕过相关文档与 Agent 入口。
+- 增强 doctor 和 Agent 资产同步能力，检测内容漂移。
+- 拆分并审计 Task complete 异常绕过。
+- 收紧 R18 当前有效决策判定。
+- 增加行为契约与发布验证。
+- 同步当前仓库已安装 Claude Skill 的托管副本。
 
 ### 明确不做
 
-- 不改变已实现的生命周期代码行为。
-- 不新增状态转换、CLI 命令或迁移目标。
-- 不修改任何 Task、Decision 或历史 spec 状态。
-- 不扩展到与生命周期无关的文档重写。
+- 不自动覆盖无法确认归属的用户自定义 Agent 文件。
+- 不修改与本主题无关的业务能力。
+- 不伪造外部发布成功；实际全局安装需要明确执行并验证。
+- 不回退当前工作树已有修改。
 
 ## 成功指标
 
-- 关键入口不再包含“只有 frozen → implemented”或“L1/L2 必须 frozen 才能级联”的错误描述。
-- bundled 与已安装 Claude flow-control rule 完全一致。
-- Agent 从任一入口均能得到同一生命周期规则。
-- 全量验证与 doctor 保持通过。
+- doctor 能稳定发现并指导修复托管资产漂移。
+- 无理由全量绕过入口被消除，所有异常绕过可追溯。
+- R18 不能被失效历史卡片满足。
+- 方法论契约测试验证行为而非只匹配关键词。
+- 用户实际调用的 CLI 与当前仓库构建验证一致。

@@ -29,12 +29,31 @@ describe('runProjectDoctor', () => {
     expect(agentCheck?.action).toBe('spec-manager project agents --provider all');
   });
 
-  it('suggests explicit remediation instead of force for incomplete Claude skill assets', () => {
+  it('suggests safe managed sync instead of force for incomplete Claude skill assets', () => {
     mkdirSync(join(project.root, '.claude', 'skills', 'spec-manager'), { recursive: true });
     const checks = runProjectDoctor(project.paths);
     const rules = checks.find(check => check.label === 'Claude skill rules bundled');
-    expect(rules?.action).toContain('project remediate');
+    expect(rules?.action).toContain('--sync-managed --dry-run');
     expect(rules?.action).not.toContain('--force');
+  });
+
+  it('suggests safe managed sync instead of force for incomplete CodeBuddy skill assets', () => {
+    mkdirSync(join(project.root, '.codebuddy', 'skills', 'spec-manager'), { recursive: true });
+    const checks = runProjectDoctor(project.paths);
+    const rules = checks.find(check => check.label === 'CodeBuddy skill rules bundled');
+    expect(rules?.action).toContain('--sync-managed --dry-run');
+    expect(rules?.action).not.toContain('--force');
+  });
+
+  it('reports managed agent asset drift with a dry-run sync action', () => {
+    mkdirSync(join(project.root, '.claude', 'skills', 'spec-manager'), { recursive: true });
+    writeFileSync(join(project.root, '.claude', 'skills', 'spec-manager', 'SKILL.md'), '# stale\n', 'utf8');
+
+    const check = runProjectDoctor(project.paths, process.cwd()).find((candidate) => candidate.label === 'Managed agent assets');
+
+    expect(check?.status).toBe('warn');
+    expect(check?.detail).toContain('drifted');
+    expect(check?.action).toContain('--sync-managed --dry-run');
   });
 
   it('does not report a complete spec that references the marker as placeholder', () => {

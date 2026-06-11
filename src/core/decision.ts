@@ -35,6 +35,10 @@ export interface DecisionRecord {
 const WHAT_MAX = DECISION_WHAT_MAX;
 const WHY_MAX = DECISION_WHY_MAX;
 
+export function isActiveDecision(decision: DecisionRecord): boolean {
+  return decision.fm.status === 'active';
+}
+
 export function listDecisions(
   paths: ProjectPaths,
   opts?: { topic?: string; docCode?: string; includeAll?: boolean; criteria?: string | string[] },
@@ -94,7 +98,7 @@ export interface CreateDecisionInput {
 }
 
 export function createDecision(input: CreateDecisionInput): DecisionRecord {
-  // R18 校验：只能给 implemented L1 建决策
+  // R18: confirmed L1 可在最后一个 Task 完成前预建决策；implemented L1 可继续补充。
   const spec = findSpecByCode(input.paths, input.docCode);
   if (!spec) {
     throw new Error(`Spec not found: ${input.docCode}`);
@@ -102,8 +106,8 @@ export function createDecision(input: CreateDecisionInput): DecisionRecord {
   if (spec.fm.level !== 'L1') {
     throw new Error(`Decision card 只能关联 L1 spec，${input.docCode} 是 ${spec.fm.level}`);
   }
-  if (spec.fm.status !== 'implemented') {
-    throw new Error(`R18: L1 必须 implemented 才能建决策卡片，当前 status=${spec.fm.status}`);
+  if (spec.fm.status !== 'confirmed' && spec.fm.status !== 'implemented') {
+    throw new Error(`R18: L1 必须 confirmed 或 implemented 才能建决策卡片，当前 status=${spec.fm.status}`);
   }
   if (input.what.length > WHAT_MAX) {
     throw new Error(`what 长度 ${input.what.length} > ${WHAT_MAX}`);

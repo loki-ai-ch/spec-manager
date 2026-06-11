@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 8,
-    "R2": 39,
+    "R1": 23,
+    "R2": 67,
     "R3": 1,
-    "R4": 22,
+    "R4": 51,
     "R5": 2,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 39,
-    "R10": 0,
+    "R9": 67,
+    "R10": 1,
     "R11": 0,
     "R12": 2,
-    "R13": 8,
+    "R13": 22,
     "R14": 0,
     "R15": 0,
-    "R16": 4,
+    "R16": 10,
     "R17": 0,
-    "R18": 0,
-    "R19": 32,
+    "R18": 4,
+    "R19": 53,
     "R20": 0,
     "R21": 0,
-    "R22": 8,
+    "R22": 22,
     "R23": 0,
     "R24": 0
   },
@@ -1015,7 +1015,969 @@
       "timestamp": "2026-06-08T09:03:22.105Z",
       "specCode": "harness-coding-L3.1.4-change",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-08T09:32:22.042Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:32:22.045Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:32:58.463Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:32:58.464Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:32:58.465Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:32:58.702Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:33:35.249Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:33:35.250Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:33:35.373Z",
+      "specCode": "architecture-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:34:40.891Z",
+      "specCode": "architecture-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:34:40.892Z",
+      "specCode": "architecture-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:34:40.892Z",
+      "specCode": "architecture-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:35:14.886Z",
+      "specCode": "architecture-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:35:14.887Z",
+      "specCode": "architecture-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:35:15.002Z",
+      "specCode": "architecture-hardening-L3.1.1-task",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:35:15.117Z",
+      "specCode": "architecture-hardening-L3.1.2-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:35:15.247Z",
+      "specCode": "architecture-hardening-L3.1.3-integrity",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:35:15.374Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:35:15.491Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:36:42.082Z",
+      "specCode": "architecture-hardening-L3.1.2-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:36:42.082Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:36:42.083Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:36:42.083Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:36:42.125Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:36:42.126Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:36:42.126Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:36:51.000Z",
+      "specCode": "architecture-hardening-L3.1.1-task",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:36:51.108Z",
+      "specCode": "architecture-hardening-L3.1.2-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:36:51.216Z",
+      "specCode": "architecture-hardening-L3.1.3-integrity",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:36:51.326Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:36:51.435Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:37:18.896Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:37:18.897Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:37:18.897Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:37:19.129Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:37:19.129Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:37:19.130Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:37:47.790Z",
+      "specCode": "architecture-hardening-L3.1.1-task",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:37:47.791Z",
+      "specCode": "architecture-hardening-L3.1.1-task",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:37:47.900Z",
+      "specCode": "architecture-hardening-L3.1.2-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:37:47.901Z",
+      "specCode": "architecture-hardening-L3.1.2-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:37:48.017Z",
+      "specCode": "architecture-hardening-L3.1.3-integrity",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:37:48.018Z",
+      "specCode": "architecture-hardening-L3.1.3-integrity",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:37:48.131Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:37:48.132Z",
+      "specCode": "architecture-hardening-L3.1.4-transaction",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:37:48.248Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:37:48.250Z",
+      "specCode": "architecture-hardening-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-08T09:50:30.474Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:50:30.477Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-08T09:51:05.196Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-08T09:51:05.196Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-08T09:51:05.197Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:52:54.843Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:52:54.843Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:52:59.621Z",
+      "specCode": "repository-remediation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T09:54:24.369Z",
+      "specCode": "repository-remediation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T09:57:21.609Z",
+      "specCode": "repository-remediation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T09:57:21.609Z",
+      "specCode": "repository-remediation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:57:31.253Z",
+      "specCode": "repository-remediation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:57:38.643Z",
+      "specCode": "repository-remediation-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-08T09:57:42.512Z",
+      "specCode": "repository-remediation-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T10:00:50.744Z",
+      "specCode": "repository-remediation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T10:00:50.745Z",
+      "specCode": "repository-remediation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T10:00:50.959Z",
+      "specCode": "repository-remediation-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T10:00:50.960Z",
+      "specCode": "repository-remediation-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-08T10:00:59.274Z",
+      "specCode": "repository-remediation-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-08T10:00:59.275Z",
+      "specCode": "repository-remediation-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-08T10:01:19.736Z",
+      "specCode": "repository-remediation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T10:04:49.284Z",
+      "specCode": "l3-approval-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T10:04:49.407Z",
+      "specCode": "roadmap-openspec-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T10:04:49.525Z",
+      "specCode": "spec-manager-ai-ux-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-08T10:04:49.639Z",
+      "specCode": "workflow-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-09T01:18:01.953Z",
+      "specCode": "architecture-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-09T01:18:02.069Z",
+      "specCode": "harness-coding-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-09T01:18:02.185Z",
+      "specCode": "repository-remediation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-09T01:18:08.418Z",
+      "specCode": "lifecycle-reconciliation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-09T01:18:08.421Z",
+      "specCode": "lifecycle-reconciliation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-09T01:19:49.521Z",
+      "specCode": "lifecycle-reconciliation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-09T01:19:49.522Z",
+      "specCode": "lifecycle-reconciliation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-09T01:20:11.800Z",
+      "specCode": "lifecycle-reconciliation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-09T01:23:37.751Z",
+      "specCode": "lifecycle-reconciliation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-09T01:23:37.751Z",
+      "specCode": "lifecycle-reconciliation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-09T01:23:46.867Z",
+      "specCode": "lifecycle-reconciliation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-09T01:23:51.621Z",
+      "specCode": "lifecycle-reconciliation-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-09T01:23:51.738Z",
+      "specCode": "lifecycle-reconciliation-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-09T01:25:55.219Z",
+      "specCode": "lifecycle-reconciliation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-09T01:25:55.220Z",
+      "specCode": "lifecycle-reconciliation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-09T01:25:55.346Z",
+      "specCode": "lifecycle-reconciliation-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-09T01:25:55.346Z",
+      "specCode": "lifecycle-reconciliation-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-09T01:25:55.465Z",
+      "specCode": "lifecycle-reconciliation-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-09T01:25:55.465Z",
+      "specCode": "lifecycle-reconciliation-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-09T01:37:35.718Z",
+      "specCode": "lifecycle-reconciliation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-09T01:38:47.120Z",
+      "specCode": "lifecycle-guidance-sync-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-09T01:38:47.122Z",
+      "specCode": "lifecycle-guidance-sync-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-11T01:37:21.345Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T01:37:21.348Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:37:27.830Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:37:27.831Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:37:27.831Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T01:37:46.055Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T01:37:46.056Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T01:38:58.153Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:39:03.805Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:39:03.805Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:39:03.806Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:40:52.232Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:40:52.232Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:40:52.233Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T01:40:52.354Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T01:40:52.355Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T01:41:57.793Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:41:57.922Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:41:57.923Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:41:57.923Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T01:42:40.417Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T01:42:40.418Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-11T01:46:34.968Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T01:46:35.217Z",
+      "specCode": "methodology-hardening-L3.1.1-doc-contract",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T01:46:35.343Z",
+      "specCode": "methodology-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T01:46:35.464Z",
+      "specCode": "methodology-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-11T01:49:00.749Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T01:49:00.753Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:49:00.883Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:49:00.884Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:49:00.884Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T01:50:31.751Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T01:50:31.751Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T01:52:04.031Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:52:04.173Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:52:04.174Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:52:04.175Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T01:52:52.053Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T01:52:52.053Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T01:54:13.917Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T01:54:14.037Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T01:54:14.037Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T01:54:14.038Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T01:55:25.488Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T01:55:25.489Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-11T01:58:14.535Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T01:58:26.545Z",
+      "specCode": "r18-decision-lifecycle-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T01:58:26.675Z",
+      "specCode": "r18-decision-lifecycle-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T01:58:26.798Z",
+      "specCode": "r18-decision-lifecycle-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T02:12:51.094Z",
+      "specCode": "lifecycle-guidance-sync-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T02:15:23.395Z",
+      "specCode": "lifecycle-guidance-sync-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T02:15:23.396Z",
+      "specCode": "lifecycle-guidance-sync-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T02:15:27.424Z",
+      "specCode": "lifecycle-guidance-sync-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T02:16:52.762Z",
+      "specCode": "lifecycle-guidance-sync-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T02:16:52.763Z",
+      "specCode": "lifecycle-guidance-sync-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T02:17:01.153Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T02:17:01.256Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.2-distribution",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T02:18:30.023Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T02:18:30.024Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T02:18:39.925Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.2-distribution",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T02:18:39.926Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.2-distribution",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-11T02:29:14.087Z",
+      "specCode": "lifecycle-guidance-sync-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T02:31:31.633Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.3-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T02:32:56.263Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.3-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T02:32:56.264Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.3-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T02:38:22.925Z",
+      "specCode": "lifecycle-guidance-sync-L3.1.3-review-fixes",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-08T09:03:22.105Z"
+  "lastUpdated": "2026-06-11T02:38:22.925Z",
+  "sessionId": "sess-mq8tv4jl",
+  "startedAt": "2026-06-11T01:37:21.345Z"
 }

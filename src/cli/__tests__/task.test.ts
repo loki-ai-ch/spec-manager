@@ -115,6 +115,22 @@ function createDraftL3(): string {
 }
 
 describe('task CLI', () => {
+  it('rejects deprecated force and points to scoped bypasses', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await expect(
+      makeProgram().parseAsync(['task', 'complete', 'T-001', '--spec', specCode, '--force'], { from: 'user' }),
+    ).rejects.toThrow(/DEPRECATED_FORCE.*--skip-r18/);
+  });
+
+  it('requires a reason for scoped completion bypasses', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await expect(
+      makeProgram().parseAsync(['task', 'complete', 'T-001', '--spec', specCode, '--skip-r18'], { from: 'user' }),
+    ).rejects.toThrow(/BYPASS_REASON_REQUIRED/);
+  });
+
   it('prints shownSteps and totalSteps for truncated task show', async () => {
     const specCode = createFrozenL3WithTask();
 
@@ -290,6 +306,7 @@ describe('task CLI', () => {
     await makeProgram().parseAsync(['task', 'show', 'T-001', '--spec', specCode], { from: 'user' });
 
     expect(output()).toContain('verifications: 1');
-    expect(output()).toContain('latest: V-001 exitCode=0');
+    expect(output()).toContain('[functional]');
+    expect(output()).toContain('V-001:');
   });
 });

@@ -12,6 +12,7 @@
  */
 
 import { isPlaceholderContent } from './placeholder.js';
+import { splitArgs, VERIFY_RE, VERIFY_TYPE_ARITY } from './verify.js';
 
 const SPEC_CODE_INLINE_RE = /\b[a-z0-9][a-z0-9-]*-L[0-3](?:\.\d+)*(?:-(?!\d{8}\b)[a-z0-9][a-z0-9-]*)?\b/;
 
@@ -127,6 +128,45 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
         level: 'warn',
         message: 'R23: Spec 写作前必须基于实际代码；正文应包含代码调查、现有代码路径或复用清单',
       });
+    }
+  }
+
+  // @verify 语法校验（仅 L3）
+  if (level === 'L3') {
+    const ac = sections.find(s => s.heading === '验收标准');
+    if (ac) {
+      for (const line of ac.body.split('\n')) {
+        const trimmed = line.trim();
+        if (!/@verify:/.test(trimmed)) continue;
+
+        const m = VERIFY_RE.exec(trimmed);
+        if (!m) {
+          warnings.push({
+            rule: 'verify_syntax_error',
+            level: 'warn',
+            message: `@verify 行格式不正确: "${trimmed}" — 期望 @verify: type(arg1, ...)`,
+            section: '验收标准',
+          });
+          continue;
+        }
+        const [, type, argsStr] = m;
+        const argCount = splitArgs(argsStr).length;
+        if (!(type in VERIFY_TYPE_ARITY)) {
+          warnings.push({
+            rule: 'unknown_verify_type',
+            level: 'warn',
+            message: `未知 @verify 类型: "${type}" — 支持: file-exists, export-exists, command`,
+            section: '验收标准',
+          });
+        } else if (argCount !== VERIFY_TYPE_ARITY[type]) {
+          warnings.push({
+            rule: 'verify_arity_mismatch',
+            level: 'warn',
+            message: `@verify: ${type}() 参数数量错误: 期望 ${VERIFY_TYPE_ARITY[type]}，实际 ${argCount}`,
+            section: '验收标准',
+          });
+        }
+      }
     }
   }
 

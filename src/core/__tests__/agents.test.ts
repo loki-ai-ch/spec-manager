@@ -3,7 +3,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import type { ProjectPaths } from '../paths.js';
-import { detectAgentProviders, installAgentSupport, listAgentProviders, mergeMissingDirectories, parseAgentProviders } from '../agents.js';
+import { detectAgentProviders, inspectManagedAgentAssets, installAgentSupport, listAgentProviders, mergeMissingDirectories, parseAgentProviders } from '../agents.js';
 import { createTestProject, type TestProject } from './project-fixture.js';
 
 let root: string;
@@ -134,7 +134,7 @@ describe('installAgentSupport', () => {
 
     expect(report.dryRun).toBe(true);
     expect(report.created).toContain('CLAUDE.md');
-    expect(report.created).toContain('.claude/skills/spec-manager');
+    expect(report.created).toContain('.claude/skills/spec-manager/SKILL.md');
     expect(report.created).toContain('AGENTS.md');
     expect(report.created).toContain('.cursorrules');
     expect(report.created).toContain('.windsurfrules');
@@ -158,6 +158,34 @@ describe('installAgentSupport', () => {
 
     expect(report.overwritten).toContain('AGENTS.md');
     expect(readFileSync(join(root, 'AGENTS.md'), 'utf8')).toBe('# existing\n');
+  });
+
+  it('syncs managed directory files without deleting extra custom files', () => {
+    installAgentSupport({ paths, packageRoot, providers: parseAgentProviders('claude') });
+    writeFileSync(join(root, '.claude', 'skills', 'spec-manager', 'custom.md'), '# custom\n', 'utf8');
+    writeFileSync(join(root, '.claude', 'skills', 'spec-manager', 'SKILL.md'), '# stale\n', 'utf8');
+    writeFileSync(join(root, 'CLAUDE.md'), '# user instructions\n', 'utf8');
+
+    const report = installAgentSupport({ paths, packageRoot, providers: parseAgentProviders('claude'), syncManaged: true });
+
+    expect(report.overwritten).toContain('.claude/skills/spec-manager/SKILL.md');
+    expect(readFileSync(join(root, '.claude', 'skills', 'spec-manager', 'custom.md'), 'utf8')).toBe('# custom\n');
+    expect(readFileSync(join(root, 'CLAUDE.md'), 'utf8')).toBe('# user instructions\n');
+  });
+});
+
+describe('inspectManagedAgentAssets', () => {
+  it('reports missing and drifted managed files while ignoring custom extras', () => {
+    installAgentSupport({ paths, packageRoot, providers: parseAgentProviders('claude') });
+    writeFileSync(join(root, '.claude', 'skills', 'spec-manager', 'SKILL.md'), '# stale\n', 'utf8');
+    rmSync(join(root, '.claude', 'skills', 'spec-manager', 'rules', 'flow-control.md'));
+    writeFileSync(join(root, '.claude', 'skills', 'spec-manager', 'custom.md'), '# custom\n', 'utf8');
+
+    const result = inspectManagedAgentAssets(paths, packageRoot, ['claude']);
+
+    expect(result.drifted).toContain('.claude/skills/spec-manager/SKILL.md');
+    expect(result.missing).toContain('.claude/skills/spec-manager/rules/flow-control.md');
+    expect([...result.drifted, ...result.missing]).not.toContain('.claude/skills/spec-manager/custom.md');
   });
 });
 

@@ -7,8 +7,8 @@
 
 ## 模板
 
-- [templates/L3-impl.md](../../templates/L3-impl.md)
-- [templates/agent-plan.json](../../templates/agent-plan.json)（planJson 字段名 stepNo/stepType/name）
+- [templates/L3-impl.md](../templates/L3-impl.md)
+- [templates/agent-plan.json](../templates/agent-plan.json)（planJson 字段名 stepNo/stepType/name）
 
 ## 流程
 
@@ -24,7 +24,7 @@
    > ☑ **R23** / **R12** / **R8** — 流程规则,人工把关
 4. **创建 L3**：
    ```bash
-   spec-manager spec new L3 --topic <topic> --title "..." --parent <L2 code>  # --code 不传则自动生成
+   spec-manager spec new L3 --topic <topic> --title "..." --parent <L2 code>  # --code 不传则自动生成 <topic>-L3.N.M[-desc]
    ```
    > ☑ **R20** — 流程规则:scope-split L2 时所有子 L3 一次建齐
 5. **写正文**：
@@ -40,30 +40,48 @@
    > ☑ **R13** / **R21** — `--ai-summary` ≤300 字符（CLI 截断,>300 自动 warn）
    > ☑ **R14** / **R22** — 流程规则,人工把关
 6. 🛑 **等用户审核**（R1）— 流程规则,停下等用户信号
-7. 用户批准 → `spec-manager spec confirm <code>` → 用户再批准 → `spec-manager spec freeze <code>`
+7. 用户一次批准 → `spec-manager spec confirm <code>`，L3 直接进入 `frozen`
    > ☑ **R2** / **R4** — 流程规则:状态由用户推进,每层独立审核
-   > CLI 在 `confirm`/`freeze` 之前会校验 R22（contentTemplate 非空）
+   > CLI 在批准进入 `frozen` 之前会校验 R22（contentTemplate 非空）
 
 ### Agent Task 执行
 
-8. **frozen 才可建 Task**（R3）：
+8. **查历史任务**（连续性层）：
+   ```bash
+   spec-manager task list --topic <topic>
+   ```
+   了解同主题已有实现模式，复用成功的步骤顺序，避免重复踩坑。
+9. **frozen 才可建 Task**（R3）：
    ```bash
    spec-manager task create <L3 code> --plan ./plan.json --auto-confirm
    ```
    > ☑ **R3** — 非 frozen 时 CLI 拒绝并 audit hit
-9. `spec-manager task start <task-id>`
-10. 逐步 `spec-manager task step <task-id> --no N --type T --name S --status ok --output-json J --latency L`
+10. `spec-manager task start <task-id>`
+11. 逐步 `spec-manager task step <task-id> --no N --type T --name S --status succeeded --output-json J --latency L`
     - 禁跳步（R5）
     - outputJson 必含 summary（R15）
     - step_report 必须在工作完成后才报（R15）
     > ☑ **R5** — `task complete` 时仍有 pending/running 步会拒绝并报错
     > ☑ **R15** — outputJson 缺 summary 时 warning 落 warn 数组
-11. `spec-manager task complete <task-id>`
-    > 完成后看 `cascadedL1Specs`,对每个 L1 用 `decision list --doc-code <L1>` 查是否已建决策卡
+12. 最后一个子 Task 完成前，对即将级联的 confirmed L1 检查并预建 R18 决策卡片：
+    ```bash
+    spec-manager decision list --doc-code <L1-code>
+    spec-manager decision create <L1-code> --topic <topic> --what "..." --why "..."
+    ```
+13. `spec-manager task complete <task-id>`
     > ☑ **R6** — 流程规则:确认 cascade 后再标 implemented
-12. 若仍 frozen,手动 `spec-manager spec implement <L3 code>`
-13. L1 implemented 后必须 ≥1 张决策卡片（R18）
-    > ☑ **R18** — task complete 触发 L1 cascade 时 CLI 自动 audit hit,提示待建决策卡
+    > ☑ **R18** — L1 cascade 到 implemented 后自动校验预建决策卡片，缺失则拒绝完成并回滚
+14. 若仍 frozen,手动 `spec-manager spec implement <L3 code>`
+15. 异常或历史恢复必须使用独立跳过参数并提供原因，跳过 R18 后必须立即补建 active 决策卡：
+    ```bash
+    spec-manager task complete <task-id> --skip-r18 --reason "历史仓库恢复"
+    spec-manager decision create <L1-code> --topic <topic> --what "..." --why "..."
+    ```
+16. 规则审计合规检查：
+    ```bash
+    spec-manager audit show
+    ```
+    确认最低合规基线通过（R1≥1, R4≥1, R13≥1, R22≥1）
 
 ## 与主 SKILL.md 关系
 

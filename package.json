@@ -1,6 +1,6 @@
 {
   "name": "spec-manager",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "spec-manager: local-first spec-driven development platform. Pure markdown storage, no network, no MCP. Portable CLI + multi-agent instructions.",
   "type": "module",
   "license": "MIT",
@@ -14,6 +14,7 @@
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
+    "scripts",
     "skill",
     "templates",
     "rules",
@@ -27,7 +28,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "dev": "tsc --watch",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "verify:installed-cli": "node scripts/verify-installed-cli.mjs"
   },
   "keywords": [
     "spec-driven",

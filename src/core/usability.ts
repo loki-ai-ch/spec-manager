@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { parse as parseYaml } from 'yaml';
-import { AGENT_PROVIDER_INFO } from './agents.js';
+import { AGENT_PROVIDER_INFO, detectAgentProviders, inspectManagedAgentAssets } from './agents.js';
 import { readAudit } from './audit.js';
 import { findSpecByCode, isPlaceholderContent, listAllSpecs, type SpecRecord } from './spec-io.js';
 import { listTasks, type TaskRecord } from './task.js';
@@ -20,7 +20,7 @@ export interface DoctorCheck {
   blocking?: boolean;
 }
 
-export function runProjectDoctor(paths: ProjectPaths): DoctorCheck[] {
+export function runProjectDoctor(paths: ProjectPaths, packageRoot?: string): DoctorCheck[] {
   const checks: DoctorCheck[] = [];
   checks.push(fileCheck(paths.isInitialized, '.spec-manager/', 'Project initialized', 'spec-manager project init', true));
   checks.push(fileCheck(existsSync(paths.configFile), '.spec-manager/config.yaml', 'Config file present', 'spec-manager project init', true));
@@ -41,13 +41,29 @@ export function runProjectDoctor(paths: ProjectPaths): DoctorCheck[] {
 
   const claudeSkill = join(paths.root, '.claude', 'skills', 'spec-manager');
   if (existsSync(claudeSkill)) {
-    checks.push(fileCheck(existsSync(join(claudeSkill, 'rules')), '.claude/skills/spec-manager/rules', 'Claude skill rules bundled', 'spec-manager project remediate --migration repository-remediation-v1 --dry-run', false));
-    checks.push(fileCheck(existsSync(join(claudeSkill, 'templates')), '.claude/skills/spec-manager/templates', 'Claude skill templates bundled', 'spec-manager project remediate --migration repository-remediation-v1 --dry-run', false));
+    checks.push(fileCheck(existsSync(join(claudeSkill, 'rules')), '.claude/skills/spec-manager/rules', 'Claude skill rules bundled', 'spec-manager project agents --provider claude --sync-managed --dry-run', false));
+    checks.push(fileCheck(existsSync(join(claudeSkill, 'templates')), '.claude/skills/spec-manager/templates', 'Claude skill templates bundled', 'spec-manager project agents --provider claude --sync-managed --dry-run', false));
   }
   const codeBuddySkill = join(paths.root, '.codebuddy', 'skills', 'spec-manager');
   if (existsSync(codeBuddySkill)) {
-    checks.push(fileCheck(existsSync(join(codeBuddySkill, 'rules')), '.codebuddy/skills/spec-manager/rules', 'CodeBuddy skill rules bundled', 'spec-manager project agents --provider codebuddy --force', false));
-    checks.push(fileCheck(existsSync(join(codeBuddySkill, 'templates')), '.codebuddy/skills/spec-manager/templates', 'CodeBuddy skill templates bundled', 'spec-manager project agents --provider codebuddy --force', false));
+    checks.push(fileCheck(existsSync(join(codeBuddySkill, 'rules')), '.codebuddy/skills/spec-manager/rules', 'CodeBuddy skill rules bundled', 'spec-manager project agents --provider codebuddy --sync-managed --dry-run', false));
+    checks.push(fileCheck(existsSync(join(codeBuddySkill, 'templates')), '.codebuddy/skills/spec-manager/templates', 'CodeBuddy skill templates bundled', 'spec-manager project agents --provider codebuddy --sync-managed --dry-run', false));
+  }
+  if (packageRoot) {
+    const detected = detectAgentProviders(paths);
+    if (detected.providers.length > 0) {
+      const managed = inspectManagedAgentAssets(paths, packageRoot, detected.providers);
+      const problemCount = managed.missing.length + managed.drifted.length;
+      checks.push({
+        status: problemCount === 0 ? 'ok' : 'warn',
+        label: 'Managed agent assets',
+        detail: problemCount === 0
+          ? 'Installed managed assets match bundled sources'
+          : `${managed.missing.length} missing, ${managed.drifted.length} drifted: ${[...managed.missing, ...managed.drifted].slice(0, 3).join(', ')}`,
+        action: problemCount === 0 ? undefined : `spec-manager project agents --provider ${detected.providers.join(',')} --sync-managed --dry-run`,
+        blocking: false,
+      });
+    }
   }
 
   const specs = paths.isInitialized ? listAllSpecs(paths) : [];

@@ -402,9 +402,9 @@ spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 
 Task 进入 `completed` 或 `failed` 后，其步骤与验证历史不可再由普通命令修改。完成 Task 前必须全部计划步骤成功，并至少记录一条 `exitCode=0` 的 verification。已弃用的 `task batch` 不再自动生成成功执行记录。
 
-### 7. 记录决策卡片(R18:L1 implemented)
+### 7. 在最后一个 Task 完成前记录决策卡片(R18)
 
-L1 走到 `implemented` 后,**必须**至少建一张决策卡片,记录关键 what/why:
+L1 进入 `confirmed` 后、最后一个子 Task 完成前，**必须**至少预建一张 active 决策卡片，记录关键 what/why。superseded 或 partial 卡片不能满足 R18：
 
 ```bash
 spec-manager decision create auth-L1 \
@@ -415,17 +415,14 @@ spec-manager decision create auth-L1 \
 # → 输出: DC-001
 ```
 
-`task complete` 完成后,CLI **自动**打印 R18 自检提示 —— 对每个刚 cascade 到 `implemented` 的 L1,展示是否已有决策卡片,并给出完整创建命令 + `audit hit R18` 收尾命令:
+最后一个 `task complete` 会在同一事务中检查 active 决策卡片。缺失时完成操作和级联状态全部回滚，可在仍为 `confirmed` 的 L1 上创建卡片后正常重试：
 
-```text
-⚠ R18 (决策卡片):以下 L1 已 cascade 到 implemented,请确认已建决策卡片:
-  ✗ auth-L1 [auth] — 待建
-    spec-manager decision create auth-L1 \
-      --topic auth --what "..." --why "..." --criteria AC-1,AC-2
-    spec-manager audit hit R18 --spec auth-L1
-  ✓ billing-L1 [billing] — 已有 2 张 (active: 2)
-    spec-manager audit hit R18 --spec billing-L1
+```bash
+spec-manager decision create auth-L1 --topic auth --what "..." --why "..."
+spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 ```
+
+异常恢复必须使用独立跳过参数并记录原因：`--skip-r18`、`--skip-verification`、`--skip-verify`。旧 `--force` 已拒绝执行。
 
 **查询决策** —— 按 topic 或按 AC 编号(AC-7:追溯某个 requirement 经历了哪些变化):
 

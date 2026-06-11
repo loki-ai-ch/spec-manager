@@ -11,7 +11,7 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { siblingMetaDir, type ProjectPaths } from './paths.js';
 import { findSpecByCode, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
-import { listDecisions } from './decision.js';
+import { isActiveDecision, listDecisions } from './decision.js';
 import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
 import { validatePlanJson } from './validate.js';
@@ -26,8 +26,16 @@ import {
 } from './invariants.js';
 import { withProjectTransaction } from './transaction.js';
 import { cascadeImplementedHierarchy } from './lifecycle.js';
+import { parseVerifyRules, executeVerifyRules, runCommand } from './verify.js';
+import { extractVerificationCommands, truncateWithEllipsis, LAST_FAILED_OUTPUT_MAX_LEN } from './spec-sections.js';
 
 export type { TaskStatus } from './status.js';
+
+/** verification 分层枚举 */
+export type VerificationLayer = 'compile' | 'functional' | 'smoke';
+
+/** 验证层排序优先级 */
+export const VERIFICATION_LAYER_ORDER: VerificationLayer[] = ['compile', 'functional', 'smoke'];
 
 export interface TaskRecord {
   id: string;
@@ -42,6 +50,7 @@ export interface TaskRecord {
   waitReason: string | null;
   errorCode: string | null;
   errorMessage: string | null;
+  lastFailedOutput: string | null;
 }
 
 export interface TaskVerificationRecord {
@@ -52,6 +61,7 @@ export interface TaskVerificationRecord {
   artifacts: string[];
   coversAc: string[];
   created: string;
+  layer: VerificationLayer;
 }
 
 export { canTaskTransition } from './status.js';
@@ -179,6 +189,7 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     waitReason: null,
     errorCode: null,
     errorMessage: null,
+    lastFailedOutput: null,
   };
   const taskFile = taskFilePath(spec.filePath, input.specCode, taskId);
   writeTaskJSON(taskFile, task);
@@ -257,8 +268,13 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   const task = findTaskById(input.paths, input.taskId, input.specCode);
   assertTaskMutable(task, 'report step');
 
-  // R15: outputJson 必含 summary（warning 而非 throw）
   const warnings: string[] = [];
+
+  if (task.lastFailedOutput) {
+    warnings.push(`⚠ 上次 step 失败摘要: ${truncateWithEllipsis(task.lastFailedOutput, LAST_FAILED_OUTPUT_MAX_LEN)}`);
+  }
+
+  // R15: outputJson 必含 summary（warning 而非 throw）
   if (input.status === 'succeeded') {
     if (!input.outputJson) {
       warnings.push('R15: succeeded step 必须提供 outputJson.summary');
@@ -296,6 +312,9 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   };
   steps[idx] = step;
   const updatedTask: TaskRecord = { ...task, steps };
+  if (input.status === 'failed' && input.outputJson) {
+    updatedTask.lastFailedOutput = input.outputJson;
+  }
   writeTaskJSON(taskFilePath(spec.filePath, task.specCode, task.id), updatedTask);
 
   return { task: updatedTask, spec, warnings };
@@ -310,6 +329,7 @@ export interface AddTaskVerificationInput {
   summary: string;
   artifacts?: string[];
   coversAc?: string[];
+  layer?: VerificationLayer;
 }
 
 export function addTaskVerification(input: AddTaskVerificationInput): { task: TaskRecord; verification: TaskVerificationRecord } {
@@ -324,6 +344,7 @@ export function addTaskVerification(input: AddTaskVerificationInput): { task: Ta
     artifacts: input.artifacts ?? [],
     coversAc: input.coversAc ?? [],
     created: new Date().toISOString(),
+    layer: input.layer ?? 'functional',
   };
   const updated: TaskRecord = {
     ...task,
@@ -339,6 +360,9 @@ export interface CompleteInput {
   specCode?: string;
   auditSink?: AuditSink;
   skipR18Check?: boolean;
+  skipVerification?: boolean;
+  skipVerify?: boolean;
+  bypassReason?: string;
 }
 
 export interface CompleteResult {
@@ -359,8 +383,15 @@ export function completeTask(input: CompleteInput): CompleteResult {
 function completeTaskUnlocked(input: CompleteInput): CompleteResult {
   const task = findTaskById(input.paths, input.taskId, input.specCode);
   assertTaskTransition(task.status, 'completed');
+  const bypassedChecks = [
+    input.skipR18Check ? 'r18' : null,
+    input.skipVerification ? 'verification-commands' : null,
+    input.skipVerify ? 'verify-rules' : null,
+  ].filter((value): value is string => value !== null);
+  if (bypassedChecks.length > 0 && !input.bypassReason?.trim()) {
+    throw new Error('BYPASS_REASON_REQUIRED: 跳过完成门禁时必须提供非空原因');
+  }
 
-  // R5: 校验所有 plan 步骤都已上报(不能跳步)
   const l3 = findSpecByCode(input.paths, task.specCode);
   if (l3) {
     if (l3.fm.status !== 'frozen') {
@@ -376,8 +407,52 @@ function completeTaskUnlocked(input: CompleteInput): CompleteResult {
         ` — 请先逐个 reportStep 到 succeeded，失败或跳过步骤需修复后重新上报，禁止跳号`,
       );
     }
+    assertTaskHasSuccessfulVerification(task);
+
+    const specContent = l3.content;
+
+    if (!input.skipVerification) {
+      const verifyCmds = extractVerificationCommands(specContent);
+      const cmdResults: Array<{ cmd: string; exitCode: number; output: string }> = [];
+      let anyCmdFailed = false;
+
+      for (const cmd of verifyCmds) {
+        const result = runCommand(cmd, input.paths.root);
+        cmdResults.push({ cmd, exitCode: result.exitCode, output: result.output });
+        if (result.exitCode !== 0) anyCmdFailed = true;
+      }
+
+      if (anyCmdFailed) {
+        const errorLines: string[] = [];
+        const passed = cmdResults.filter(r => r.exitCode === 0).length;
+        errorLines.push(`验证命令失败 (${passed}/${cmdResults.length}):`);
+        for (const r of cmdResults) {
+          const icon = r.exitCode === 0 ? '✓' : '✗';
+          errorLines.push(`  ${icon} ${r.cmd}${r.exitCode !== 0 ? ` (exit ${r.exitCode}): ${r.output}` : ''}`);
+        }
+        throw new Error(errorLines.join('\n'));
+      }
+    }
+
+    if (!input.skipVerify) {
+      const verifyRules = parseVerifyRules(specContent, '验收标准');
+      if (verifyRules.length > 0) {
+        const ruleResults = executeVerifyRules(verifyRules, input.paths.root);
+        const anyRuleFailed = ruleResults.some(r => !r.passed);
+        if (anyRuleFailed) {
+          const errorLines: string[] = [];
+          const passed = ruleResults.filter(r => r.passed).length;
+          errorLines.push(`@verify 规则失败 (${passed}/${ruleResults.length}):`);
+          for (const r of ruleResults) {
+            errorLines.push(`  ${r.passed ? '✓' : '✗'} ${r.message}`);
+          }
+          throw new Error(errorLines.join('\n'));
+        }
+      }
+    }
   }
-  assertTaskHasSuccessfulVerification(task);
+
+  if (!l3) assertTaskHasSuccessfulVerification(task);
 
   // 把 task 标记为 completed
   const updated: TaskRecord = { ...task, status: 'completed', finishedAt: new Date().toISOString() };
@@ -405,21 +480,37 @@ function completeTaskUnlocked(input: CompleteInput): CompleteResult {
     const missing: string[] = [];
     for (const code of cascadedL1Specs) {
       const decisions = listDecisions(input.paths, { docCode: code, includeAll: true });
-      if (decisions.length === 0) missing.push(code);
+      if (!decisions.some(isActiveDecision)) missing.push(code);
     }
     if (missing.length > 0) {
       recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: missing[0] }, input.auditSink);
       throw new Error(
-        `R18: 以下 L1 已 cascade 到 implemented 但缺少决策卡片: ${missing.join(', ')}\n` +
+        `R18: 以下 L1 已 cascade 到 implemented 但缺少 active 决策卡片: ${missing.join(', ')}\n` +
         `请先创建决策卡片:\n` +
-        missing.map(code => `  spec-manager decision create --doc-code ${code} --topic <topic> --what "..." --why "..."`).join('\n'),
+        missing.map(code => `  spec-manager decision create ${code} --topic <topic> --what "..." --why "..."`).join('\n'),
       );
     }
   }
 
   // 记录 R18 audit hit（已有决策卡片的情况）
-  for (const code of cascadedL1Specs) {
-    recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: code }, input.auditSink);
+  if (!input.skipR18Check) {
+    for (const code of cascadedL1Specs) {
+      recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: code }, input.auditSink);
+    }
+  }
+  if (bypassedChecks.length > 0) {
+    recordAuditHit({
+      paths: input.paths,
+      ruleId: input.skipR18Check ? 'R18' : 'R10',
+      specCode: task.specCode,
+      taskCode: task.id,
+      metadata: {
+        event: 'task-complete-bypass',
+        bypassedChecks,
+        reason: input.bypassReason!.trim(),
+      },
+      countRule: false,
+    }, input.auditSink);
   }
 
   return {
@@ -477,6 +568,7 @@ export function showTask(paths: ProjectPaths, taskId: string, opts?: { full?: bo
   shownSteps: number;
   totalSteps: number;
   truncated: boolean;
+  verificationsByLayer: Record<string, TaskVerificationRecord[]>;
 } | null {
   let task: TaskRecord | undefined;
   if (opts?.specCode) {
@@ -492,11 +584,20 @@ export function showTask(paths: ProjectPaths, taskId: string, opts?: { full?: bo
   const spec = findSpecByCode(paths, task.specCode);
   const steps = taskSteps(task, spec?.fm.steps);
   const all = [...steps].sort((a, b) => Number(a.stepNo) - Number(b.stepNo));
+
+  // AC-4: 按 layer 分组 verification
+  const verificationsByLayer: Record<string, TaskVerificationRecord[]> = {};
+  for (const v of task.verifications ?? []) {
+    const layer = v.layer ?? 'functional';
+    if (!verificationsByLayer[layer]) verificationsByLayer[layer] = [];
+    verificationsByLayer[layer].push(v);
+  }
+
   if (opts?.full || all.length <= 5) {
-    return { task, steps: all, shownSteps: all.length, totalSteps: all.length, truncated: false };
+    return { task, steps: all, shownSteps: all.length, totalSteps: all.length, truncated: false, verificationsByLayer };
   }
   const shown = all.slice(-5);
-  return { task, steps: shown, shownSteps: shown.length, totalSteps: all.length, truncated: true };
+  return { task, steps: shown, shownSteps: shown.length, totalSteps: all.length, truncated: true, verificationsByLayer };
 }
 
 function taskSteps(task: TaskRecord, fallback?: StepFrontmatter[]): StepFrontmatter[] {

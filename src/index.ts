@@ -9,6 +9,8 @@ export * from './core/audit-events.js';
 export * from './core/repository.js';
 export * from './core/usability.js';
 export * from './core/invariants.js';
+export * from './core/verify.js';
+export * from './core/spec-sections.js';
 export * from './core/integrity.js';
 export * from './core/integrity-exemptions.js';
 export * from './core/remediation.js';

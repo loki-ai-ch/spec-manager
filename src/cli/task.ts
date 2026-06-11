@@ -23,6 +23,7 @@ import {
   showTask,
   listTasks,
   type TaskStatus,
+  VERIFICATION_LAYER_ORDER,
 } from '../core/task.js';
 import {
   buildHarnessTaskContext,
@@ -168,6 +169,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--summary <summary>', '验证摘要')
     .option('--artifacts <paths>', '逗号分隔的 artifact 路径')
     .option('--covers-ac <items>', '逗号分隔的 AC 编号')
+    .option('--layer <layer>', 'verification layer: compile, functional, smoke')
     .option('--input <file>', '从 JSON 文件读取 verification payload')
     .option('--json', '以 JSON 格式输出', false)
     .action((taskId: string, opts: {
@@ -177,9 +179,14 @@ export function registerTaskCommands(program: Command): void {
       summary?: string;
       artifacts?: string;
       coversAc?: string;
+      layer?: string;
       input?: string;
       json: boolean;
     }) => {
+      if (opts.layer && !VERIFICATION_LAYER_ORDER.includes(opts.layer as 'compile' | 'functional' | 'smoke')) {
+        console.error(`✗ --layer 非法: ${opts.layer}（必须 compile|functional|smoke）`);
+        process.exit(2);
+      }
       const hasFlags = opts.command !== undefined || opts.exitCode !== undefined || opts.summary !== undefined || opts.artifacts !== undefined || opts.coversAc !== undefined;
       if (opts.input && hasFlags) {
         console.error('✗ task verify --input 不能与 --command/--exit-code/--summary/--artifacts/--covers-ac 混用');
@@ -195,6 +202,7 @@ export function registerTaskCommands(program: Command): void {
               summary: opts.summary,
               artifacts: splitCsv(opts.artifacts),
               coversAc: splitCsv(opts.coversAc),
+              layer: opts.layer,
             };
         const payload = normalizeHarnessTaskVerificationPayload(raw);
         const result = recordHarnessTaskVerification({ paths, taskId, specCode: opts.spec, payload });
@@ -285,11 +293,26 @@ export function registerTaskCommands(program: Command): void {
     .command('complete <taskId>')
     .description('标记 Task 完成 → 触发 L3 spec cascade → implemented')
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
-    .option('--force', '跳过 R18 决策卡片检查', false)
+    .option('--force', '已废弃：请改用独立 skip 参数并提供 --reason', false)
+    .option('--skip-r18', '跳过 R18 active 决策卡片检查（异常恢复）', false)
+    .option('--skip-verification', '跳过 L3 验证命令执行（异常恢复）', false)
+    .option('--skip-verify', '跳过 @verify 规则执行', false)
+    .option('--reason <text>', '跳过任一完成门禁时必填的审计原因')
     .option('--json', '以 JSON 格式输出 cascade 结果', false)
-    .action((taskId: string, opts: { spec?: string; force: boolean; json: boolean }) => {
+    .action((taskId: string, opts: { spec?: string; force: boolean; skipR18: boolean; skipVerification: boolean; skipVerify: boolean; reason?: string; json: boolean }) => {
+      if (opts.force) {
+        throw new Error('DEPRECATED_FORCE: --force 已移除；请按需使用 --skip-r18、--skip-verification 或 --skip-verify，并提供 --reason');
+      }
       const paths = getPaths();
-      const result = completeTask({ paths, taskId, specCode: opts.spec, skipR18Check: opts.force });
+      const result = completeTask({
+        paths,
+        taskId,
+        specCode: opts.spec,
+        skipR18Check: opts.skipR18,
+        skipVerification: opts.skipVerification,
+        skipVerify: opts.skipVerify,
+        bypassReason: opts.reason,
+      });
       if (opts.json) {
         console.log(JSON.stringify(result, null, 2));
         return;
@@ -376,8 +399,18 @@ export function registerTaskCommands(program: Command): void {
       if (result.task.errorCode) console.log(`  error: ${result.task.errorCode} — ${result.task.errorMessage}`);
       const verifications = result.task.verifications ?? [];
       console.log(`  verifications: ${verifications.length}`);
-      const latestVerification = verifications[verifications.length - 1];
-      if (latestVerification) {
+      const layers = Object.keys(result.verificationsByLayer);
+      if (layers.length > 0) {
+        for (const layer of VERIFICATION_LAYER_ORDER) {
+          const items = result.verificationsByLayer[layer];
+          if (!items || items.length === 0) continue;
+          console.log(`  [${layer}]`);
+          for (const v of items) {
+            console.log(`    ${v.id}: ${v.command} → exit ${v.exitCode} (${v.created.slice(0, 10)})`);
+          }
+        }
+      } else if (verifications.length > 0) {
+        const latestVerification = verifications[verifications.length - 1];
         console.log(`    latest: ${latestVerification.id} exitCode=${latestVerification.exitCode} — ${latestVerification.summary}`);
       }
       console.log('  steps:');

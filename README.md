@@ -418,9 +418,9 @@ spec-manager task complete T-001 --spec auth-L3.1.1-jwt
 
 Task history is immutable after `completed` or `failed`. A task can complete only after every planned step succeeds and at least one recorded verification has `exitCode=0`. The deprecated `task batch` command cannot synthesize successful execution records.
 
-### 7. Record a decision card (R18: L1 implemented)
+### 7. Record a decision card before the final Task completes (R18)
 
-Once the L1 is `implemented`, you MUST record at least one decision card capturing the key what/why:
+After the L1 is `confirmed`, create at least one decision card capturing the key what/why before the final child Task completes:
 
 ```bash
 spec-manager decision create auth-L1 \
@@ -431,17 +431,23 @@ spec-manager decision create auth-L1 \
 # → outputs: DC-001
 ```
 
-`task complete` automatically prints an R18 checklist for any L1 that just cascaded to `implemented` — for each, it shows whether a decision card already exists and the exact CLI commands to create one (and `audit hit R18` to record the check).
+The final `task complete` checks for at least one active card inside the same cascade transaction. Superseded or partial cards do not satisfy R18. If the L1 has no active card, completion is rejected and Task/Spec states are rolled back; create the card on the still-`confirmed` L1 and retry normally.
 
 ```text
-⚠ R18 (decision cards): these L1s just cascaded to implemented — verify a card exists:
-  ✗ auth-L1 [auth] — pending
-    spec-manager decision create auth-L1 \
-      --topic auth --what "..." --why "..." --criteria AC-1,AC-2
-    spec-manager audit hit R18 --spec auth-L1
-  ✓ billing-L1 [billing] — 2 cards (active: 2)
-    spec-manager audit hit R18 --spec billing-L1
+spec-manager decision create auth-L1 \
+  --topic auth --what "..." --why "..." --criteria AC-1,AC-2
+spec-manager task complete T-001 --spec auth-L3.1.1-jwt
+# → L1 cascades to implemented
 ```
+
+Exceptional recovery uses narrowly scoped bypasses and always records a reason:
+
+```bash
+spec-manager task complete T-001 --spec auth-L3.1.1-jwt \
+  --skip-r18 --reason "historical repository recovery"
+```
+
+Available bypasses are `--skip-r18`, `--skip-verification`, and `--skip-verify`. The deprecated `--force` flag is rejected.
 
 **Query decisions** by topic or by AC reference (AC-7 — track which requirements have changed and why):
 

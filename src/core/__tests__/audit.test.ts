@@ -86,6 +86,21 @@ describe('hit — 记录规则命中', () => {
     expect(state.pending[0].reported).toBe(false);
   });
 
+  it('event-only hit is retained without increasing compliance rule count', () => {
+    hit({
+      paths,
+      ruleId: 'R18',
+      countRule: false,
+      metadata: { event: 'task-complete-bypass', reason: 'legacy recovery' },
+    });
+
+    const state = readAudit(paths);
+    expect(state.rules.R18).toBe(0);
+    expect(state.pending).toHaveLength(1);
+    expect(state.pending[0].countRule).toBe(false);
+    expect(checkCompliance(state).details.find(item => item.ruleId === 'R18')?.pass).toBe(false);
+  });
+
   it('非法 ruleId 抛错', () => {
     expect(() => hit({ paths, ruleId: 'R0' })).toThrow(/格式非法/);
     expect(() => hit({ paths, ruleId: 'R25' })).toThrow(/格式非法/);
@@ -218,13 +233,13 @@ describe('showSummary — 文本摘要', () => {
     hit({ paths, ruleId: 'R18' });
     hit({ paths, ruleId: 'R22' });
     const summary = showSummary(paths);
-    expect(summary).toContain('compliance: ✓ PASS');
+    expect(summary).toContain('compliance: PASS');
   });
 
   it('合规基线未满足时显示 FAIL', () => {
     hit({ paths, ruleId: 'R1' });
     const summary = showSummary(paths);
-    expect(summary).toContain('compliance: ✗ FAIL');
+    expect(summary).toContain('compliance: FAIL');
     expect(summary).toContain('✗ R4: 0 (min 1)');
   });
 
@@ -342,7 +357,7 @@ function createCompletedTask(topic: string, removeVerification = false): string 
   startTask(paths, 'T-001', l3Code);
   reportStep({ paths, taskId: 'T-001', specCode: l3Code, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"ok"}' });
   addTaskVerification({ paths, taskId: 'T-001', specCode: l3Code, command: 'npm test', exitCode: 0, summary: 'passed' });
-  completeTask({ paths, taskId: 'T-001', specCode: l3Code, skipR18Check: true });
+  completeTask({ paths, taskId: 'T-001', specCode: l3Code, skipR18Check: true, bypassReason: 'test fixture' });
   if (removeVerification) {
     const taskFile = join(paths.specsDir, topic, 'tasks', `${l3Code}-T-001.json`);
     const legacy = JSON.parse(readFileSync(taskFile, 'utf8'));

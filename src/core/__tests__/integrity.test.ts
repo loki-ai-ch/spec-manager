@@ -5,6 +5,7 @@ import { createTestProject, type TestProject } from './project-fixture.js';
 import { createSpec, writeSpec } from '../spec-io.js';
 import { inspectProjectIntegrity } from '../integrity.js';
 import { writeIntegrityExemptions } from '../integrity-exemptions.js';
+import { createDecision, setDecisionPartial } from '../decision.js';
 
 let project: TestProject;
 
@@ -23,6 +24,15 @@ describe('inspectProjectIntegrity', () => {
     const issues = inspectProjectIntegrity(project.paths);
     expect(issues.some(issue => issue.kind === 'dangling-reference' && issue.targetId === 'missing-L0')).toBe(true);
     expect(issues.some(issue => issue.kind === 'missing-decision' && issue.sourceId === 'auth-L1')).toBe(true);
+  });
+
+  it('treats a partial decision as missing for implemented L1 integrity', () => {
+    const spec = createSpec({ paths: project.paths, code: 'partial-L1', level: 'L1', title: 'Partial', topic: 'partial', parentCode: null });
+    writeSpec({ ...spec, fm: { ...spec.fm, status: 'implemented' } });
+    const decision = createDecision({ paths: project.paths, docCode: 'partial-L1', topic: 'partial', what: 'Legacy choice' });
+    setDecisionPartial({ paths: project.paths, id: decision.id, reason: 'No longer current' });
+
+    expect(inspectProjectIntegrity(project.paths).some(issue => issue.kind === 'missing-decision' && issue.sourceId === 'partial-L1')).toBe(true);
   });
 
   it('detects legacy completed task without successful verification', () => {

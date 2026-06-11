@@ -1,7 +1,8 @@
 import type { ProjectPaths } from './paths.js';
 import { listDecisions } from './decision.js';
 import { findSpecByCode, listAllSpecs, type SpecRecord } from './spec-io.js';
-import { addTaskVerification, reportStep, showTask, type TaskRecord, type TaskVerificationRecord } from './task.js';
+import { addTaskVerification, reportStep, showTask, listTasks, VERIFICATION_LAYER_ORDER, type VerificationLayer, type TaskRecord, type TaskVerificationRecord } from './task.js';
+import { sectionBody, extractVerificationCommands, truncateWithEllipsis, LAST_FAILED_OUTPUT_MAX_LEN } from './spec-sections.js';
 
 export type HarnessContextFormat = 'text' | 'json';
 
@@ -53,6 +54,7 @@ export interface HarnessTaskVerificationPayload {
   summary: string;
   artifacts?: string[];
   coversAc?: string[];
+  layer?: 'compile' | 'functional' | 'smoke';
 }
 
 export interface HarnessTaskVerificationInput {
@@ -93,6 +95,12 @@ export function buildHarnessTaskContext(paths: ProjectPaths, l3Code: string): Ha
     title: d.fm.what,
     summary: d.fm.why ?? d.fm.what,
   }));
+
+  const tasks = listTasks(paths, { specCode: l3Code });
+  const latestTask = tasks[tasks.length - 1];
+  if (latestTask?.lastFailedOutput) {
+    warnings.push(`⚠ 上次 step 失败摘要: ${truncateWithEllipsis(latestTask.lastFailedOutput, LAST_FAILED_OUTPUT_MAX_LEN)}`);
+  }
 
   return {
     schemaVersion: 'harness-context.experimental.v1',
@@ -175,6 +183,9 @@ export function normalizeHarnessTaskVerificationPayload(raw: unknown): HarnessTa
     summary: summary.trim(),
     artifacts: normalizeStringArray(raw.artifacts, 'artifacts', 'INVALID_VERIFICATION'),
     coversAc: normalizeStringArray(raw.coversAc, 'coversAc', 'INVALID_VERIFICATION'),
+    layer: typeof raw.layer === 'string' && VERIFICATION_LAYER_ORDER.includes(raw.layer as VerificationLayer)
+      ? raw.layer as VerificationLayer
+      : undefined,
   };
 }
 
@@ -189,6 +200,7 @@ export function recordHarnessTaskVerification(input: HarnessTaskVerificationInpu
     summary: payload.summary,
     artifacts: payload.artifacts ?? [],
     coversAc: payload.coversAc ?? [],
+    layer: payload.layer,
   });
 }
 
@@ -291,36 +303,6 @@ function extractListSection(content: string, heading: string): string[] {
   return extractBullets(sectionBody(content, heading));
 }
 
-function extractVerificationCommands(content: string): string[] {
-  const section = sectionBody(content, '验证命令');
-  if (!section) return [];
-  const commands: string[] = [];
-  const fenceRe = /```(?:bash|sh|shell)?\n([\s\S]*?)```/g;
-  let match: RegExpExecArray | null;
-  while ((match = fenceRe.exec(section)) !== null) {
-    for (const raw of match[1].split('\n')) {
-      const line = raw.trim();
-      if (!line || line.startsWith('#')) continue;
-      commands.push(line);
-    }
-  }
-  return commands;
-}
-
-function sectionBody(content: string, heading: string): string {
-  const lines = content.split('\n');
-  const start = lines.findIndex(line => new RegExp(`^##\\s+${escapeRegExp(heading)}\\s*$`).test(line.trim()));
-  if (start < 0) return '';
-  let end = lines.length;
-  for (let i = start + 1; i < lines.length; i += 1) {
-    if (/^##\s+/.test(lines[i])) {
-      end = i;
-      break;
-    }
-  }
-  return lines.slice(start + 1, end).join('\n').trim();
-}
-
 function extractBullets(section: string): string[] {
   const out: string[] = [];
   for (const raw of section.split('\n')) {
@@ -342,8 +324,4 @@ function firstParagraph(section: string): string | null {
     .map(line => line.trim())
     .filter(line => line && !line.startsWith('#') && !line.startsWith('```') && !line.startsWith('**'));
   return lines[0] ?? null;
-}
-
-function escapeRegExp(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

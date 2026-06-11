@@ -17,11 +17,11 @@ import { DecisionInputSchema } from '../schemas/spec.js';
 export function registerDecisionCommands(program: Command): void {
   const dec = program
     .command('decision')
-    .description('Decision Cards — 为 implemented L1 spec 记录"决定了什么 / 为什么"');
+    .description('Decision Cards — 为 confirmed/implemented L1 spec 记录"决定了什么 / 为什么"');
 
   dec
     .command('create <specCode>')
-    .description('为 implemented L1 spec 创建决策卡片（R18）')
+    .description('为 confirmed/implemented L1 spec 创建决策卡片（R18）')
     .requiredOption('--topic <topic>', '功能主题')
     .requiredOption('--what <what>', '决定了什么（≤500 字）')
     .option('--why <why>', '为什么（≤500 字）')

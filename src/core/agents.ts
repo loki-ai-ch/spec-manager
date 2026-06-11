@@ -1,4 +1,4 @@
-import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import type { ProjectPaths } from './paths.js';
 
@@ -25,6 +25,7 @@ export interface InstallAgentSupportOptions {
   packageRoot: string;
   providers: AgentProviderSelection[];
   force?: boolean;
+  syncManaged?: boolean;
   dryRun?: boolean;
 }
 
@@ -40,6 +41,11 @@ export interface AgentInstallReport {
 export interface AgentProviderDetection {
   providers: AgentProvider[];
   reasons: Partial<Record<AgentProvider, string[]>>;
+}
+
+export interface ManagedAgentAssetInspection {
+  missing: string[];
+  drifted: string[];
 }
 
 export interface MergeMissingDirectory {
@@ -208,12 +214,30 @@ export function installAgentSupport(options: InstallAgentSupportOptions): AgentI
     for (const step of config.installSteps) {
       if (installedTargets.has(step.target)) continue;
       installedTargets.add(step.target);
+      if (options.syncManaged && isAgentEntryTarget(step.target)) continue;
       applyInstallStep(options, report, step);
     }
     report.notes.push(...config.notes);
   }
 
   return report;
+}
+
+export function inspectManagedAgentAssets(
+  paths: ProjectPaths,
+  packageRoot: string,
+  providers: AgentProviderSelection[],
+): ManagedAgentAssetInspection {
+  const result: ManagedAgentAssetInspection = { missing: [], drifted: [] };
+  for (const asset of listManagedAssets(packageRoot, providers)) {
+    const target = join(paths.root, ...asset.target.split('/'));
+    if (!existsSync(target)) {
+      result.missing.push(asset.target);
+    } else if (readFileSync(target, 'utf8') !== readFileSync(asset.source, 'utf8')) {
+      result.drifted.push(asset.target);
+    }
+  }
+  return result;
 }
 
 export function mergeMissingDirectories(options: MergeMissingDirectoryOptions): MergeMissingDirectoryReport {
@@ -278,6 +302,10 @@ function writeTemplate(
   const source = join(options.packageRoot, ...templateRelPath.split('/'));
   const target = join(options.paths.root, ...targetRelPath.split('/'));
   const content = readFileSync(source, 'utf8');
+  if (existsSync(target) && readFileSync(target, 'utf8') === content) {
+    report.skipped.push(displayPath(options.paths, target));
+    return;
+  }
   writeManagedFile(options, report, target, content);
 }
 
@@ -289,7 +317,7 @@ function writeManagedFile(
 ): void {
   const path = displayPath(options.paths, target);
   const existed = existsSync(target);
-  if (existed && !options.force) {
+  if (existed && !options.force && !options.syncManaged) {
     report.skipped.push(path);
     return;
   }
@@ -303,7 +331,7 @@ function writeManagedFile(
   }
   mkdirSync(dirname(target), { recursive: true });
   writeFileSync(target, content, 'utf8');
-  if (existed && options.force) {
+  if (existed && (options.force || options.syncManaged)) {
     report.overwritten.push(path);
   } else {
     report.created.push(path);
@@ -316,31 +344,30 @@ function copyDirectory(
   source: string,
   target: string,
 ): void {
-  const path = displayPath(options.paths, target);
   if (!existsSync(source)) {
     report.notes.push(`missing bundled asset: ${source}`);
     return;
   }
-  if (existsSync(target) && !options.force) {
-    report.skipped.push(path);
-    return;
-  }
-  if (options.dryRun) {
-    if (existsSync(target)) {
-      report.overwritten.push(path);
-    } else {
-      report.created.push(path);
+  for (const sourceFile of listDirectoryFiles(source)) {
+    const rel = relative(source, sourceFile);
+    const targetFile = join(target, rel);
+    const path = displayPath(options.paths, targetFile);
+    const existed = existsSync(targetFile);
+    if (existed && readFileSync(targetFile, 'utf8') === readFileSync(sourceFile, 'utf8')) {
+      report.skipped.push(path);
+      continue;
     }
-    return;
-  }
-  mkdirSync(dirname(target), { recursive: true });
-  const existed = existsSync(target);
-  if (existed && options.force) rmSync(target, { recursive: true, force: true });
-  cpSync(source, target, { recursive: true });
-  if (existed && options.force) {
-    report.overwritten.push(path);
-  } else {
-    report.created.push(path);
+    if (existed && !options.force && !options.syncManaged) {
+      report.skipped.push(path);
+      continue;
+    }
+    if (options.dryRun) {
+      (existed ? report.overwritten : report.created).push(path);
+      continue;
+    }
+    mkdirSync(dirname(targetFile), { recursive: true });
+    cpSync(sourceFile, targetFile);
+    (existed ? report.overwritten : report.created).push(path);
   }
 }
 
@@ -357,4 +384,32 @@ function listDirectoryFiles(root: string): string[] {
     else if (entry.isFile()) files.push(path);
   }
   return files.sort();
+}
+
+function listManagedAssets(
+  packageRoot: string,
+  providers: AgentProviderSelection[],
+): Array<{ source: string; target: string }> {
+  const assets = new Map<string, string>();
+  for (const provider of expandAgentProviders(providers)) {
+    for (const step of providerConfig(provider).installSteps) {
+      const source = join(packageRoot, ...step.source.split('/'));
+      if (!existsSync(source)) continue;
+      if (step.kind === 'template') {
+        if (isAgentEntryTarget(step.target)) continue;
+        assets.set(step.target, source);
+        continue;
+      }
+      for (const sourceFile of listDirectoryFiles(source)) {
+        assets.set(join(step.target, relative(source, sourceFile)), sourceFile);
+      }
+    }
+  }
+  return [...assets.entries()]
+    .map(([target, source]) => ({ source, target }))
+    .sort((a, b) => a.target.localeCompare(b.target));
+}
+
+function isAgentEntryTarget(target: string): boolean {
+  return ['CLAUDE.md', 'AGENTS.md', 'CODEBUDDY.md', '.cursorrules', '.windsurfrules'].includes(target);
 }

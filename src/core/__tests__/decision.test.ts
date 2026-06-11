@@ -41,7 +41,21 @@ function createL1Draft(topic = 'auth', title = 'Auth L1'): string {
   return code;
 }
 
-describe('createDecision — R18 强制 L1 implemented', () => {
+function createL1Confirmed(topic = 'auth', title = 'Auth L1'): string {
+  const code = createL1Draft(topic, title);
+  updateSpec(paths, code, { status: 'confirmed' });
+  return code;
+}
+
+describe('createDecision — R18 允许 confirmed/implemented L1', () => {
+  it('confirmed L1 可预建决策', () => {
+    const code = createL1Confirmed();
+    const d = createDecision({ paths, docCode: code, topic: 'auth', what: '用 JWT' });
+    expect(d.fm.status).toBe('active');
+    expect(d.fm.docCode).toBe(code);
+    expect(existsSync(d.filePath)).toBe(true);
+  });
+
   it('implemented L1 可建决策', () => {
     const code = createL1Implemented();
     const d = createDecision({ paths, docCode: code, topic: 'auth', what: '用 JWT' });
@@ -53,7 +67,15 @@ describe('createDecision — R18 强制 L1 implemented', () => {
 
   it('draft L1 不可建决策 (R18)', () => {
     const code = createL1Draft();
-    expect(() => createDecision({ paths, docCode: code, topic: 'auth', what: 'X' })).toThrow(/R18/);
+    expect(() => createDecision({ paths, docCode: code, topic: 'auth', what: 'X' }))
+      .toThrow(/R18: L1 必须 confirmed 或 implemented/);
+  });
+
+  it('frozen L1 不可建决策 (R18)', () => {
+    const code = createL1Draft();
+    updateSpec(paths, code, { status: 'frozen' });
+    expect(() => createDecision({ paths, docCode: code, topic: 'auth', what: 'X' }))
+      .toThrow(/R18: L1 必须 confirmed 或 implemented/);
   });
 
   it('what 超过 500 字抛错', () => {

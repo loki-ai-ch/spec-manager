@@ -1,0 +1,83 @@
+{
+  "id": "T-001",
+  "specCode": "lifecycle-guidance-sync-L3.1.2-distribution",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取分发 L3/L2、历史任务、plan 模板、Agent/doctor 与入口文档",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"读取分发 L3/L2、Agent、doctor、入口文档与已安装资产差异\",\"files\":[]}",
+      "reportedAt": "2026-06-11T02:28:09.072Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 Agent 与 doctor Core 检测托管资产 missing 和 drift",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"doctor 逐文件检测托管资产 missing 与 drift\",\"files\":[\"src/core/agents.ts\",\"src/core/usability.ts\",\"src/cli/project.ts\"]}",
+      "reportedAt": "2026-06-11T02:28:09.197Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 Agent 同步能力支持 dry-run、显式覆盖与逐文件报告",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现 sync-managed dry-run 与安全逐文件同步，保留用户入口文件和额外文件\",\"files\":[\"src/core/agents.ts\",\"src/cli/project.ts\"]}",
+      "reportedAt": "2026-06-11T02:28:09.321Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 README、methodology、rules、Skill 与已安装 Claude 托管副本统一语义",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"同步 README、中文 README、methodology、rules、Skill、Claude 与 CodeBuddy 托管副本\",\"files\":[\"README.md\",\"readme_zh.md\",\"docs/methodology.md\",\"rules/quality-gate.md\",\"skill/subskills/impl.md\",\".claude/skills/spec-manager\",\".codebuddy/skills/spec-manager\"]}",
+      "reportedAt": "2026-06-11T02:28:09.444Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑方法论与分发测试验证行为契约和内容漂移",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"增加 doctor 漂移、安全同步、CLI 绕过和方法论契约测试\",\"files\":[\"src/core/__tests__/agents.test.ts\",\"src/core/__tests__/usability.test.ts\",\"src/core/__tests__/methodology-contract.test.ts\",\"src/cli/__tests__/task.test.ts\"]}",
+      "reportedAt": "2026-06-11T02:28:09.569Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "新增发布验证脚本比较实际 spec-manager 与当前构建",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 verify:installed-cli 发布验证，已准确检出全局 CLI 漂移\",\"files\":[\"scripts/verify-installed-cli.mjs\",\"package.json\"]}",
+      "reportedAt": "2026-06-11T02:28:09.693Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证: dry-run 同步并运行 doctor、发布验证、全量测试、lint、build 与 diff 检查",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"dry-run 与托管资产同步完成；doctor ok；476 tests、lint、build、diff check 与实际 PATH CLI 发布验证通过\",\"files\":[\".claude/skills/spec-manager\",\".codebuddy/skills/spec-manager\",\"scripts/verify-installed-cli.mjs\"]}",
+      "reportedAt": "2026-06-11T02:29:08.677Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T02:21:51.480Z",
+  "finishedAt": "2026-06-11T02:29:14.072Z",
+  "created": "2026-06-11T02:19:22.890Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": "{\"summary\":\"doctor、476 tests、lint、build、diff check 均通过；全局 CLI 安装因 root 权限阻塞，verify:installed-cli 仍正确失败\"}",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && npm run verify:installed-cli && spec-manager project doctor && git diff --check",
+      "exitCode": 0,
+      "summary": "476 tests, lint, build, installed CLI verification, doctor and diff check passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-11T02:29:08.804Z",
+      "layer": "functional"
+    }
+  ]
+}

@@ -64,10 +64,12 @@ added: 0.1.0
 applies_to: [L1_implemented]
 ---
 
-L1 spec 状态推进到 `implemented`（通常通过 L3 cascade）后，**必须**至少创建 1 张决策卡片：
+L1 spec 状态推进到 `implemented`（通常通过 L3 cascade）后，**必须**至少存在 1 张 active 决策卡片；superseded 或 partial 卡片不满足 R18。为避免最后一个 Task 与 R18 形成循环依赖，正常流程应在 L1 已 `confirmed`、最后一个 Task 完成前预建卡片：
 
 ```bash
 spec-manager decision create <L1 code> --topic <topic> --what "..." --why "..." --criteria AC-1,AC-2
 ```
+
+**执行机制**：`decision create` 允许关联 `confirmed` 或 `implemented` L1，拒绝 draft L1。`task complete` 在 cascade 到 L1 implemented 后自动检查 active 决策卡片，缺失则抛出 R18 错误并回滚完成事务。异常或历史恢复只能使用独立的 `--skip-r18`、`--skip-verification`、`--skip-verify`，且必须提供 `--reason`；旧 `--force` 被拒绝。R18 已纳入合规基线（`audit show` 检查）。
 
 新 L1 创建前（PRE-WRITE Q4）必须 `spec-manager decision list --topic <topic>` 查询历史决策。

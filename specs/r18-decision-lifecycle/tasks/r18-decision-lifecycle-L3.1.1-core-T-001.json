@@ -1,0 +1,81 @@
+{
+  "id": "T-001",
+  "specCode": "r18-decision-lifecycle-L3.1.1-core",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 R18 L3/L2、历史任务、plan 模板与核心文件",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"读取 L3/L2、历史任务、plan 模板及 R18 核心、事务、测试与指引文件，确认最小修复范围\",\"files\":[]}",
+      "reportedAt": "2026-06-11T01:55:45.580Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/decision.ts 允许 confirmed 或 implemented L1 建卡",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"修改 createDecision 允许 confirmed 或 implemented L1，保持其他状态与非 L1 拒绝\",\"files\":[\"src/core/decision.ts\"]}",
+      "reportedAt": "2026-06-11T01:56:24.338Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 decision.test.ts 覆盖合法与非法 L1 状态",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"扩展 Decision 单元测试，覆盖 confirmed/implemented 成功与 draft/frozen 拒绝\",\"files\":[\"src/core/__tests__/decision.test.ts\"]}",
+      "reportedAt": "2026-06-11T01:56:24.458Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 task-cascade.test.ts 覆盖 R18 正常闭环与事务回滚",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 R18 预建卡片普通完成与缺卡事务回滚集成测试\",\"files\":[\"src/core/__tests__/task-cascade.test.ts\"]}",
+      "reportedAt": "2026-06-11T01:56:24.578Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "编辑 CLI、R18 规则、README 与 impl skill 同步预建卡片流程",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"同步 Decision CLI 描述、R18 规则、README 与 impl skill 的预建卡片正常流程\",\"files\":[\"src/cli/decision.ts\",\"rules/quality-gate.md\",\"README.md\",\"skill/subskills/impl.md\"]}",
+      "reportedAt": "2026-06-11T01:57:06.864Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证: 运行 R18 专项测试、全量测试、lint、build、doctor 与 diff 检查",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"R18专项测试64项、全量测试468项、lint、build、project doctor与diff检查通过；未修改completeTask核心逻辑\",\"files\":[\"src/core/decision.ts\",\"src/core/__tests__/decision.test.ts\",\"src/core/__tests__/task-cascade.test.ts\",\"src/cli/decision.ts\",\"rules/quality-gate.md\",\"README.md\",\"skill/subskills/impl.md\"],\"tests\":[\"npx vitest run src/core/__tests__/decision.test.ts src/core/__tests__/task-cascade.test.ts\",\"npm test\",\"npm run lint\",\"npm run build\",\"spec-manager project doctor\",\"git diff --check\"]}",
+      "reportedAt": "2026-06-11T01:57:50.167Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T01:55:45.457Z",
+  "finishedAt": "2026-06-11T01:58:14.521Z",
+  "created": "2026-06-11T01:55:45.452Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npx vitest run src/core/__tests__/decision.test.ts src/core/__tests__/task-cascade.test.ts && npm test && npm run lint && npm run build && spec-manager project doctor && git diff --check",
+      "exitCode": 0,
+      "summary": "R18专项测试64项和全量测试468项通过，lint/build/doctor/diff检查通过",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-06-11T01:57:50.289Z"
+    }
+  ]
+}
