@@ -1,0 +1,63 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充 snapshot 范围错误消费者回归测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 snapshot scope、integrity 全量回退及 readiness/flow 范围回退测试，当前实现按预期失败\",\"files\":[\"src/core/__tests__/project-snapshot.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:18:04.588Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "增加 ProjectSnapshot scope 元数据与范围 helper",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"ProjectSnapshot 增加可选 scope 元数据，并导出 include、topic coverage 与 full snapshot 范围 helper\",\"files\":[\"src/core/project-snapshot.ts\"]}",
+      "reportedAt": "2026-06-11T09:18:57.165Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "加固 integrity、doctor、flow、readiness 和 advice 消费者",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"integrity、doctor、flow、readiness、suggestion 与 upstream advice 在注入 snapshot 范围不足时自动重建所需快照\",\"files\":[\"src/core/integrity.ts\",\"src/core/lifecycle.ts\",\"src/core/usability.ts\"]}",
+      "reportedAt": "2026-06-11T09:18:57.289Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证 snapshot 专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"snapshot 专项 7 files/54 tests、全量 45 files/535 tests、TypeScript lint 和 project doctor 全部通过\",\"files\":[\"src/core/project-snapshot.ts\",\"src/core/integrity.ts\",\"src/core/lifecycle.ts\",\"src/core/usability.ts\",\"src/core/__tests__/project-snapshot.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:19:21.408Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T09:17:41.386Z",
+  "finishedAt": "2026-06-11T09:19:26.085Z",
+  "created": "2026-06-11T09:17:41.243Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "45 test files / 535 tests passed; TypeScript lint passed; Project doctor ok",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-11T09:19:21.538Z",
+      "layer": "smoke"
+    }
+  ]
+}

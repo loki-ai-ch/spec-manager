@@ -27,14 +27,19 @@ import {
 } from '../core/task.js';
 import {
   buildHarnessTaskContext,
-  normalizeHarnessTaskReportPayload,
-  normalizeHarnessTaskVerificationPayload,
-  recordHarnessTaskVerification,
   renderHarnessTaskContextText,
-  reportHarnessTaskStep,
 } from '../core/harness.js';
 import { listDecisions } from '../core/decision.js';
 import { StepStatusSchema } from '../schemas/spec.js';
+import { createDefaultCliActionContext, runCliAction } from './common.js';
+import {
+  printTaskReportResult,
+  printTaskVerifyResult,
+  runTaskReportCommand,
+  runTaskVerifyCommand,
+  TASK_REPORT_KNOWN_ERRORS,
+  TASK_VERIFY_KNOWN_ERRORS,
+} from './task-handlers.js';
 
 const TASK_STATUSES: TaskStatus[] = ['draft', 'running', 'waiting', 'completed', 'failed'];
 
@@ -110,7 +115,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--risks <risks>', '逗号分隔的风险备注列表')
     .option('--input <file>', '从 JSON 文件读取 report payload')
     .option('--json', '以 JSON 格式输出', false)
-    .action((taskId: string, opts: {
+    .action(async (taskId: string, opts: {
       spec?: string;
       step?: string;
       summary?: string;
@@ -120,44 +125,15 @@ export function registerTaskCommands(program: Command): void {
       input?: string;
       json: boolean;
     }) => {
-      const hasFlags = opts.step !== undefined || opts.summary !== undefined || opts.files !== undefined || opts.tests !== undefined || opts.risks !== undefined;
-      if (opts.input && hasFlags) {
-        console.error('✗ task report --input 不能与 --summary/--files/--tests/--risks/--step 混用');
-        process.exit(2);
-      }
-      const paths = getPaths();
-      try {
-        const raw = opts.input
-          ? JSON.parse(readFileSync(opts.input, 'utf8'))
-          : {
-              summary: opts.summary,
-              stepNo: opts.step,
-              files: splitCsv(opts.files),
-              tests: splitCsv(opts.tests),
-              risks: splitCsv(opts.risks),
-            };
-        const payload = normalizeHarnessTaskReportPayload(raw);
-        const result = reportHarnessTaskStep({ paths, taskId, specCode: opts.spec, payload });
-        if (opts.json) {
-          console.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        console.log(`✓ Task ${taskId} report written`);
-        console.log(`  step: ${result.stepNo}`);
-        for (const w of result.warnings) console.warn(`⚠ ${w}`);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        if (
-          message.startsWith('INVALID_REPORT:') ||
-          message.startsWith('NO_REPORTABLE_STEP:') ||
-          message.startsWith('TASK_NOT_FOUND:') ||
-          message.startsWith('Task not found:')
-        ) {
-          console.error(`✗ ${message}`);
-          process.exit(2);
-        }
-        throw err;
-      }
+      const context = createDefaultCliActionContext();
+      await runCliAction({
+        context,
+        knownErrors: TASK_REPORT_KNOWN_ERRORS,
+        action: () => {
+          const result = runTaskReportCommand({ context, taskId, opts });
+          printTaskReportResult(context, result, { json: opts.json });
+        },
+      });
     });
 
   task
@@ -172,7 +148,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--layer <layer>', 'verification layer: compile, functional, smoke')
     .option('--input <file>', '从 JSON 文件读取 verification payload')
     .option('--json', '以 JSON 格式输出', false)
-    .action((taskId: string, opts: {
+    .action(async (taskId: string, opts: {
       spec?: string;
       command?: string;
       exitCode?: number;
@@ -183,48 +159,15 @@ export function registerTaskCommands(program: Command): void {
       input?: string;
       json: boolean;
     }) => {
-      if (opts.layer && !VERIFICATION_LAYER_ORDER.includes(opts.layer as 'compile' | 'functional' | 'smoke')) {
-        console.error(`✗ --layer 非法: ${opts.layer}（必须 compile|functional|smoke）`);
-        process.exit(2);
-      }
-      const hasFlags = opts.command !== undefined || opts.exitCode !== undefined || opts.summary !== undefined || opts.artifacts !== undefined || opts.coversAc !== undefined;
-      if (opts.input && hasFlags) {
-        console.error('✗ task verify --input 不能与 --command/--exit-code/--summary/--artifacts/--covers-ac 混用');
-        process.exit(2);
-      }
-      const paths = getPaths();
-      try {
-        const raw = opts.input
-          ? JSON.parse(readFileSync(opts.input, 'utf8'))
-          : {
-              command: opts.command,
-              exitCode: opts.exitCode,
-              summary: opts.summary,
-              artifacts: splitCsv(opts.artifacts),
-              coversAc: splitCsv(opts.coversAc),
-              layer: opts.layer,
-            };
-        const payload = normalizeHarnessTaskVerificationPayload(raw);
-        const result = recordHarnessTaskVerification({ paths, taskId, specCode: opts.spec, payload });
-        if (opts.json) {
-          console.log(JSON.stringify(result, null, 2));
-          return;
-        }
-        console.log(`✓ Task ${taskId} verification ${result.verification.id} recorded`);
-        console.log(`  exitCode: ${result.verification.exitCode}`);
-        console.log(`  taskStatus: ${result.task.status}`);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        if (
-          message.startsWith('INVALID_VERIFICATION:') ||
-          message.startsWith('TASK_NOT_FOUND:') ||
-          message.startsWith('Task not found:')
-        ) {
-          console.error(`✗ ${message}`);
-          process.exit(2);
-        }
-        throw err;
-      }
+      const context = createDefaultCliActionContext();
+      await runCliAction({
+        context,
+        knownErrors: TASK_VERIFY_KNOWN_ERRORS,
+        action: () => {
+          const result = runTaskVerifyCommand({ context, taskId, opts });
+          printTaskVerifyResult(context, result, { json: opts.json });
+        },
+      });
     });
 
   task
@@ -469,9 +412,4 @@ export function registerTaskCommands(program: Command): void {
       console.error('✗ TASK_BATCH_DEPRECATED: use task create, start, report/step, verify, then complete');
       process.exit(2);
     });
-}
-
-function splitCsv(value: string | undefined): string[] | undefined {
-  if (value === undefined) return undefined;
-  return value.split(',').map(item => item.trim()).filter(Boolean);
 }

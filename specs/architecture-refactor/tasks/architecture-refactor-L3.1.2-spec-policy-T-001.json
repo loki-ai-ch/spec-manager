@@ -1,0 +1,126 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.2-spec-policy",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集 spec policy 上下文: 读取 architecture-refactor-L3.1.2-spec-policy、architecture-refactor-L2.1、历史任务、agent-plan 和相关源码测试",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 architecture-refactor-L3.1.2-spec-policy、architecture-refactor-L2.1、历史任务、agent-plan 和 spec policy 相关源码测试分析\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T07:40:45.531Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 spec policy 模块: 编辑 src/core/spec-policy.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 spec policy 模块并迁入 create/update 业务策略\",\"files\":[\"src/core/spec-policy.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T07:44:29.744Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "委托 createSpec 和 updateSpec 到 spec policy: 编辑 src/core/spec-io.ts 和 src/core/spec-policy.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"将 spec-io 收窄为仓储与兼容 facade，createSpec/updateSpec 委托 spec-policy\",\"files\":[\"src/core/spec-io.ts\",\"src/core/spec-policy.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T07:44:36.492Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "导出 spec policy 并检查调用路径: 编辑 src/index.ts 并检查 src/cli/spec.ts",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"导出 spec-policy 并确认 CLI 与核心模块继续通过 spec-io 兼容入口工作\",\"files\":[\"src/index.ts\",\"src/cli/spec.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T07:44:42.368Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增 spec policy 单元测试: 编辑 src/core/__tests__/spec-policy.test.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 spec policy 专项测试覆盖 create/update/status/relation 策略\",\"files\":[\"src/core/__tests__/spec-policy.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T07:44:48.417Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "回归 spec policy 相关测试: 运行 spec-policy、spec-io、cli spec 测试",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 spec policy 专项、spec-io 和 CLI spec 回归，并确认规则主体迁出 spec-io\",\"files\":[\"src/core/spec-policy.ts\",\"src/core/spec-io.ts\",\"src/core/__tests__/spec-policy.test.ts\"]}",
+      "latencyMs": 444,
+      "reportedAt": "2026-06-11T07:44:55.358Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证 spec policy 重构: 运行 npm test、npm run lint、spec-manager project doctor",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成全量测试、类型检查和 project doctor 验证\",\"files\":[]}",
+      "latencyMs": 2287,
+      "reportedAt": "2026-06-11T07:45:17.751Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T07:40:08.850Z",
+  "finishedAt": "2026-06-11T07:46:28.462Z",
+  "created": "2026-06-11T07:40:03.513Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/spec-policy.test.ts src/core/__tests__/spec-io.test.ts src/cli/__tests__/spec.test.ts",
+      "exitCode": 0,
+      "summary": "spec-policy、spec-io、cli spec 相关测试通过：3 test files / 63 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T07:45:57.358Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量测试通过：39 test files / 501 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T07:46:07.632Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit 通过，project doctor 输出 Project doctor: ok",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T07:46:19.359Z",
+      "layer": "compile"
+    }
+  ]
+}

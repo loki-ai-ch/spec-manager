@@ -1,0 +1,130 @@
+{
+  "id": "T-001",
+  "specCode": "cli-application-boundary-L3.1.1-runtime",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 cli-application-boundary-L3.1.1-runtime、cli-application-boundary-L2.1、历史任务、agent-plan 和 CLI 锚点源码测试",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 cli-application-boundary-L3.1.1-runtime、cli-application-boundary-L2.1、历史任务、agent-plan 和 CLI 锚点源码测试分析\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:43:38.657Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/common.ts 新增 CLI action context 和默认 context",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 src/cli/common.ts，新增 CliActionContext、CliKnownError、CliTextPresenter 和 createDefaultCliActionContext，保留 fail/requireInitialized/printPathGroup 行为\",\"files\":[\"src/cli/common.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:44:44.476Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/common.ts 新增 CSV、JSON 和 presenter helper",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 splitCsv、renderJson、printPresentedResult，支持 text/json presenter 输出和 warning 输出\",\"files\":[\"src/cli/common.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:44:50.496Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/common.ts 新增 runCliAction 已知错误映射 helper",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 runCliAction，支持 sync/async action、已知错误前缀到 stderr/exit code 映射，未知错误继续抛出\",\"files\":[\"src/cli/common.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:44:56.746Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增 src/cli/__tests__/common.test.ts 覆盖 runtime helper 行为",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 common.test.ts，覆盖默认 context、splitCsv、renderJson、presenter 输出、runCliAction 正常和错误路径\",\"files\":[\"src/cli/__tests__/common.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:45:03.025Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证: npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/spec.test.ts",
+      "status": "succeeded",
+      "toolName": "npm-test",
+      "outputJson": "{\"summary\":\"CLI runtime 专项与 task/spec CLI 回归通过：3 files / 34 tests passed\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:45:18.189Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证: npm run lint && spec-manager project doctor && npm test -- src/cli/__tests__/architecture-smoke.test.ts",
+      "status": "succeeded",
+      "toolName": "lint-doctor-smoke",
+      "outputJson": "{\"summary\":\"npm run lint 通过；spec-manager project doctor 输出 Project doctor: ok；architecture-smoke.test.ts 1 test passed\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:45:27.619Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T08:43:31.691Z",
+  "finishedAt": "2026-06-11T08:46:23.755Z",
+  "created": "2026-06-11T08:43:26.203Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/spec.test.ts",
+      "exitCode": 0,
+      "summary": "CLI runtime, task CLI, and spec CLI tests passed: 3 files / 34 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:45:35.280Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit check passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:45:41.063Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "spec-manager project doctor && npm test -- src/cli/__tests__/architecture-smoke.test.ts",
+      "exitCode": 0,
+      "summary": "Project doctor ok and architecture smoke passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:45:48.006Z",
+      "layer": "smoke"
+    }
+  ]
+}

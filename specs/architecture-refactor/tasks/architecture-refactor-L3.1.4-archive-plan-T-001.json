@@ -1,0 +1,126 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.4-archive-plan",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集 archive plan 上下文: 读取 architecture-refactor-L3.1.4-archive-plan、architecture-refactor-L2.1、历史任务、agent-plan 和归档源码测试",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 architecture-refactor-L3.1.4-archive-plan、architecture-refactor-L2.1、历史任务、agent-plan 和归档链路源码测试分析\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:11:44.460Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 archive plan 模块: 编辑 src/core/archive-plan.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 archive plan 模块，提供只读计划和预检输出\",\"files\":[\"src/core/archive-plan.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:17:01.047Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "迁出归档预检规则: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"将归档 proposal 校验、预检和 ADDED metadata 规则迁入 archive-plan\",\"files\":[\"src/core/archive.ts\",\"src/core/archive-plan.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:17:09.794Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "拆分归档应用边界: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"拆分 archive apply、reference update 和 change 目录归档边界，保留 archiveChange facade\",\"files\":[\"src/core/archive.ts\",\"src/core/archive-plan.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:17:18.115Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "导出 archive-plan 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/archive-plan.test.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"导出 archive-plan 并新增归档计划专项测试\",\"files\":[\"src/index.ts\",\"src/core/__tests__/archive-plan.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:17:25.094Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "回归归档链路: 运行 archive-plan、archive、paths、CLI change 测试",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 archive-plan、archive、paths 和 CLI change 回归，并确认归档预检规则已迁出\",\"files\":[\"src/core/archive-plan.ts\",\"src/core/archive.ts\",\"src/core/__tests__/archive-plan.test.ts\"]}",
+      "latencyMs": 384,
+      "reportedAt": "2026-06-11T08:17:32.194Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证 archive plan 重构: 运行 npm test、npm run lint、spec-manager project doctor",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成全量测试、类型检查和 project doctor 验证\",\"files\":[]}",
+      "latencyMs": 2521,
+      "reportedAt": "2026-06-11T08:17:50.057Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T08:11:25.881Z",
+  "finishedAt": "2026-06-11T08:18:27.492Z",
+  "created": "2026-06-11T08:11:19.585Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/archive-plan.test.ts src/core/__tests__/archive.test.ts src/core/__tests__/paths.test.ts src/cli/__tests__/change.test.ts",
+      "exitCode": 0,
+      "summary": "archive plan 与归档回归测试通过：4 test files / 49 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T08:17:59.943Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量测试通过：41 test files / 510 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:18:09.632Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit 通过，project doctor 输出 Project doctor: ok",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:18:16.426Z",
+      "layer": "compile"
+    }
+  ]
+}

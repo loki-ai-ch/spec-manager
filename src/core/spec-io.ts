@@ -13,15 +13,20 @@ import {
   assertSafeTopic,
   listSpecFiles,
   listSpecPathMigrations,
-  specFilePath,
   type ProjectPaths,
   type SpecFileEntry,
 } from './paths.js';
-import { AI_SUMMARY_MAX, PLACEHOLDER_MARKER } from './constants.js';
-import { recordAuditHit, type AuditSink } from './audit-events.js';
-import { isPlaceholderContent } from './placeholder.js';
+import type { AuditSink } from './audit-events.js';
 import { SpecFrontmatterSchema } from '../schemas/spec.js';
-import { assertSpecTransition, isAuthorizedImplementationTransition, type ImplementationAuthority } from './status.js';
+import type { ImplementationAuthority } from './status.js';
+import {
+  applySpecUpdatePolicy,
+  buildInitialSpecRecord,
+  recordCreateSpecAudit,
+  recordUpdatedSpecAudit,
+  validateSpecParentPolicy,
+  type SpecUpdatePatch,
+} from './spec-policy.js';
 export { isPlaceholderContent } from './placeholder.js';
 
 export interface SpecFrontmatter {
@@ -184,56 +189,11 @@ export function createSpec(args: {
   milestone?: string;
   auditSink?: AuditSink;
 }): SpecRecord {
-  let parentFilePath: string | null = null;
-  if (args.parentCode) {
-    const parent = args.parentRecord ?? findSpecByCode(args.paths, args.parentCode);
-    if (!parent) {
-      throw new Error(`parentCode 指向不存在的 spec: ${args.parentCode}`);
-    }
-    const expectedParentLevels: Record<SpecLevel, SpecLevel[]> = {
-      L0: [],
-      L1: [],
-      L2: ['L0', 'L1'],
-      L3: ['L2'],
-    };
-    if (!expectedParentLevels[args.level].includes(parent.fm.level)) {
-      recordAuditHit({ paths: args.paths, ruleId: 'R7', specCode: args.code }, args.auditSink);
-      throw new Error(
-        `R7: ${args.level} 的 parent 必须是 ${expectedParentLevels[args.level].join('/')}, ` +
-        `实际是 ${parent.fm.level} (${args.parentCode})`,
-      );
-    }
-    if ((args.level === 'L2' || args.level === 'L3') && parent.fm.status === 'draft') {
-      recordAuditHit({ paths: args.paths, ruleId: 'R4', specCode: args.code }, args.auditSink);
-      throw new Error(
-        `R4: 创建 ${args.level} 前父级 ${args.parentCode} 必须先通过独立审核（confirmed/frozen/implemented），` +
-        `当前 status=${parent.fm.status}`,
-      );
-    }
-    recordAuditHit({ paths: args.paths, ruleId: 'R4', specCode: args.code }, args.auditSink);
-    parentFilePath = parent.filePath;
-  } else if (args.level === 'L2' || args.level === 'L3') {
-    recordAuditHit({ paths: args.paths, ruleId: 'R7', specCode: args.code }, args.auditSink);
-    throw new Error(`R7: ${args.level} 必须有 parentCode`);
-  }
-  const filePath = specFilePath(args.paths, parentFilePath, args.code, args.topic);
-  const now = new Date().toISOString();
-  const fm: SpecFrontmatter = {
-    code: args.code,
-    level: args.level,
-    title: args.title,
-    topic: args.topic,
-    parentCode: args.parentCode,
-    status: 'draft',
-    milestone: args.milestone,
-    created: now,
-    updated: now,
-  };
-  const rec: SpecRecord = { fm, content: `# ${args.title}\n\n${PLACEHOLDER_MARKER}\n`, filePath };
+  const policyInput = { ...args, findSpecByCode };
+  const parentPolicy = validateSpecParentPolicy(policyInput);
+  const { record: rec } = buildInitialSpecRecord(policyInput, parentPolicy);
   writeSpec(rec);
-  if (args.level === 'L0' || args.level === 'L1') {
-    recordAuditHit({ paths: args.paths, ruleId: 'R4', specCode: args.code }, args.auditSink);
-  }
+  recordCreateSpecAudit(policyInput);
   return rec;
 }
 
@@ -249,84 +209,27 @@ export interface UpdateResult {
 export function updateSpec(
   paths: ProjectPaths,
   code: string,
-  patch: {
-    content?: string;
-    aiSummary?: string;
-    changeSummary?: string;
-    status?: SpecFrontmatter['status'];
-    appendStep?: StepFrontmatter;
-    replaceStep?: { no: number | string; step: StepFrontmatter };
-    addRelation?: { type: string; target: string };
-  },
+  patch: SpecUpdatePatch,
   opts?: { auditSink?: AuditSink; transitionAuthority?: ImplementationAuthority },
 ): UpdateResult {
-  const warnings: string[] = [];
   const existing = findSpecByCode(paths, code);
   if (!existing) {
     throw new Error(`Spec not found: ${code}`);
   }
-  const fm = { ...existing.fm };
-  let content = existing.content;
 
-  if (patch.content !== undefined) {
-    if (patch.aiSummary === undefined || patch.aiSummary.trim().length === 0) {
-      recordAuditHit({ paths, ruleId: 'R13', specCode: code }, opts?.auditSink);
-      throw new Error(`R13: spec update --content 必须同时提供 aiSummary，禁止写正文后没有 AI 摘要`);
-    }
-    if (isPlaceholderContent(patch.content)) {
-      recordAuditHit({ paths, ruleId: 'R22', specCode: code }, opts?.auditSink);
-      throw new Error(`R22: contentTemplate 仍是占位内容，spec 创建后必须立即写正文`);
-    }
-    content = patch.content;
-  }
-  if (patch.aiSummary !== undefined) {
-    if (patch.aiSummary.length > AI_SUMMARY_MAX) {
-      recordAuditHit({ paths, ruleId: 'R21', specCode: code }, opts?.auditSink);
-      warnings.push(`aiSummary 超过 ${AI_SUMMARY_MAX} 字符，已自动截断（原长 ${patch.aiSummary.length}）`);
-      fm.aiSummary = patch.aiSummary.slice(0, AI_SUMMARY_MAX);
-    } else {
-      fm.aiSummary = patch.aiSummary;
-    }
-  }
-  if (patch.changeSummary !== undefined) fm.changeSummary = patch.changeSummary;
-  if (patch.status !== undefined) {
-    if (fm.level === 'L3' && patch.status === 'confirmed' && fm.status === 'draft') {
-      warnings.push(`L3_STATUS_WARN: L3 spec ${code} 推荐直接 draft → frozen，confirmed 是中间态。建议使用: spec-manager spec confirm ${code}`);
-    }
-    if (!isAuthorizedImplementationTransition(fm.level, fm.status, patch.status, opts?.transitionAuthority)) {
-      assertSpecTransition(fm.status, patch.status);
-    }
-    fm.status = patch.status;
-  }
-  if (patch.appendStep) {
-    fm.steps = [...(fm.steps ?? []), patch.appendStep];
-  }
-  if (patch.replaceStep) {
-    const steps = [...(fm.steps ?? [])];
-    const idx = steps.findIndex(s => String(s.stepNo) === String(patch.replaceStep!.no));
-    if (idx >= 0) steps[idx] = patch.replaceStep.step;
-    else steps.push(patch.replaceStep.step);
-    fm.steps = steps;
-  }
-  if (patch.addRelation) {
-    if (!['based_on', 'supersedes', 'implements', 'references'].includes(patch.addRelation.type)) {
-      throw new Error(`RELATION_INVALID: unsupported relation type ${patch.addRelation.type}`);
-    }
-    if (!findSpecByCode(paths, patch.addRelation.target)) {
-      throw new Error(`RELATION_TARGET_NOT_FOUND: ${patch.addRelation.target}`);
-    }
-    fm.relations = [...(fm.relations ?? []), patch.addRelation];
-  }
-  fm.updated = new Date().toISOString();
-
-  const rec: SpecRecord = { fm, content, filePath: existing.filePath };
-  writeSpec(rec);
-  if (patch.content !== undefined) {
-    recordAuditHit({ paths, ruleId: 'R1', specCode: code }, opts?.auditSink);
-    recordAuditHit({ paths, ruleId: 'R13', specCode: code }, opts?.auditSink);
-    recordAuditHit({ paths, ruleId: 'R22', specCode: code }, opts?.auditSink);
-  }
-  return { record: rec, warnings };
+  const policyInput = {
+    paths,
+    code,
+    existing,
+    patch,
+    auditSink: opts?.auditSink,
+    transitionAuthority: opts?.transitionAuthority,
+    findSpecByCode,
+  };
+  const result = applySpecUpdatePolicy(policyInput);
+  writeSpec(result.record);
+  recordUpdatedSpecAudit(policyInput);
+  return result;
 }
 
 function validateSpecFileIdentity(entry: SpecFileEntry, record: SpecRecord): void {

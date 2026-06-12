@@ -1,0 +1,63 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充 R5、R6、R18 失败 audit 持久化回归测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 R5、R6、R18 默认 audit 持久化及 collecting sink 单次事件测试，当前默认 audit 测试按预期失败\",\"files\":[\"src/core/__tests__/task-completion.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:23:15.318Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "建立 completion 失败审计事件边界",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 CompletionGateError 携带结构化 AuditEvent，避免依赖错误文本映射且隔离非规则失败\",\"files\":[\"src/core/task-completion.ts\"]}",
+      "reportedAt": "2026-06-11T09:24:21.558Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "在事务回滚后持久化失败规则 audit",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"runTaskCompletion 在 completion transaction 回滚后持久化失败规则 audit，默认与 collecting sink 均保持单次事件\",\"files\":[\"src/core/task-completion.ts\",\"src/core/__tests__/task-completion.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:24:21.689Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证 task completion 专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"task completion 专项 3 files/53 tests、全量 45 files/538 tests、TypeScript lint 和 project doctor 全部通过\",\"files\":[\"src/core/task-completion.ts\",\"src/core/__tests__/task-completion.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:24:47.831Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T09:22:36.253Z",
+  "finishedAt": "2026-06-11T09:24:52.740Z",
+  "created": "2026-06-11T09:22:36.127Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "45 test files / 538 tests passed; TypeScript lint passed; Project doctor ok",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-11T09:24:47.954Z",
+      "layer": "smoke"
+    }
+  ]
+}

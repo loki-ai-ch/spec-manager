@@ -5,11 +5,12 @@ import { Command } from 'commander';
 import { registerTaskCommands } from '../task.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 import { createSpec, updateSpec } from '../../core/spec-io.js';
-import { createTask, findTask, startTask } from '../../core/task.js';
+import { addTaskVerification, createTask, findTask, reportStep, startTask } from '../../core/task.js';
 
 let project: TestProject;
 let oldSpecManagerRoot: string | undefined;
 let logSpy: ReturnType<typeof vi.spyOn>;
+let warnSpy: ReturnType<typeof vi.spyOn>;
 let writeSpy: ReturnType<typeof vi.spyOn>;
 let errorSpy: ReturnType<typeof vi.spyOn>;
 let exitSpy: ReturnType<typeof vi.spyOn>;
@@ -22,6 +23,7 @@ beforeEach(() => {
   oldSpecManagerRoot = process.env.SPEC_MANAGER_ROOT;
   process.env.SPEC_MANAGER_ROOT = project.root;
   logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+  warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   writeSpy = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
   errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
   exitSpy = vi.spyOn(process, 'exit').mockImplementation(((code?: string | number | null) => {
@@ -36,6 +38,7 @@ afterEach(() => {
     process.env.SPEC_MANAGER_ROOT = oldSpecManagerRoot;
   }
   logSpy.mockRestore();
+  warnSpy.mockRestore();
   writeSpy.mockRestore();
   errorSpy.mockRestore();
   exitSpy.mockRestore();
@@ -58,6 +61,10 @@ function output(): string {
 
 function stderr(): string {
   return errorSpy.mock.calls.map((call) => String(call[0])).join('\n');
+}
+
+function warnings(): string {
+  return warnSpy.mock.calls.map((call) => String(call[0])).join('\n');
 }
 
 function createFrozenL3WithTask(): string {
@@ -197,6 +204,52 @@ describe('task CLI', () => {
     expect(payload.tests).toEqual(['npm test']);
   });
 
+  it('prints task report warnings through console.warn without stderr', async () => {
+    const specCode = createFrozenL3WithTask();
+    reportStep({
+      paths: project.paths,
+      taskId: 'T-001',
+      specCode,
+      stepNo: 1,
+      status: 'failed',
+      outputJson: '{"summary":"previous failure"}',
+    });
+
+    await makeProgram().parseAsync([
+      'task', 'report', 'T-001',
+      '--spec', specCode,
+      '--step', '2',
+      '--summary', 'Recovered report',
+    ], { from: 'user' });
+
+    expect(warnings()).toContain('上次 step 失败摘要');
+    expect(stderr()).toBe('');
+  });
+
+  it('keeps task report json parseable and suppresses warnings', async () => {
+    const specCode = createFrozenL3WithTask();
+    reportStep({
+      paths: project.paths,
+      taskId: 'T-001',
+      specCode,
+      stepNo: 1,
+      status: 'failed',
+      outputJson: '{"summary":"previous failure"}',
+    });
+
+    await makeProgram().parseAsync([
+      'task', 'report', 'T-001',
+      '--spec', specCode,
+      '--step', '2',
+      '--summary', 'Recovered report',
+      '--json',
+    ], { from: 'user' });
+
+    expect(JSON.parse(output()).stepNo).toBe('2');
+    expect(warnings()).toBe('');
+    expect(stderr()).toBe('');
+  });
+
   it('reports task step from input json', async () => {
     const specCode = createFrozenL3WithTask();
     const reportFile = join(project.root, 'report.json');
@@ -230,7 +283,7 @@ describe('task CLI', () => {
 
     await expect(makeProgram().parseAsync(['task', 'report', 'T-001', '--spec', specCode, '--input', reportFile, '--summary', 'flag report'], { from: 'user' })).rejects.toThrow('process.exit:2');
 
-    expect(stderr()).toContain('--input 不能与 --summary');
+    expect(stderr()).toBe('✗ task report --input 不能与 --summary/--files/--tests/--risks/--step 混用');
   });
 
   it('reports specified task step from flags', async () => {
@@ -287,6 +340,21 @@ describe('task CLI', () => {
     expect(stderr()).toContain('INVALID_VERIFICATION');
   });
 
+  it('rejects invalid verification layer with legacy stderr text', async () => {
+    const specCode = createFrozenL3WithTask();
+
+    await expect(makeProgram().parseAsync([
+      'task', 'verify', 'T-001',
+      '--spec', specCode,
+      '--command', 'npm test',
+      '--exit-code', '0',
+      '--summary', 'passed',
+      '--layer', 'invalid',
+    ], { from: 'user' })).rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toBe('✗ --layer 非法: invalid（必须 compile|functional|smoke）');
+  });
+
   it('rejects verification input mixed with flags', async () => {
     const specCode = createFrozenL3WithTask();
     const verificationFile = join(project.root, 'verification.json');
@@ -294,7 +362,7 @@ describe('task CLI', () => {
 
     await expect(makeProgram().parseAsync(['task', 'verify', 'T-001', '--spec', specCode, '--input', verificationFile, '--summary', 'flag summary'], { from: 'user' })).rejects.toThrow('process.exit:2');
 
-    expect(stderr()).toContain('--input 不能与 --command');
+    expect(stderr()).toBe('✗ task verify --input 不能与 --command/--exit-code/--summary/--artifacts/--covers-ac 混用');
   });
 
   it('shows verification summary in task show', async () => {
@@ -308,5 +376,45 @@ describe('task CLI', () => {
     expect(output()).toContain('verifications: 1');
     expect(output()).toContain('[functional]');
     expect(output()).toContain('V-001:');
+  });
+
+  it('keeps task complete json limited to the legacy result fields', async () => {
+    const specCode = createFrozenL3WithTask();
+    for (let stepNo = 1; stepNo <= 8; stepNo += 1) {
+      reportStep({
+        paths: project.paths,
+        taskId: 'T-001',
+        specCode,
+        stepNo,
+        status: 'succeeded',
+        outputJson: '{"summary":"done"}',
+      });
+    }
+    addTaskVerification({
+      paths: project.paths,
+      taskId: 'T-001',
+      specCode,
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+    });
+
+    await makeProgram().parseAsync([
+      'task', 'complete', 'T-001',
+      '--spec', specCode,
+      '--skip-r18',
+      '--skip-verification',
+      '--reason', 'test fixture',
+      '--json',
+    ], { from: 'user' });
+
+    const result = JSON.parse(output());
+    expect(Object.keys(result).sort()).toEqual([
+      'cascadedL1Specs',
+      'cascadedSpecs',
+      'skippedSpecs',
+      'task',
+    ]);
+    expect(result.gateResults).toBeUndefined();
   });
 });

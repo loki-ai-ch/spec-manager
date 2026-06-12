@@ -32,6 +32,15 @@ describe('verify-installed-cli', () => {
     writeFileSync(join(installedRoot, 'dist', 'core', 'audit.js'), 'changed\n', 'utf8');
     expect(() => runVerification()).toThrow(/INSTALLED_CLI_DRIFT/);
   });
+
+  it('fails when architecture refactor dist modules are missing', () => {
+    unlinkSync(join(installedRoot, 'dist', 'core', 'archive-plan.js'));
+    expect(() => runVerification()).toThrow(/INSTALLED_CLI_DRIFT/);
+
+    cpSync(resolve('dist'), join(installedRoot, 'dist'), { recursive: true });
+    unlinkSync(join(installedRoot, 'dist', 'core', 'project-snapshot.js'));
+    expect(() => runVerification()).toThrow(/INSTALLED_CLI_DRIFT/);
+  });
 });
 
 function runVerification(): string {

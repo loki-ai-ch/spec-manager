@@ -11,7 +11,6 @@ import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { siblingMetaDir, type ProjectPaths } from './paths.js';
 import { findSpecByCode, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
-import { isActiveDecision, listDecisions } from './decision.js';
 import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
 import { validatePlanJson } from './validate.js';
@@ -21,13 +20,10 @@ import { listTopicMetaFiles } from './repository.js';
 import { assertTaskTransition, type TaskStatus } from './status.js';
 import {
   assertNoActiveTaskForSpec,
-  assertTaskHasSuccessfulVerification,
   assertTaskMutable,
 } from './invariants.js';
-import { withProjectTransaction } from './transaction.js';
-import { cascadeImplementedHierarchy } from './lifecycle.js';
-import { parseVerifyRules, executeVerifyRules, runCommand } from './verify.js';
-import { extractVerificationCommands, truncateWithEllipsis, LAST_FAILED_OUTPUT_MAX_LEN } from './spec-sections.js';
+import { truncateWithEllipsis, LAST_FAILED_OUTPUT_MAX_LEN } from './spec-sections.js';
+import { runTaskCompletion } from './task-completion.js';
 
 export type { TaskStatus } from './status.js';
 
@@ -373,151 +369,12 @@ export interface CompleteResult {
 }
 
 export function completeTask(input: CompleteInput): CompleteResult {
-  return withProjectTransaction(input.paths, `complete task ${input.taskId}`, tx => {
-    for (const spec of listAllSpecs(input.paths)) tx.snapshot(spec.filePath);
-    for (const file of listTopicMetaFiles(input.paths, 'tasks', { extension: TASK_FILE_EXT })) tx.snapshot(file.filePath);
-    return completeTaskUnlocked(input);
-  });
-}
-
-function completeTaskUnlocked(input: CompleteInput): CompleteResult {
-  const task = findTaskById(input.paths, input.taskId, input.specCode);
-  assertTaskTransition(task.status, 'completed');
-  const bypassedChecks = [
-    input.skipR18Check ? 'r18' : null,
-    input.skipVerification ? 'verification-commands' : null,
-    input.skipVerify ? 'verify-rules' : null,
-  ].filter((value): value is string => value !== null);
-  if (bypassedChecks.length > 0 && !input.bypassReason?.trim()) {
-    throw new Error('BYPASS_REASON_REQUIRED: 跳过完成门禁时必须提供非空原因');
-  }
-
-  const l3 = findSpecByCode(input.paths, task.specCode);
-  if (l3) {
-    if (l3.fm.status !== 'frozen') {
-      recordAuditHit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id }, input.auditSink);
-      throw new Error(`R6: task complete 前 L3 必须仍是 frozen，当前 status=${l3.fm.status}`);
-    }
-    const unfinished = taskSteps(task, l3.fm.steps).filter(s => s.status !== 'succeeded');
-    if (unfinished.length > 0) {
-      recordAuditHit({ paths: input.paths, ruleId: 'R5', specCode: task.specCode }, input.auditSink);
-      throw new Error(
-        `R5: 仍有 ${unfinished.length} 个步骤未成功（pending/running/failed/skipped）:` +
-        unfinished.map(s => `#${s.stepNo}`).join(', ') +
-        ` — 请先逐个 reportStep 到 succeeded，失败或跳过步骤需修复后重新上报，禁止跳号`,
-      );
-    }
-    assertTaskHasSuccessfulVerification(task);
-
-    const specContent = l3.content;
-
-    if (!input.skipVerification) {
-      const verifyCmds = extractVerificationCommands(specContent);
-      const cmdResults: Array<{ cmd: string; exitCode: number; output: string }> = [];
-      let anyCmdFailed = false;
-
-      for (const cmd of verifyCmds) {
-        const result = runCommand(cmd, input.paths.root);
-        cmdResults.push({ cmd, exitCode: result.exitCode, output: result.output });
-        if (result.exitCode !== 0) anyCmdFailed = true;
-      }
-
-      if (anyCmdFailed) {
-        const errorLines: string[] = [];
-        const passed = cmdResults.filter(r => r.exitCode === 0).length;
-        errorLines.push(`验证命令失败 (${passed}/${cmdResults.length}):`);
-        for (const r of cmdResults) {
-          const icon = r.exitCode === 0 ? '✓' : '✗';
-          errorLines.push(`  ${icon} ${r.cmd}${r.exitCode !== 0 ? ` (exit ${r.exitCode}): ${r.output}` : ''}`);
-        }
-        throw new Error(errorLines.join('\n'));
-      }
-    }
-
-    if (!input.skipVerify) {
-      const verifyRules = parseVerifyRules(specContent, '验收标准');
-      if (verifyRules.length > 0) {
-        const ruleResults = executeVerifyRules(verifyRules, input.paths.root);
-        const anyRuleFailed = ruleResults.some(r => !r.passed);
-        if (anyRuleFailed) {
-          const errorLines: string[] = [];
-          const passed = ruleResults.filter(r => r.passed).length;
-          errorLines.push(`@verify 规则失败 (${passed}/${ruleResults.length}):`);
-          for (const r of ruleResults) {
-            errorLines.push(`  ${r.passed ? '✓' : '✗'} ${r.message}`);
-          }
-          throw new Error(errorLines.join('\n'));
-        }
-      }
-    }
-  }
-
-  if (!l3) assertTaskHasSuccessfulVerification(task);
-
-  // 把 task 标记为 completed
-  const updated: TaskRecord = { ...task, status: 'completed', finishedAt: new Date().toISOString() };
-  writeTaskJSON(taskFilePath(specFilePathOf(input.paths, task.specCode), task.specCode, task.id), updated);
-
-  // L3 spec → implemented (cascade)
-  const cascade = cascadeImplementedHierarchy({
-    paths: input.paths,
-    startSpecCode: task.specCode,
-    authority: 'task-complete',
-    auditSink: input.auditSink,
-  });
-  const implemented = findSpecByCode(input.paths, task.specCode);
-  if (implemented?.fm.status !== 'implemented') {
-    recordAuditHit({ paths: input.paths, ruleId: 'R6', specCode: task.specCode, taskCode: task.id }, input.auditSink);
-    throw new Error(`R6: task complete 后 ${task.specCode} 必须是 implemented，当前 status=${implemented?.fm.status ?? 'missing'}`);
-  }
-
-  const cascadedL1Specs = cascade.cascadedSpecs
-    .filter(c => c.level === 'L1' || c.level === 'L0')
-    .map(c => c.code);
-
-  // R18: L1 implemented 后必须至少有 1 张决策卡片
-  if (!input.skipR18Check && cascadedL1Specs.length > 0) {
-    const missing: string[] = [];
-    for (const code of cascadedL1Specs) {
-      const decisions = listDecisions(input.paths, { docCode: code, includeAll: true });
-      if (!decisions.some(isActiveDecision)) missing.push(code);
-    }
-    if (missing.length > 0) {
-      recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: missing[0] }, input.auditSink);
-      throw new Error(
-        `R18: 以下 L1 已 cascade 到 implemented 但缺少 active 决策卡片: ${missing.join(', ')}\n` +
-        `请先创建决策卡片:\n` +
-        missing.map(code => `  spec-manager decision create ${code} --topic <topic> --what "..." --why "..."`).join('\n'),
-      );
-    }
-  }
-
-  // 记录 R18 audit hit（已有决策卡片的情况）
-  if (!input.skipR18Check) {
-    for (const code of cascadedL1Specs) {
-      recordAuditHit({ paths: input.paths, ruleId: 'R18', specCode: code }, input.auditSink);
-    }
-  }
-  if (bypassedChecks.length > 0) {
-    recordAuditHit({
-      paths: input.paths,
-      ruleId: input.skipR18Check ? 'R18' : 'R10',
-      specCode: task.specCode,
-      taskCode: task.id,
-      metadata: {
-        event: 'task-complete-bypass',
-        bypassedChecks,
-        reason: input.bypassReason!.trim(),
-      },
-      countRule: false,
-    }, input.auditSink);
-  }
-
+  const result = runTaskCompletion(input);
   return {
-    task: updated,
-    cascadedSpecs: cascade.cascadedSpecs,
-    cascadedL1Specs,
-    skippedSpecs: cascade.skippedSpecs,
+    task: result.task,
+    cascadedSpecs: result.cascadedSpecs,
+    cascadedL1Specs: result.cascadedL1Specs,
+    skippedSpecs: result.skippedSpecs,
   };
 }
 

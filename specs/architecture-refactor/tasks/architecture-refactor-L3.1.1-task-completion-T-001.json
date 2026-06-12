@@ -1,0 +1,90 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.1-task-completion",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集 task completion 上下文: 读取 architecture-refactor-L3.1.1-task-completion、architecture-refactor-L2.1、历史任务、agent-plan 和相关源码测试",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 architecture-refactor-L3.1.1-task-completion、architecture-refactor-L2.1、历史任务、planJson 和任务完成相关文件级分析\",\"files\":[]}",
+      "reportedAt": "2026-06-11T07:15:50.237Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 task completion gate 模块: 编辑 src/core/task-completion.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task completion gate 模块并迁入完成门禁判断\",\"files\":[\"src/core/task-completion.ts\"]}",
+      "reportedAt": "2026-06-11T07:21:44.311Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "委托 completeTask 到 runTaskCompletion: 编辑 src/core/task.ts 和 src/core/task-completion.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"将 completeTask 改为兼容 facade，实际委托 runTaskCompletion 编排\",\"files\":[\"src/core/task.ts\",\"src/core/task-completion.ts\"]}",
+      "reportedAt": "2026-06-11T07:21:52.998Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "收口 completion 依赖导出: 检查 src/core/task.ts、src/core/task-completion.ts、src/index.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"收口 task completion 依赖方向并保持公共导出兼容\",\"files\":[\"src/core/task.ts\",\"src/core/task-completion.ts\",\"src/index.ts\"]}",
+      "reportedAt": "2026-06-11T07:18:37.543Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增 task completion 单元测试: 编辑 src/core/__tests__/task-completion.test.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task completion 专项测试覆盖成功和反向门禁\",\"files\":[\"src/core/__tests__/task-completion.test.ts\"]}",
+      "reportedAt": "2026-06-11T07:20:25.375Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "回归 CLI 和 harness 调用路径: 检查 src/cli/task.ts 和 src/core/harness.ts",
+      "status": "succeeded",
+      "toolName": "rg",
+      "outputJson": "{\"summary\":\"确认 CLI 与 harness 继续通过 completeTask 兼容入口工作\",\"files\":[\"src/cli/task.ts\",\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-11T07:20:34.439Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证 task completion 重构: 运行 npm test、npm run lint、spec-manager project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成测试、类型检查、doctor 和 spec 状态验证：npm test 38 files/487 tests passed，npm run lint 通过，project doctor ok\",\"files\":[]}",
+      "reportedAt": "2026-06-11T07:21:59.481Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T07:15:50.222Z",
+  "finishedAt": "2026-06-11T07:22:11.314Z",
+  "created": "2026-06-11T07:15:42.072Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "npm test 38 files/487 tests passed; npm run lint passed; project doctor ok",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-11T07:21:26.079Z",
+      "layer": "functional"
+    }
+  ]
+}

@@ -1,0 +1,131 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.5-verification",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集 verification 上下文",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 architecture-refactor-L3.1.5-verification、architecture-refactor-L2.1、历史任务、agent-plan 和验证链路源码测试分析\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:24:04.648Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 public API contract 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 src/core/__tests__/public-api.test.ts，覆盖架构重构边界导出和既有 facade 兼容性；同时补充 src/index.ts 的 completeTask 命名导出\",\"files\":[\"src/core/__tests__/public-api.test.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:27:24.363Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "新增 CLI architecture smoke 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 src/cli/__tests__/architecture-smoke.test.ts，使用临时项目和 Commander 注册真实命令串联 L1/L2/L3/task/project doctor\",\"files\":[\"src/cli/__tests__/architecture-smoke.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:27:32.469Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "强化 installed CLI drift 验证测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 installed CLI drift 测试，覆盖 archive-plan.js 和 project-snapshot.js 等新增架构模块缺失\",\"files\":[\"src/core/__tests__/installed-cli-verification.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:25:37.467Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "运行架构专项测试与 export 搜索",
+      "status": "succeeded",
+      "toolName": "npm-test-rg",
+      "outputJson": "{\"summary\":\"架构专项测试 6 files / 32 tests 通过；src/index.ts 与 dist/index.d.ts 包含 spec-policy、project-snapshot、archive-plan、completeTask 导出\",\"files\":[\"src/index.ts\",\"dist/index.d.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:26:47.860Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "运行 build、installed CLI 验证与相关测试",
+      "status": "succeeded",
+      "toolName": "npm-build-verify-installed-cli",
+      "outputJson": "{\"summary\":\"npm run build 通过；npm run verify:installed-cli 通过且已安装 CLI 匹配当前 build；installed-cli-verification.test.ts 3 tests 通过\",\"files\":[\"dist\",\"src/core/__tests__/installed-cli-verification.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:26:47.852Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "运行全量验证并完成 task",
+      "status": "succeeded",
+      "toolName": "npm-test-lint-doctor",
+      "outputJson": "{\"summary\":\"npm test 43 files / 514 tests 通过；npm run lint 通过；spec-manager project doctor 输出 Project doctor: ok\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:27:46.562Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T08:24:04.642Z",
+  "finishedAt": "2026-06-11T08:27:58.629Z",
+  "created": "2026-06-11T08:23:56.372Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T08:27:08.537Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full test suite passed: 43 files / 514 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T08:27:08.544Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run verify:installed-cli && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "Installed CLI drift check and project doctor passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:27:37.394Z",
+      "layer": "smoke"
+    }
+  ]
+}

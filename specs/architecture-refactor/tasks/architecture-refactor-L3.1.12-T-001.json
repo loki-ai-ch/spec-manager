@@ -1,0 +1,104 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.12",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充链式 rename 引用与 task 文件迁移回归测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added a chained rename regression covering final spec code, child parent, relation, task path/specCode, and integrity; it fails because references stop at the intermediate code.\",\"files\":[\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts (expected failure: chained rename parent remains intermediate)\"]}",
+      "reportedAt": "2026-06-12T00:55:00.699Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "规划 rename 最终 code 闭包与冲突校验",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added final rename closure planning and validated task conflicts against final target paths, including chained rename regression coverage.\",\"files\":[\"src/core/archive-plan.ts\",\"src/core/__tests__/archive-plan.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/core/__tests__/integrity.test.ts src/cli/__tests__/change.test.ts\"]}",
+      "reportedAt": "2026-06-12T00:56:10.144Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "应用结构化引用到最终 rename code",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Normalized all structured reference and task updates to final rename codes and used the same closure during archive apply.\",\"files\":[\"src/core/archive.ts\",\"src/core/archive-plan.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/core/__tests__/integrity.test.ts src/cli/__tests__/change.test.ts\"]}",
+      "reportedAt": "2026-06-12T00:56:10.276Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证归档专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"Chained rename focused and full validation passed; lint, project doctor, and diff whitespace check are clean.\",\"files\":[\"src/core/archive.ts\",\"src/core/archive-plan.ts\",\"src/core/__tests__/archive.test.ts\",\"src/core/__tests__/archive-plan.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/core/__tests__/integrity.test.ts src/cli/__tests__/change.test.ts (30 passed)\",\"npm test (45 files, 549 tests passed)\",\"npm run lint\",\"spec-manager project doctor\",\"git diff --check\"]}",
+      "reportedAt": "2026-06-12T00:56:51.610Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-12T00:54:24.340Z",
+  "finishedAt": "2026-06-12T00:57:01.425Z",
+  "created": "2026-06-12T00:54:24.197Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/core/__tests__/integrity.test.ts src/cli/__tests__/change.test.ts",
+      "exitCode": 0,
+      "summary": "Chained rename archive suite passed: 4 files, 30 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-12T00:56:51.746Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full suite passed: 45 files, 549 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T00:56:51.882Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T00:56:52.014Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "Project doctor reported ok with no integrity issues.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T00:56:52.145Z",
+      "layer": "smoke"
+    }
+  ]
+}

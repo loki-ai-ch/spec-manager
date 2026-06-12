@@ -1,0 +1,63 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充多 rename 与 planning audit 只读性回归测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增双 RENAMED 引用/task 迁移、planning audit 只读性及 archiveChange R24 审计回归测试；当前测试按预期暴露三个缺陷\",\"files\":[\"src/core/__tests__/archive.test.ts\",\"src/core/__tests__/archive-plan.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:03:20.241Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "修复归档引用更新应用边界",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"将 referenceUpdates 移至全部 RENAMED 完成后一次性应用，并按最终 spec code 定位更新目标，修复重复消费、旧路径读取和引用丢失\",\"files\":[\"src/core/archive.ts\"]}",
+      "reportedAt": "2026-06-11T09:04:35.265Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "恢复 planArchiveChange 默认只读并保留 archiveChange R24 审计",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"planArchiveChange 默认不写 audit；archiveChange 在事务回滚后记录 R24 失败审计并保持成功审计语义\",\"files\":[\"src/core/archive.ts\",\"src/core/archive-plan.ts\"]}",
+      "reportedAt": "2026-06-11T09:04:35.386Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证修复：运行归档专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"归档专项测试 3 files/17 tests、全量测试 45 files/530 tests、TypeScript lint 和 project doctor 全部通过\",\"files\":[\"src/core/archive.ts\",\"src/core/archive-plan.ts\",\"src/core/__tests__/archive.test.ts\",\"src/core/__tests__/archive-plan.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:05:12.407Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T09:02:20.874Z",
+  "finishedAt": "2026-06-11T09:05:25.908Z",
+  "created": "2026-06-11T09:02:16.007Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "45 test files / 530 tests passed; TypeScript lint passed; Project doctor ok",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-11T09:05:12.527Z",
+      "layer": "smoke"
+    }
+  ]
+}

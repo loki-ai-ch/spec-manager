@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 23,
-    "R2": 67,
+    "R1": 47,
+    "R2": 92,
     "R3": 1,
-    "R4": 51,
+    "R4": 76,
     "R5": 2,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 67,
-    "R10": 1,
+    "R9": 92,
+    "R10": 2,
     "R11": 0,
     "R12": 2,
-    "R13": 22,
+    "R13": 46,
     "R14": 0,
     "R15": 0,
-    "R16": 10,
+    "R16": 12,
     "R17": 0,
-    "R18": 4,
-    "R19": 53,
+    "R18": 6,
+    "R19": 77,
     "R20": 0,
     "R21": 0,
-    "R22": 22,
+    "R22": 46,
     "R23": 0,
     "R24": 0
   },
@@ -1975,9 +1975,1065 @@
       "timestamp": "2026-06-11T02:38:22.925Z",
       "specCode": "lifecycle-guidance-sync-L3.1.3-review-fixes",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-11T06:59:42.318Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T06:59:42.321Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:05:00.852Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:05:00.853Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:05:00.854Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:05:34.512Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:05:34.513Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:05:34.513Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:06:04.440Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:06:04.441Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:06:04.441Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:06:14.414Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T07:06:36.910Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T07:06:36.911Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T07:06:42.474Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:08:01.667Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:08:01.667Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:08:01.668Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:08:29.246Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:08:29.247Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:08:29.248Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:08:40.814Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T07:10:43.670Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T07:10:43.670Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:11:00.497Z",
+      "specCode": "architecture-refactor-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T07:11:09.157Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:13:03.462Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:13:03.463Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:13:03.463Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:13:28.988Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:13:28.989Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:13:28.990Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:13:50.332Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:14:20.405Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T07:15:09.175Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T07:15:09.176Z",
+      "specCode": "architecture-refactor-L3.1.1-task-completion",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-11T07:22:11.330Z",
+      "specCode": "architecture-refactor-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T07:23:23.906Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:25:07.984Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:25:07.984Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:25:07.985Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:26:28.964Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:26:28.965Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:26:28.966Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T07:39:34.545Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T07:39:34.546Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:46:36.138Z",
+      "specCode": "architecture-refactor-L3.1.2-spec-policy",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T07:51:26.327Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:53:27.682Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:53:27.682Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:53:27.683Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T07:53:58.113Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T07:53:58.114Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T07:53:58.115Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T07:54:32.905Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T07:55:07.915Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T07:55:07.916Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:03:16.834Z",
+      "specCode": "architecture-refactor-L3.1.3-snapshot",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T08:07:16.792Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:08:37.895Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:08:37.896Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:08:37.897Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:09:16.870Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:09:16.871Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:09:16.872Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:09:43.157Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:09:43.158Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:09:43.159Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:10:13.435Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T08:10:50.798Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T08:10:50.799Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:18:40.495Z",
+      "specCode": "architecture-refactor-L3.1.4-archive-plan",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T08:19:27.892Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:20:48.880Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:20:48.881Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:20:48.882Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:21:26.706Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T08:22:04.914Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T08:22:04.915Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:28:13.379Z",
+      "specCode": "architecture-refactor-L3.1.5-verification",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-11T08:29:24.017Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T08:29:24.020Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:30:19.966Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:30:19.967Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:30:19.967Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T08:32:32.466Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T08:32:32.466Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:32:40.625Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T08:33:13.937Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:34:14.329Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:34:14.330Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:34:14.330Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:34:25.296Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T08:34:54.049Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T08:34:54.050Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:34:59.051Z",
+      "specCode": "cli-application-boundary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T08:40:36.110Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:41:45.549Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:41:45.550Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:41:45.550Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:42:19.974Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T08:42:40.064Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T08:42:40.065Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:42:45.991Z",
+      "specCode": "cli-application-boundary-L3.1.1-runtime",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-11T08:46:23.769Z",
+      "specCode": "cli-application-boundary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T08:47:19.170Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T08:48:39.223Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T08:48:39.224Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T08:48:39.225Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:48:56.816Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T08:49:27.937Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T08:49:27.938Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-11T08:49:34.120Z",
+      "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:00:23.821Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T09:01:11.513Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T09:01:11.513Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T09:01:11.514Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:01:36.877Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:01:36.878Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-11T09:02:03.234Z",
+      "specCode": "architecture-refactor-L3.1.6-archive-review-fixes",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:06:39.041Z",
+      "specCode": "architecture-refactor-L3.1.7-archive-transaction-hardening",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T09:07:19.081Z",
+      "specCode": "architecture-refactor-L3.1.7-archive-transaction-hardening",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T09:07:19.082Z",
+      "specCode": "architecture-refactor-L3.1.7-archive-transaction-hardening",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T09:07:19.083Z",
+      "specCode": "architecture-refactor-L3.1.7-archive-transaction-hardening",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:07:38.440Z",
+      "specCode": "architecture-refactor-L3.1.7-archive-transaction-hardening",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:07:38.441Z",
+      "specCode": "architecture-refactor-L3.1.7-archive-transaction-hardening",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:11:18.838Z",
+      "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T09:16:31.534Z",
+      "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T09:16:31.535Z",
+      "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T09:16:31.536Z",
+      "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:17:17.936Z",
+      "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:17:17.937Z",
+      "specCode": "architecture-refactor-L3.1.8-snapshot-scope-safety",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:21:24.014Z",
+      "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T09:21:59.360Z",
+      "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T09:21:59.361Z",
+      "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T09:21:59.361Z",
+      "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:22:19.059Z",
+      "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:22:19.060Z",
+      "specCode": "architecture-refactor-L3.1.9-completion-audit-persistence",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:25:43.121Z",
+      "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-11T09:26:16.901Z",
+      "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-11T09:26:16.902Z",
+      "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-11T09:26:16.903Z",
+      "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:26:35.364Z",
+      "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:26:35.365Z",
+      "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:33:33.354Z",
+      "specCode": "architecture-refactor-L3.1.10",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:36:04.427Z",
+      "specCode": "architecture-refactor-L3.1.10",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:36:04.428Z",
+      "specCode": "architecture-refactor-L3.1.10",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:40:33.967Z",
+      "specCode": "architecture-refactor-L3.1.11",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-11T09:42:00.512Z",
+      "specCode": "architecture-refactor-L3.1.11",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-11T09:42:00.513Z",
+      "specCode": "architecture-refactor-L3.1.11",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-11T09:44:14.676Z",
+      "specCode": "architecture-refactor-L3.1.12",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T00:54:11.449Z",
+      "specCode": "architecture-refactor-L3.1.12",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T00:54:11.450Z",
+      "specCode": "architecture-refactor-L3.1.12",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T01:00:39.475Z",
+      "specCode": "architecture-refactor-L3.1.13",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T01:01:30.177Z",
+      "specCode": "architecture-refactor-L3.1.13",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T01:01:30.178Z",
+      "specCode": "architecture-refactor-L3.1.13",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T01:24:57.565Z",
+      "specCode": "architecture-refactor-L3.1.14",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T01:28:36.447Z",
+      "specCode": "architecture-refactor-L3.1.14",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T01:28:36.448Z",
+      "specCode": "architecture-refactor-L3.1.14",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T01:31:51.631Z",
+      "specCode": "architecture-refactor-L3.1.14",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T01:34:27.677Z",
+      "specCode": "architecture-refactor-L3.1.15",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T01:36:12.229Z",
+      "specCode": "architecture-refactor-L3.1.15",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T01:36:12.230Z",
+      "specCode": "architecture-refactor-L3.1.15",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T01:40:05.739Z",
+      "specCode": "architecture-refactor-L3.1.15",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T01:41:01.103Z",
+      "specCode": "architecture-refactor-L3.1.16",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T01:42:54.588Z",
+      "specCode": "architecture-refactor-L3.1.16",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T01:42:54.589Z",
+      "specCode": "architecture-refactor-L3.1.16",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T01:46:53.704Z",
+      "specCode": "architecture-refactor-L3.1.16",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T01:49:00.869Z",
+      "specCode": "architecture-refactor-L3.1.17",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T01:52:24.561Z",
+      "specCode": "architecture-refactor-L3.1.17",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T01:52:24.562Z",
+      "specCode": "architecture-refactor-L3.1.17",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T01:55:23.134Z",
+      "specCode": "architecture-refactor-L3.1.17",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T01:56:36.109Z",
+      "specCode": "cli-application-boundary-L3.1.4-spec-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T01:57:59.597Z",
+      "specCode": "cli-application-boundary-L3.1.4-spec-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T01:57:59.598Z",
+      "specCode": "cli-application-boundary-L3.1.4-spec-handlers",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T02:03:37.857Z",
+      "specCode": "cli-application-boundary-L3.1.4-spec-handlers",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-11T02:38:22.925Z",
+  "lastUpdated": "2026-06-12T02:03:37.857Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

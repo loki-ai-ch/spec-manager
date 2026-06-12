@@ -1,0 +1,92 @@
+{
+  "id": "T-001",
+  "specCode": "cli-application-boundary-L3.1.4-spec-handlers",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充 spec update 与状态推进兼容回归测试",
+      "status": "succeeded",
+      "toolName": "vitest",
+      "outputJson": "{\"summary\":\"新增 spec handler/presenter 测试覆盖文件/stdin update、L3 confirm、audit、freeze 与 R3 错误；专项 31/31 通过\"}",
+      "reportedAt": "2026-06-12T02:00:56.514Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 spec CLI update 与 transition handlers",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 spec-handlers.ts 承载 update/transition 输入转换、门禁、audit 与 core 调用\"}",
+      "reportedAt": "2026-06-12T02:01:06.880Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "新增 spec presenters 并瘦身 Commander actions",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 update/transition presenters，spec.ts actions 改为 runtime/handler/presenter 接线；common runtime 支持已知错误原样输出\"}",
+      "reportedAt": "2026-06-12T02:01:13.090Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证 spec/task CLI 专项、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"Full validation passed: npm test (46 files, 571 tests), npm run lint, npm run build, npm run verify:installed-cli, spec-manager project doctor, git diff --check.\"}",
+      "reportedAt": "2026-06-12T02:02:45.579Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-12T01:58:28.039Z",
+  "finishedAt": "2026-06-12T02:03:27.835Z",
+  "created": "2026-06-12T01:58:19.255Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/spec-handlers.test.ts src/cli/__tests__/spec.test.ts src/cli/__tests__/common.test.ts src/cli/__tests__/task-handlers.test.ts src/cli/__tests__/architecture-smoke.test.ts",
+      "exitCode": 0,
+      "summary": "Focused spec handler, compatibility, runtime, and architecture tests passed: 5 files, 31 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-12T02:02:56.171Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full regression suite passed: 46 files, 571 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T02:03:02.408Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint && npm run build && npm run verify:installed-cli && spec-manager project doctor && git diff --check",
+      "exitCode": 0,
+      "summary": "Type/lint/build, installed CLI parity, project integrity, and whitespace checks passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T02:03:09.017Z",
+      "layer": "compile"
+    }
+  ]
+}

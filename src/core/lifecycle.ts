@@ -1,8 +1,9 @@
 import type { AuditSink } from './audit-events.js';
 import type { ProjectPaths } from './paths.js';
-import { findSpecByCode, listAllSpecs, updateSpec } from './spec-io.js';
+import { findSpecByCode, updateSpec } from './spec-io.js';
 import type { ImplementationAuthority, SpecStatus } from './status.js';
 import type { SpecLevel } from './validate.js';
+import { buildProjectSnapshot, isFullProjectSnapshot, type ProjectSnapshot } from './project-snapshot.js';
 
 export type { ImplementationAuthority } from './status.js';
 
@@ -44,8 +45,12 @@ export function assessImplementationReadiness(
   paths: ProjectPaths,
   specCode: string,
   authority: ImplementationAuthority,
+  snapshot?: ProjectSnapshot,
 ): ImplementationReadiness {
-  const spec = findSpecByCode(paths, specCode);
+  const project = snapshot && isFullProjectSnapshot(snapshot, ['specs'])
+    ? snapshot
+    : buildProjectSnapshot(paths, { include: ['specs'] });
+  const spec = project.indexes.specByCode.get(specCode) ?? findSpecByCode(paths, specCode);
   const expectedStatus = spec?.fm.level === 'L3' ? 'frozen' : 'confirmed';
   if (!spec) {
     return { specCode, expectedStatus: 'confirmed', ready: false, alreadyImplemented: false, blockers: ['missing-spec'] };
@@ -68,7 +73,7 @@ export function assessImplementationReadiness(
     if (spec.fm.status !== 'frozen') blockers.push('wrong-status');
   } else if (spec.fm.level === 'L1' || spec.fm.level === 'L2') {
     if (spec.fm.status !== 'confirmed') blockers.push('wrong-status');
-    const children = listAllSpecs(paths).filter(child => child.fm.parentCode === specCode);
+    const children = project.indexes.childrenByParent.get(specCode) ?? [];
     if (children.length === 0) blockers.push('no-children');
     else if (children.some(child => child.fm.status !== 'implemented')) blockers.push('children-incomplete');
   } else {

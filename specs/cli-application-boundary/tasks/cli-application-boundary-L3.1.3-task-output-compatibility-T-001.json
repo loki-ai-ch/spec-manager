@@ -1,0 +1,104 @@
+{
+  "id": "T-001",
+  "specCode": "cli-application-boundary-L3.1.3-task-output-compatibility",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充 task CLI warning、JSON 与 stderr 精确兼容测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added precise regression tests for warning routing, JSON warning suppression, and legacy task report/verify stderr text; focused suite fails on the intended compatibility regressions.\",\"files\":[\"src/cli/__tests__/common.test.ts\",\"src/cli/__tests__/task.test.ts\"],\"tests\":[\"npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/task-handlers.test.ts (expected failures: 9)\"]}",
+      "reportedAt": "2026-06-11T09:29:06.453Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "增加 CLI warning presenter 通道并保护 JSON 输出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added optional CLI warning channel mapped to console.warn and made JSON presenter output return before warnings.\",\"files\":[\"src/cli/common.ts\",\"src/cli/__tests__/common.test.ts\",\"src/cli/__tests__/task.test.ts\"],\"tests\":[\"npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/task-handlers.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:29:35.430Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "恢复 task report/verify 前置校验 stderr 文本",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added ordered known-error message formatters that restore legacy report/verify pre-validation stderr while preserving structured handler errors.\",\"files\":[\"src/cli/common.ts\",\"src/cli/task-handlers.ts\",\"src/cli/__tests__/common.test.ts\",\"src/cli/__tests__/task.test.ts\"],\"tests\":[\"npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/task-handlers.test.ts (36 passed)\"]}",
+      "reportedAt": "2026-06-11T09:29:42.251Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证 task CLI 专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"Focused and full validation passed; lint, project doctor, and diff whitespace check are clean.\",\"files\":[\"src/cli/common.ts\",\"src/cli/task-handlers.ts\",\"src/cli/__tests__/common.test.ts\",\"src/cli/__tests__/task.test.ts\"],\"tests\":[\"npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/task-handlers.test.ts (36 passed)\",\"npm test (45 files, 542 tests passed)\",\"npm run lint\",\"spec-manager project doctor\",\"git diff --check\"]}",
+      "reportedAt": "2026-06-11T09:30:09.245Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T09:27:03.119Z",
+  "finishedAt": "2026-06-11T09:30:39.734Z",
+  "created": "2026-06-11T09:27:02.982Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/task-handlers.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/common.test.ts",
+      "exitCode": 0,
+      "summary": "Focused task CLI compatibility suite passed: 3 files, 36 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T09:30:14.220Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full suite passed: 45 files, 542 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T09:30:18.344Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T09:30:23.114Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "Project doctor reported ok with no integrity issues.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T09:30:29.969Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -4,11 +4,17 @@ import { parse as parseYaml } from 'yaml';
 import { AGENT_PROVIDER_INFO, detectAgentProviders, inspectManagedAgentAssets } from './agents.js';
 import { readAudit } from './audit.js';
 import { findSpecByCode, isPlaceholderContent, listAllSpecs, type SpecRecord } from './spec-io.js';
-import { listTasks, type TaskRecord } from './task.js';
+import type { TaskRecord } from './task.js';
 import type { ProjectPaths } from './paths.js';
 import { REQUIRED_SECTIONS, type SpecLevel } from './validate.js';
 import { inspectProjectIntegrity } from './integrity.js';
 import { assessImplementationReadiness } from './lifecycle.js';
+import {
+  buildProjectSnapshot,
+  isFullProjectSnapshot,
+  snapshotCoversTopic,
+  type ProjectSnapshot,
+} from './project-snapshot.js';
 
 export type DoctorSeverity = 'ok' | 'warn' | 'fail';
 
@@ -20,7 +26,7 @@ export interface DoctorCheck {
   blocking?: boolean;
 }
 
-export function runProjectDoctor(paths: ProjectPaths, packageRoot?: string): DoctorCheck[] {
+export function runProjectDoctor(paths: ProjectPaths, packageRoot?: string, opts?: { snapshot?: ProjectSnapshot }): DoctorCheck[] {
   const checks: DoctorCheck[] = [];
   checks.push(fileCheck(paths.isInitialized, '.spec-manager/', 'Project initialized', 'spec-manager project init', true));
   checks.push(fileCheck(existsSync(paths.configFile), '.spec-manager/config.yaml', 'Config file present', 'spec-manager project init', true));
@@ -66,7 +72,10 @@ export function runProjectDoctor(paths: ProjectPaths, packageRoot?: string): Doc
     }
   }
 
-  const specs = paths.isInitialized ? listAllSpecs(paths) : [];
+  const snapshot = paths.isInitialized
+    ? opts?.snapshot && isFullProjectSnapshot(opts.snapshot) ? opts.snapshot : buildProjectSnapshot(paths)
+    : null;
+  const specs = snapshot?.specs ?? [];
   const placeholders = specs.filter((s) => isPlaceholderContent(s.content));
   checks.push({
     status: placeholders.length === 0 ? 'ok' : 'warn',
@@ -90,7 +99,7 @@ export function runProjectDoctor(paths: ProjectPaths, packageRoot?: string): Doc
   }
 
   if (paths.isInitialized) {
-    const issues = inspectProjectIntegrity(paths);
+    const issues = inspectProjectIntegrity(paths, snapshot ? { snapshot } : undefined);
     checks.push({
       status: issues.length === 0 ? 'ok' : 'warn',
       label: 'Repository integrity',
@@ -138,14 +147,17 @@ export interface TopicFlow {
 
 export type GuideFormat = 'text' | 'rich';
 
-export function getFlowStatus(paths: ProjectPaths, opts?: { topic?: string }): TopicFlow[] {
-  const specs = listAllSpecs(paths).filter((s) => !opts?.topic || s.fm.topic === opts.topic);
+export function getFlowStatus(paths: ProjectPaths, opts?: { topic?: string; snapshot?: ProjectSnapshot }): TopicFlow[] {
+  const snapshot = opts?.snapshot && snapshotCoversTopic(opts.snapshot, opts.topic, ['specs', 'tasks'])
+    ? opts.snapshot
+    : buildProjectSnapshot(paths, { topic: opts?.topic });
+  const specs = snapshot.specs.filter((s) => !opts?.topic || s.fm.topic === opts.topic);
   const topics = new Set(specs.map((s) => s.fm.topic));
   if (opts?.topic) topics.add(opts.topic);
 
   return [...topics].sort().map((topic) => {
     const topicSpecs = specs.filter((s) => s.fm.topic === topic).sort(compareSpecRecords);
-    const tasks = listTasks(paths, { topic });
+    const tasks = snapshot.tasks.filter((task) => topicSpecs.some((spec) => spec.fm.code === task.specCode));
     return {
       topic,
       specs: topicSpecs,
@@ -190,7 +202,7 @@ export function suggestNextActionForTopic(topic: string, specs: SpecRecord[], ta
   return 'No immediate action. Use spec-manager flow status for details.';
 }
 
-export function suggestAfterSpecCommand(spec: SpecRecord, paths?: ProjectPaths): string {
+export function suggestAfterSpecCommand(spec: SpecRecord, paths?: ProjectPaths, snapshot?: ProjectSnapshot): string {
   if (isPlaceholderContent(spec.content)) {
     return `spec-manager spec update ${spec.fm.code} --content ./draft.md --ai-summary "..." --change-summary "init"`;
   }
@@ -212,22 +224,27 @@ export function suggestAfterSpecCommand(spec: SpecRecord, paths?: ProjectPaths):
   }
   if ((spec.fm.level === 'L1' || spec.fm.level === 'L2') && spec.fm.status === 'confirmed') {
     if (!paths) return 'spec-manager flow status';
-    const specs = listAllSpecs(paths);
-    const children = specs.filter(child => child.fm.parentCode === spec.fm.code);
+    const project = snapshot && isFullProjectSnapshot(snapshot, ['specs'])
+      ? snapshot
+      : buildProjectSnapshot(paths, { include: ['specs'] });
+    const children = project.indexes.childrenByParent.get(spec.fm.code) ?? [];
     if (children.length === 0) {
       return spec.fm.level === 'L1'
         ? `spec-manager spec new L2 --topic ${spec.fm.topic} --parent ${spec.fm.code} --title "..."`
         : `spec-manager spec new L3 --topic ${spec.fm.topic} --parent ${spec.fm.code} --title "..."`;
     }
-    if (assessImplementationReadiness(paths, spec.fm.code, 'project-reconcile').ready) {
+    if (assessImplementationReadiness(paths, spec.fm.code, 'project-reconcile', project).ready) {
       return 'spec-manager project reconcile --dry-run';
     }
   }
   return 'spec-manager flow status';
 }
 
-export function getUpstreamFreezeAdvice(paths: ProjectPaths, spec: SpecRecord): string[] {
-  return getUpstreamFreezeAdviceForSpecs(listAllSpecs(paths), spec);
+export function getUpstreamFreezeAdvice(paths: ProjectPaths, spec: SpecRecord, snapshot?: ProjectSnapshot): string[] {
+  const project = snapshot && isFullProjectSnapshot(snapshot, ['specs'])
+    ? snapshot
+    : buildProjectSnapshot(paths, { include: ['specs'] });
+  return getUpstreamFreezeAdviceForSpecs(project.specs, spec);
 }
 
 function getUpstreamFreezeAdviceForSpecs(specs: SpecRecord[], spec: SpecRecord): string[] {
@@ -269,11 +286,12 @@ export function readProjectContext(paths: ProjectPaths): string {
 }
 
 export function renderRichGuide(paths: ProjectPaths, packageRoot: string, request: string): string {
-  const matchedSpec = findSpecForRequest(paths, request);
+  const snapshot = buildProjectSnapshot(paths);
+  const matchedSpec = findSpecForRequest(paths, request, snapshot);
   const topic = matchedSpec?.fm.topic ?? inferTopicFromRequest(request) ?? '<topic>';
-  const flow = getFlowStatus(paths, { topic })[0];
+  const flow = getFlowStatus(paths, { topic, snapshot })[0];
   const nextCommand = matchedSpec
-    ? suggestAfterSpecCommand(matchedSpec, paths)
+    ? suggestAfterSpecCommand(matchedSpec, paths, snapshot)
     : flow?.nextAction ?? `spec-manager spec new L1 --topic ${topic} --title "..."`;
 
   return [
@@ -298,13 +316,13 @@ export function renderTemplate(packageRoot: string, level: SpecLevel | 'agent-pl
   return raw.replaceAll('{{title}}', title ?? 'Untitled');
 }
 
-function findSpecForRequest(paths: ProjectPaths, request: string): SpecRecord | null {
+function findSpecForRequest(paths: ProjectPaths, request: string, snapshot?: ProjectSnapshot): SpecRecord | null {
   const exact = request.trim();
   if (exact) {
-    const found = findSpecByCode(paths, exact);
+    const found = snapshot?.indexes.specByCode.get(exact) ?? findSpecByCode(paths, exact);
     if (found) return found;
   }
-  const specs = listAllSpecs(paths);
+  const specs = snapshot?.specs ?? listAllSpecs(paths);
   return specs.find((spec) => request.includes(spec.fm.code)) ?? null;
 }
 

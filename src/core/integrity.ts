@@ -1,10 +1,8 @@
 import type { ProjectPaths } from './paths.js';
-import { listAllSpecs } from './spec-io.js';
-import { listTasks, type TaskRecord } from './task.js';
-import { isActiveDecision, listDecisions } from './decision.js';
-import { listIncidents } from './incident.js';
-import { listTaskLinkedChangeProposals } from './delta.js';
+import type { TaskRecord } from './task.js';
+import { isActiveDecision } from './decision.js';
 import { exemptionTaskKey, readIntegrityExemptions } from './integrity-exemptions.js';
+import { buildProjectSnapshot, isFullProjectSnapshot, taskKey, type ProjectSnapshot } from './project-snapshot.js';
 
 export type IntegrityIssueKind =
   | 'dangling-reference'
@@ -26,18 +24,16 @@ export interface IntegrityIssue {
 
 const ACTIVE_TASK_STATUSES = new Set(['draft', 'running', 'waiting']);
 
-export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
+export function inspectProjectIntegrity(paths: ProjectPaths, opts?: { snapshot?: ProjectSnapshot }): IntegrityIssue[] {
   const issues: IntegrityIssue[] = [];
-  const specs = listAllSpecs(paths);
-  const tasks = listTasks(paths);
-  const decisions = listDecisions(paths, { includeAll: true });
-  const incidents = listIncidents(paths);
-  const changes = listTaskLinkedChangeProposals(paths);
+  const snapshot = opts?.snapshot && isFullProjectSnapshot(opts.snapshot)
+    ? opts.snapshot
+    : buildProjectSnapshot(paths);
+  const { specs, tasks, decisions, incidents, changes } = snapshot;
   const exemptionResult = readIntegrityExemptions(paths);
-  const specCodes = new Set(specs.map(spec => spec.fm.code));
-  const taskKeys = new Set(tasks.map(task => `${task.specCode}:${task.id}`));
-  const decisionIds = new Set(decisions.map(decision => decision.id));
-  const taskByKey = new Map(tasks.map(task => [`${task.specCode}:${task.id}`, task]));
+  const specCodes = snapshot.indexes.specByCode;
+  const taskByKey = snapshot.indexes.taskByKey;
+  const decisionIds = snapshot.indexes.decisionById;
   const validExemptionTaskKeys = new Set<string>();
 
   for (const problem of exemptionResult.problems) {
@@ -72,7 +68,8 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
         issues.push(dangling(spec.filePath, spec.fm.code, relation.target, `relation ${relation.type}`));
       }
     }
-    if (spec.fm.level === 'L1' && spec.fm.status === 'implemented' && !decisions.some(d => d.fm.docCode === spec.fm.code && isActiveDecision(d))) {
+    const specDecisions = snapshot.indexes.decisionsByDocCode.get(spec.fm.code) ?? [];
+    if (spec.fm.level === 'L1' && spec.fm.status === 'implemented' && !specDecisions.some(isActiveDecision)) {
       issues.push({
         kind: 'missing-decision',
         sourceFile: spec.filePath,
@@ -82,7 +79,7 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
       });
     }
     if ((spec.fm.level === 'L1' || spec.fm.level === 'L2') && spec.fm.status === 'confirmed') {
-      const children = specs.filter(child => child.fm.parentCode === spec.fm.code);
+      const children = snapshot.indexes.childrenByParent.get(spec.fm.code) ?? [];
       if (children.length > 0 && children.every(child => child.fm.status === 'implemented')) {
         issues.push({
           kind: 'stale-confirmed-parent',
@@ -97,14 +94,14 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
 
   for (const task of tasks) {
     if (!specCodes.has(task.specCode)) {
-      issues.push(dangling(taskFileHint(paths, task), task.id, task.specCode, 'task specCode'));
+      issues.push(dangling(taskFileHint(paths, snapshot, task), task.id, task.specCode, 'task specCode'));
     }
-    const taskKey = `${task.specCode}:${task.id}`;
-    if (task.status === 'completed' && !(task.verifications ?? []).some(v => v.exitCode === 0) && !validExemptionTaskKeys.has(taskKey)) {
+    const key = taskKey(task.specCode, task.id);
+    if (task.status === 'completed' && !(task.verifications ?? []).some(v => v.exitCode === 0) && !validExemptionTaskKeys.has(key)) {
       issues.push({
         kind: 'missing-verification',
-        sourceFile: taskFileHint(paths, task),
-        sourceId: `${task.specCode}:${task.id}`,
+        sourceFile: taskFileHint(paths, snapshot, task),
+        sourceId: key,
         message: `completed task ${task.id} (${task.specCode}) has no successful verification`,
         remediation: 'Create a follow-up task; completed task history is immutable.',
       });
@@ -112,8 +109,8 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
     if ((task.status === 'completed' || task.status === 'failed') && (task.steps ?? []).some(step => step.status !== 'succeeded')) {
       issues.push({
         kind: 'immutable-history-violation',
-        sourceFile: taskFileHint(paths, task),
-        sourceId: `${task.specCode}:${task.id}`,
+        sourceFile: taskFileHint(paths, snapshot, task),
+        sourceId: taskKey(task.specCode, task.id),
         message: `terminal task ${task.id} contains non-succeeded steps`,
       });
     }
@@ -127,7 +124,7 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
     if (active.length > 1) {
       issues.push({
         kind: 'conflicting-active-task',
-        sourceFile: taskFileHint(paths, active[0]),
+        sourceFile: taskFileHint(paths, snapshot, active[0]),
         sourceId: specCode,
         message: `${specCode} has ${active.length} active tasks: ${active.map(task => task.id).join(', ')}`,
       });
@@ -143,7 +140,7 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
     if (incident.fm.specCode && !specCodes.has(incident.fm.specCode)) {
       issues.push(dangling(incident.filePath, incident.id, incident.fm.specCode, 'incident specCode'));
     }
-    if (incident.fm.taskCode && incident.fm.specCode && !taskKeys.has(`${incident.fm.specCode}:${incident.fm.taskCode}`)) {
+    if (incident.fm.taskCode && incident.fm.specCode && !taskByKey.has(taskKey(incident.fm.specCode, incident.fm.taskCode))) {
       issues.push(dangling(incident.filePath, incident.id, incident.fm.taskCode, 'incident taskCode'));
     }
     for (const id of incident.fm.relatedDecisions ?? []) {
@@ -154,7 +151,7 @@ export function inspectProjectIntegrity(paths: ProjectPaths): IntegrityIssue[] {
     if (!specCodes.has(change.specCode)) {
       issues.push(dangling(change.proposalFile, change.name, change.specCode, 'change specCode'));
     }
-    if (!taskKeys.has(`${change.specCode}:${change.taskCode}`)) {
+    if (!taskByKey.has(taskKey(change.specCode, change.taskCode))) {
       issues.push(dangling(change.proposalFile, change.name, change.taskCode, 'change taskCode'));
     }
   }
@@ -181,7 +178,7 @@ function dangling(sourceFile: string, sourceId: string, targetId: string, field:
   };
 }
 
-function taskFileHint(paths: ProjectPaths, task: TaskRecord): string {
-  const topic = listAllSpecs(paths).find(spec => spec.fm.code === task.specCode)?.fm.topic ?? '?';
+function taskFileHint(paths: ProjectPaths, snapshot: ProjectSnapshot, task: TaskRecord): string {
+  const topic = snapshot.indexes.specByCode.get(task.specCode)?.fm.topic ?? '?';
   return `${paths.specsDir}/${topic}/tasks/${task.specCode}-${task.id}.json`;
 }

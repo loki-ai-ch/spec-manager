@@ -1,9 +1,9 @@
 import type { ProjectPaths } from './paths.js';
-import { listAllSpecs } from './spec-io.js';
-import { listTasks, type TaskRecord } from './task.js';
+import type { TaskRecord } from './task.js';
 import { getFlowStatus } from './usability.js';
 import type { SpecLevelT, SpecStatusT } from '../schemas/spec.js';
 import type { TaskStatus } from './status.js';
+import { buildProjectSnapshot } from './project-snapshot.js';
 
 export interface ViewSpecSummary {
   code: string;
@@ -38,13 +38,14 @@ export interface ViewModel {
 }
 
 export function buildViewModel(paths: ProjectPaths, opts?: { topic?: string }): ViewModel {
-  const specs = listAllSpecs(paths).filter((spec) => !opts?.topic || spec.fm.topic === opts.topic);
-  const tasks = listTasks(paths, { topic: opts?.topic });
+  const snapshot = buildProjectSnapshot(paths, { topic: opts?.topic });
+  const specs = snapshot.specs;
+  const tasks = snapshot.tasks;
   if (opts?.topic && specs.length === 0 && tasks.length === 0) {
     throw new Error(`TOPIC_NOT_FOUND: ${opts.topic}`);
   }
 
-  const flows = getFlowStatus(paths, { topic: opts?.topic });
+  const flows = getFlowStatus(paths, { topic: opts?.topic, snapshot });
   const topics = flows
     .filter((flow) => !opts?.topic || flow.topic === opts.topic)
     .map((flow) => {

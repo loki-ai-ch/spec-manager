@@ -1,0 +1,131 @@
+{
+  "id": "T-001",
+  "specCode": "cli-application-boundary-L3.1.2-task-handlers",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 cli-application-boundary-L3.1.2-task-handlers、cli-application-boundary-L2.1、历史任务、agent-plan 和 task CLI 锚点源码测试",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 cli-application-boundary-L3.1.2-task-handlers、cli-application-boundary-L2.1、历史任务、agent-plan 和 task CLI 锚点源码测试分析\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:51:48.021Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 src/cli/task-handlers.ts 实现 task report/verify handler",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task-handlers.ts，拆出 task report/verify 的 input/flags 校验、CSV 解析、payload normalize 和 harness/core 调用\",\"files\":[\"src/cli/task-handlers.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:53:45.300Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/task-handlers.ts 新增 task report/verify presenter",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task report/verify presenter 和 print 函数，保持文本输出与 JSON shape 基于原 result 对象\",\"files\":[\"src/cli/task-handlers.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:53:54.466Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/cli/task.ts 接入 task report/verify handler 和 presenter",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"task.ts 的 report/verify action 改为 createDefaultCliActionContext + runCliAction + handler + presenter 接线，其他 task 命令未改\",\"files\":[\"src/cli/task.ts\",\"src/cli/task-handlers.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:54:01.183Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "新增 src/cli/__tests__/task-handlers.test.ts 覆盖 task handler 和 presenter",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task-handlers.test.ts，覆盖 report/verify handler 成功路径、混用/非法 layer 错误、text/json presenter 输出\",\"files\":[\"src/cli/__tests__/task-handlers.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:54:08.300Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证: npm test -- src/cli/__tests__/task-handlers.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/common.test.ts && npm test -- src/cli/__tests__/architecture-smoke.test.ts",
+      "status": "succeeded",
+      "toolName": "npm-test",
+      "outputJson": "{\"summary\":\"task handler/task/common 专项 3 files / 32 tests passed；architecture-smoke 1 test passed\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:54:27.041Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "验证: npm run lint && spec-manager project doctor && npm test -- src/cli/__tests__/spec.test.ts",
+      "status": "succeeded",
+      "toolName": "lint-doctor-test",
+      "outputJson": "{\"summary\":\"npm run lint 通过；project doctor ok；spec.test.ts 9 tests passed\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:54:33.114Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T08:51:40.519Z",
+  "finishedAt": "2026-06-11T08:55:04.481Z",
+  "created": "2026-06-11T08:51:34.871Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/task-handlers.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/common.test.ts",
+      "exitCode": 0,
+      "summary": "Task handler, task CLI, and common runtime tests passed: 3 files / 32 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:54:39.598Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit check passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:54:46.266Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "spec-manager project doctor && npm test -- src/cli/__tests__/architecture-smoke.test.ts",
+      "exitCode": 0,
+      "summary": "Project doctor ok and architecture smoke passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3",
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:54:55.208Z",
+      "layer": "smoke"
+    }
+  ]
+}

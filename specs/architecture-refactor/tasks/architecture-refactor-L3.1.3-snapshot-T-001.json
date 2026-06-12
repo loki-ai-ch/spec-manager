@@ -1,0 +1,136 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.3-snapshot",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "收集 snapshot 上下文: 读取 architecture-refactor-L3.1.3-snapshot、architecture-refactor-L2.1、历史任务、agent-plan 和只读模块源码",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 architecture-refactor-L3.1.3-snapshot、architecture-refactor-L2.1、历史任务、agent-plan 和只读模块源码分析\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T07:56:09.572Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 ProjectSnapshot 模块: 编辑 src/core/project-snapshot.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 ProjectSnapshot 只读模型与常用索引构建能力\",\"files\":[\"src/core/project-snapshot.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:01:26.847Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "接入 integrity 快照索引: 编辑 src/core/integrity.ts 和 src/core/project-snapshot.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"integrity 接入 ProjectSnapshot 并移除重复只读扫描\",\"files\":[\"src/core/integrity.ts\",\"src/core/project-snapshot.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:01:34.901Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "接入 usability 和 view 快照读取: 编辑 src/core/usability.ts、src/core/view.ts 和 src/core/project-snapshot.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"usability 与 view 接入 ProjectSnapshot，保持 CLI 展示兼容\",\"files\":[\"src/core/usability.ts\",\"src/core/view.ts\",\"src/core/project-snapshot.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:01:41.089Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "接入 lifecycle readiness 快照索引: 编辑 src/core/lifecycle.ts 和 src/core/project-snapshot.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"lifecycle readiness 接入 ProjectSnapshot 索引并保持 cascade 行为兼容\",\"files\":[\"src/core/lifecycle.ts\",\"src/core/project-snapshot.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:01:48.406Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "导出 ProjectSnapshot 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/project-snapshot.test.ts",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"导出 ProjectSnapshot 并新增快照与消费者兼容测试\",\"files\":[\"src/index.ts\",\"src/core/__tests__/project-snapshot.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-11T08:01:55.073Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "回归 snapshot 相关只读链路: 运行 project-snapshot、integrity、usability、view、lifecycle 测试",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 snapshot 相关核心与 CLI 展示回归，并确认重复只读扫描已收敛\",\"files\":[\"src/core/project-snapshot.ts\",\"src/core/integrity.ts\",\"src/core/usability.ts\",\"src/core/view.ts\",\"src/core/lifecycle.ts\"]}",
+      "latencyMs": 605,
+      "reportedAt": "2026-06-11T08:02:04.083Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 ProjectSnapshot 重构: 运行 npm test、npm run lint、spec-manager project doctor",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成全量测试、类型检查和 project doctor 验证\",\"files\":[]}",
+      "latencyMs": 2436,
+      "reportedAt": "2026-06-11T08:02:25.125Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T07:55:45.519Z",
+  "finishedAt": "2026-06-11T08:03:04.187Z",
+  "created": "2026-06-11T07:55:39.130Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/project-snapshot.test.ts src/core/__tests__/integrity.test.ts src/core/__tests__/usability.test.ts src/core/__tests__/view.test.ts src/core/__tests__/lifecycle.test.ts src/cli/__tests__/view.test.ts src/cli/__tests__/usability.test.ts",
+      "exitCode": 0,
+      "summary": "snapshot 与消费者回归测试通过：7 test files / 51 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T08:02:33.859Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量测试通过：40 test files / 505 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:02:41.622Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit 通过，project doctor 输出 Project doctor: ok",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T08:02:52.001Z",
+      "layer": "compile"
+    }
+  ]
+}

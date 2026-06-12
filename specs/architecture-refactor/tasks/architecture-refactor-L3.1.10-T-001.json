@@ -1,0 +1,104 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.10",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充 REMOVED 成功目录一致性与失败目录清理回归测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added regression tests proving successful REMOVED archives split across roots and failed apply leaves archive directories behind.\",\"files\":[\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts (expected failures: 2)\"]}",
+      "reportedAt": "2026-06-11T09:37:26.354Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "统一 removed spec 与 change 元数据归档目标",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Staged removed specs inside the change tree and selected one archive target before apply, so all archive assets move atomically into a single root.\",\"files\":[\"src/core/archive.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:38:34.511Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "加固归档事务创建目录回滚",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Tracked directories created during archive apply and removed them in reverse order during rollback without touching pre-existing directories.\",\"files\":[\"src/core/archive.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts\"]}",
+      "reportedAt": "2026-06-11T09:38:34.634Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证归档专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"Archive-focused and full validation passed; lint, project doctor, and diff whitespace check are clean.\",\"files\":[\"src/core/archive.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts (22 passed)\",\"npm test (45 files, 545 tests passed)\",\"npm run lint\",\"spec-manager project doctor\",\"git diff --check\"]}",
+      "reportedAt": "2026-06-11T09:39:08.524Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-11T09:36:27.352Z",
+  "finishedAt": "2026-06-11T09:39:18.066Z",
+  "created": "2026-06-11T09:36:27.225Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts",
+      "exitCode": 0,
+      "summary": "Archive-focused suite passed: 3 files, 22 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-11T09:39:08.650Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full suite passed: 45 files, 545 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T09:39:08.776Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T09:39:08.905Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "Project doctor reported ok with no integrity issues.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-11T09:39:09.032Z",
+      "layer": "smoke"
+    }
+  ]
+}

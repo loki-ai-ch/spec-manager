@@ -1,0 +1,104 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.13",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充 ADDED 新 topic apply 与移动失败目录回滚测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added ADDED new-topic rollback regressions for later apply failure and final archive move failure, while protecting an existing topic sentinel; both fail on the expected empty-directory leak.\",\"files\":[\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts (expected failures: 2)\"]}",
+      "reportedAt": "2026-06-12T01:02:26.203Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "在 ADDED 创建前纳入 topic 目录事务跟踪",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Registered the target topic directory with the archive transaction before createSpec writes an ADDED spec.\",\"files\":[\"src/core/archive.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts (26 passed)\"]}",
+      "reportedAt": "2026-06-12T01:02:53.070Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "加固目录回滚对既有 topic 的保护",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Verified rollback removes only directories created by the archive attempt and preserves pre-existing topic contents.\",\"files\":[\"src/core/archive.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts (26 passed)\"]}",
+      "reportedAt": "2026-06-12T01:02:53.191Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证归档专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"ADDED topic rollback focused and full validation passed; build and installed CLI drift verification also passed.\",\"files\":[\"src/core/archive.ts\",\"src/core/__tests__/archive.test.ts\"],\"tests\":[\"npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts (26 passed)\",\"npm test (45 files, 551 tests passed)\",\"npm run lint\",\"npm run build\",\"npm run verify:installed-cli\",\"spec-manager project doctor\",\"git diff --check\"]}",
+      "reportedAt": "2026-06-12T01:03:38.231Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-12T01:01:47.996Z",
+  "finishedAt": "2026-06-12T01:03:52.402Z",
+  "created": "2026-06-12T01:01:47.865Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/archive.test.ts src/core/__tests__/archive-plan.test.ts src/cli/__tests__/change.test.ts",
+      "exitCode": 0,
+      "summary": "Archive ADDED topic rollback suite passed: 3 files, 26 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-12T01:03:38.354Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full suite passed: 45 files, 551 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T01:03:38.477Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T01:03:38.605Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "npm run verify:installed-cli && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "Installed CLI matches current build and project doctor reported ok.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T01:03:38.729Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -5,18 +5,25 @@ import {
   createSpec,
   findSpecByCode,
   generateSpecCode,
-  isPlaceholderContent,
   listAllSpecs,
   migrateSpecPaths,
   updateSpec,
   DESC_MAX_LEN,
 } from '../core/spec-io.js';
-import { canTransition, isActiveStatus, nextStatuses } from '../core/status.js';
+import { isActiveStatus } from '../core/status.js';
 import { extractPlanJsonFromSpecContent, validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
 import { hit } from '../core/audit.js';
 import { listDecisions } from '../core/decision.js';
 import { suggestAfterSpecCommand } from '../core/usability.js';
-import { fail, requireInitialized } from './common.js';
+import { createDefaultCliActionContext, fail, requireInitialized, runCliAction } from './common.js';
+import {
+  printSpecTransitionResult,
+  printSpecUpdateResult,
+  runSpecTransitionCommand,
+  runSpecUpdateCommand,
+  SPEC_HANDLER_KNOWN_ERRORS,
+  type SpecTransitionCommand,
+} from './spec-handlers.js';
 
 export function registerSpec(program: Command): void {
   const cmd = program.command('spec').description('Spec 增删改查');
@@ -155,29 +162,13 @@ export function registerSpec(program: Command): void {
     .option('--content <file>', '从文件读 contentTemplate 内容（- 表示 stdin）')
     .option('--ai-summary <s>', 'aiSummary（≤300 字符）')
     .option('--change-summary <s>', '本次修改的原因说明')
-    .action((code, opts) => {
-      const paths = getPaths();
-      const rec = findSpecByCode(paths, code);
-      if (!rec) {
-        fail(`✗ 未找到: ${code}`);
-      }
-      const patch: Parameters<typeof updateSpec>[2] = {};
-      if (opts.content) {
-        patch.content = opts.content === '-' ? readStdin() : readFileSync(opts.content, 'utf8');
-      }
-      if (opts.aiSummary) patch.aiSummary = opts.aiSummary;
-      if (opts.changeSummary) patch.changeSummary = opts.changeSummary;
-
-      const result = updateSpec(paths, code, patch);
-      for (const w of result.warnings) console.warn(`⚠ ${w}`);
-      // 写完自动跑一次非阻断校验
-      const warnings = validateSpecContent(result.record.fm.level, result.record.content);
-      for (const w of warnings) {
-        const sym = w.level === 'warn' ? '⚠' : 'ℹ';
-        console.log(`${sym} [${w.rule}] ${w.message}`);
-      }
-      console.log(`✓ 已更新 ${code}（status: ${result.record.fm.status}）`);
-      console.log(`Next: ${suggestAfterSpecCommand(result.record, paths)}`);
+    .action(async (code, opts) => {
+      const context = createDefaultCliActionContext();
+      await runCliAction({
+        context,
+        knownErrors: SPEC_HANDLER_KNOWN_ERRORS,
+        action: () => printSpecUpdateResult(context, runSpecUpdateCommand({ context, code, opts, readStdin })),
+      });
     });
 
   // 状态推进命令
@@ -190,43 +181,18 @@ export function registerSpec(program: Command): void {
       .command(`${sub} <code>`)
       .description(`推进 status 到 ${target}（R2: 仅用户/自动 cascade 触发）`)
       .option('--force', '强制推进（跳过 R3 L3 保护）', false)
-      .action((code, opts: { force: boolean }) => {
-        const paths = getPaths();
-        const rec = findSpecByCode(paths, code);
-        if (!rec) {
-          fail(`✗ 未找到: ${code}`);
-        }
-        const actualTarget =
-          sub === 'confirm' && rec.fm.level === 'L3' && rec.fm.status === 'draft'
-            ? 'frozen'
-            : target;
-        if (actualTarget === 'frozen' && rec.fm.status === 'draft' && rec.fm.level !== 'L3') {
-          fail(`✗ 状态非法: ${rec.fm.level} ${rec.fm.status} → ${actualTarget}\n  L1/L2 请先使用 spec-manager spec confirm ${code}`, 2);
-        }
-        // R22: 推进到 confirmed/frozen 之前,contentTemplate 不能只有占位
-        if ((actualTarget === 'confirmed' || actualTarget === 'frozen') && isPlaceholderContent(rec.content)) {
-          fail(
-            `✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）\n` +
-            `  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`,
-            2,
-          );
-        }
-        if (!canTransition(rec.fm.status, actualTarget)) {
-          fail(`✗ 状态非法: ${rec.fm.status} → ${actualTarget}\n  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`, 2);
-        }
-        // R3: L3 的 implemented 应由 task cascade 触发，手动推进需 --force
-        if (actualTarget === 'implemented' && rec.fm.level === 'L3' && rec.fm.status === 'frozen' && !opts.force) {
-          fail(
-            `⚠ R3: L3 spec ${code} 的 implemented 应由 task complete 自动 cascade\n` +
-            `  如确需手动推进，请用: spec-manager spec implement ${code} --force`,
-            2,
-          );
-        }
-        hit({ paths, ruleId: 'R2', specCode: code });
-        hit({ paths, ruleId: 'R9', specCode: code });
-        const { record } = updateSpec(paths, code, { status: actualTarget, changeSummary: `${rec.fm.status} → ${actualTarget}` });
-        console.log(`✓ ${code}: ${rec.fm.status} → ${actualTarget}`);
-        console.log(`Next: ${suggestAfterSpecCommand(record, paths)}`);
+      .action(async (code, opts: { force: boolean }) => {
+        const context = createDefaultCliActionContext();
+        await runCliAction({
+          context,
+          knownErrors: SPEC_HANDLER_KNOWN_ERRORS,
+          action: () => printSpecTransitionResult(context, runSpecTransitionCommand({
+            context,
+            code,
+            command: sub as SpecTransitionCommand,
+            force: opts.force,
+          })),
+        });
       });
   }
 

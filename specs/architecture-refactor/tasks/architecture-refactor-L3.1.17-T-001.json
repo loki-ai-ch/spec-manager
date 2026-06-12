@@ -1,0 +1,92 @@
+{
+  "id": "T-001",
+  "specCode": "architecture-refactor-L3.1.17",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "补充多 topic 重复占位与单一占位回归测试",
+      "status": "succeeded",
+      "toolName": "vitest",
+      "outputJson": "{\"summary\":\"新增 planning/archive 重复占位拒绝和多个不同 code 单一占位兼容测试；专项 69/69 通过\"}",
+      "reportedAt": "2026-06-12T01:53:37.103Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "增加 ADDED 占位候选唯一性校验",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"resolveAddedMetadata 收集并排序全部候选，多个候选时报告 code 与路径并拒绝 planning\"}",
+      "reportedAt": "2026-06-12T01:53:43.321Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "保持占位元数据优先级与归档兼容",
+      "status": "succeeded",
+      "toolName": "vitest",
+      "outputJson": "{\"summary\":\"单一占位 metadata 优先级、ADDED 创建、替换与回滚现有专项测试全部通过\"}",
+      "reportedAt": "2026-06-12T01:53:49.399Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证归档专项测试、全量测试、lint 和 project doctor",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"专项 69/69、全量 566/566、lint、build、installed CLI、project doctor 与 diff check 全部通过\"}",
+      "reportedAt": "2026-06-12T01:54:32.761Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-12T01:52:43.742Z",
+  "finishedAt": "2026-06-12T01:55:13.905Z",
+  "created": "2026-06-12T01:52:39.744Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/archive-plan.test.ts src/core/__tests__/archive.test.ts src/core/__tests__/delta.test.ts src/cli/__tests__/change.test.ts",
+      "exitCode": 0,
+      "summary": "4 files, 69 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-12T01:54:40.809Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "45 files, 566 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T01:54:48.925Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint && npm run build && npm run verify:installed-cli && spec-manager project doctor && git diff --check",
+      "exitCode": 0,
+      "summary": "compile, installed CLI drift, repository integrity, and diff checks passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-12T01:54:56.368Z",
+      "layer": "compile"
+    }
+  ]
+}
