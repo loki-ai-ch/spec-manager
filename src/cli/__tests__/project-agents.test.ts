@@ -47,6 +47,7 @@ describe('project agents CLI', () => {
     expect(output()).toContain('claude');
     expect(output()).toContain('codex');
     expect(output()).toContain('opencode');
+    expect(output()).toContain('mimocode');
     expect(output()).toContain('codebuddy');
     expect(output()).toContain('cursor');
     expect(output()).toContain('windsurf');
@@ -67,10 +68,11 @@ describe('project agents CLI', () => {
 
     await makeProgram().parseAsync(['project', 'agents', '--dry-run'], { from: 'user' });
 
-    expect(output()).toContain('AI agent support planned: codex, opencode');
+    expect(output()).toContain('AI agent support planned: codex, opencode, mimocode');
     expect(output()).toContain('detected:');
     expect(output()).toContain('AGENTS.md -> codex');
     expect(output()).toContain('AGENTS.md -> opencode');
+    expect(output()).toContain('AGENTS.md -> mimocode');
     expect(output()).toContain('skipped:');
     expect(existsSync(join(root, '.cursorrules'))).toBe(false);
   });
@@ -89,7 +91,7 @@ describe('project agents CLI', () => {
   it('keeps explicit all behavior separate from auto-detection', async () => {
     await makeProgram().parseAsync(['project', 'agents', '--provider', 'all', '--dry-run'], { from: 'user' });
 
-    expect(output()).toContain('AI agent support planned: claude, codex, opencode, codebuddy, cursor, windsurf');
+    expect(output()).toContain('AI agent support planned: claude, codex, opencode, mimocode, codebuddy, cursor, windsurf');
     expect(output()).not.toContain('detected:');
     expect(output()).toContain('CLAUDE.md');
     expect(output()).toContain('.windsurfrules');

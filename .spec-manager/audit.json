@@ -1,14 +1,14 @@
 {
   "rules": {
     "R1": 47,
-    "R2": 92,
+    "R2": 93,
     "R3": 1,
-    "R4": 76,
+    "R4": 77,
     "R5": 2,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 92,
+    "R9": 93,
     "R10": 2,
     "R11": 0,
     "R12": 2,
@@ -18,7 +18,7 @@
     "R16": 12,
     "R17": 0,
     "R18": 6,
-    "R19": 77,
+    "R19": 78,
     "R20": 0,
     "R21": 0,
     "R22": 46,
@@ -3031,9 +3031,33 @@
       "timestamp": "2026-06-12T02:03:37.857Z",
       "specCode": "cli-application-boundary-L3.1.4-spec-handlers",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T02:15:09.496Z",
+      "specCode": "workflow-hardening-L3.1.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T02:17:42.293Z",
+      "specCode": "workflow-hardening-L3.1.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T02:17:42.294Z",
+      "specCode": "workflow-hardening-L3.1.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T02:21:57.425Z",
+      "specCode": "workflow-hardening-L3.1.5",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-12T02:03:37.857Z",
+  "lastUpdated": "2026-06-12T02:21:57.425Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

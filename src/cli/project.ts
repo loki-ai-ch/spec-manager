@@ -60,7 +60,7 @@ export function registerProject(program: Command): void {
   cmd
     .command('agents')
     .description('安装 AI agent 指令与 skill（不传 provider 自动检测；显式 all 安装全部）')
-    .option('-p, --provider <provider>', 'list | all | claude | codex | opencode | codebuddy | cursor | windsurf（可逗号组合）')
+    .option('-p, --provider <provider>', 'list | all | claude | codex | opencode | mimocode | codebuddy | cursor | windsurf（可逗号组合）')
     .option('--dry-run', '只显示将写入/覆盖/跳过的文件，不实际落盘')
     .option('--force', '覆盖已存在的 agent 指令文件/skill 目录')
     .option('--sync-managed', '逐文件同步托管 agent 资产；保留目标中的额外自定义文件')

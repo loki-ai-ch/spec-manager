@@ -1,0 +1,79 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-hardening-L3.1.5",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 L3/L2、agents 实现、CLI 测试、README 和 MiMo-Code AGENTS.md",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 L3/L2、agent provider、CLI 测试、README 和 MiMo-Code AGENTS.md 上下文收集\",\"files\":[\"specs/workflow-hardening/workflow-hardening-L3.1.5.md\",\"src/core/agents.ts\",\"src/cli/project.ts\",\"src/core/__tests__/agents.test.ts\",\"src/cli/__tests__/project-agents.test.ts\",\"README.md\",\"readme_zh.md\"]}",
+      "reportedAt": "2026-06-12T02:18:36.502Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 src/core/agents.ts 和 src/cli/project.ts 新增 mimocode provider",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 mimocode provider 元数据并更新 project agents provider help\",\"files\":[\"src/core/agents.ts\",\"src/cli/project.ts\"]}",
+      "reportedAt": "2026-06-12T02:19:37.296Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 provider 单元测试和 CLI 测试覆盖 mimocode",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 mimocode alias、provider list、all 安装和 AGENTS.md 自动检测测试\",\"files\":[\"src/core/__tests__/agents.test.ts\",\"src/cli/__tests__/project-agents.test.ts\"]}",
+      "reportedAt": "2026-06-12T02:19:37.437Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "编辑 README.md 和 readme_zh.md 补充 MiMo-Code 使用方式",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"README 和中文 README 补充 MiMo-Code provider、AGENTS.md 胶囊和 mimocode 使用命令\",\"files\":[\"README.md\",\"readme_zh.md\"]}",
+      "reportedAt": "2026-06-12T02:20:52.847Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "验证 targeted tests、npm test、npm run build 和 provider list smoke",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"targeted tests、完整 npm test、npm run build、git diff --check 和 provider list smoke 均通过\",\"files\":[]}",
+      "reportedAt": "2026-06-12T02:21:29.551Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-12T02:18:23.175Z",
+  "finishedAt": "2026-06-12T02:21:45.966Z",
+  "created": "2026-06-12T02:18:12.718Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/agents.test.ts src/cli/__tests__/project-agents.test.ts && npm test && npm run build && node dist/cli/index.js project agents --provider list",
+      "exitCode": 0,
+      "summary": "targeted provider tests passed (2 files, 30 tests); full suite passed (46 files, 571 tests); build passed; provider list includes mimocode",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6"
+      ],
+      "created": "2026-06-12T02:21:30.047Z",
+      "layer": "functional"
+    }
+  ]
+}

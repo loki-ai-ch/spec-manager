@@ -26,7 +26,7 @@
 - **决策卡片** 带 `what/why/affectedCriteria` 三段 + topic 查询
 - **规则审计** at-least-once 本地 JSON 累加器
 - **Delta specs** (OpenSpec 风格 `changes/<name>/`,含 ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
-- **多 Agent 配置** — 一个命令安装 Claude Code、Codex、OpenCode、CodeBuddy 指令
+- **多 Agent 配置** — 一个命令安装 Claude Code、Codex、OpenCode、MiMo-Code、CodeBuddy 指令
 - **RFC 2119** 关键字(SHALL/MUST/SHOULD)在验收标准中校验
 - **事故追踪** — 规则违规驱动规则迭代
 
@@ -44,7 +44,7 @@ npm install -g spec-manager
 
 ## AI Agent 配置
 
-spec-manager 不绑定单一 AI 工具：CLI 负责把规格、任务、决策和审计数据落到本地文件；AI 工具只需要一个能强制执行同一套规则的工作流入口。内置安装器支持 Claude Code、Codex、OpenCode、CodeBuddy，以及其他兼容 `AGENTS.md` 的 agent。
+spec-manager 不绑定单一 AI 工具：CLI 负责把规格、任务、决策和审计数据落到本地文件；AI 工具只需要一个能强制执行同一套规则的工作流入口。内置安装器支持 Claude Code、Codex、OpenCode、MiMo-Code、CodeBuddy，以及其他兼容 `AGENTS.md` 的 agent。
 
 不是每个工具都有原生的 "skills" 目录。spec-manager 会按平台安装最接近的形式：平台支持 skill 时安装真实 skill；平台不支持时，用项目级 `AGENTS.md` 作为类 skill 的工作流胶囊。
 
@@ -53,6 +53,7 @@ spec-manager 不绑定单一 AI 工具：CLI 负责把规格、任务、决策�
 ```bash
 cd my-project
 spec-manager project init --name my-project
+spec-manager project agents                 # 自动检测已安装/已配置的 agent
 spec-manager project agents --provider all
 ```
 
@@ -63,29 +64,34 @@ spec-manager project agents --provider all
 | Claude Code | 原生 skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
 | Codex | `AGENTS.md` 工作流胶囊，不是原生 skill | `AGENTS.md` |
 | OpenCode | `AGENTS.md` 工作流胶囊，不是原生 skill | `AGENTS.md` |
+| MiMo-Code | `AGENTS.md` 工作流胶囊，不是原生 skill | `AGENTS.md` |
 | CodeBuddy | 原生 skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
 
 也可以只安装部分入口：
 
 ```bash
 spec-manager project agents --provider list
+spec-manager project agents --dry-run
 spec-manager project agents --provider all --dry-run
-spec-manager project agents --provider codex,opencode
+spec-manager project agents --provider codex,opencode,mimocode
+spec-manager project agents --provider mimocode --dry-run
 spec-manager project agents --provider codebuddy --force
 ```
 
 使用 `--dry-run` 可以在实际写入前预览会创建、覆盖和跳过哪些文件。
 
-参考：[Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md)、[OpenCode rules](https://opencode.ai/docs/rules/)、[CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills)。
+参考：[Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md)、[OpenCode rules](https://opencode.ai/docs/rules/)、[MiMo-Code](https://github.com/XiaomiMiMo/MiMo-Code)、[CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills)。
 
 对 Codex CLI 来说，不需要找 `skills` 命令或目录。只要在项目根目录运行 Codex，它会读取 `AGENTS.md`。你让它 "Use spec-manager ..." 时，这个文件就相当于 spec-manager 的工作流入口。
+
+对 MiMo-Code 来说，先用 `npm install -g @mimo-ai/cli` 安装 CLI，再执行 `spec-manager project agents --provider mimocode` 写入共享的 `AGENTS.md` 胶囊，然后在项目根目录运行 `mimocode`。MiMo-Code 会读取 `AGENTS.md`，因此同一套 spec-manager 工作流规则会生效。
 
 ### 手动安装
 
 如果不使用安装器，也可以直接复制模板：
 
 ```bash
-# Codex / OpenCode / AGENTS.md 兼容工具（类 skill 工作流胶囊）
+# Codex / OpenCode / MiMo-Code / AGENTS.md 兼容工具（类 skill 工作流胶囊）
 cp path/to/spec-manager/templates/agents/AGENTS.md my-project/AGENTS.md
 
 # Claude Code
@@ -110,7 +116,7 @@ cp path/to/spec-manager/templates/agents/codebuddy-skill/SKILL.md my-project/.co
 # Claude Code / CodeBuddy skill:
 /spec-manager 新增用户认证功能
 
-# Codex / OpenCode / 其他 AGENTS.md agent:
+# Codex / OpenCode / MiMo-Code / 其他 AGENTS.md agent:
 使用 spec-manager 新增用户认证功能。
 ```
 

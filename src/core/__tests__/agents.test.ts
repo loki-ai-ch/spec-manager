@@ -41,10 +41,13 @@ function writePackageAsset(relPath: string, content: string): void {
 
 describe('parseAgentProviders', () => {
   it('normalizes provider aliases', () => {
-    expect(parseAgentProviders('claude-code,codex,open code,code buddy,cursor,windsurf')).toEqual([
+    expect(parseAgentProviders('claude-code,codex,open code,mimo-code,mimo code,mimo,code buddy,cursor,windsurf')).toEqual([
       'claude',
       'codex',
       'opencode',
+      'mimocode',
+      'mimocode',
+      'mimocode',
       'codebuddy',
       'cursor',
       'windsurf',
@@ -63,11 +66,14 @@ describe('listAgentProviders', () => {
       'claude',
       'codex',
       'opencode',
+      'mimocode',
       'codebuddy',
       'cursor',
       'windsurf',
     ]);
     expect(providers.find((p) => p.provider === 'codex')?.files).toContain('AGENTS.md');
+    expect(providers.find((p) => p.provider === 'mimocode')?.files).toContain('AGENTS.md');
+    expect(providers.find((p) => p.provider === 'mimocode')?.aliases).toContain('mimo-code');
     expect(providers.find((p) => p.provider === 'codebuddy')?.aliases).toContain('code buddy');
     expect(providers.find((p) => p.provider === 'cursor')?.files).toContain('.cursorrules');
     expect(providers.find((p) => p.provider === 'windsurf')?.files).toContain('.windsurfrules');
@@ -82,7 +88,7 @@ describe('installAgentSupport', () => {
       providers: parseAgentProviders('all'),
     });
 
-    expect(report.providers).toEqual(['claude', 'codex', 'opencode', 'codebuddy', 'cursor', 'windsurf']);
+    expect(report.providers).toEqual(['claude', 'codex', 'opencode', 'mimocode', 'codebuddy', 'cursor', 'windsurf']);
     expect(existsSync(join(root, 'AGENTS.md'))).toBe(true);
     expect(existsSync(join(root, 'CLAUDE.md'))).toBe(true);
     expect(existsSync(join(root, 'CODEBUDDY.md'))).toBe(true);
@@ -235,14 +241,15 @@ describe('detectAgentProviders', () => {
     expect(detected.reasons.claude).toContain('.claude/skills/spec-manager');
   });
 
-  it('detects AGENTS.md as codex and opencode', () => {
+  it('detects AGENTS.md as codex opencode and mimocode', () => {
     writeFileSync(join(root, 'AGENTS.md'), '# rules\n', 'utf8');
 
     const detected = detectAgentProviders(paths);
 
-    expect(detected.providers).toEqual(['codex', 'opencode']);
+    expect(detected.providers).toEqual(['codex', 'opencode', 'mimocode']);
     expect(detected.reasons.codex).toContain('AGENTS.md');
     expect(detected.reasons.opencode).toContain('AGENTS.md');
+    expect(detected.reasons.mimocode).toContain('AGENTS.md');
   });
 
   it('detects codebuddy cursor and windsurf markers', () => {
@@ -266,7 +273,7 @@ describe('detectAgentProviders', () => {
 
     const detected = detectAgentProviders(paths);
 
-    expect(detected.providers).toEqual(['claude', 'codex', 'opencode', 'windsurf']);
+    expect(detected.providers).toEqual(['claude', 'codex', 'opencode', 'mimocode', 'windsurf']);
     expect(detected.reasons.claude).toEqual(['CLAUDE.md', '.claude/skills/spec-manager']);
   });
 });

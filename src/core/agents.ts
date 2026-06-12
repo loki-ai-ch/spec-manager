@@ -2,7 +2,7 @@ import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync
 import { dirname, join, relative } from 'node:path';
 import type { ProjectPaths } from './paths.js';
 
-export const AGENT_PROVIDERS = ['claude', 'codex', 'opencode', 'codebuddy', 'cursor', 'windsurf'] as const;
+export const AGENT_PROVIDERS = ['claude', 'codex', 'opencode', 'mimocode', 'codebuddy', 'cursor', 'windsurf'] as const;
 
 export type AgentProvider = (typeof AGENT_PROVIDERS)[number];
 export type AgentProviderSelection = AgentProvider | 'all';
@@ -97,6 +97,16 @@ export const AGENT_PROVIDER_INFO: AgentProviderInfo[] = [
     files: ['AGENTS.md'],
     description: 'OpenCode project instructions via AGENTS.md.',
     notes: ['OpenCode reads AGENTS.md and also falls back to CLAUDE.md when AGENTS.md is absent.'],
+    installSteps: [
+      { kind: 'template', source: 'templates/agents/AGENTS.md', target: 'AGENTS.md' },
+    ],
+  },
+  {
+    provider: 'mimocode',
+    aliases: ['mimocode', 'mimo-code', 'mimo code', 'mimo'],
+    files: ['AGENTS.md'],
+    description: 'MiMo-Code project instructions via AGENTS.md.',
+    notes: ['MiMo-Code reads project instructions from AGENTS.md.'],
     installSteps: [
       { kind: 'template', source: 'templates/agents/AGENTS.md', target: 'AGENTS.md' },
     ],

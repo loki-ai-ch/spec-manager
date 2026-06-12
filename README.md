@@ -26,7 +26,7 @@
 - **Decision cards** with `what/why/affectedCriteria` + topic query
 - **Rule audit** with at-least-once local JSON accumulator
 - **Delta specs** (OpenSpec-style `changes/<name>/` with ADDED/MODIFIED/REMOVED/RENAMED + archive merge)
-- **Multi-agent setup** — auto-detect or explicitly install instructions for Claude Code, Codex, OpenCode, CodeBuddy, Cursor, and Windsurf
+- **Multi-agent setup** — auto-detect or explicitly install instructions for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, and Windsurf
 - **Interactive workflow view** — browse topics, specs, tasks, and next-step suggestions from one terminal UI
 - **Shell completion** — install dynamic zsh/bash/fish completion for commands and spec codes
 - **RFC 2119** keywords (SHALL/MUST/SHOULD) validation in acceptance criteria
@@ -46,7 +46,7 @@ npm install -g spec-manager
 
 ## AI Agent Setup
 
-spec-manager is agent-agnostic: the CLI stores the source of truth locally, and AI tools only need a workflow entrypoint that enforces the same rules. Built-in setup supports Claude Code, Codex, OpenCode, CodeBuddy, and other `AGENTS.md`-compatible agents.
+spec-manager is agent-agnostic: the CLI stores the source of truth locally, and AI tools only need a workflow entrypoint that enforces the same rules. Built-in setup supports Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, and other `AGENTS.md`-compatible agents.
 
 Not every tool has a native "skills" directory. spec-manager installs the closest equivalent for each platform: real skills where the platform supports them, and a project-level `AGENTS.md` workflow capsule where it does not.
 
@@ -66,6 +66,7 @@ This writes:
 | Claude Code | Native skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
 | Codex | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
 | OpenCode | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
+| MiMo-Code | `AGENTS.md` workflow capsule, not a native skill | `AGENTS.md` |
 | CodeBuddy | Native skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
 | Cursor | Project rules | `.cursor/rules/spec-manager.mdc` |
 | Windsurf | Project rules | `.windsurf/rules/spec-manager.md` |
@@ -76,22 +77,25 @@ Use a narrower install when needed:
 spec-manager project agents --provider list
 spec-manager project agents --dry-run
 spec-manager project agents --provider all --dry-run
-spec-manager project agents --provider codex,cursor,windsurf
+spec-manager project agents --provider codex,mimocode,cursor,windsurf
+spec-manager project agents --provider mimocode --dry-run
 spec-manager project agents --provider codebuddy --force
 ```
 
 Use `--dry-run` to preview created, overwritten, and skipped files before touching the project.
 
-References: [Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md), [OpenCode rules](https://opencode.ai/docs/rules/), [CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills).
+References: [Codex `AGENTS.md`](https://github.com/openai/codex/blob/main/docs/agents_md.md), [OpenCode rules](https://opencode.ai/docs/rules/), [MiMo-Code](https://github.com/XiaomiMiMo/MiMo-Code), [CodeBuddy skills](https://www.codebuddy.ai/docs/cli/skills).
 
 For Codex CLI, do not look for a `skills` command or directory. Run Codex from the project root and it will read `AGENTS.md`. Ask it to "Use spec-manager ..." and the file acts as the spec-manager workflow entrypoint.
+
+For MiMo-Code, install the CLI with `npm install -g @mimo-ai/cli`, add the shared capsule with `spec-manager project agents --provider mimocode`, then run `mimocode` from the project root. MiMo-Code reads `AGENTS.md`, so the same spec-manager workflow rules apply.
 
 ### Manual install
 
 If you do not want to use the installer, copy the templates directly:
 
 ```bash
-# Codex / OpenCode / AGENTS.md-compatible tools (skill-like workflow capsule)
+# Codex / OpenCode / MiMo-Code / AGENTS.md-compatible tools (skill-like workflow capsule)
 cp path/to/spec-manager/templates/agents/AGENTS.md my-project/AGENTS.md
 
 # Claude Code
