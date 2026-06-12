@@ -1,14 +1,14 @@
 {
   "rules": {
     "R1": 47,
-    "R2": 93,
+    "R2": 94,
     "R3": 1,
-    "R4": 77,
-    "R5": 2,
+    "R4": 78,
+    "R5": 3,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 93,
+    "R9": 94,
     "R10": 2,
     "R11": 0,
     "R12": 2,
@@ -18,7 +18,7 @@
     "R16": 12,
     "R17": 0,
     "R18": 6,
-    "R19": 78,
+    "R19": 79,
     "R20": 0,
     "R21": 0,
     "R22": 46,
@@ -3055,9 +3055,39 @@
       "timestamp": "2026-06-12T02:21:57.425Z",
       "specCode": "workflow-hardening-L3.1.5",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-12T10:29:25.685Z",
+      "specCode": "spec-manager-ai-ux-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-12T10:32:59.365Z",
+      "specCode": "spec-manager-ai-ux-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-12T10:32:59.366Z",
+      "specCode": "spec-manager-ai-ux-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-12T10:36:03.363Z",
+      "specCode": "spec-manager-ai-ux-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-12T10:36:54.268Z",
+      "specCode": "spec-manager-ai-ux-L3.1.6",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-12T02:21:57.425Z",
+  "lastUpdated": "2026-06-12T10:36:54.268Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

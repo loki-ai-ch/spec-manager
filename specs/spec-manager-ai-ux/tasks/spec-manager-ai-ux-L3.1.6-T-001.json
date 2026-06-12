@@ -1,0 +1,74 @@
+{
+  "id": "T-001",
+  "specCode": "spec-manager-ai-ux-L3.1.6",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 README/readme_zh、spec-manager-ai-ux-L2.1 和现有命令入口",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"完成 README/readme_zh、spec-manager-ai-ux-L2.1 和现有新手命令入口上下文收集\",\"files\":[\"README.md\",\"readme_zh.md\",\"specs/spec-manager-ai-ux/spec-manager-ai-ux-L3.1.6.md\"]}",
+      "reportedAt": "2026-06-12T10:33:45.361Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "编辑 README.md 简化首屏、Quick Start 和 AI agent 接入",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"README.md 改为短首页、3 分钟开始、MiMo-Code 快速接入和精简命令参考\",\"files\":[\"README.md\"]}",
+      "reportedAt": "2026-06-12T10:35:26.603Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "编辑 readme_zh.md 同步中文新手路径",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"readme_zh.md 同步中文新手路径，直接说明不用先理解完整流程\",\"files\":[\"readme_zh.md\"]}",
+      "reportedAt": "2026-06-12T10:36:35.769Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "收纳复杂教程和命令参考，避免首屏过载",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"移除 README 中冗长端到端教程，把高级内容收纳为常用命令、文件布局和深入链接\",\"files\":[\"README.md\",\"readme_zh.md\"]}",
+      "reportedAt": "2026-06-12T10:36:20.853Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "验证 targeted tests、npm run build 和 git diff --check",
+      "status": "succeeded",
+      "toolName": "multi_tool_use.parallel",
+      "outputJson": "{\"summary\":\"targeted tests、npm run build、git diff --check 均通过；README/readme_zh 均降到 175 行\",\"files\":[]}",
+      "reportedAt": "2026-06-12T10:35:56.453Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-12T10:33:38.334Z",
+  "finishedAt": "2026-06-12T10:36:42.720Z",
+  "created": "2026-06-12T10:33:27.547Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/project-agents.test.ts src/core/__tests__/agents.test.ts && npm run build && git diff --check",
+      "exitCode": 0,
+      "summary": "provider targeted tests passed (2 files, 30 tests); build passed; diff check passed; README and readme_zh reduced to 175 lines each",
+      "artifacts": [],
+      "coversAc": [
+        "README-ONBOARDING"
+      ],
+      "created": "2026-06-12T10:35:56.480Z",
+      "layer": "functional"
+    }
+  ]
+}
