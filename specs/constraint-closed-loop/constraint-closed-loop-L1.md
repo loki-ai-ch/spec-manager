@@ -4,14 +4,14 @@ level: L1
 title: 约束闭环增强 — 机器可校验的验收与带错重试
 topic: constraint-closed-loop
 parentCode: null
-status: confirmed
-created: '2026-06-10T12:00:00.000Z'
-updated: '2026-06-10T12:30:00.000Z'
+status: implemented
 aiSummary: >-
-  约束闭环增强：task complete 前自动执行验证命令、L3 AC 支持 @verify 机器校验、
-  step failed 上下文自动注入重试、verification 分层标记(compile/functional/smoke)、
-  audit show 输出 compliance PASS/FAIL 判定
-changeSummary: 用户确认 L1，进入 confirmed
+  约束闭环增强：task complete 前自动执行验证命令、L3 AC 支持 @verify 机器校验、 step failed
+  上下文自动注入重试、verification 分层标记(compile/functional/smoke)、 audit show 输出
+  compliance PASS/FAIL 判定
+created: '2026-06-10T12:00:00.000Z'
+updated: '2026-06-15T09:30:21.686Z'
+changeSummary: 'cascade: task-complete'
 ---
 # 约束闭环增强 — 需求文档
 

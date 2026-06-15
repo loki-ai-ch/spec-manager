@@ -201,6 +201,7 @@ export function runVerificationCommandGate(input: TaskCompletionInput, specConte
     gate: 'verification-commands',
     status: 'passed',
     message: `${cmdResults.length} verification command(s) passed`,
+    metadata: { passed: cmdResults.length, total: cmdResults.length },
   };
 }
 
@@ -210,7 +211,12 @@ export function runVerifyRuleGate(input: TaskCompletionInput, specContent: strin
   }
   const verifyRules = parseVerifyRules(specContent, '验收标准');
   if (verifyRules.length === 0) {
-    return { gate: 'verify-rules', status: 'passed', message: 'no @verify rules' };
+    return {
+      gate: 'verify-rules',
+      status: 'passed',
+      message: 'no @verify rules',
+      metadata: { passed: 0, total: 0 },
+    };
   }
   const ruleResults = executeVerifyRules(verifyRules, input.paths.root);
   const anyRuleFailed = ruleResults.some(r => !r.passed);
@@ -227,6 +233,7 @@ export function runVerifyRuleGate(input: TaskCompletionInput, specContent: strin
     gate: 'verify-rules',
     status: 'passed',
     message: `${ruleResults.length} @verify rule(s) passed`,
+    metadata: { passed: ruleResults.length, total: ruleResults.length },
   };
 }
 

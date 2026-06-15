@@ -4,15 +4,14 @@ level: L2
 title: 技术方案：约束闭环增强
 topic: constraint-closed-loop
 parentCode: constraint-closed-loop-L1
-status: confirmed
-created: '2026-06-10T13:00:00.000Z'
-updated: '2026-06-10T13:30:00.000Z'
+status: implemented
 aiSummary: >-
-  L2 拆 3 个 L3：L3.1.1 @verify 规则解析执行(AC-2)、L3.1.2 task-complete
-  验证钩子+step failed 注入+verification layer(AC-1/3/4)、L3.1.3 audit
-  compliance 格式+task show 分组(AC-5)。关键：@verify 放验收标准段内、
-  complete 默认拒绝验证失败、失败通过 warnings 注入、layer 固定枚举
-changeSummary: 用户确认 L2，进入 confirmed
+  L2 拆分并对账约束闭环：@verify 解析执行；task-completion 应用用例在 R5/evidence 后、级联前执行验证；异常恢复使用
+  scoped skip + required reason 审计；lastFailedOutput 持久化失败上下文；verification layer
+  与 audit compliance 契约已落地。
+created: '2026-06-10T13:00:00.000Z'
+updated: '2026-06-15T09:43:00.393Z'
+changeSummary: follow-up L3.1.4 对账完成门禁模块路径、顺序、bypass 与失败上下文契约
 ---
 # 技术方案：约束闭环增强 — 技术设计
 
@@ -21,7 +20,7 @@ changeSummary: 用户确认 L2，进入 confirmed
 把 `constraint-closed-loop-L1` 的 5 条 AC 拆成 3 个可独立实施的模块：
 
 1. **@verify 机器校验**（AC-2）— 新增 `src/core/verify.ts`，解析 L3 验收标准中的 `@verify` 标记并自动执行
-2. **task-complete 验证钩子**（AC-1 + AC-3）— 修改 `src/core/task.ts`，complete 前自动执行验证命令，step failed 上下文注入重试
+2. **task-complete 验证钩子**（AC-1 + AC-3）— 由 `src/core/task-completion.ts` 编排完成门禁，`src/core/task.ts` 持久化 step failed 上下文
 3. **verification 分层 + audit 合规**（AC-4 + AC-5）— 扩展 verification 数据模型，调整 task show 输出，audit compliance 已基本可用只需微调
 
 架构关系：
@@ -40,8 +39,8 @@ changeSummary: 用户确认 L2，进入 confirmed
 |---|---|---|---|
 | @verify 语法位置 | A: L3 验收标准段内 B: 独立段 C: frontmatter | A | 验收标准和机器校验规则在同一段，减少上下文切换 |
 | @verify 规则类型 | A: 内置规则(file-exists/export-exists/command) B: 纯命令执行 C: 插件式 | A | 内置规则覆盖 80% 场景，command 兜底任意校验 |
-| task complete 验证失败处理 | A: 拒绝 complete B: warning 允许继续 C: --force 跳过 | A + C | 默认拒绝保证质量，--force 用于紧急场景 |
-| 失败上下文注入方式 | A: warnings 数组追加 B: 独立字段 C: 写文件 | A | 复用现有 warnings 机制，不改 task JSON 结构 |
+| task complete 验证失败处理 | A: 拒绝 complete B: warning 允许继续 C: scoped skip + reason | A + C | 默认拒绝保证质量；异常恢复按门禁独立跳过，强制提供 reason 并记录审计 |
+| 失败上下文注入方式 | A: warnings 数组追加 B: 独立字段 C: 写文件 | A + B | `TaskRecord.lastFailedOutput` 持久化失败输出，后续 step 与 harness context 复用 warnings 展示 |
 | verification layer 枚举 | A: compile/functional/smoke 三级 B: 自由文本 C: 数字优先级 | A | 固定枚举便于分组和排序，覆盖主要验收层级 |
 | audit compliance 现状 | 已有 checkCompliance + showSummary | 微调 | R18 已在基线中，L1 描述略有过时；保持现状 |
 
@@ -50,7 +49,8 @@ changeSummary: 用户确认 L2，进入 confirmed
 | 模块/路径 | 变更类型 | 范围 | 测试策略 |
 |---|---|---|---|
 | `src/core/verify.ts` | **新增** | @verify 规则解析 + 执行（file-exists/export-exists/command） | 单元测试覆盖三种规则类型 + 边界 case |
-| `src/core/task.ts` | 修改 | `completeTaskUnlocked()` 增加验证命令执行；`reportStep()` 失败时持久化 outputJson；`addTaskVerification()` 增加 layer 参数 | 现有测试 + 新增 complete 前验证、失败注入、layer 测试 |
+| `src/core/task-completion.ts` | 修改 | `runTaskCompletion()` 编排 R5、verification evidence、验证命令、@verify、级联与 R18 门禁 | 完成门禁应用用例测试 + 验证通过/失败/跳过测试 |
+| `src/core/task.ts` | 修改 | `completeTask()` 保持兼容 facade；`reportStep()` 持久化 outputJson；`addTaskVerification()` 增加 layer 参数 | 现有测试 + 失败注入、layer 与 facade 兼容测试 |
 | `src/core/harness.ts` | 修改 | `buildHarnessTaskContext()` 在 warnings 中追加上次失败摘要 | 现有测试 + 新增失败注入测试 |
 | `src/core/validate.ts` | 修改 | `validateSpecContent()` 增加 @verify 语法校验（warning-only） | 现有测试 + 新增 @verify 校验测试 |
 | `src/core/invariants.ts` | 修改 | `assertTaskHasSuccessfulVerification()` 可选按 layer 检查 | 现有测试 + 新增 layer 过滤测试 |
@@ -104,11 +104,15 @@ type VerifyRule =
 
 ### CLI: `spec-manager task complete <taskId>`
 
-**新增前置行为**：
+**完成门禁顺序**：
 
-1. 从 L3 spec `## 验证命令` 段提取命令
-2. 从 L3 spec `## 验收标准` 段提取 `@verify` 规则
-3. 依次执行，任一 exitCode ≠ 0 时拒绝 complete
+1. 检查 task / L3 status 与 R5 steps
+2. 检查已有 successful verification evidence
+3. 从 L3 spec `## 验证命令` 段提取并执行命令
+4. 从 L3 spec `## 验收标准` 段提取并执行 `@verify` 规则
+5. 验证通过后执行 lifecycle cascade，最后检查 R18
+
+验证命令和 `@verify` 任一失败 SHALL 拒绝 complete，且 SHALL 在 lifecycle cascade 前完成。
 
 **成功输出**：
 ```text
@@ -126,15 +130,18 @@ type VerifyRule =
     FAIL src/core/__tests__/verify.test.ts
     ...
 ✗ task complete 拒绝：验证未通过
-  使用 --force 跳过验证（不推荐）
+  异常恢复按需使用 --skip-verification 或 --skip-verify，并提供 --reason
 ```
 
 **新增参数**：
 
 | 参数 | 类型 | 说明 |
 |---|---|---|
-| `--force` | boolean | 跳过验证命令执行（紧急场景） |
-| `--skip-verify` | boolean | 跳过 @verify 规则执行 |
+| `--force` | boolean | 已废弃；调用时返回 `DEPRECATED_FORCE` |
+| `--skip-r18` | boolean | 跳过 R18 门禁；必须提供 `--reason` |
+| `--skip-verification` | boolean | 跳过验证命令执行；必须提供 `--reason` |
+| `--skip-verify` | boolean | 跳过 @verify 规则执行；必须提供 `--reason` |
+| `--reason` | string | 任一 scoped skip 的必填审计原因 |
 
 ### CLI: `spec-manager task step --status failed`
 
@@ -198,12 +205,12 @@ compliance: FAIL
 | @verify: command 执行超时 | 校验失败 | 30s 超时，输出 timeout 错误 | 优化命令或增加超时 |
 | 旧 task JSON 无 lastFailedOutput | 无失败上下文 | warnings 中不输出 | 无需恢复，新 task 自动包含 |
 | 旧 verification 无 layer | 分组显示 | 默认归类为 `functional` | 无需恢复 |
-| --force 跳过验证 | 代码可能有问题 | 输出 warning 标记已跳过 | 后续手动验证 |
+| scoped skip 跳过完成门禁 | 代码或审计可能不完整 | 要求 `--reason` 并记录 task-complete-bypass 审计事件 | 后续补充验证或决策后重新对账 |
 
 ## 向后兼容
 
 - **Task JSON**: `lastFailedOutput` 和 `layer` 都是新增字段，旧 task 文件无需迁移
-- **CLI**: `task complete` 新增验证是增强行为，`--force` 提供逃生口
+- **CLI**: `task complete` 新增验证是增强行为；`--force` 已废弃，scoped skip + `--reason` 提供可审计逃生口
 - **@verify 语法**: 纯新增，不影响现有 L3 spec 内容
 - **audit compliance**: 已有功能，仅输出格式微调
 
@@ -215,14 +222,14 @@ compliance: FAIL
 用户 → task complete T-001
   ├─ findTaskById
   ├─ assertTaskTransition(running → completed)
+  ├─ R5: 检查所有 step 已 succeeded
+  ├─ assertTaskHasSuccessfulVerification
   ├─ extractVerificationCommands(L3 ## 验证命令)  ← 新增
   │   └─ 逐条执行，收集 exitCode
   ├─ extractVerifyRules(L3 ## 验收标准)           ← 新增
   │   └─ 逐条执行 file-exists/export-exists/command
   ├─ 任一失败?
   │   └─ 拒绝 complete，输出错误摘要
-  ├─ R5: 检查所有 step 已 succeeded
-  ├─ assertTaskHasSuccessfulVerification
   ├─ cascade implemented
   └─ R18: 检查决策卡片
 ```

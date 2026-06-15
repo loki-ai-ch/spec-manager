@@ -132,7 +132,7 @@ exit 1
     expect(() => completeTask({ paths, taskId: task.id, skipR18Check: true, bypassReason: 'test fixture' })).toThrow(/验证命令失败/);
   });
 
-  it('--force 跳过验证命令执行', () => {
+  it('skipVerification 跳过验证命令执行', () => {
     const content = `# L3
 
 ## 目标

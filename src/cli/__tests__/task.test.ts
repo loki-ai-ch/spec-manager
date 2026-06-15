@@ -4,7 +4,7 @@ import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerTaskCommands } from '../task.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
-import { createSpec, updateSpec } from '../../core/spec-io.js';
+import { createSpec, findSpecByCode, updateSpec } from '../../core/spec-io.js';
 import { addTaskVerification, createTask, findTask, reportStep, startTask } from '../../core/task.js';
 
 let project: TestProject;
@@ -416,5 +416,42 @@ describe('task CLI', () => {
       'task',
     ]);
     expect(result.gateResults).toBeUndefined();
+  });
+
+  it('prints successful verification gate summaries', async () => {
+    const specCode = createFrozenL3WithTask();
+    const spec = findSpecByCode(project.paths, specCode)!;
+    updateSpec(project.paths, specCode, {
+      content: spec.content.replace('npm test -- --run src/cli/__tests__/task.test.ts', 'echo ok'),
+      aiSummary: spec.fm.aiSummary,
+    });
+    for (let stepNo = 1; stepNo <= 8; stepNo += 1) {
+      reportStep({
+        paths: project.paths,
+        taskId: 'T-001',
+        specCode,
+        stepNo,
+        status: 'succeeded',
+        outputJson: '{"summary":"done"}',
+      });
+    }
+    addTaskVerification({
+      paths: project.paths,
+      taskId: 'T-001',
+      specCode,
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+    });
+
+    await makeProgram().parseAsync([
+      'task', 'complete', 'T-001',
+      '--spec', specCode,
+      '--skip-r18',
+      '--reason', 'test fixture',
+    ], { from: 'user' });
+
+    expect(output()).toContain('✓ 验证命令通过 (1/1)');
+    expect(output()).toContain('✓ @verify 规则通过 (0/0)');
   });
 });

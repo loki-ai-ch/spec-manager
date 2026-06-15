@@ -1,16 +1,56 @@
 ---
 code: constraint-closed-loop-L3.1.1-verify
 level: L3
-title: "@verify 规则解析与执行"
+title: '@verify 规则解析与执行'
 topic: constraint-closed-loop
 parentCode: constraint-closed-loop-L2.1
-status: draft
-created: '2026-06-10T14:00:00.000Z'
-updated: '2026-06-10T14:00:00.000Z'
+status: implemented
 aiSummary: >-
-  新增 src/core/verify.ts 实现 @verify 标记语法解析(file-exists/export-exists/
-  command 三种规则)与执行；扩展 validate.ts 增加 @verify 语法校验(warning-only)；
-  为 L3.1.2 hooks 提供 parseVerifyRules/executeVerifyRules 基础设施。
+  新增 src/core/verify.ts 实现 file-exists/export-exists/command 三种机器校验规则的解析与执行；扩展
+  validate.ts 提供 warning-only 语法校验，并为 constraint-closed-loop-L3.1.2-hooks 提供
+  parseVerifyRules/executeVerifyRules 基础设施。
+coveredTasks:
+  - T-001
+steps:
+  - stepNo: 1
+    stepType: mcp_tool
+    name: '上下文收集: 读取 L3/L2 spec + 受影响模块源码'
+    status: pending
+  - stepNo: 2
+    stepType: mcp_tool
+    name: 核对 verify.ts 类型定义(VerifyRule/VerifyResult)
+    status: pending
+  - stepNo: 3
+    stepType: mcp_tool
+    name: 核对 parseVerifyRules 三种规则解析
+    status: pending
+  - stepNo: 4
+    stepType: mcp_tool
+    name: 核对 executeVerifyRules 三种规则执行
+    status: pending
+  - stepNo: 5
+    stepType: mcp_tool
+    name: 核对 verify.ts 导出注册到 index.ts
+    status: pending
+  - stepNo: 6
+    stepType: mcp_tool
+    name: 核对 validateSpecContent @verify 语法校验
+    status: pending
+  - stepNo: 7
+    stepType: mcp_tool
+    name: 核对 verify.test.ts 测试(parse + execute)
+    status: pending
+  - stepNo: 8
+    stepType: mcp_tool
+    name: 核对 validate.test.ts @verify 校验测试
+    status: pending
+  - stepNo: 9
+    stepType: mcp_tool
+    name: '验证: npm test + npm run lint + npm run build'
+    status: pending
+created: '2026-06-10T14:00:00.000Z'
+updated: '2026-06-15T09:47:08.903Z'
+changeSummary: 交付收口：避免验收标准中的说明性示例被误识别为非法 @verify 行
 ---
 # "@verify 规则解析与执行" — 实施规格
 
@@ -320,9 +360,9 @@ if (level === 'L3') {
 
 ## 验收标准
 
-- `@verify: file-exists(path)` 在验收标准段内 SHALL 被解析为 `VerifyRule` 并可通过 `executeVerifyRules` 执行
-- `@verify: export-exists(file, symbol)` SHALL 检查文件是否导出指定符号
-- `@verify: command(cmd)` SHALL 执行命令并以 exitCode=0 判定通过
+- `file-exists(path)` 类型的机器校验标记在验收标准段内 SHALL 被解析为 `VerifyRule` 并可通过 `executeVerifyRules` 执行
+- `export-exists(file, symbol)` 类型的机器校验标记 SHALL 检查文件是否导出指定符号
+- `command(cmd)` 类型的机器校验标记 SHALL 执行命令并以 exitCode=0 判定通过
 - 不在 `## 验收标准` 段内的 `@verify` 行 SHALL 被忽略
 - `validateSpecContent('L3', content)` SHALL 对 @verify 语法错误输出 warning（不 throw）
 - @verify: file-exists(src/core/verify.ts)

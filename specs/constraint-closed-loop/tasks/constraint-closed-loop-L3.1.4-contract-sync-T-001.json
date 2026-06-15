@@ -1,0 +1,75 @@
+{
+  "id": "T-001",
+  "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "核对 change proposal、父 L2/L3.1.2 与完成门禁实现",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对确认规格漂移：完成用例已拆到 task-completion.ts；门禁顺序为 R5/evidence 后验证、级联前；force 已废弃并要求 scoped skip + reason；lastFailedOutput 持久化到 TaskRecord\",\"files\":[\"src/core/task-completion.ts\",\"src/core/task.ts\",\"src/cli/task.ts\",\"specs/constraint-closed-loop/constraint-closed-loop-L2.1.md\",\"specs/constraint-closed-loop/constraint-closed-loop-L3.1.2-hooks.md\"]}",
+      "reportedAt": "2026-06-15T09:39:40.568Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "对账 constraint-closed-loop-L2.1 完成门禁契约",
+      "status": "succeeded",
+      "toolName": "spec-manager",
+      "outputJson": "{\"summary\":\"对账父 L2 的完成门禁模块、顺序、scoped bypass 与失败上下文数据模型\",\"files\":[\"specs/constraint-closed-loop/constraint-closed-loop-L2.1.md\"]}",
+      "reportedAt": "2026-06-15T09:43:06.260Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "对账 constraint-closed-loop-L3.1.2-hooks 实施记录",
+      "status": "succeeded",
+      "toolName": "spec-manager",
+      "outputJson": "{\"summary\":\"对账 L3.1.2 的实际完成模块、门禁顺序与执行记录\",\"files\":[\"specs/constraint-closed-loop/constraint-closed-loop-L3.1.2-hooks.md\"]}",
+      "reportedAt": "2026-06-15T09:43:19.835Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证规格一致性与完成门禁专项测试",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"父 L2/L3.1.2 规格校验通过，旧契约残留扫描仅保留 force 已废弃描述，完成门禁专项测试 43 项通过\",\"tests\":[\"spec-manager spec validate constraint-closed-loop-L2.1\",\"spec-manager spec validate constraint-closed-loop-L3.1.2-hooks\",\"rg drift scan\",\"43 targeted tests passed\"]}",
+      "reportedAt": "2026-06-15T09:43:36.967Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "解除 change proposal 并验证 npm test + lint + build + project doctor",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"已解除规格漂移 proposal，并通过全量测试、类型检查、构建与项目诊断\",\"tests\":[\"change proposal resolved\",\"npm test: 46 files, 572 tests passed\",\"npm run lint: passed\",\"npm run build: passed\",\"spec-manager project doctor: ok\"]}",
+      "reportedAt": "2026-06-15T09:44:06.992Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-15T09:39:19.643Z",
+  "finishedAt": "2026-06-15T09:44:29.008Z",
+  "created": "2026-06-15T09:39:15.493Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "spec validation + targeted tests + npm test + npm run lint + npm run build + project doctor",
+      "exitCode": 0,
+      "summary": "L2/L3.1.2 contract sync validated; proposal resolved; 43 targeted and 572 full tests passed; lint/build/doctor passed",
+      "artifacts": [],
+      "coversAc": [
+        "contract-sync",
+        "proposal-resolved"
+      ],
+      "created": "2026-06-15T09:44:13.543Z",
+      "layer": "functional"
+    }
+  ]
+}

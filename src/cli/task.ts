@@ -17,7 +17,6 @@ import {
   createTask,
   startTask,
   reportStep,
-  completeTask,
   failTask,
   waitTask,
   showTask,
@@ -25,6 +24,7 @@ import {
   type TaskStatus,
   VERIFICATION_LAYER_ORDER,
 } from '../core/task.js';
+import { runTaskCompletion } from '../core/task-completion.js';
 import {
   buildHarnessTaskContext,
   renderHarnessTaskContextText,
@@ -247,7 +247,7 @@ export function registerTaskCommands(program: Command): void {
         throw new Error('DEPRECATED_FORCE: --force 已移除；请按需使用 --skip-r18、--skip-verification 或 --skip-verify，并提供 --reason');
       }
       const paths = getPaths();
-      const result = completeTask({
+      const result = runTaskCompletion({
         paths,
         taskId,
         specCode: opts.spec,
@@ -257,11 +257,20 @@ export function registerTaskCommands(program: Command): void {
         bypassReason: opts.reason,
       });
       if (opts.json) {
-        console.log(JSON.stringify(result, null, 2));
+        const { gateResults: _gateResults, ...legacyResult } = result;
+        console.log(JSON.stringify(legacyResult, null, 2));
         return;
       }
       console.log(`✓ Task ${result.task.id} → completed`);
       console.log(`  finishedAt: ${result.task.finishedAt}`);
+      const verificationCommands = result.gateResults.find(gate => gate.gate === 'verification-commands');
+      const verifyRules = result.gateResults.find(gate => gate.gate === 'verify-rules');
+      if (verificationCommands?.status === 'passed') {
+        console.log(`  ✓ 验证命令通过 (${verificationCommands.metadata?.passed ?? 0}/${verificationCommands.metadata?.total ?? 0})`);
+      }
+      if (verifyRules?.status === 'passed') {
+        console.log(`  ✓ @verify 规则通过 (${verifyRules.metadata?.passed ?? 0}/${verifyRules.metadata?.total ?? 0})`);
+      }
       if (result.cascadedSpecs.length > 0) {
         console.log('  cascaded:');
         for (const c of result.cascadedSpecs) {

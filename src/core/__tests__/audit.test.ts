@@ -233,13 +233,19 @@ describe('showSummary — 文本摘要', () => {
     hit({ paths, ruleId: 'R18' });
     hit({ paths, ruleId: 'R22' });
     const summary = showSummary(paths);
-    expect(summary).toContain('compliance: PASS');
+    const complianceLine = summary.split('\n').find(line => line.startsWith('compliance:'));
+    expect(complianceLine).toBe('compliance: PASS');
+    expect(complianceLine).not.toMatch(/[✓✗]/);
+    expect(summary).toContain('✓ R18: 1 (min 1)');
   });
 
   it('合规基线未满足时显示 FAIL', () => {
     hit({ paths, ruleId: 'R1' });
     const summary = showSummary(paths);
-    expect(summary).toContain('compliance: FAIL');
+    const complianceLine = summary.split('\n').find(line => line.startsWith('compliance:'));
+    expect(complianceLine).toBe('compliance: FAIL');
+    expect(complianceLine).not.toMatch(/[✓✗]/);
+    expect(summary).toContain('✓ R1: 1 (min 1)');
     expect(summary).toContain('✗ R4: 0 (min 1)');
   });
 

@@ -1,0 +1,128 @@
+{
+  "id": "T-001",
+  "specCode": "constraint-closed-loop-L3.1.1-verify",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"读取 L3/L2 spec、verify.ts、validate.ts、index.ts 与相关测试，确认实现已存在但生命周期待补齐。\",\"files\":[\"specs/constraint-closed-loop/constraint-closed-loop-L3.1.1-verify.md\",\"src/core/verify.ts\",\"src/core/validate.ts\",\"src/index.ts\",\"src/core/__tests__/verify.test.ts\",\"src/core/__tests__/validate.test.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:19.737Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "核对 verify.ts 类型定义(VerifyRule/VerifyResult)",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对 src/core/verify.ts 已定义 VerifyRule 与 VerifyResult，并覆盖 file-exists/export-exists/command 三类规则。\",\"files\":[\"src/core/verify.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:28.770Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "核对 parseVerifyRules 三种规则解析",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对 parseVerifyRules 已限定在指定 markdown 段内解析 @verify 行，支持三种规则并跳过未知类型或错误参数数量。\",\"files\":[\"src/core/verify.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:34.607Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "核对 executeVerifyRules 三种规则执行",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对 executeVerifyRules 已实现文件存在、导出符号和命令 exit code 执行逻辑，command 使用 30s 超时并截断输出。\",\"files\":[\"src/core/verify.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:40.401Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "核对 verify.ts 导出注册到 index.ts",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对公共入口已通过 src/index.ts 导出 core/verify.js 和 task-completion.js，后续模块可消费 verify API。\",\"files\":[\"src/index.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:45.750Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "核对 validateSpecContent @verify 语法校验",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对 validateSpecContent 已在 L3 验收标准段校验 @verify 语法，返回 syntax/type/arity warning 且不抛错。\",\"files\":[\"src/core/validate.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:51.651Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "核对 verify.test.ts 测试(parse + execute)",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对 verify.test.ts 覆盖三类规则解析、忽略非验收标准段、未知规则、参数错误、文件/导出/命令执行等场景。\",\"files\":[\"src/core/__tests__/verify.test.ts\"]}",
+      "reportedAt": "2026-06-15T09:07:59.666Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "核对 validate.test.ts @verify 校验测试",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"核对 validate.test.ts 已覆盖合法 @verify、未知类型、参数数量错误、格式错误，以及 L1/L2 不触发校验。\",\"files\":[\"src/core/__tests__/validate.test.ts\"]}",
+      "reportedAt": "2026-06-15T09:08:06.082Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "mcp_tool",
+      "name": "验证: npm test + npm run lint + npm run build",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"验证通过：npm test 46 files/571 tests passed，npm run lint 通过，npm run build 通过。\",\"files\":[]}",
+      "reportedAt": "2026-06-15T09:08:29.666Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-15T09:07:01.831Z",
+  "finishedAt": "2026-06-15T09:09:00.296Z",
+  "created": "2026-06-15T09:06:56.424Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-15T09:08:34.801Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Vitest passed: 46 files, 571 tests",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-15T09:08:40.719Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-15T09:08:47.485Z",
+      "layer": "compile"
+    }
+  ]
+}

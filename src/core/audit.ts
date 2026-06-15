@@ -214,7 +214,7 @@ export interface ComplianceResult {
   details: Array<{ ruleId: string; count: number; min: number; pass: boolean }>;
 }
 
-/** 检查最低合规基线：R1≥1, R4≥1, R13≥1, R22≥1 */
+/** 检查最低合规基线：R1≥1, R4≥1, R13≥1, R18≥1, R22≥1 */
 export function checkCompliance(state: AuditState): ComplianceResult {
   const details = COMPLIANCE_BASELINE.map(ruleId => {
     const count = state.rules[ruleId] ?? 0;

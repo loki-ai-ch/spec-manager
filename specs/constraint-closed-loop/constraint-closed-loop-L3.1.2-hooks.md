@@ -4,20 +4,85 @@ level: L3
 title: task complete 验证钩子与 step failed 上下文注入
 topic: constraint-closed-loop
 parentCode: constraint-closed-loop-L2.1
-status: draft
-created: '2026-06-10T14:00:00.000Z'
-updated: '2026-06-10T14:00:00.000Z'
+status: implemented
 aiSummary: >-
-  修改 task.ts 的 completeTaskUnlocked 增加验证命令+@verify 规则自动执行(AC-1)；
-  reportStep 失败时持久化 outputJson 到 lastFailedOutput 并在下次注入 warnings(AC-3)；
-  addTaskVerification 增加 layer 参数、showTask 按 layer 分组显示(AC-4)。
-  修改 invariants/harness/cli/task 配套支持。
+  由 task-completion.ts 的 runTaskCompletion 编排 R5/evidence 后、级联前的验证命令与 @verify
+  门禁；scoped skip 必须提供 reason 并审计。task.ts 持久化 lastFailedOutput、支持 verification
+  layer，harness/CLI 配套展示。
+coveredTasks:
+  - T-001
+steps:
+  - stepNo: 1
+    stepType: mcp_tool
+    name: '上下文收集: 读取 L3/L2 spec + 受影响模块源码'
+    status: pending
+  - stepNo: 2
+    stepType: mcp_tool
+    name: >-
+      核对数据模型扩展: VerificationLayer + TaskVerificationRecord.layer +
+      TaskRecord.lastFailedOutput
+    status: pending
+  - stepNo: 3
+    stepType: mcp_tool
+    name: 核对 addTaskVerification layer 参数
+    status: pending
+  - stepNo: 4
+    stepType: mcp_tool
+    name: 核对 reportStep 失败时持久化 outputJson 到 lastFailedOutput
+    status: pending
+  - stepNo: 5
+    stepType: mcp_tool
+    name: 核对 task complete 验证命令和 @verify 自动执行
+    status: pending
+  - stepNo: 6
+    stepType: mcp_tool
+    name: 核对 showTask verification 按 layer 分组
+    status: pending
+  - stepNo: 7
+    stepType: mcp_tool
+    name: 核对 invariants 按 layer 检查 verification
+    status: pending
+  - stepNo: 8
+    stepType: mcp_tool
+    name: 核对 harness buildHarnessTaskContext 注入 lastFailedOutput
+    status: pending
+  - stepNo: 9
+    stepType: mcp_tool
+    name: 核对 cli task complete skip/reason 语义和 force 废弃路径
+    status: pending
+  - stepNo: 10
+    stepType: mcp_tool
+    name: 核对 cli task verify --layer 参数
+    status: pending
+  - stepNo: 11
+    stepType: mcp_tool
+    name: 核对 cli task show 按 layer 分组显示
+    status: pending
+  - stepNo: 12
+    stepType: mcp_tool
+    name: 核对 task complete 验证钩子测试
+    status: pending
+  - stepNo: 13
+    stepType: mcp_tool
+    name: 核对 step failed 上下文注入测试
+    status: pending
+  - stepNo: 14
+    stepType: mcp_tool
+    name: 核对 verification layer 测试
+    status: pending
+  - stepNo: 15
+    stepType: mcp_tool
+    name: '验证: npm test + npm run lint + npm run build'
+    status: pending
+created: '2026-06-10T14:00:00.000Z'
+updated: '2026-06-15T09:43:14.418Z'
+changeSummary: follow-up L3.1.4 对账已实现的 completion 应用用例、门禁顺序与执行记录
 ---
 # task complete 验证钩子与 step failed 上下文注入 — 实施规格
 
 ## 目标
 
-实施 constraint-closed-loop-L2.1 的 deliverable 2：修改 `src/core/task.ts` 使 task complete 前自动执行验证命令和 @verify 规则(AC-1)、step failed 时持久化 outputJson 并在下次注入 warnings(AC-3)、verification 支持 layer 分层(AC-4)。
+实施 constraint-closed-loop-L2.1 的 deliverable 2：由 `src/core/task-completion.ts` 编排 task complete 验证门禁(AC-1)，由 `src/core/task.ts` 持久化 step failed outputJson 并支持 verification layer(AC-3/AC-4)。
 
 **前置依赖**: constraint-closed-loop-L3.1.1-verify implemented（需要 `parseVerifyRules` / `executeVerifyRules`）
 
@@ -33,7 +98,8 @@ aiSummary: >-
 
 - `spec-manager spec show constraint-closed-loop-L3.1.2-hooks --include-content`
 - 执行 Level 3 文件级分析(R23):
-  - Read `src/core/task.ts` — 确认 `completeTaskUnlocked()`(line 359)、`reportStep()`(line 256)、`addTaskVerification()`(line 315)、`showTask()`(line 474) 的精确签名和行为
+  - Read `src/core/task-completion.ts` — 确认 `runTaskCompletion()` 与各 completion gate 的精确签名和行为
+  - Read `src/core/task.ts` — 确认 `completeTask()` facade、`reportStep()`、`addTaskVerification()`、`showTask()` 的精确签名和行为
   - Read `src/core/invariants.ts` — 确认 `assertTaskHasSuccessfulVerification()`(line 19) 签名
   - Read `src/core/harness.ts` — 确认 `buildHarnessTaskContext()`(line 70) 和 `extractVerificationCommands()`(line 294)
   - Read `src/core/verify.ts` — 确认 L3.1.1 产出的 `parseVerifyRules` / `executeVerifyRules` 签名
@@ -139,16 +205,16 @@ if (input.status === 'failed' && input.outputJson) {
   {"summary": "reportStep 失败时持久化 outputJson 到 lastFailedOutput，下次调用注入 warnings", "files": ["src/core/task.ts"]}
   ```
 
-### Step 5 — 修改 completeTaskUnlocked()：验证命令 + @verify 自动执行
+### Step 5 — 修改 runTaskCompletion()：验证命令 + @verify 自动执行
 
-- 修改 `src/core/task.ts` 的 `completeTaskUnlocked()` 函数（line 359）：
-  - 在 R5 检查（all steps succeeded）**之前**插入验证逻辑
+- 修改 `src/core/task-completion.ts` 的 `runTaskCompletion()` 应用用例：
+  - 在 R5 和 successful verification evidence 检查之后、lifecycle cascade 之前执行验证逻辑
   - 从 L3 spec 内容提取验证命令（复用 `extractVerificationCommands` from harness.ts）
   - 从 L3 spec 内容提取 @verify 规则（使用 `parseVerifyRules` from verify.ts）
   - 依次执行，任一失败时拒绝 complete
 
 ```typescript
-// 在 completeTaskUnlocked() 中，assertTaskTransition 之后、R6 检查之前插入：
+// 在 runTaskCompletion() 中，R5/evidence gate 之后、lifecycle cascade 之前执行：
 
 // AC-1: 自动执行验证命令
 const spec = findSpecByCode(paths, input.specCode ?? task.specCode);
@@ -180,8 +246,8 @@ const ruleResults = verifyRules.length > 0
   : [];
 const anyRuleFailed = ruleResults.some(r => !r.passed);
 
-// 拒绝 complete 若任一失败（除非 --force）
-if (!input.skipVerify && (anyCmdFailed || anyRuleFailed)) {
+// 拒绝 complete 若任一失败（除非显式 skip 对应门禁并提供 reason）
+if ((!input.skipVerification && anyCmdFailed) || (!input.skipVerify && anyRuleFailed)) {
   const errorLines: string[] = [];
   if (cmdResults.length > 0) {
     const passed = cmdResults.filter(r => r.exitCode === 0).length;
@@ -198,13 +264,14 @@ if (!input.skipVerify && (anyCmdFailed || anyRuleFailed)) {
       errorLines.push(`  ${r.passed ? '✓' : '✗'} ${r.message}`);
     }
   }
-  throw new Error(`VERIFICATION_FAILED:\n${errorLines.join('\n')}\n使用 --force 跳过验证（不推荐）`);
+  throw new Error(`VERIFICATION_FAILED:\n${errorLines.join('\n')}\n如需异常恢复，请使用 --skip-verification 或 --skip-verify，并提供 --reason`);
 }
 ```
 
 - 需要新增 `CompleteInput` 字段：
   - `skipVerify?: boolean` — 跳过 @verify 规则执行（对应 `--skip-verify`）
-  - `skipVerification?: boolean` — 跳过验证命令执行（对应 `--force` 的新语义）
+  - `skipVerification?: boolean` — 跳过验证命令执行（对应 `--skip-verification`）
+  - `bypassReason?: string` — 跳过任一完成门禁时必填，用于审计记录
 
 ```typescript
 interface CompleteInput {
@@ -213,15 +280,16 @@ interface CompleteInput {
   specCode?: string;
   auditSink?: (ruleId: string) => void;
   skipR18Check?: boolean;
-  skipVerification?: boolean;  // 新增：跳过验证命令（--force）
+  skipVerification?: boolean;  // 新增：跳过验证命令（--skip-verification）
   skipVerify?: boolean;         // 新增：跳过 @verify 规则（--skip-verify）
+  bypassReason?: string;        // 新增：任一 skip 门禁时必填
 }
 ```
 
-- 需要导入：`execSync` from `node:child_process`，`parseVerifyRules` / `executeVerifyRules` from `./verify.js`
+- 复用 `runCommand`、`parseVerifyRules` / `executeVerifyRules` from `./verify.js`
 - 完成后 step_report outputJson:
   ```json
-  {"summary": "completeTaskUnlocked 增加验证命令+@verify 自动执行，失败拒绝 complete", "files": ["src/core/task.ts"]}
+  {"summary": "runTaskCompletion 增加验证命令+@verify 自动执行，失败拒绝 complete", "files": ["src/core/task-completion.ts"]}
   ```
 
 ### Step 6 — 修改 showTask()：verification 按 layer 分组
@@ -301,28 +369,37 @@ if (taskRecord?.lastFailedOutput) {
   {"summary": "buildHarnessTaskContext 在 warnings 中追加 lastFailedOutput 摘要", "files": ["src/core/harness.ts"]}
   ```
 
-### Step 9 — 修改 cli/task.ts：task complete 增加 --force/--skip-verify
+### Step 9 — 修改 cli/task.ts：task complete 增加 --skip-verification/--skip-verify/--reason
 
 - 修改 `src/cli/task.ts` 的 `task complete` 命令（line 284）：
-  - 现有 `--force` 参数改为跳过验证命令执行（当前仅跳过 R18）
+  - 保持 `--force` 为废弃参数，调用时 SHALL 抛出 `DEPRECATED_FORCE`
+  - 新增 `--skip-verification` 参数：跳过 L3 验证命令执行
   - 新增 `--skip-verify` 参数：跳过 @verify 规则执行
+  - 新增 `--reason <text>` 参数：跳过任一完成门禁时必填；缺失时 SHALL 抛出 `BYPASS_REASON_REQUIRED`
 
 ```typescript
 // task complete 命令修改：
 .command('complete <taskId>')
 .option('--spec <specCode>', 'scope to specific spec')
-.option('--force', 'skip verification command execution (emergency)')
+.option('--force', 'deprecated: use skip flags with --reason')
+.option('--skip-r18', 'skip R18 decision gate')
+.option('--skip-verification', 'skip L3 verification command execution')
 .option('--skip-verify', 'skip @verify rule execution')
+.option('--reason <text>', 'required reason when any completion gate is skipped')
 .option('--json', 'output as JSON')
 .action(async (taskId, opts) => {
+  if (opts.force) {
+    throw new Error('DEPRECATED_FORCE: --force 已移除；请按需使用 --skip-r18、--skip-verification 或 --skip-verify，并提供 --reason');
+  }
   // ... 现有逻辑 ...
   const result = completeTask({
     paths,
     taskId,
     specCode: opts.spec,
-    skipR18Check: opts.force,        // 保留现有行为
-    skipVerification: opts.force,    // 新增：--force 也跳过验证命令
+    skipR18Check: opts.skipR18,
+    skipVerification: opts.skipVerification,
     skipVerify: opts.skipVerify,     // 新增
+    bypassReason: opts.reason,
   });
   // ... 输出逻辑 ...
 });
@@ -330,10 +407,10 @@ if (taskRecord?.lastFailedOutput) {
 
 - 输出格式变更：
   - 成功时输出验证通过摘要：`✓ 验证命令通过 (N/N)` + `✓ @verify 规则通过 (N/N)`
-  - 失败时输出完整错误上下文（复用 completeTaskUnlocked 的 errorLines）
+  - 失败时输出完整错误上下文（复用 completion gate 的 errorLines）
 - 完成后 step_report outputJson:
   ```json
-  {"summary": "task complete 增加 --force 跳过验证、--skip-verify 跳过 @verify", "files": ["src/cli/task.ts"]}
+  {"summary": "task complete 增加 --skip-verification、--skip-verify 与 --reason，--force 保持废弃错误路径", "files": ["src/cli/task.ts"]}
   ```
 
 ### Step 10 — 修改 cli/task.ts：task verify 增加 --layer
@@ -386,18 +463,20 @@ if (result.verificationsByLayer && Object.keys(result.verificationsByLayer).leng
 ### Step 12 — 测试：task complete 验证钩子
 
 - 在 `src/core/__tests__/` 中新增或扩展测试：
-  - **completeTaskUnlocked 验证命令通过**：L3 含 `## 验证命令` 段，命令全部 exit 0 → complete 成功
-  - **completeTaskUnlocked 验证命令失败**：命令 exit 1 → 拒绝 complete，错误包含命令输出
-  - **completeTaskUnlocked @verify 通过**：L3 含 `@verify: file-exists(existing-file)` → complete 成功
-  - **completeTaskUnlocked @verify 失败**：`@verify: file-exists(nonexistent)` → 拒绝 complete
-  - **completeTaskUnlocked --force**：验证失败 + `skipVerification: true` → complete 成功
-  - **completeTaskUnlocked --skip-verify**：@verify 失败 + `skipVerify: true` → complete 成功
-  - **completeTaskUnlocked 无验证命令段**：跳过命令执行，仅执行 @verify
-  - **completeTaskUnlocked 无验收标准段**：跳过 @verify，仅执行验证命令
+  - **runTaskCompletion 验证命令通过**：L3 含 `## 验证命令` 段，命令全部 exit 0 → complete 成功
+  - **runTaskCompletion 验证命令失败**：命令 exit 1 → 拒绝 complete，错误包含命令输出
+  - **runTaskCompletion @verify 通过**：L3 含 `@verify: file-exists(existing-file)` → complete 成功
+  - **runTaskCompletion @verify 失败**：`@verify: file-exists(nonexistent)` → 拒绝 complete
+  - **runTaskCompletion --skip-verification**：验证命令失败 + `skipVerification: true` + `bypassReason` → complete 成功并记录 bypass
+  - **runTaskCompletion --skip-verify**：@verify 失败 + `skipVerify: true` + `bypassReason` → complete 成功并记录 bypass
+  - **runTaskCompletion skip 无 reason**：任一 skip=true 但缺少 `bypassReason` → 拒绝 complete
+  - **runTaskCompletion 无验证命令段**：跳过命令执行，仅执行 @verify
+  - **runTaskCompletion 无验收标准段**：跳过 @verify，仅执行验证命令
+  - **CLI --force 废弃路径**：`task complete --force` → 抛出 `DEPRECATED_FORCE`
 - 使用真实文件系统（temp dir），不 mock
 - 完成后 step_report outputJson:
   ```json
-  {"summary": "task complete 验证钩子测试覆盖通过/失败/force/skip-verify 场景", "files": ["src/core/__tests__/task-complete-verify.test.ts"]}
+  {"summary": "task complete 验证钩子测试覆盖通过/失败/skip-verification/skip-verify/reason/force-deprecated 场景", "files": ["src/core/__tests__/task-complete-verify.test.ts"]}
   ```
 
 ### Step 13 — 测试：step failed 上下文注入
@@ -434,8 +513,9 @@ if (result.verificationsByLayer && Object.keys(result.verificationsByLayer).leng
 
 - `spec-manager task complete` 在级联 status 前 SHALL 执行 L3 验证命令，exitCode ≠ 0 时 SHALL 拒绝 complete
 - `spec-manager task complete` SHALL 执行 @verify 规则，失败时 SHALL 拒绝 complete
-- `--force` SHALL 跳过验证命令执行
+- `--skip-verification` SHALL 跳过验证命令执行，且 SHALL 要求 `--reason`
 - `--skip-verify` SHALL 跳过 @verify 规则执行
+- `--force` SHALL 被拒绝，并提示改用 `--skip-r18` / `--skip-verification` / `--skip-verify` + `--reason`
 - `reportStep(status=failed, outputJson=...)` SHALL 持久化 outputJson 到 `task.lastFailedOutput`
 - 下次同 task 的 `reportStep` 调用 SHALL 在 warnings 中包含上次失败摘要
 - `addTaskVerification` SHALL 支持 `layer` 参数，值域 `compile|functional|smoke`，默认 `functional`
@@ -484,14 +564,14 @@ npm run build
     {"stepNo": 2, "stepType": "mcp_tool", "name": "数据模型扩展: VerificationLayer 类型 + TaskVerificationRecord.layer + TaskRecord.lastFailedOutput"},
     {"stepNo": 3, "stepType": "mcp_tool", "name": "修改 addTaskVerification 增加 layer 参数"},
     {"stepNo": 4, "stepType": "mcp_tool", "name": "修改 reportStep 失败时持久化 outputJson 到 lastFailedOutput"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "修改 completeTaskUnlocked 增加验证命令+@verify 自动执行"},
+    {"stepNo": 5, "stepType": "mcp_tool", "name": "修改 runTaskCompletion 增加验证命令+@verify 自动执行"},
     {"stepNo": 6, "stepType": "mcp_tool", "name": "修改 showTask verification 按 layer 分组"},
     {"stepNo": 7, "stepType": "mcp_tool", "name": "修改 invariants 按 layer 检查 verification"},
     {"stepNo": 8, "stepType": "mcp_tool", "name": "修改 harness buildHarnessTaskContext 注入 lastFailedOutput"},
-    {"stepNo": 9, "stepType": "mcp_tool", "name": "修改 cli task complete 增加 --force/--skip-verify"},
+    {"stepNo": 9, "stepType": "mcp_tool", "name": "修改 cli task complete 增加 --skip-verification/--skip-verify/--reason，保留 --force 废弃错误路径"},
     {"stepNo": 10, "stepType": "mcp_tool", "name": "修改 cli task verify 增加 --layer 参数"},
     {"stepNo": 11, "stepType": "mcp_tool", "name": "修改 cli task show 按 layer 分组显示"},
-    {"stepNo": 12, "stepType": "mcp_tool", "name": "测试: task complete 验证钩子(通过/失败/force/skip-verify)"},
+    {"stepNo": 12, "stepType": "mcp_tool", "name": "测试: task complete 验证钩子(通过/失败/skip-verification/skip-verify/reason/force-deprecated)"},
     {"stepNo": 13, "stepType": "mcp_tool", "name": "测试: step failed 上下文注入(持久化/warnings)"},
     {"stepNo": 14, "stepType": "mcp_tool", "name": "测试: verification layer(默认值/分组/按 layer 检查)"},
     {"stepNo": 15, "stepType": "mcp_tool", "name": "验证: npm test + npm run lint + npm run build"}
@@ -499,13 +579,13 @@ npm run build
 }
 ```
 
-autoConfirm=false — 需人工确认 completeTaskUnlocked 的验证执行位置（R5 之前）和 --force 语义是否合理。
+autoConfirm=false — 已人工确认 runTaskCompletion 的验证执行位置和完成门禁 scoped skip/reason 语义。
 
 ## 回滚方案
 
 | 场景 | 回滚操作 | 预估耗时 |
 |---|---|---|
-| completeTaskUnlocked 验证逻辑有 bug | `git revert <commit>`，恢复 task.ts 的 completeTaskUnlocked | < 2 min |
+| runTaskCompletion 验证逻辑有 bug | `git revert <commit>`，恢复 task-completion.ts 的完成门禁实现 | < 2 min |
 | lastFailedOutput 导致 task JSON 异常 | 删除 task JSON 中的 lastFailedOutput 字段，还原 reportStep | < 2 min |
 | layer 字段兼容问题 | 旧 task 无 layer 默认 functional，无需迁移；如需回滚删除 layer 相关代码 | < 3 min |
 
@@ -513,11 +593,11 @@ autoConfirm=false — 需人工确认 completeTaskUnlocked 的验证执行位置
 
 | 风险 | 应对 |
 |---|---|
-| completeTaskUnlocked 中 execSync 阻塞 | 30s 超时，与 L3.1.1 的 executeVerifyRules 一致 |
-| 验证命令可能有副作用（如写文件） | 文档说明：验证命令应幂等且无副作用；--force 提供逃生口 |
+| runTaskCompletion 中外部命令阻塞 | `runCommand` 使用 30s 超时，与 L3.1.1 的 executeVerifyRules 一致 |
+| 验证命令可能有副作用（如写文件） | 文档说明：验证命令应幂等且无副作用；异常恢复使用 `--skip-verification --reason <原因>` 并留审计记录 |
 | lastFailedOutput 可能很大（大 JSON） | warnings 中截断到 200-300 字符 |
 | 旧 task 无 layer 字段导致类型错误 | 所有读取 layer 的地方使用 `?? 'functional'` 兜底 |
-| completeTaskUnlocked 在事务内执行外部命令 | execSync 在 withProjectTransaction 的 snapshot 之后执行，失败时回滚 |
+| runTaskCompletion 在事务内执行外部命令 | 外部命令在 withProjectTransaction 的 snapshot 之后执行，失败时回滚 |
 
 ## 关联
 

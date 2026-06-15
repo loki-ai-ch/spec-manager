@@ -1,0 +1,74 @@
+{
+  "id": "T-001",
+  "specCode": "constraint-closed-loop-L3.1.3-audit",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "核对 audit.ts、audit.test.ts 与 cli/audit.ts 既有实现",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对确认运行时 compliance 主行已为 PASS/FAIL、R18 已在基线、CLI 直接调用 showSummary；发现代码注释漏 R18 且测试仅做子串断言\",\"files\":[\"src/core/audit.ts\",\"src/core/__tests__/audit.test.ts\",\"src/cli/audit.ts\"]}",
+      "reportedAt": "2026-06-15T09:28:22.756Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "修正 audit.ts 的 R18 合规基线注释",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"修正 checkCompliance 注释并确认 R18 保持在合规基线中\",\"files\":[\"src/core/audit.ts\"]}",
+      "reportedAt": "2026-06-15T09:28:41.786Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "强化 audit.test.ts 的 compliance 精确格式断言",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"强化 audit compliance PASS/FAIL 主行与 details 前缀契约测试\",\"files\":[\"src/core/__tests__/audit.test.ts\"]}",
+      "reportedAt": "2026-06-15T09:28:46.907Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "验证 audit 专项测试与真实 CLI 输出",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"audit 专项测试、构建与真实 CLI 输出格式通过；真实主行为 compliance: PASS，details 保留图标\",\"tests\":[\"npm test -- --run src/core/__tests__/audit.test.ts: 32 passed\",\"npm run build: passed\",\"node dist/cli/index.js audit show: compliance: PASS\"]}",
+      "reportedAt": "2026-06-15T09:29:10.218Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "验证 npm test + npm run lint + npm run build",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"全量测试、类型检查与构建通过\",\"files\":[\"src/core/audit.ts\",\"src/core/__tests__/audit.test.ts\"],\"tests\":[\"npm test: 46 files, 572 tests passed\",\"npm run lint: passed\",\"npm run build: passed\"]}",
+      "reportedAt": "2026-06-15T09:29:30.828Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-15T09:28:16.291Z",
+  "finishedAt": "2026-06-15T09:30:21.674Z",
+  "created": "2026-06-15T09:28:12.463Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && node dist/cli/index.js audit show",
+      "exitCode": 0,
+      "summary": "audit compliance exact-format tests, full suite, lint, build, and real CLI output passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-15T09:29:37.746Z",
+      "layer": "functional"
+    }
+  ]
+}

@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 47,
-    "R2": 94,
+    "R1": 54,
+    "R2": 98,
     "R3": 1,
-    "R4": 78,
+    "R4": 79,
     "R5": 3,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 94,
+    "R9": 98,
     "R10": 2,
     "R11": 0,
     "R12": 2,
-    "R13": 46,
+    "R13": 53,
     "R14": 0,
     "R15": 0,
     "R16": 12,
     "R17": 0,
-    "R18": 6,
-    "R19": 79,
+    "R18": 8,
+    "R19": 84,
     "R20": 0,
     "R21": 0,
-    "R22": 46,
+    "R22": 53,
     "R23": 0,
     "R24": 0
   },
@@ -3085,9 +3085,246 @@
       "timestamp": "2026-06-12T10:36:54.268Z",
       "specCode": "spec-manager-ai-ux-L3.1.6",
       "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-15T09:04:48.188Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-15T09:04:48.191Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-15T09:04:56.131Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-15T09:05:13.698Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-15T09:05:59.046Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-15T09:05:59.047Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-15T09:06:32.945Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-15T09:09:00.307Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "taskCode": "T-001",
+      "metadata": {
+        "event": "task-complete-bypass",
+        "bypassedChecks": [
+          "verification-commands"
+        ],
+        "reason": "L3 verification command block contains a multiline node -e smoke example; current extractor runs fenced commands line-by-line. Structured verification plus @verify cover lint/test/export checks."
+      },
+      "countRule": false,
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-15T09:09:14.368Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-15T09:16:40.223Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:25:47.011Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:25:47.012Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:25:47.013Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-15T09:28:00.207Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-15T09:28:00.207Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-15T09:29:53.267Z",
+      "specCode": "constraint-closed-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-15T09:30:21.690Z",
+      "specCode": "constraint-closed-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-15T09:32:16.807Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:38:19.369Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:38:19.370Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:38:19.371Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-15T09:38:54.161Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-15T09:38:54.162Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:43:00.397Z",
+      "specCode": "constraint-closed-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:43:00.398Z",
+      "specCode": "constraint-closed-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:43:00.399Z",
+      "specCode": "constraint-closed-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:43:14.422Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:43:14.423Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:43:14.423Z",
+      "specCode": "constraint-closed-loop-L3.1.2-hooks",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:47:08.908Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:47:08.909Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:47:08.910Z",
+      "specCode": "constraint-closed-loop-L3.1.1-verify",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:47:14.660Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:47:14.661Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:47:14.662Z",
+      "specCode": "constraint-closed-loop-L3.1.3-audit",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-15T09:47:21.943Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-15T09:47:21.944Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-15T09:47:21.945Z",
+      "specCode": "constraint-closed-loop-L3.1.4-contract-sync",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-12T10:36:54.268Z",
+  "lastUpdated": "2026-06-15T09:47:21.945Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

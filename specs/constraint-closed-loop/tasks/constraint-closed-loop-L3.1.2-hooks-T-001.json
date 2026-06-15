@@ -1,0 +1,167 @@
+{
+  "id": "T-001",
+  "specCode": "constraint-closed-loop-L3.1.2-hooks",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"已读取冻结 L3、既有实现、专项测试与执行计划；确认实现已存在于 HEAD，进入一致性核对阶段\",\"files\":[\"specs/constraint-closed-loop/constraint-closed-loop-L3.1.2-hooks.md\",\"src/core/task.ts\",\"src/core/task-completion.ts\",\"src/cli/task.ts\"]}",
+      "latencyMs": 180,
+      "reportedAt": "2026-06-15T09:12:47.135Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "核对数据模型扩展: VerificationLayer + TaskVerificationRecord.layer + TaskRecord.lastFailedOutput",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 VerificationLayer、TaskVerificationRecord.layer、TaskRecord.lastFailedOutput 已实现且兼容旧记录\",\"files\":[\"src/core/task.ts\"]}",
+      "reportedAt": "2026-06-15T09:14:41.791Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "核对 addTaskVerification layer 参数",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 addTaskVerification 支持 layer 且默认 functional\",\"files\":[\"src/core/task.ts\",\"src/core/harness.ts\",\"src/cli/task-handlers.ts\"]}",
+      "reportedAt": "2026-06-15T09:14:48.636Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "核对 reportStep 失败时持久化 outputJson 到 lastFailedOutput",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 reportStep 失败持久化 outputJson 并在后续调用注入截断 warnings\",\"files\":[\"src/core/task.ts\",\"src/core/spec-sections.ts\"]}",
+      "reportedAt": "2026-06-15T09:14:54.100Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "核对 task complete 验证命令和 @verify 自动执行",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 task complete 在级联前执行验证命令和 @verify；补充门禁通过计数元数据供 CLI 展示\",\"files\":[\"src/core/task-completion.ts\"]}",
+      "reportedAt": "2026-06-15T09:14:58.761Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "核对 showTask verification 按 layer 分组",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 showTask 将 verification 按 compile/functional/smoke 分组且旧记录归 functional\",\"files\":[\"src/core/task.ts\"]}",
+      "reportedAt": "2026-06-15T09:15:03.046Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "核对 invariants 按 layer 检查 verification",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 assertTaskHasSuccessfulVerification 支持可选 layer 过滤\",\"files\":[\"src/core/invariants.ts\"]}",
+      "reportedAt": "2026-06-15T09:15:07.457Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "核对 harness buildHarnessTaskContext 注入 lastFailedOutput",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 harness context 从最新关联 task 注入 lastFailedOutput 摘要\",\"files\":[\"src/core/harness.ts\"]}",
+      "reportedAt": "2026-06-15T09:15:12.088Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "mcp_tool",
+      "name": "核对 cli task complete skip/reason 语义和 force 废弃路径",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 CLI scoped skip 均要求 reason、force 被拒绝；修正文本完成输出以展示验证门禁通过计数\",\"files\":[\"src/cli/task.ts\",\"src/core/task-completion.ts\"]}",
+      "reportedAt": "2026-06-15T09:15:16.927Z"
+    },
+    {
+      "stepNo": "10",
+      "stepType": "mcp_tool",
+      "name": "核对 cli task verify --layer 参数",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 task verify --layer 值域校验和参数传递\",\"files\":[\"src/cli/task.ts\",\"src/cli/task-handlers.ts\"]}",
+      "reportedAt": "2026-06-15T09:15:22.228Z"
+    },
+    {
+      "stepNo": "11",
+      "stepType": "mcp_tool",
+      "name": "核对 cli task show 按 layer 分组显示",
+      "status": "succeeded",
+      "toolName": "review",
+      "outputJson": "{\"summary\":\"核对 task show 按固定 layer 顺序分组展示 verification\",\"files\":[\"src/cli/task.ts\"]}",
+      "reportedAt": "2026-06-15T09:15:26.722Z"
+    },
+    {
+      "stepNo": "12",
+      "stepType": "mcp_tool",
+      "name": "核对 task complete 验证钩子测试",
+      "status": "succeeded",
+      "toolName": "vitest",
+      "outputJson": "{\"summary\":\"task complete 验证钩子与 CLI 专项测试通过；补充文本验证摘要测试并修正旧 force 用例命名\",\"files\":[\"src/core/__tests__/task-complete-verify.test.ts\",\"src/core/__tests__/task-completion.test.ts\",\"src/cli/__tests__/task.test.ts\"],\"tests\":[\"55 targeted tests passed\"]}",
+      "reportedAt": "2026-06-15T09:15:32.516Z"
+    },
+    {
+      "stepNo": "13",
+      "stepType": "mcp_tool",
+      "name": "核对 step failed 上下文注入测试",
+      "status": "succeeded",
+      "toolName": "vitest",
+      "outputJson": "{\"summary\":\"step failed 上下文注入专项测试通过\",\"files\":[\"src/core/__tests__/step-failed-context.test.ts\"],\"tests\":[\"5 tests passed\"]}",
+      "reportedAt": "2026-06-15T09:15:37.287Z"
+    },
+    {
+      "stepNo": "14",
+      "stepType": "mcp_tool",
+      "name": "核对 verification layer 测试",
+      "status": "succeeded",
+      "toolName": "vitest",
+      "outputJson": "{\"summary\":\"verification layer 专项测试通过\",\"files\":[\"src/core/__tests__/verification-layer.test.ts\"],\"tests\":[\"7 tests passed\"]}",
+      "reportedAt": "2026-06-15T09:15:42.240Z"
+    },
+    {
+      "stepNo": "15",
+      "stepType": "mcp_tool",
+      "name": "验证: npm test + npm run lint + npm run build",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"全量验证通过\",\"files\":[\"src/core/task-completion.ts\",\"src/cli/task.ts\",\"src/core/__tests__/task-complete-verify.test.ts\",\"src/cli/__tests__/task.test.ts\"],\"tests\":[\"npm test: 46 files, 572 tests passed\",\"npm run lint: passed\",\"npm run build: passed\"]}",
+      "reportedAt": "2026-06-15T09:16:05.793Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-15T09:12:41.386Z",
+  "finishedAt": "2026-06-15T09:16:29.175Z",
+  "created": "2026-06-15T09:12:37.966Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "46 test files and 572 tests passed; lint and build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-15T09:16:13.229Z",
+      "layer": "functional"
+    }
+  ]
+}
