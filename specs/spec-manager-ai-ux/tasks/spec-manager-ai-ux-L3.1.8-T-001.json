@@ -1,0 +1,66 @@
+{
+  "id": "T-001",
+  "specCode": "spec-manager-ai-ux-L3.1.8",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "Review readme_zh.md and English README v0.4.2 sections",
+      "status": "succeeded",
+      "toolName": "sed/spec-manager",
+      "outputJson": "{\"summary\":\"Reviewed readme_zh.md structure and English README sections added for v0.4.2.\"}",
+      "reportedAt": "2026-06-16T09:17:02.278Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "Add Chinese workflow overview and adaptive harness governance sections",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Updated readme_zh.md with workflow overview and adaptive harness governance sections.\"}",
+      "reportedAt": "2026-06-16T09:17:25.192Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "Verify git diff --check and record verification evidence",
+      "status": "succeeded",
+      "toolName": "git/spec-manager",
+      "outputJson": "{\"summary\":\"git diff --check passed and verification evidence V-001 was recorded.\"}",
+      "reportedAt": "2026-06-16T09:17:39.325Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "Verify git diff --check and commit Chinese README update without staging local personal settings",
+      "status": "succeeded",
+      "toolName": "git/spec-manager",
+      "outputJson": "{\"summary\":\"Prepared Chinese README, spec, task, and audit records for commit; local personal settings remain unstaged.\"}",
+      "reportedAt": "2026-06-16T09:17:45.084Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T09:16:56.089Z",
+  "finishedAt": "2026-06-16T09:17:50.707Z",
+  "created": "2026-06-16T09:16:51.199Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "summary": "Chinese README documentation diff passed whitespace and patch-format checks.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-16T09:17:30.388Z",
+      "layer": "smoke"
+    }
+  ]
+}

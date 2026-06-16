@@ -1,18 +1,18 @@
 {
   "rules": {
-    "R1": 66,
-    "R2": 116,
+    "R1": 67,
+    "R2": 117,
     "R3": 2,
-    "R4": 96,
+    "R4": 97,
     "R5": 4,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 116,
-    "R10": 9,
+    "R9": 117,
+    "R10": 10,
     "R11": 0,
     "R12": 4,
-    "R13": 65,
+    "R13": 66,
     "R14": 0,
     "R15": 0,
     "R16": 15,
@@ -21,7 +21,7 @@
     "R19": 97,
     "R20": 0,
     "R21": 0,
-    "R22": 65,
+    "R22": 66,
     "R23": 0,
     "R24": 0
   },
@@ -4055,9 +4055,51 @@
       "timestamp": "2026-06-16T09:10:23.200Z",
       "specCode": "spec-manager-ai-ux-L3.1.7",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-16T09:15:28.331Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-16T09:15:54.326Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-16T09:15:54.327Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-16T09:15:54.328Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-16T09:16:22.519Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-16T09:16:22.521Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-16T09:16:37.131Z",
+      "specCode": "spec-manager-ai-ux-L3.1.8",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-16T09:10:23.200Z",
+  "lastUpdated": "2026-06-16T09:16:37.131Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

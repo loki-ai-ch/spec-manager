@@ -18,6 +18,32 @@
 
 所有数据都在本地：markdown + git 存储，无后端、无网络依赖、无 MCP 要求。
 
+## 它怎么工作
+
+spec-manager 把工作产物保存在你的仓库里：PRD、设计、实现规格、任务历史、决策记录和验证证据。
+
+一个典型需求会经过这条链路：
+
+`L1 PRD -> L2 Design -> L3 Impl -> Agent Task -> Verification`
+
+这样 AI agent 有明确冻结的实现目标，人也能回看每次改动为什么做、怎么做、验证过什么。
+
+## 自适应 Harness 治理
+
+`v0.4.2` 增加了一条更适合关键任务的验收证据路径。
+
+- 创建 Task 时记录 Profile 快照。
+- `standard` 保持轻量，缺少覆盖时以 warning 暴露。
+- `governed` 要求 frozen L3 声明 critical AC，并提供覆盖这些 AC 的验证证据。
+- `project profile recommend`、`project profile metrics`、`project workflow preview`、`project readiness critical` 等只读命令用于预览和审计，不做隐藏门禁。
+
+示例：
+
+```bash
+spec-manager project profile recommend --request "新增 SSO 登录"
+spec-manager project readiness critical
+```
+
 ## 3 分钟开始
 
 ```bash
