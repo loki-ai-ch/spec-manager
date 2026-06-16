@@ -1,0 +1,96 @@
+{
+  "id": "T-001",
+  "specCode": "critical-ac-readiness-L3.1.1-core",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取本 L3、critical-ac-readiness-L2.1、spec section/parser、adoption preview 和 profile metrics 基线",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, confirmed L2, spec section parser, adoption preview, profile metrics, public exports, and adjacent tests; confirmed reuse of listAllSpecs, sectionBody, validateCriticalAcceptanceCriteria, and fixture patterns.\",\"files\":[\"specs/critical-ac-readiness/critical-ac-readiness-L3.1.1-core.md\",\"specs/critical-ac-readiness/critical-ac-readiness-L2.1.md\",\"src/core/spec-sections.ts\",\"src/core/adaptive-workflow-adoption.ts\",\"src/core/profile-metrics.ts\",\"src/index.ts\",\"src/core/__tests__/adaptive-workflow-adoption.test.ts\"]}",
+      "reportedAt": "2026-06-16T08:20:12.069Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 critical readiness core 类型和 buildCriticalReadinessReport API",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added critical readiness core module with public types, buildCriticalReadinessReport API shell, topic normalization, classification helpers, summary and recommendations, and exported it from public API.\",\"files\":[\"src/core/critical-readiness.ts\",\"src/index.ts\"]}",
+      "reportedAt": "2026-06-16T08:21:10.578Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "实现 active L3 扫描、topic 过滤和 missing/empty/unknown/ready 分类",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented active L3 scanning, safe topic filtering, critical section presence detection, and missing/empty/unknown/ready classification.\",\"files\":[\"src/core/critical-readiness.ts\"]}",
+      "reportedAt": "2026-06-16T08:22:29.772Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "实现 summary、recommendations、governed upgrade 和 public export",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Implemented totals, readinessRatio, summary text, recommendations, governed upgrade note, generatedAt handling, and public API export.\",\"files\":[\"src/core/critical-readiness.ts\",\"src/index.ts\"]}",
+      "reportedAt": "2026-06-16T08:23:51.512Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "补充 core 单元测试与 schema 断言",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added focused core tests for schemaVersion, generatedAt, no active L3, topic filtering, unsafe topic rejection, all readiness classifications, readiness ratio, and governed upgrade readiness.\",\"files\":[\"src/core/__tests__/critical-readiness.test.ts\"]}",
+      "reportedAt": "2026-06-16T08:24:13.331Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "运行 vitest、build、spec validate 和 plan validate",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran focused vitest, TypeScript build, spec validate, and plan validate; fixed one noUnusedLocals build issue and confirmed final focused test/build pass. validate-plan exited 0 with existing R10 informational warning.\",\"commands\":[\"npx vitest run src/core/__tests__/critical-readiness.test.ts --reporter=dot\",\"npm run build\",\"spec-manager spec validate critical-ac-readiness-L3.1.1-core\",\"spec-manager spec validate-plan --from-spec critical-ac-readiness-L3.1.1-core\"],\"files\":[\"src/core/critical-readiness.ts\",\"src/core/__tests__/critical-readiness.test.ts\"]}",
+      "reportedAt": "2026-06-16T08:23:10.739Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T08:19:36.526Z",
+  "finishedAt": "2026-06-16T08:25:58.898Z",
+  "created": "2026-06-16T08:18:34.370Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed after adding critical-readiness public API.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-06-16T08:23:29.763Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npx vitest run src/core/__tests__/critical-readiness.test.ts --reporter=dot",
+      "exitCode": 0,
+      "summary": "Focused critical readiness core tests passed: active L3 items, missing/empty/unknown/ready classification, topic filtering, governed upgrade, schemaVersion, ratio.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-4",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-16T08:24:24.754Z",
+      "layer": "functional"
+    }
+  ]
+}

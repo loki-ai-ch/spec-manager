@@ -261,6 +261,84 @@ The real scaffold marker in a short, otherwise empty specification remains block
   });
 });
 
+describe('validateSpecContent — critical acceptance criteria', () => {
+  it('accepts L3 critical AC references that exist in acceptance criteria', () => {
+    const content = `# Impl
+
+## 目标
+\`src/core/task.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: Given x, When y, Then z SHALL happen.
+2. AC-2 Given x, When y, Then z SHALL happen.
+3. @verify: file-exists(src/core/task.ts)
+
+## 关键验收标准
+- AC-1
+- AC-2
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`;
+
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.some(w => w.rule === 'unknown_critical_ac')).toBe(false);
+  });
+
+  it('warns when critical AC references an unknown AC', () => {
+    const content = `# Impl
+
+## 目标
+\`src/core/task.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: Given x, When y, Then z SHALL happen.
+
+## 关键验收标准
+- AC-2
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`;
+
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings.some(w => w.rule === 'unknown_critical_ac' && w.message.includes('AC-2'))).toBe(true);
+  });
+
+  it('warns when non-L3 specs define critical AC', () => {
+    const content = `# Auth
+
+## 背景
+bg
+
+## 用户故事
+story
+
+## 验收标准
+1. **AC-1**: 系统 SHALL 支持登录
+
+## 关键验收标准
+- AC-1
+
+## 范围边界
+scope
+`;
+
+    const warnings = validateSpecContent('L1', content);
+    expect(warnings.some(w => w.rule === 'critical_ac_non_l3')).toBe(true);
+  });
+});
+
 describe('validateSpecContent — @verify 语法校验', () => {
   it('L3 合法 @verify 行无 warning', () => {
     const content = `# Impl

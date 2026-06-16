@@ -47,4 +47,29 @@ describe('methodology document contract', () => {
     expect(methodology).toContain('必须提供原因');
     expect(methodology).toContain('只有 active 决策卡片满足 R18');
   });
+
+  it('documents adaptive workflow profile and evidence coverage semantics', () => {
+    expect(methodology).toContain('adaptive workflow 是显式启用的风险分级能力');
+    expect(methodology).toContain('项目保持 legacy 行为');
+    expect(methodology).toContain('`standard` 或 `governed` Profile');
+    expect(methodology).toContain('当前已实现的是 Profile 配置、Task Profile 快照、关键 AC 解析、`task evidence` 动态投影');
+    expect(methodology).toContain('governed 关键 AC 成功 verification 全覆盖完成门禁');
+    expect(methodology).toContain('spec-manager project profile recommend --request');
+    expect(methodology).toContain('推荐不会自动启用 adaptive workflow');
+    expect(methodology).toContain('不是 hidden gate');
+    expect(methodology).toContain('spec-manager project profile metrics');
+    expect(methodology).toContain('standard warnings 和 explicit overrides');
+    expect(methodology).toContain('metrics 不会自动修改配置或历史 Task');
+    expect(methodology).toContain('不替代 doctor 或 task complete 门禁');
+    expect(methodology).toContain('spec-manager project readiness critical');
+    expect(methodology).toContain('missing');
+    expect(methodology).toContain('empty');
+    expect(methodology).toContain('unknown');
+    expect(methodology).toContain('不会自动生成或插入关键 AC');
+    expect(methodology).toContain('人工确认真实关键 AC');
+    expect(methodology).toContain('spec-manager project workflow preview');
+    expect(methodology).toContain('只读采用预检');
+    expect(methodology).toContain('推荐 defaultProfile 和 next steps');
+    expect(methodology).toContain('不是 enable 的 hidden gate');
+  });
 });

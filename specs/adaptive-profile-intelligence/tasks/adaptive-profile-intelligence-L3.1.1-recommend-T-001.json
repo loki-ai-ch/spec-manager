@@ -1,0 +1,98 @@
+{
+  "id": "T-001",
+  "specCode": "adaptive-profile-intelligence-L3.1.1-recommend",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 adaptive-profile-intelligence-L2.1、workflow-profile 与 project CLI 基线",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"读取 L3/L2/L1、workflow-profile、project CLI 与测试基线；workflow/profile/project 聚焦测试 3 files / 21 tests passed。\",\"files\":[\"src/core/workflow-profile.ts\",\"src/cli/project.ts\",\"src/index.ts\",\"src/core/__tests__/workflow-profile.test.ts\",\"src/cli/__tests__/project-workflow.test.ts\",\"src/core/__tests__/methodology-contract.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T06:33:37.009Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 Profile 推荐核心模块与公开导出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 Profile 推荐核心模块、类型、adaptive workflow 状态输出与 public API 导出；推荐核心测试 8 tests passed，build passed。\",\"files\":[\"src/core/profile-recommendation.ts\",\"src/core/__tests__/profile-recommendation.test.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T06:35:18.284Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "实现 governed/standard/quick 确定性推荐规则",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 governed/standard/quick 确定性推荐规则、优先级、默认 standard、quick 边界和高风险治理核心路径识别。\",\"files\":[\"src/core/profile-recommendation.ts\",\"src/core/__tests__/profile-recommendation.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T06:35:18.288Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "新增 project profile recommend CLI text/json 输出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 project profile recommend CLI text/json 输出、legacy note、risk factors/reasons/override presenter 和错误映射；推荐核心+CLI 测试 12 tests passed，build passed。\",\"files\":[\"src/cli/project.ts\",\"src/cli/__tests__/project-profile.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T06:36:26.537Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "同步方法论、skill 和 Agent 入口推荐规则",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"同步方法论文档、skill、Agent 入口和 claude/codebuddy managed assets，明确 profile recommend 是本地确定性建议、非 hidden gate；方法论契约测试 8 tests passed。\",\"files\":[\"docs/methodology.md\",\"skill/SKILL.md\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"templates/agents/codebuddy-skill/SKILL.md\",\"AGENTS.md\",\"CLAUDE.md\",\"CODEBUDDY.md\",\"src/core/__tests__/methodology-contract.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T06:37:22.720Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证推荐聚焦测试、全量测试、lint、build、installed CLI 和 project doctor",
+      "status": "succeeded",
+      "toolName": "vitest/npm/spec-manager/node",
+      "outputJson": "{\"summary\":\"Verification suite passed: focused profile recommendation/methodology tests, full test suite, lint, build, installed CLI verification, installed CLI profile recommend smoke, project doctor, spec validate, and plan validate.\",\"evidence\":\"focused vitest: 3 files / 20 tests passed; npm test: 52 files / 631 tests passed; npm run lint passed; npm run build passed; npm run verify:installed-cli passed; installed profile recommend smoke passed; project doctor ok; spec validate ok; validate-plan ok\"}",
+      "reportedAt": "2026-06-16T06:39:42.705Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T06:33:21.694Z",
+  "finishedAt": "2026-06-16T06:40:43.837Z",
+  "created": "2026-06-16T06:33:16.078Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "legacy",
+  "profileSource": "legacy",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npx vitest run src/core/__tests__/profile-recommendation.test.ts src/cli/__tests__/project-profile.test.ts src/core/__tests__/methodology-contract.test.ts --reporter=dot; npm test -- --reporter=dot; npm run lint; npm run build; npm run verify:installed-cli; node .spec-manager/tmp-profile-recommend-smoke.mjs; spec-manager project doctor; spec-manager spec validate adaptive-profile-intelligence-L3.1.1-recommend; spec-manager spec validate-plan --from-spec adaptive-profile-intelligence-L3.1.1-recommend",
+      "exitCode": 0,
+      "summary": "Profile recommendation L3.1.1 verified: focused tests 20 passed, full suite 631 passed, lint/build passed, installed CLI and installed profile recommend smoke passed, doctor/spec/plan validation passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-16T06:39:59.170Z",
+      "layer": "functional"
+    }
+  ]
+}

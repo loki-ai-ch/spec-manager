@@ -29,6 +29,22 @@ L1 PRD → L2 Design → L3 Impl → Agent Task
 
 quick 是受限例外：仅适用于 ≤5 步、单文件、不涉及 schema、API 契约或跨模块的微调。quick 不需要建立完整 L1/L2/L3 链路，`git diff` 是其主要审计记录。
 
+adaptive workflow 是显式启用的风险分级能力。未在 `.spec-manager/config.yaml` 启用时，项目保持 legacy 行为，现有 Task 完成语义不自动加严。启用后，完整 Task 可使用 `standard` 或 `governed` Profile；Profile 在 Task 创建时写入快照，后续项目默认值变化不改写历史 Task。
+
+- `quick`: 受限轻量例外，不创建完整 L1/L2/L3/Task 链路。
+- `standard`: 继续使用完整 L1/L2/L3/Task 路径，关键 AC 覆盖缺口会在完成与 evidence 报告中作为 warning 提示。
+- `governed`: 创建 Task 前，frozen L3 必须在 `## 关键验收标准` 中引用至少一条自身 `## 验收标准` 的 AC ID；完成前所有关键 AC 必须有 `exitCode=0` verification evidence 覆盖。
+
+当前已实现的是 Profile 配置、Task Profile 快照、关键 AC 解析、`task evidence` 动态投影、standard coverage warning 和 governed 关键 AC 成功 verification 全覆盖完成门禁。`task evidence` 是从 L3、Task 与 verification 生成的只读投影，不是新的事实源。
+
+Profile 推荐是本地确定性建议，可通过 `spec-manager project profile recommend --request "<work>"` 获取 quick、standard 或 governed 推荐、risk factors、reasons 和 override guidance。推荐不会自动启用 adaptive workflow，不会自动创建 Task，也不是 hidden gate；用户可以覆盖推荐，最终硬门禁仍由 Task Profile 快照和 evidence coverage gate 决定。
+
+Profile metrics 是只读治理效果报告，可通过 `spec-manager project profile metrics [--topic <topic>] [--json]` 汇总 legacy、standard、governed Task 状态、governed coverage 缺口、standard warnings 和 explicit overrides。metrics 不会自动修改配置或历史 Task，不替代 doctor 或 task complete 门禁；standard warning 只作为报告项，不计为完成违规。
+
+Critical AC readiness 是只读修复清单，可通过 `spec-manager project readiness critical [--topic <topic>] [--json]` 汇总 active L3 的 `missing`、`empty`、`unknown` 和 `ready` 状态。readiness report 只提供修复建议和 governed 升级判断，不会自动修改 L3，不会自动生成或插入关键 AC；修复 missing/empty/unknown 前必须读取 L3 上下文并人工确认真实关键 AC。
+
+启用 adaptive workflow 前先运行 `spec-manager project workflow preview [--json]`。preview 是只读采用预检，会汇总当前 workflow 状态、legacy Task 数量、active L3 关键 AC readiness、推荐 defaultProfile 和 next steps；preview 不会写配置、不迁移历史 Task，也不是 enable 的 hidden gate。
+
 R8 是代码调查规则：改代码前必须确认相关 Spec、文件路径、调用链和测试位置。它不等同于“所有 Edit/Write 都必须绑定 Agent Task”；是否需要 Agent Task 由工作路径和 quick 边界决定。
 
 ### 分层状态流
@@ -70,7 +86,7 @@ Task:  draft → running ↔ waiting → completed | failed
 | 全部计划步骤 succeeded | hard gate | 未完成步骤会阻止 `task complete` |
 | L3 验证命令与 `@verify` | hard gate | 默认在 `task complete` 时执行，失败则拒绝完成 |
 | 至少一条成功 verification | hard gate | 没有 `exitCode=0` 证据则拒绝完成 |
-| verification 覆盖全部关键 AC | target capability | `coversAc` 可记录，但当前不强制完整覆盖 |
+| verification 覆盖全部关键 AC | governed: hard gate / standard: warning | `task evidence` 动态投影关键 AC 覆盖；governed 未覆盖时拒绝完成 |
 | 真实环境冷启动与人工使用验收 | human gate / target capability | 应按风险执行，当前不由统一门禁强制 |
 
 机器可验不等于应用可用。编译、测试或某条 verification 成功只能证明对应检查通过；不能自动证明完整用户流程可用。高风险交付仍应执行功能验证、smoke 验证和真实环境人工验收。
@@ -86,7 +102,7 @@ Task:  draft → running ↔ waiting → completed | failed
 5. Task 完成后 L3 成功级联为 `implemented`。
 6. L1 被级联为 `implemented` 时已有至少一张决策卡片。
 
-上述条件是当前系统保证的最低完成标准。关键 AC 全覆盖、真实环境可用和业务指标达标仍需按项目风险补充验收。
+上述条件是当前系统保证的最低完成标准。关键 AC 全覆盖在 governed Profile 中属于系统门禁；真实环境可用和业务指标达标仍需按项目风险补充验收。
 
 ## 运行机制
 
@@ -218,14 +234,14 @@ audit 命中表示相关规则被记录，不单独证明产出质量或真实�
 
 - Spec 分层与人类审核门控。
 - frozen L3 到 Agent Task 的执行约束。
-- 步骤完整性、验证命令、`@verify` 与成功 verification 完成门禁。
+- 步骤完整性、验证命令、`@verify`、成功 verification 与 governed 关键 AC evidence coverage 完成门禁。
+- `task evidence` 动态投影，展示 Profile、关键 AC 覆盖、verification 与 artifact。
 - 失败摘要保存、任务继续执行、状态级联、决策与审计记录。
 
 仍属于目标能力或项目级人工流程的事项：
 
 - 自动 retry 调度与完整错误上下文自动注入。
 - 按风险强制 compile、functional、smoke 多层 verification。
-- 强制 verification 覆盖全部关键 AC。
 - 统一的真实环境冷启动和人工用户流程验收门禁。
 - 业务指标达标后的自动闭环判定。
 

@@ -6,7 +6,7 @@ import { Command } from 'commander';
 import { getPaths, type ProjectPaths } from '../paths.js';
 import { hit, readAudit, startSession, report, showSummary, RULE_ID_RE, ALL_RULE_IDS, checkCompliance, COMPLIANCE_BASELINE } from '../audit.js';
 import { registerAuditCommands } from '../../cli/audit.js';
-import { createSpec, updateSpec } from '../spec-io.js';
+import { createSpec, updateSpec, writeSpec } from '../spec-io.js';
 import { addTaskVerification, completeTask, createTask, reportStep, startTask } from '../task.js';
 import { createTaskLinkedChangeProposal, resolveTaskLinkedChangeProposal } from '../delta.js';
 
@@ -267,6 +267,23 @@ describe('showSummary — 文本摘要', () => {
     expect(summary).not.toContain(`completed task T-001 (${specCode}) has no verification evidence`);
   });
 
+  it('completed governed task without critical AC evidence emits warning', () => {
+    const specCode = writeGovernedCompletedEvidenceFixture('audit-governed-evidence-L3.1.1', []);
+
+    const summary = showSummary(paths);
+
+    expect(summary).toContain(`completed governed task T-001 (${specCode}) lacks successful evidence for critical AC: AC-1`);
+    expect(summary).toContain('completed task history is immutable');
+  });
+
+  it('legacy completed task without critical AC evidence does not emit governed evidence warning', () => {
+    const specCode = writeGovernedCompletedEvidenceFixture('audit-legacy-evidence-L3.1.1', [], 'legacy');
+
+    const summary = showSummary(paths);
+
+    expect(summary).not.toContain(`completed governed task T-001 (${specCode}) lacks successful evidence`);
+  });
+
   it('unresolved task-linked change proposal emits warning', () => {
     const specCode = createCompletedTask('audit-change-open');
     createTaskLinkedChangeProposal({
@@ -371,4 +388,72 @@ function createCompletedTask(topic: string, removeVerification = false): string 
     writeFileSync(taskFile, JSON.stringify(legacy, null, 2), 'utf8');
   }
   return l3Code;
+}
+
+function writeGovernedCompletedEvidenceFixture(
+  specCode: string,
+  coversAc: string[],
+  profile: 'legacy' | 'governed' = 'governed',
+): string {
+  const topic = specCode.split('-L3')[0];
+  const l1Code = `${topic}-L1`;
+  const l2Code = `${topic}-L2.1`;
+  const l1 = createSpec({ paths, code: l1Code, level: 'L1', title: 'Evidence L1', topic, parentCode: null });
+  writeSpec({ ...l1, fm: { ...l1.fm, status: 'confirmed' } });
+  const l2 = createSpec({ paths, code: l2Code, level: 'L2', title: 'Evidence L2', topic, parentCode: l1Code });
+  writeSpec({ ...l2, fm: { ...l2.fm, status: 'confirmed' } });
+  const spec = createSpec({ paths, code: specCode, level: 'L3', title: 'Evidence', topic, parentCode: l2Code });
+  writeSpec({
+    ...spec,
+    fm: { ...spec.fm, status: 'implemented', aiSummary: 'evidence fixture' },
+    content: `# Evidence
+
+## 目标
+\`src/core/audit.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: critical behavior
+
+## 关键验收标准
+- AC-1
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`,
+  });
+  const taskDir = join(paths.specsDir, topic, 'tasks');
+  mkdirSync(taskDir, { recursive: true });
+  writeFileSync(join(taskDir, `${specCode}-T-001.json`), JSON.stringify({
+    id: 'T-001',
+    specCode,
+    status: 'completed',
+    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
+    verifications: [{
+      id: 'V-001',
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+      artifacts: [],
+      coversAc,
+      created: new Date().toISOString(),
+      layer: 'functional',
+    }],
+    autoConfirm: false,
+    startedAt: new Date().toISOString(),
+    finishedAt: new Date().toISOString(),
+    created: new Date().toISOString(),
+    waitReason: null,
+    errorCode: null,
+    errorMessage: null,
+    lastFailedOutput: null,
+    profile,
+    profileSource: profile === 'legacy' ? 'legacy' : 'project-default',
+    profileOverrideReason: null,
+  }, null, 2), 'utf8');
+  return specCode;
 }

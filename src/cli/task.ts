@@ -29,6 +29,7 @@ import {
   buildHarnessTaskContext,
   renderHarnessTaskContextText,
 } from '../core/harness.js';
+import { buildTaskEvidence, type TaskEvidence } from '../core/task-evidence.js';
 import { listDecisions } from '../core/decision.js';
 import { StepStatusSchema } from '../schemas/spec.js';
 import { createDefaultCliActionContext, runCliAction } from './common.js';
@@ -53,16 +54,36 @@ export function registerTaskCommands(program: Command): void {
     .description('为 frozen L3 spec 创建 Agent Task（R3）')
     .requiredOption('--plan <file>', 'planJson 文件路径（含 steps[]）')
     .option('--auto-confirm', 'human_gate 自动通过', false)
+    .option('--profile <profile>', 'workflow profile: standard | governed')
+    .option('--profile-reason <reason>', '显式覆盖项目默认 Profile 的原因')
     .option('--json', '以 JSON 格式输出', false)
-    .action((specCode: string, opts: { plan: string; autoConfirm: boolean; json: boolean }) => {
+    .action((specCode: string, opts: { plan: string; autoConfirm: boolean; profile?: string; profileReason?: string; json: boolean }) => {
       const paths = getPaths();
       const planJson = JSON.parse(readFileSync(opts.plan, 'utf8'));
-      const result = createTask({
-        paths,
-        specCode,
-        planJson,
-        autoConfirm: opts.autoConfirm,
-      });
+      let result: ReturnType<typeof createTask>;
+      try {
+        result = createTask({
+          paths,
+          specCode,
+          planJson,
+          autoConfirm: opts.autoConfirm,
+          profile: opts.profile,
+          profileOverrideReason: opts.profileReason,
+        });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (
+          message.startsWith('ADAPTIVE_WORKFLOW_DISABLED:') ||
+          message.startsWith('INVALID_WORKFLOW_PROFILE:') ||
+          message.startsWith('PROFILE_OVERRIDE_REASON_REQUIRED:') ||
+          message.startsWith('GOVERNED_CRITICAL_AC_REQUIRED:') ||
+          message.startsWith('UNKNOWN_CRITICAL_AC:')
+        ) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
       if (opts.json) {
         console.log(JSON.stringify(result, null, 2));
         return;
@@ -71,6 +92,7 @@ export function registerTaskCommands(program: Command): void {
       console.log(`  file: ${result.taskFile}`);
       console.log(`  status: ${result.task.status}`);
       console.log(`  steps: ${planJson.steps.length}`);
+      console.log(`  profile: ${result.task.profile ?? 'legacy'} (${result.task.profileSource ?? 'legacy'})`);
     });
 
   task
@@ -168,6 +190,38 @@ export function registerTaskCommands(program: Command): void {
           printTaskVerifyResult(context, result, { json: opts.json });
         },
       });
+    });
+
+  task
+    .command('evidence <taskId>')
+    .description('展示 Task 的动态验收证据投影')
+    .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
+    .option('--format <format>', 'text | json', 'text')
+    .action((taskId: string, opts: { spec?: string; format: string }) => {
+      if (opts.format !== 'text' && opts.format !== 'json') {
+        console.error('✗ task evidence --format 必须是 text 或 json');
+        process.exit(2);
+      }
+      const paths = getPaths();
+      try {
+        const evidence = buildTaskEvidence(paths, taskId, opts.spec);
+        if (opts.format === 'json') {
+          console.log(JSON.stringify(evidence, null, 2));
+          return;
+        }
+        process.stdout.write(renderTaskEvidenceText(evidence));
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (
+          message.startsWith('TASK_NOT_FOUND:') ||
+          message.startsWith('SPEC_NOT_FOUND:') ||
+          message.startsWith('UNKNOWN_CRITICAL_AC:')
+        ) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
     });
 
   task
@@ -270,6 +324,17 @@ export function registerTaskCommands(program: Command): void {
       }
       if (verifyRules?.status === 'passed') {
         console.log(`  ✓ @verify 规则通过 (${verifyRules.metadata?.passed ?? 0}/${verifyRules.metadata?.total ?? 0})`);
+      }
+      const evidenceCoverage = result.gateResults.find(gate => gate.gate === 'evidence-coverage');
+      if (evidenceCoverage?.status === 'passed') {
+        const metadata = evidenceCoverage.metadata ?? {};
+        const required = metadata.required ?? 0;
+        const covered = metadata.covered ?? 0;
+        if (metadata.warning) {
+          console.warn(`  ⚠ evidence coverage warning (${covered}/${required}): ${(metadata.blockingCriteria as string[] | undefined)?.join(', ') ?? '-'}`);
+        } else {
+          console.log(`  ✓ evidence coverage (${covered}/${required})`);
+        }
       }
       if (result.cascadedSpecs.length > 0) {
         console.log('  cascaded:');
@@ -421,4 +486,31 @@ export function registerTaskCommands(program: Command): void {
       console.error('✗ TASK_BATCH_DEPRECATED: use task create, start, report/step, verify, then complete');
       process.exit(2);
     });
+}
+
+function renderTaskEvidenceText(evidence: TaskEvidence): string {
+  const lines: string[] = [];
+  lines.push(`Task Evidence: ${evidence.specCode} / ${evidence.taskId}`);
+  lines.push(`Profile: ${evidence.profile} (${evidence.profileSource})`);
+  lines.push(`Coverage: ${evidence.summary.covered}/${evidence.summary.required} critical AC covered`);
+  lines.push('');
+  lines.push('Critical Criteria:');
+  if (evidence.criticalCriteria.length === 0) {
+    lines.push('- none');
+  } else {
+    for (const item of evidence.criticalCriteria) {
+      const icon = item.status === 'covered' ? '✓' : item.status === 'failed' ? '✗' : '!';
+      const refs = item.verificationIds.length > 0 ? ` by ${item.verificationIds.join(', ')}` : '';
+      lines.push(`${icon} ${item.id} ${item.status}${refs}`);
+      lines.push(`  ${item.text}`);
+    }
+  }
+  lines.push('');
+  lines.push('Artifacts:');
+  if (evidence.artifacts.length === 0) {
+    lines.push('- none');
+  } else {
+    for (const artifact of evidence.artifacts) lines.push(`- ${artifact}`);
+  }
+  return `${lines.join('\n')}\n`;
 }

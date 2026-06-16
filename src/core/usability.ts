@@ -8,6 +8,7 @@ import type { TaskRecord } from './task.js';
 import type { ProjectPaths } from './paths.js';
 import { REQUIRED_SECTIONS, type SpecLevel } from './validate.js';
 import { inspectProjectIntegrity } from './integrity.js';
+import { readAdaptiveWorkflowConfig } from './workflow-profile.js';
 import { assessImplementationReadiness } from './lifecycle.js';
 import {
   buildProjectSnapshot,
@@ -34,6 +35,25 @@ export function runProjectDoctor(paths: ProjectPaths, packageRoot?: string, opts
   checks.push(fileCheck(existsSync(paths.specsDir), 'specs/', 'Specs directory present', 'spec-manager project init', true));
   checks.push(fileCheck(existsSync(paths.changesDir), 'changes/', 'Changes directory present', 'spec-manager project init', true));
   checks.push(fileCheck(existsSync(paths.archiveDir), 'archive/', 'Archive directory present', 'spec-manager project init', true));
+  if (existsSync(paths.configFile)) {
+    try {
+      const adaptive = readAdaptiveWorkflowConfig(paths);
+      checks.push({
+        status: 'ok',
+        label: 'Adaptive workflow config',
+        detail: adaptive.enabled ? `enabled, defaultProfile=${adaptive.defaultProfile}` : 'disabled (legacy compatibility)',
+        blocking: false,
+      });
+    } catch (err) {
+      checks.push({
+        status: 'fail',
+        label: 'Adaptive workflow config',
+        detail: err instanceof Error ? err.message : String(err),
+        action: 'Fix .spec-manager/config.yaml or run spec-manager project workflow enable --default-profile standard',
+        blocking: true,
+      });
+    }
+  }
 
   const agentFiles = AGENT_PROVIDER_INFO.flatMap((p) => p.files);
   const installedAgentFiles = Array.from(new Set(agentFiles)).filter((f) => existsSync(join(paths.root, trimTrailingSlash(f))));

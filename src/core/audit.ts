@@ -27,6 +27,7 @@ import { listTaskLinkedChangeProposals } from './delta.js';
 import { listTasks } from './task.js';
 import { writeAtomic } from './frontmatter.js';
 import { withProjectTransaction } from './transaction.js';
+import { buildTaskEvidence, evaluateEvidenceCoverage } from './task-evidence.js';
 
 export const RULE_ID_RE = /^R([1-9]|1[0-9]|2[0-4])$/;
 export const ALL_RULE_IDS = Array.from({ length: 24 }, (_, i) => `R${i + 1}`);
@@ -230,6 +231,23 @@ export function collectAuditWarnings(paths: ProjectPaths): string[] {
       `completed task ${task.id} (${task.specCode}) has no verification evidence; ` +
       `completed task history is immutable; create a follow-up L3/Task to record new verification`,
     );
+  for (const task of listTasks(paths, { status: 'completed' }).filter(task => task.profile === 'governed')) {
+    try {
+      const evidence = buildTaskEvidence(paths, task.id, task.specCode);
+      const evaluation = evaluateEvidenceCoverage(evidence);
+      if (!evaluation.satisfied) {
+        warnings.push(
+          `completed governed task ${task.id} (${task.specCode}) lacks successful evidence for critical AC: ` +
+          `${evaluation.blockingCriteria.join(', ')}; completed task history is immutable; create a follow-up L3/Task to record new evidence`,
+        );
+      }
+    } catch (err) {
+      warnings.push(
+        `completed governed task ${task.id} (${task.specCode}) has invalid evidence projection: ` +
+        `${err instanceof Error ? err.message : String(err)}; repair through an explicit follow-up change`,
+      );
+    }
+  }
   for (const proposal of listTaskLinkedChangeProposals(paths, { status: 'unresolved' })) {
     warnings.push(
       `unresolved change proposal ${proposal.name} for task ${proposal.taskCode} (${proposal.specCode}); ` +

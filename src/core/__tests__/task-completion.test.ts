@@ -8,6 +8,7 @@ import { addTaskVerification, completeTask, createTask, findTask, reportStep, st
 import { runTaskCompletion } from '../task-completion.js';
 import { readAudit } from '../audit.js';
 import { CollectingAuditSink } from '../audit-events.js';
+import { writeAdaptiveWorkflowConfig } from '../workflow-profile.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -52,6 +53,31 @@ echo ok
 ## 验收标准
 1. AC-1
 ${extraAcceptance}
+
+## 代码调查
+\`src/core/task-completion.ts\`
+`;
+}
+
+function l3ContentWithCriticalAc(): string {
+  return `# L3
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+echo ok
+\`\`\`
+
+## 验收标准
+1. **AC-1**: critical behavior
+
+## 关键验收标准
+- AC-1
 
 ## 代码调查
 \`src/core/task-completion.ts\`
@@ -244,5 +270,89 @@ describe('runTaskCompletion', () => {
 
     expect(result.task.status).toBe('completed');
     expect(result.gateResults.some(gate => gate.gate === 'verify-rules' && gate.status === 'passed')).toBe(true);
+  });
+
+  it('keeps legacy task completion compatible with evidence coverage gate', () => {
+    const { l3Code } = createFrozenHierarchy('completion-evidence-legacy', l3ContentWithCriticalAc());
+    const task = createRunningTask(l3Code, { markSteps: true, verification: true });
+
+    const result = runTaskCompletion({
+      paths,
+      taskId: task.id,
+      specCode: l3Code,
+      skipR18Check: true,
+      bypassReason: 'test fixture',
+    });
+
+    const evidenceGate = result.gateResults.find(gate => gate.gate === 'evidence-coverage');
+    expect(result.task.status).toBe('completed');
+    expect(evidenceGate).toMatchObject({
+      status: 'passed',
+      metadata: { profile: 'legacy', required: 1, covered: 0, uncovered: 1 },
+    });
+  });
+
+  it('allows standard task completion with evidence warning', () => {
+    writeAdaptiveWorkflowConfig(paths, { enabled: true, defaultProfile: 'standard' });
+    const { l3Code } = createFrozenHierarchy('completion-evidence-standard', l3ContentWithCriticalAc());
+    const task = createRunningTask(l3Code, { markSteps: true, verification: true });
+
+    const result = runTaskCompletion({
+      paths,
+      taskId: task.id,
+      specCode: l3Code,
+      skipR18Check: true,
+      bypassReason: 'test fixture',
+    });
+
+    const evidenceGate = result.gateResults.find(gate => gate.gate === 'evidence-coverage');
+    expect(result.task.status).toBe('completed');
+    expect(evidenceGate).toMatchObject({
+      status: 'passed',
+      metadata: { profile: 'standard', warning: true, blockingCriteria: ['AC-1'] },
+    });
+  });
+
+  it('blocks governed task completion when critical AC evidence is missing and rolls back state', () => {
+    writeAdaptiveWorkflowConfig(paths, { enabled: true, defaultProfile: 'governed' });
+    const { l3Code } = createFrozenHierarchy('completion-evidence-governed-block', l3ContentWithCriticalAc());
+    const task = createRunningTask(l3Code, { markSteps: true, verification: true });
+
+    expect(() => runTaskCompletion({
+      paths,
+      taskId: task.id,
+      specCode: l3Code,
+      skipR18Check: true,
+      bypassReason: 'test fixture',
+    })).toThrow(/EVIDENCE_COVERAGE_REQUIRED.*AC-1/);
+
+    expect(findTask(paths, l3Code, task.id)?.status).toBe('running');
+    expect(findSpecByCode(paths, l3Code)?.fm.status).toBe('frozen');
+  });
+
+  it('allows governed task completion when every critical AC has successful evidence', () => {
+    writeAdaptiveWorkflowConfig(paths, { enabled: true, defaultProfile: 'governed' });
+    const { l3Code } = createFrozenHierarchy('completion-evidence-governed-pass', l3ContentWithCriticalAc());
+    const planJson = planFor(l3Code);
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson });
+    startTask(paths, task.id, l3Code);
+    for (const step of planJson.steps) {
+      reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: step.stepNo, status: 'succeeded', outputJson: '{"summary":"done"}' });
+    }
+    addTaskVerification({ paths, taskId: task.id, specCode: l3Code, command: 'npm test', exitCode: 0, summary: 'passed', coversAc: ['AC-1'] });
+
+    const result = runTaskCompletion({
+      paths,
+      taskId: task.id,
+      specCode: l3Code,
+      skipR18Check: true,
+      bypassReason: 'test fixture',
+    });
+
+    expect(result.task.status).toBe('completed');
+    expect(result.gateResults.find(gate => gate.gate === 'evidence-coverage')).toMatchObject({
+      status: 'passed',
+      metadata: { profile: 'governed', required: 1, covered: 1, blockingCriteria: [] },
+    });
   });
 });

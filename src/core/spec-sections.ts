@@ -39,6 +39,61 @@ export function extractVerificationCommands(content: string): string[] {
   return commands;
 }
 
+export interface AcceptanceCriterion {
+  id: string;
+  text: string;
+}
+
+export interface CriticalAcceptanceCriteriaValidation {
+  acceptanceCriteria: AcceptanceCriterion[];
+  criticalCriteria: AcceptanceCriterion[];
+  unknown: string[];
+}
+
+export function extractAcceptanceCriteria(content: string): AcceptanceCriterion[] {
+  const out: AcceptanceCriterion[] = [];
+  const section = sectionBody(content, '验收标准');
+  for (const raw of section.split('\n')) {
+    const line = raw.trim();
+    if (!line || /@verify:/.test(line)) continue;
+    const match = line.match(/^(?:[-*]|\d+\.)\s+(?:\*\*)?(AC-\d+)(?:\*\*)?\s*:?\s*(.*)$/);
+    if (!match) continue;
+    out.push({
+      id: match[1],
+      text: match[2]?.trim() ? `${match[1]}: ${match[2].trim()}` : match[1],
+    });
+  }
+  return out;
+}
+
+export function extractCriticalAcceptanceCriteria(content: string): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  const section = sectionBody(content, '关键验收标准');
+  for (const raw of section.split('\n')) {
+    const line = raw.trim();
+    const match = line.match(/^(?:[-*]|\d+\.)\s+(AC-\d+)\s*$/);
+    if (!match || seen.has(match[1])) continue;
+    seen.add(match[1]);
+    out.push(match[1]);
+  }
+  return out;
+}
+
+export function validateCriticalAcceptanceCriteria(content: string): CriticalAcceptanceCriteriaValidation {
+  const acceptanceCriteria = extractAcceptanceCriteria(content);
+  const byId = new Map(acceptanceCriteria.map(item => [item.id, item]));
+  const criticalIds = extractCriticalAcceptanceCriteria(content);
+  const criticalCriteria: AcceptanceCriterion[] = [];
+  const unknown: string[] = [];
+  for (const id of criticalIds) {
+    const ac = byId.get(id);
+    if (ac) criticalCriteria.push(ac);
+    else unknown.push(id);
+  }
+  return { acceptanceCriteria, criticalCriteria, unknown };
+}
+
 export function truncateWithEllipsis(value: string, maxLen: number): string {
   return value.length > maxLen ? value.slice(0, maxLen) + '...' : value;
 }

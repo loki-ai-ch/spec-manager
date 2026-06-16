@@ -12,6 +12,7 @@
  */
 
 import { isPlaceholderContent } from './placeholder.js';
+import { sectionBody, validateCriticalAcceptanceCriteria } from './spec-sections.js';
 import { splitArgs, VERIFY_RE, VERIFY_TYPE_ARITY } from './verify.js';
 
 const SPEC_CODE_INLINE_RE = /\b[a-z0-9][a-z0-9-]*-L[0-3](?:\.\d+)*(?:-(?!\d{8}\b)[a-z0-9][a-z0-9-]*)?\b/;
@@ -168,6 +169,22 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
         }
       }
     }
+    const critical = validateCriticalAcceptanceCriteria(content);
+    for (const id of critical.unknown) {
+      warnings.push({
+        rule: 'unknown_critical_ac',
+        level: 'warn',
+        message: `关键验收标准引用了不存在的 AC: ${id}`,
+        section: '关键验收标准',
+      });
+    }
+  } else if (sectionBody(content, '关键验收标准')) {
+    warnings.push({
+      rule: 'critical_ac_non_l3',
+      level: 'warn',
+      message: '关键验收标准段仅应出现在 L3 spec 中',
+      section: '关键验收标准',
+    });
   }
 
   return warnings;

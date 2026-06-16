@@ -12,6 +12,19 @@ import {
 import { getPaths } from '../core/paths.js';
 import { listAllSpecs } from '../core/spec-io.js';
 import { runProjectDoctor } from '../core/usability.js';
+import {
+  isTaskWorkflowProfile,
+  readAdaptiveWorkflowConfig,
+  writeAdaptiveWorkflowConfig,
+  type TaskWorkflowProfile,
+} from '../core/workflow-profile.js';
+import { recommendWorkflowProfile, type ProfileRecommendation } from '../core/profile-recommendation.js';
+import { buildProfileMetrics, type ProfileMetricsReport } from '../core/profile-metrics.js';
+import {
+  buildAdaptiveWorkflowAdoptionPreview,
+  type AdaptiveWorkflowAdoptionPreview,
+} from '../core/adaptive-workflow-adoption.js';
+import { buildCriticalReadinessReport, type CriticalReadinessReport } from '../core/critical-readiness.js';
 import { applyRepositoryRemediation, planRepositoryRemediation } from '../core/remediation.js';
 import { applyLifecycleReconciliation, planLifecycleReconciliation } from '../core/reconciliation.js';
 import { printPathGroup, requireInitialized } from './common.js';
@@ -106,6 +119,172 @@ export function registerProject(program: Command): void {
       }
     });
 
+  const workflow = cmd
+    .command('workflow')
+    .description('管理风险自适应工作流配置（显式启用后影响后续 Task Profile）');
+
+  workflow
+    .command('preview')
+    .description('只读预检 adaptive workflow 采用状态、governed readiness 和推荐默认 Profile')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const preview = buildAdaptiveWorkflowAdoptionPreview(paths);
+      if (opts.json) {
+        console.log(JSON.stringify(preview, null, 2));
+        return;
+      }
+      printAdaptiveWorkflowAdoptionPreview(preview);
+    });
+
+  workflow
+    .command('show')
+    .description('查看 adaptive workflow 配置')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const config = readAdaptiveWorkflowConfig(paths);
+      if (opts.json) {
+        console.log(JSON.stringify(config, null, 2));
+        return;
+      }
+      console.log('Adaptive workflow:');
+      console.log(`  enabled: ${config.enabled}`);
+      console.log(`  defaultProfile: ${config.defaultProfile}`);
+      if (!config.enabled) {
+        console.log('  mode: legacy compatibility (existing task completion semantics unchanged)');
+      }
+    });
+
+  workflow
+    .command('enable')
+    .description('显式启用 adaptive workflow')
+    .option('--default-profile <profile>', 'standard | governed', 'standard')
+    .action((opts: { defaultProfile: string }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      if (!isTaskWorkflowProfile(opts.defaultProfile)) {
+        throw new Error(`INVALID_WORKFLOW_PROFILE: ${opts.defaultProfile} (must be standard|governed)`);
+      }
+      const config = writeAdaptiveWorkflowConfig(paths, {
+        enabled: true,
+        defaultProfile: opts.defaultProfile as TaskWorkflowProfile,
+      });
+      console.log('✓ Adaptive workflow enabled');
+      console.log(`  defaultProfile: ${config.defaultProfile}`);
+      console.log('  Future tasks will record standard/governed profile snapshots.');
+      console.log('  Historical tasks are not modified.');
+      console.log('  Audit adoption with `spec-manager project profile metrics`.');
+    });
+
+  workflow
+    .command('disable')
+    .description('禁用 adaptive workflow（只影响后续 Task，不改写历史 Task）')
+    .action(() => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const current = readAdaptiveWorkflowConfig(paths);
+      const config = writeAdaptiveWorkflowConfig(paths, {
+        enabled: false,
+        defaultProfile: current.defaultProfile,
+      });
+      console.log('✓ Adaptive workflow disabled');
+      console.log(`  defaultProfile: ${config.defaultProfile}`);
+      console.log('  existing task profile snapshots were not modified');
+      console.log('  Only future task profile resolution changes.');
+      console.log('  Existing task profile snapshots remain unchanged.');
+    });
+
+  const profile = cmd
+    .command('profile')
+    .description('Profile 推荐与治理效果报告');
+
+  profile
+    .command('recommend')
+    .description('根据请求文本和可选文件路径推荐 quick/standard/governed Profile')
+    .requiredOption('--request <text>', '工作请求或变更描述')
+    .option('--files <paths>', '逗号分隔的相关文件路径')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { request: string; files?: string; json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      try {
+        const recommendation = recommendWorkflowProfile({
+          paths,
+          request: opts.request,
+          files: splitCommaList(opts.files),
+        });
+        if (opts.json) {
+          console.log(JSON.stringify(recommendation, null, 2));
+          return;
+        }
+        printProfileRecommendation(recommendation);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.startsWith('PROFILE_RECOMMENDATION_REQUEST_REQUIRED:')) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    });
+
+  profile
+    .command('metrics')
+    .description('汇总 Profile 采用、完成状态、Evidence coverage 与覆盖审计')
+    .option('--topic <topic>', '只统计指定 topic')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { topic?: string; json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      try {
+        const report = buildProfileMetrics(paths, { topic: opts.topic });
+        if (opts.json) {
+          console.log(JSON.stringify(report, null, 2));
+          return;
+        }
+        printProfileMetrics(report);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.startsWith('INVALID_PROFILE_METRICS_TOPIC:')) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    });
+
+  const readiness = cmd
+    .command('readiness')
+    .description('项目治理 readiness 只读报告');
+
+  readiness
+    .command('critical')
+    .description('汇总 active L3 的关键 AC readiness 和修复建议')
+    .option('--topic <topic>', '只统计指定 topic')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { topic?: string; json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      try {
+        const report = buildCriticalReadinessReport(paths, { topic: opts.topic });
+        if (opts.json) {
+          console.log(JSON.stringify(report, null, 2));
+          return;
+        }
+        printCriticalReadinessReport(report);
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (message.startsWith('INVALID_CRITICAL_READINESS_TOPIC:')) {
+          console.error(`✗ ${message}`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    });
+
   cmd
     .command('reconcile')
     .description('预览或执行已审阅范围内的历史规格状态对账')
@@ -188,6 +367,151 @@ export function registerProject(program: Command): void {
         console.log('\n(尚无 spec)');
       }
     });
+}
+
+function printProfileRecommendation(recommendation: ProfileRecommendation): void {
+  console.log(`Recommended Profile: ${recommendation.recommendedProfile}`);
+  console.log(`Rule Version: ${recommendation.ruleVersion}`);
+  console.log('Adaptive Workflow:');
+  console.log(`  enabled: ${recommendation.adaptiveWorkflow.enabled}`);
+  console.log(`  defaultProfile: ${recommendation.adaptiveWorkflow.defaultProfile}`);
+  console.log(`  note: ${recommendation.adaptiveWorkflow.note}`);
+  console.log('Risk Factors:');
+  for (const factor of recommendation.riskFactors) {
+    console.log(`  - ${factor.id} [${factor.severity}] matched "${factor.matched}": ${factor.reason}`);
+  }
+  console.log('Reasons:');
+  for (const reason of recommendation.reasons) console.log(`  - ${reason}`);
+  console.log('Override:');
+  console.log(`  allowed: ${recommendation.override.allowed}`);
+  console.log(`  requiresReason: ${recommendation.override.requiresReason}`);
+  console.log(`  guidance: ${recommendation.override.guidance}`);
+}
+
+function printAdaptiveWorkflowAdoptionPreview(preview: AdaptiveWorkflowAdoptionPreview): void {
+  console.log('Adaptive Workflow Adoption Preview:');
+  console.log(`  schemaVersion: ${preview.schemaVersion}`);
+  console.log(`  generatedAt: ${preview.generatedAt}`);
+  console.log('Adaptive Workflow:');
+  console.log(`  enabled: ${preview.adaptiveWorkflow.enabled}`);
+  console.log(`  defaultProfile: ${preview.adaptiveWorkflow.defaultProfile}`);
+  console.log(`  note: ${preview.adaptiveWorkflow.note}`);
+  console.log('Task Profile Metrics:');
+  console.log(`  totalTasks: ${preview.taskProfileMetrics.totalTasks}`);
+  console.log(`  legacyTasks: ${preview.taskProfileMetrics.legacyTasks}`);
+  console.log(`  standardTasks: ${preview.taskProfileMetrics.standardTasks}`);
+  console.log(`  governedTasks: ${preview.taskProfileMetrics.governedTasks}`);
+  console.log('Governed Readiness:');
+  console.log(`  activeL3Specs: ${preview.governedReadiness.activeL3Specs}`);
+  console.log(`  withCriticalAcceptanceCriteria: ${preview.governedReadiness.withCriticalAcceptanceCriteria}`);
+  console.log(`  withoutCriticalAcceptanceCriteria: ${preview.governedReadiness.withoutCriticalAcceptanceCriteria}`);
+  console.log(`  readyForGovernedDefault: ${preview.governedReadiness.readyForGovernedDefault}`);
+  console.log('  examplesWithoutCriticalAcceptanceCriteria:');
+  if (preview.governedReadiness.examplesWithoutCriticalAcceptanceCriteria.length === 0) {
+    console.log('    (none)');
+  } else {
+    for (const code of preview.governedReadiness.examplesWithoutCriticalAcceptanceCriteria) console.log(`    - ${code}`);
+  }
+  console.log('Recommendation:');
+  console.log(`  recommendedDefaultProfile: ${preview.recommendation.recommendedDefaultProfile}`);
+  console.log('  reasons:');
+  for (const reason of preview.recommendation.reasons) console.log(`    - ${reason}`);
+  console.log('  warnings:');
+  if (preview.recommendation.warnings.length === 0) {
+    console.log('    (none)');
+  } else {
+    for (const warning of preview.recommendation.warnings) console.log(`    - ${warning}`);
+  }
+  console.log('  nextSteps:');
+  for (const step of preview.recommendation.nextSteps) console.log(`    - ${step}`);
+  console.log('History Policy:');
+  console.log(`  mutatesHistoricalTasks: ${preview.historyPolicy.mutatesHistoricalTasks}`);
+  console.log(`  note: ${preview.historyPolicy.note}`);
+}
+
+function printProfileMetrics(report: ProfileMetricsReport): void {
+  console.log('Profile Metrics:');
+  console.log(`  schemaVersion: ${report.schemaVersion}`);
+  console.log(`  generatedAt: ${report.generatedAt}`);
+  if (report.topic) console.log(`  topic: ${report.topic}`);
+  console.log('Adaptive Workflow:');
+  console.log(`  enabled: ${report.adaptiveWorkflow.enabled}`);
+  console.log(`  defaultProfile: ${report.adaptiveWorkflow.defaultProfile}`);
+  console.log(`  note: ${report.adaptiveWorkflow.note}`);
+  console.log('Totals:');
+  console.log(`  tasks: ${report.totals.tasks}`);
+  console.log(`  completed: ${report.totals.completed}`);
+  console.log(`  failed: ${report.totals.failed}`);
+  console.log(`  active: ${report.totals.active}`);
+  console.log('By Profile:');
+  for (const profile of ['legacy', 'standard', 'governed'] as const) {
+    const bucket = report.byProfile[profile];
+    const rate = bucket.completionRate === null ? 'n/a' : `${Math.round(bucket.completionRate * 100)}%`;
+    console.log(`  - ${profile}: tasks=${bucket.tasks} completed=${bucket.completed} failed=${bucket.failed} active=${bucket.active} completionRate=${rate}`);
+  }
+  console.log('Governed Coverage:');
+  console.log(`  required: ${report.evidence.governed.required}`);
+  console.log(`  covered: ${report.evidence.governed.covered}`);
+  console.log(`  failed: ${report.evidence.governed.failed}`);
+  console.log(`  uncovered: ${report.evidence.governed.uncovered}`);
+  console.log(`  completedWithGaps: ${report.evidence.governed.completedWithGaps.length}`);
+  for (const item of report.evidence.governed.completedWithGaps) {
+    console.log(`    - ${item.specCode}/${item.taskId}: missing ${item.missing.join(', ')}`);
+  }
+  console.log('Standard Warnings:');
+  console.log(`  warnings: ${report.evidence.standard.warnings}`);
+  for (const item of report.evidence.standard.missing) {
+    console.log(`    - ${item.specCode}/${item.taskId}: missing ${item.missing.join(', ')}`);
+  }
+  console.log('Explicit Overrides:');
+  console.log(`  count: ${report.overrides.length}`);
+  for (const item of report.overrides) {
+    console.log(`    - ${item.specCode}/${item.taskId}: ${item.profile} (${item.reason})`);
+  }
+  console.log('Invalid Evidence Projections:');
+  console.log(`  count: ${report.evidence.invalidProjections.length}`);
+  for (const item of report.evidence.invalidProjections) {
+    console.log(`    - ${item.specCode}/${item.taskId}: ${item.error}`);
+  }
+}
+
+function printCriticalReadinessReport(report: CriticalReadinessReport): void {
+  console.log('Critical AC Readiness:');
+  console.log(`  schemaVersion: ${report.schemaVersion}`);
+  console.log(`  generatedAt: ${report.generatedAt}`);
+  if (report.topic) console.log(`  topic: ${report.topic}`);
+  console.log('Totals:');
+  console.log(`  activeL3: ${report.totals.activeL3}`);
+  console.log(`  ready: ${report.totals.ready}`);
+  console.log(`  missing: ${report.totals.missing}`);
+  console.log(`  empty: ${report.totals.empty}`);
+  console.log(`  unknown: ${report.totals.unknown}`);
+  console.log(`  readinessRatio: ${Math.round(report.readinessRatio * 100)}%`);
+  console.log(`Summary: ${report.summary}`);
+  console.log('Gaps:');
+  const gaps = report.items.filter(item => item.status !== 'ready');
+  if (gaps.length === 0) {
+    console.log('  (none)');
+  } else {
+    for (const item of gaps) {
+      console.log(`  - ${item.specCode}: ${item.status}`);
+      console.log(`    reason: ${item.reason}`);
+      if (item.unknownCriticalIds.length > 0) {
+        console.log(`    unknownCriticalIds: ${item.unknownCriticalIds.join(', ')}`);
+      }
+      console.log(`    suggestion: ${item.suggestion}`);
+    }
+  }
+  console.log('Recommendations:');
+  for (const recommendation of report.recommendations) console.log(`  - ${recommendation}`);
+  console.log('Governed Upgrade:');
+  console.log(`  readyForGovernedDefault: ${report.governedUpgrade.readyForGovernedDefault}`);
+  console.log(`  note: ${report.governedUpgrade.note}`);
+}
+
+function splitCommaList(value: string | undefined): string[] | undefined {
+  if (value === undefined) return undefined;
+  return value.split(',').map(item => item.trim()).filter(Boolean);
 }
 
 function printRemediationGroup(label: string, actions: Array<{ action: string; target: string; detail: string }>): void {

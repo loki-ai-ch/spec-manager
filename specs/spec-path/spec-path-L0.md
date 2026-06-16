@@ -4,11 +4,11 @@ level: L0
 title: Spec 路径与命名规范
 topic: spec-path
 parentCode: null
-status: frozen
+status: implemented
 aiSummary: 统一 spec 编码、目录结构和文件命名：点分编号 + 平铺布局 + desc 描述后缀
 created: '2026-06-05T07:21:56.255Z'
-updated: '2026-06-05T17:51:32+08:00'
-changeSummary: 同步方法论 L0 必填段：愿景/路线图
+updated: '2026-06-16T08:37:13.685Z'
+changeSummary: frozen → implemented
 ---
 
 # Spec 路径与命名规范

@@ -24,6 +24,12 @@ import {
 } from './invariants.js';
 import { truncateWithEllipsis, LAST_FAILED_OUTPUT_MAX_LEN } from './spec-sections.js';
 import { runTaskCompletion } from './task-completion.js';
+import {
+  resolveTaskWorkflowProfile,
+  type TaskWorkflowProfileSource,
+  type WorkflowProfile,
+} from './workflow-profile.js';
+import { validateCriticalAcceptanceCriteria } from './spec-sections.js';
 
 export type { TaskStatus } from './status.js';
 
@@ -47,6 +53,9 @@ export interface TaskRecord {
   errorCode: string | null;
   errorMessage: string | null;
   lastFailedOutput: string | null;
+  profile?: WorkflowProfile;
+  profileSource?: TaskWorkflowProfileSource;
+  profileOverrideReason?: string | null;
 }
 
 export interface TaskVerificationRecord {
@@ -126,6 +135,8 @@ export interface CreateTaskInput {
   planJson: { coveredSpecs?: string[]; steps: Array<{ stepNo: number | string; stepType: StepTypeT; name: string }> };
   autoConfirm: boolean;
   auditSink?: AuditSink;
+  profile?: string;
+  profileOverrideReason?: string;
 }
 
 export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile: string } {
@@ -166,6 +177,16 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
       `}`,
     );
   }
+  const resolvedProfile = resolveTaskWorkflowProfile(input.paths, input.profile, input.profileOverrideReason);
+  if (resolvedProfile.profile === 'governed') {
+    const critical = validateCriticalAcceptanceCriteria(spec.content);
+    if (critical.unknown.length > 0) {
+      throw new Error(`UNKNOWN_CRITICAL_AC: ${critical.unknown.join(', ')}`);
+    }
+    if (critical.criticalCriteria.length === 0) {
+      throw new Error(`GOVERNED_CRITICAL_AC_REQUIRED: ${input.specCode} must declare at least one ## 关键验收标准 item`);
+    }
+  }
 
   const taskId = generateTaskId(spec.filePath, input.specCode);
   const task: TaskRecord = {
@@ -186,6 +207,9 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     errorCode: null,
     errorMessage: null,
     lastFailedOutput: null,
+    profile: resolvedProfile.profile,
+    profileSource: resolvedProfile.profileSource,
+    profileOverrideReason: resolvedProfile.profileOverrideReason,
   };
   const taskFile = taskFilePath(spec.filePath, input.specCode, taskId);
   writeTaskJSON(taskFile, task);

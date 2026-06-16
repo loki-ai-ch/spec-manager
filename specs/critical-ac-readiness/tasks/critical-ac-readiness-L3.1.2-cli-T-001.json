@@ -1,0 +1,90 @@
+{
+  "id": "T-001",
+  "specCode": "critical-ac-readiness-L3.1.2-cli",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取本 L3、critical-readiness core、project CLI、方法论和 Agent 资产基线",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, critical readiness core API, project CLI command structure, profile metrics CLI tests, methodology contract tests, methodology docs, skill, templates, and managed agent assets; confirmed readiness CLI should be a project subcommand using existing text/json and exit-code patterns.\",\"files\":[\"specs/critical-ac-readiness/critical-ac-readiness-L3.1.2-cli.md\",\"src/core/critical-readiness.ts\",\"src/cli/project.ts\",\"src/cli/__tests__/project-profile.test.ts\",\"src/core/__tests__/methodology-contract.test.ts\",\"docs/methodology.md\",\"skill/SKILL.md\",\"templates/agents/AGENTS.md\"]}",
+      "reportedAt": "2026-06-16T08:31:32.936Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 project readiness critical CLI text/json 输出和错误处理",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added project readiness critical CLI with text/json output, topic option, INVALID_CRITICAL_READINESS_TOPIC exit-code mapping, and text printer for totals, gaps, recommendations, and governed upgrade note.\",\"files\":[\"src/cli/project.ts\"]}",
+      "reportedAt": "2026-06-16T08:32:18.003Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "补充 CLI 测试覆盖 text、json、topic 过滤和非法 topic",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added project readiness critical CLI tests covering text output with gap details, JSON output, topic filtering, governed readiness true case, and invalid topic exit-code mapping.\",\"files\":[\"src/cli/__tests__/project-readiness.test.ts\"]}",
+      "reportedAt": "2026-06-16T08:33:18.732Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "同步方法论、skill、Agent 入口和契约测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Synchronized methodology, skill, root agent instructions, templates, managed Claude/CodeBuddy assets, and methodology contract tests with read-only critical readiness guidance and no auto-generated critical AC boundary.\",\"files\":[\"docs/methodology.md\",\"skill/SKILL.md\",\"AGENTS.md\",\"CLAUDE.md\",\"CODEBUDDY.md\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"templates/agents/codebuddy-skill/SKILL.md\",\".claude/skills/spec-manager/SKILL.md\",\".codebuddy/skills/spec-manager/SKILL.md\",\"src/core/__tests__/methodology-contract.test.ts\"]}",
+      "reportedAt": "2026-06-16T08:34:40.126Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "运行 vitest、build、doctor、spec validate 和 plan validate",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran focused CLI and methodology tests, TypeScript build, project doctor, spec validate, and plan validate successfully.\",\"commands\":[\"npx vitest run src/cli/__tests__/project-readiness.test.ts src/core/__tests__/methodology-contract.test.ts --reporter=dot\",\"npm run build\",\"spec-manager project doctor\",\"spec-manager spec validate critical-ac-readiness-L3.1.2-cli\",\"spec-manager spec validate-plan --from-spec critical-ac-readiness-L3.1.2-cli\"],\"files\":[\"src/cli/project.ts\",\"src/cli/__tests__/project-readiness.test.ts\",\"src/core/__tests__/methodology-contract.test.ts\",\"docs/methodology.md\"]}",
+      "reportedAt": "2026-06-16T08:35:02.621Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T08:31:10.504Z",
+  "finishedAt": "2026-06-16T08:35:33.961Z",
+  "created": "2026-06-16T08:30:53.747Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npx vitest run src/cli/__tests__/project-readiness.test.ts src/core/__tests__/methodology-contract.test.ts --reporter=dot",
+      "exitCode": 0,
+      "summary": "Readiness CLI and methodology contract tests passed: text report, JSON, topic filtering, invalid topic mapping, gap details, and no auto-generated critical AC guidance.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-16T08:35:11.943Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "TypeScript build and project doctor passed after readiness CLI and managed asset synchronization.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-06-16T08:35:19.779Z",
+      "layer": "compile"
+    }
+  ]
+}

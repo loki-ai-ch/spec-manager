@@ -49,6 +49,26 @@ describe('inspectProjectIntegrity', () => {
     expect(inspectProjectIntegrity(project.paths).some(issue => issue.kind === 'missing-verification')).toBe(true);
   });
 
+  it('detects completed governed task without full critical AC coverage', () => {
+    writeGovernedEvidenceFixture('governed-integrity-L3.1.1', { coversAc: [] });
+
+    const issues = inspectProjectIntegrity(project.paths);
+
+    expect(issues.some(issue =>
+      issue.kind === 'missing-evidence-coverage' &&
+      issue.sourceId === 'governed-integrity-L3.1.1:T-001' &&
+      issue.message.includes('AC-1'),
+    )).toBe(true);
+  });
+
+  it('does not report legacy completed task missing critical AC coverage as evidence violation', () => {
+    writeGovernedEvidenceFixture('legacy-integrity-L3.1.1', { profile: 'legacy', coversAc: [] });
+
+    const issues = inspectProjectIntegrity(project.paths);
+
+    expect(issues.some(issue => issue.kind === 'missing-evidence-coverage')).toBe(false);
+  });
+
   it('suppresses only an exact valid legacy verification exemption', () => {
     createSpec({ paths: project.paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
     writeLegacyTask('auth-L1', 'T-001');
@@ -109,4 +129,70 @@ function writeLegacyTask(specCode: string, taskId: string): void {
     steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
     created: new Date().toISOString(),
   }), 'utf8');
+}
+
+function writeGovernedEvidenceFixture(
+  specCode: string,
+  opts: { profile?: 'legacy' | 'governed'; coversAc: string[] },
+): void {
+  const topic = specCode.split('-L3')[0];
+  const l1Code = `${topic}-L1`;
+  const l2Code = `${topic}-L2.1`;
+  const l1 = createSpec({ paths: project.paths, code: l1Code, level: 'L1', title: 'Evidence L1', topic, parentCode: null });
+  writeSpec({ ...l1, fm: { ...l1.fm, status: 'confirmed' } });
+  const l2 = createSpec({ paths: project.paths, code: l2Code, level: 'L2', title: 'Evidence L2', topic, parentCode: l1Code });
+  writeSpec({ ...l2, fm: { ...l2.fm, status: 'confirmed' } });
+  const spec = createSpec({ paths: project.paths, code: specCode, level: 'L3', title: 'Evidence', topic, parentCode: l2Code });
+  writeSpec({
+    ...spec,
+    fm: { ...spec.fm, status: 'implemented', aiSummary: 'evidence fixture' },
+    content: `# Evidence
+
+## 目标
+\`src/core/integrity.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: critical behavior
+
+## 关键验收标准
+- AC-1
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`,
+  });
+  const taskDir = join(project.paths.specsDir, topic, 'tasks');
+  mkdirSync(taskDir, { recursive: true });
+  writeFileSync(join(taskDir, `${specCode}-T-001.json`), JSON.stringify({
+    id: 'T-001',
+    specCode,
+    status: 'completed',
+    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
+    verifications: [{
+      id: 'V-001',
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+      artifacts: [],
+      coversAc: opts.coversAc,
+      created: new Date().toISOString(),
+      layer: 'functional',
+    }],
+    autoConfirm: false,
+    startedAt: new Date().toISOString(),
+    finishedAt: new Date().toISOString(),
+    created: new Date().toISOString(),
+    waitReason: null,
+    errorCode: null,
+    errorMessage: null,
+    lastFailedOutput: null,
+    profile: opts.profile ?? 'governed',
+    profileSource: opts.profile === 'legacy' ? 'legacy' : 'project-default',
+    profileOverrideReason: null,
+  }, null, 2), 'utf8');
 }

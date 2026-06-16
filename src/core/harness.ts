@@ -3,6 +3,9 @@ import { listDecisions } from './decision.js';
 import { findSpecByCode, listAllSpecs, type SpecRecord } from './spec-io.js';
 import { addTaskVerification, reportStep, showTask, listTasks, VERIFICATION_LAYER_ORDER, type VerificationLayer, type TaskRecord, type TaskVerificationRecord } from './task.js';
 import { sectionBody, extractVerificationCommands, truncateWithEllipsis, LAST_FAILED_OUTPUT_MAX_LEN } from './spec-sections.js';
+import { validateCriticalAcceptanceCriteria } from './spec-sections.js';
+import type { WorkflowProfile } from './workflow-profile.js';
+import { buildTaskEvidence, type EvidenceCoverageStatus, type TaskEvidenceSummary } from './task-evidence.js';
 
 export type HarnessContextFormat = 'text' | 'json';
 
@@ -21,6 +24,12 @@ export interface HarnessTaskContext {
   objectives: string[];
   nonGoals: string[];
   acceptanceCriteria: string[];
+  criticalAcceptanceCriteria?: string[];
+  workflowProfile?: WorkflowProfile;
+  evidenceCoverage?: {
+    summary: TaskEvidenceSummary;
+    criteria: Array<{ id: string; status: EvidenceCoverageStatus; verificationIds: string[] }>;
+  };
   decisions: Array<{ code?: string; title: string; summary: string }>;
   suggestedVerification: string[];
   nextCommands: string[];
@@ -101,6 +110,7 @@ export function buildHarnessTaskContext(paths: ProjectPaths, l3Code: string): Ha
   if (latestTask?.lastFailedOutput) {
     warnings.push(`⚠ 上次 step 失败摘要: ${truncateWithEllipsis(latestTask.lastFailedOutput, LAST_FAILED_OUTPUT_MAX_LEN)}`);
   }
+  const evidenceCoverage = latestTask ? buildHarnessEvidenceCoverage(paths, latestTask, warnings) : undefined;
 
   return {
     schemaVersion: 'harness-context.experimental.v1',
@@ -116,6 +126,9 @@ export function buildHarnessTaskContext(paths: ProjectPaths, l3Code: string): Ha
     objectives: extractObjectives(spec.content),
     nonGoals: extractNonGoals(spec.content),
     acceptanceCriteria,
+    criticalAcceptanceCriteria: validateCriticalAcceptanceCriteria(spec.content).criticalCriteria.map(item => item.text),
+    workflowProfile: latestTask?.profile ?? 'legacy',
+    evidenceCoverage,
     decisions,
     suggestedVerification,
     nextCommands: [`spec-manager task create ${spec.fm.code} --plan ./plan.json`],
@@ -218,11 +231,45 @@ export function renderHarnessTaskContextText(context: HarnessTaskContext): strin
   pushList(lines, 'Objectives', context.objectives);
   pushList(lines, 'Non Goals', context.nonGoals);
   pushList(lines, 'Acceptance Criteria', context.acceptanceCriteria);
+  if (context.criticalAcceptanceCriteria) pushList(lines, 'Critical Acceptance Criteria', context.criticalAcceptanceCriteria);
+  if (context.workflowProfile) {
+    lines.push(`Workflow Profile: ${context.workflowProfile}`);
+    lines.push('');
+  }
+  if (context.evidenceCoverage) {
+    lines.push(`Evidence Coverage: ${context.evidenceCoverage.summary.covered}/${context.evidenceCoverage.summary.required} critical AC covered`);
+    for (const item of context.evidenceCoverage.criteria) {
+      const refs = item.verificationIds.length > 0 ? ` (${item.verificationIds.join(', ')})` : '';
+      lines.push(`- ${item.id}: ${item.status}${refs}`);
+    }
+    lines.push('');
+  }
   pushList(lines, 'Decisions', context.decisions.map(d => `${d.code ? `${d.code}: ` : ''}${d.title}${d.summary && d.summary !== d.title ? ` — ${d.summary}` : ''}`));
   pushList(lines, 'Suggested Verification', context.suggestedVerification);
   pushList(lines, 'Warnings', context.warnings);
   pushList(lines, 'Next', context.nextCommands);
   return `${lines.join('\n')}\n`;
+}
+
+function buildHarnessEvidenceCoverage(
+  paths: ProjectPaths,
+  task: TaskRecord,
+  warnings: string[],
+): HarnessTaskContext['evidenceCoverage'] | undefined {
+  try {
+    const evidence = buildTaskEvidence(paths, task.id, task.specCode);
+    return {
+      summary: evidence.summary,
+      criteria: evidence.criticalCriteria.map(item => ({
+        id: item.id,
+        status: item.status,
+        verificationIds: item.verificationIds,
+      })),
+    };
+  } catch (err) {
+    warnings.push(`evidenceCoverage unavailable: ${err instanceof Error ? err.message : String(err)}`);
+    return undefined;
+  }
 }
 
 function nextReportableStepNo(taskId: string, steps: Array<{ stepNo: number | string; status: string }>): number | string {

@@ -15,6 +15,7 @@ import { executeVerifyRules, parseVerifyRules, runCommand } from './verify.js';
 import { siblingMetaDir } from './paths.js';
 import { writeAtomic } from './frontmatter.js';
 import type { TaskRecord } from './task.js';
+import { buildTaskEvidence, evaluateEvidenceCoverage, type TaskEvidence } from './task-evidence.js';
 
 export type CompletionGateName =
   | 'bypass'
@@ -23,6 +24,7 @@ export type CompletionGateName =
   | 'verification-evidence'
   | 'verification-commands'
   | 'verify-rules'
+  | 'evidence-coverage'
   | 'lifecycle-cascade'
   | 'decision-r18';
 
@@ -80,6 +82,7 @@ function runTaskCompletionUnlocked(input: TaskCompletionInput): TaskCompletionRe
     gateResults.push(runVerificationEvidenceGate(task));
     gateResults.push(runVerificationCommandGate(input, l3.content));
     gateResults.push(runVerifyRuleGate(input, l3.content));
+    gateResults.push(runEvidenceCoverageGate(input, task));
   } else {
     gateResults.push(runVerificationEvidenceGate(task));
   }
@@ -237,6 +240,62 @@ export function runVerifyRuleGate(input: TaskCompletionInput, specContent: strin
   };
 }
 
+export function runEvidenceCoverageGate(input: TaskCompletionInput, task: TaskRecord): CompletionGateResult {
+  const evidence = buildTaskEvidence(input.paths, task.id, task.specCode);
+  const evaluation = evaluateEvidenceCoverage(evidence);
+  const missingCriteria = missingEvidenceCriteria(evidence);
+  const metadata = evidenceCoverageMetadata(evidence, missingCriteria);
+
+  if (evidence.profile === 'legacy') {
+    return {
+      gate: 'evidence-coverage',
+      status: 'passed',
+      message: 'legacy profile does not require critical AC coverage',
+      metadata,
+    };
+  }
+
+  if (missingCriteria.length === 0) {
+    return {
+      gate: 'evidence-coverage',
+      status: 'passed',
+      message: `${evidence.summary.covered}/${evidence.summary.required} critical AC covered`,
+      metadata,
+    };
+  }
+
+  if (evidence.profile === 'standard') {
+    return {
+      gate: 'evidence-coverage',
+      status: 'passed',
+      message: `standard profile warning: ${missingCriteria.join(', ')} not covered`,
+      metadata: { ...metadata, warning: true },
+    };
+  }
+
+  throwCompletionGateError(
+    {
+      paths: input.paths,
+      ruleId: 'R10',
+      specCode: task.specCode,
+      taskCode: task.id,
+      metadata: {
+        event: 'evidence-coverage-failed',
+        blockingCriteria: evaluation.blockingCriteria,
+        summary: evidence.summary,
+      },
+      countRule: false,
+    },
+    `EVIDENCE_COVERAGE_REQUIRED: governed task ${task.id} (${task.specCode}) missing successful evidence for ${evaluation.blockingCriteria.join(', ')}`,
+  );
+}
+
+function missingEvidenceCriteria(evidence: TaskEvidence): string[] {
+  return evidence.criticalCriteria
+    .filter(item => item.status === 'failed' || item.status === 'uncovered')
+    .map(item => item.id);
+}
+
 export function runDecisionGate(
   input: TaskCompletionInput,
   cascadedL1Specs: string[],
@@ -292,6 +351,17 @@ function bypassedCompletionChecks(input: TaskCompletionInput): string[] {
     input.skipVerification ? 'verification-commands' : null,
     input.skipVerify ? 'verify-rules' : null,
   ].filter((value): value is string => value !== null);
+}
+
+function evidenceCoverageMetadata(evidence: TaskEvidence, blockingCriteria: string[]): Record<string, unknown> {
+  return {
+    profile: evidence.profile,
+    required: evidence.summary.required,
+    covered: evidence.summary.covered,
+    failed: evidence.summary.failed,
+    uncovered: evidence.summary.uncovered,
+    blockingCriteria,
+  };
 }
 
 class CompletionGateError extends Error {

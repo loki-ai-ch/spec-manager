@@ -7,6 +7,7 @@ import { createSpec, findSpecByCode, updateSpec, generateSpecCode } from '../spe
 import { addTaskVerification, createTask, startTask, reportStep, completeTask, findTask, listTasks, failTask, waitTask, showTask } from '../task.js';
 import { hit as auditHit, readAudit } from '../audit.js';
 import { createDecision, setDecisionPartial } from '../decision.js';
+import { writeAdaptiveWorkflowConfig } from '../workflow-profile.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -364,6 +365,137 @@ describe('R10 / R12 planJson 门禁', () => {
     })).toThrow(/R11/);
     const audit = readAudit(paths);
     expect(audit.rules.R11).toBe(1);
+  });
+});
+
+describe('adaptive workflow profile task creation', () => {
+  function enableWorkflow(defaultProfile: 'standard' | 'governed'): void {
+    writeAdaptiveWorkflowConfig(paths, { enabled: true, defaultProfile });
+  }
+
+  function setL3Content(specCode: string, critical = true): void {
+    updateSpec(paths, specCode, {
+      content: `# Impl
+
+## 目标
+\`src/core/task.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: Given task creation, When profile is resolved, Then task SHALL store profile.
+2. **AC-2**: Given governed task, When key AC is missing, Then task SHALL be blocked.
+
+${critical ? `## 关键验收标准
+- AC-1
+` : ''}
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`,
+      aiSummary: 'adaptive profile fixture',
+      changeSummary: 'test fixture content',
+    });
+  }
+
+  it('creates legacy task when adaptive workflow is disabled', () => {
+    const { l3Code } = createFrozenHierarchy('adaptive-legacy');
+
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) });
+
+    expect(task.profile).toBe('legacy');
+    expect(task.profileSource).toBe('legacy');
+    expect(task.profileOverrideReason).toBeNull();
+  });
+
+  it('uses project default profile when adaptive workflow is enabled', () => {
+    const { l3Code } = createFrozenHierarchy('adaptive-standard');
+    setL3Content(l3Code);
+    enableWorkflow('standard');
+
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) });
+
+    expect(task.profile).toBe('standard');
+    expect(task.profileSource).toBe('project-default');
+  });
+
+  it('requires reason when explicit profile overrides project default', () => {
+    const { l3Code } = createFrozenHierarchy('adaptive-override');
+    setL3Content(l3Code);
+    enableWorkflow('standard');
+
+    expect(() => createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+      profile: 'governed',
+    })).toThrow(/PROFILE_OVERRIDE_REASON_REQUIRED/);
+
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+      profile: 'governed',
+      profileOverrideReason: 'high risk',
+    });
+    expect(task.profile).toBe('governed');
+    expect(task.profileSource).toBe('explicit');
+    expect(task.profileOverrideReason).toBe('high risk');
+  });
+
+  it('rejects explicit profile when adaptive workflow is disabled', () => {
+    const { l3Code } = createFrozenHierarchy('adaptive-disabled');
+
+    expect(() => createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: planFor(l3Code),
+      profile: 'standard',
+    })).toThrow(/ADAPTIVE_WORKFLOW_DISABLED/);
+  });
+
+  it('blocks governed task creation without valid critical AC', () => {
+    const { l3Code } = createFrozenHierarchy('adaptive-governed');
+    setL3Content(l3Code, false);
+    enableWorkflow('governed');
+
+    expect(() => createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) }))
+      .toThrow(/GOVERNED_CRITICAL_AC_REQUIRED/);
+  });
+
+  it('blocks governed task creation with unknown critical AC reference', () => {
+    const { l3Code } = createFrozenHierarchy('adaptive-unknown');
+    updateSpec(paths, l3Code, {
+      content: `# Impl
+
+## 目标
+\`src/core/task.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: Given task creation, When profile is resolved, Then task SHALL store profile.
+
+## 关键验收标准
+- AC-2
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`,
+      aiSummary: 'adaptive profile fixture',
+    });
+    enableWorkflow('governed');
+
+    expect(() => createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: planFor(l3Code) }))
+      .toThrow(/UNKNOWN_CRITICAL_AC.*AC-2/);
   });
 });
 

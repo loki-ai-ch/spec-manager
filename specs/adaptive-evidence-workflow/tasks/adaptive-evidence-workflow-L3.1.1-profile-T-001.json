@@ -1,0 +1,110 @@
+{
+  "id": "T-001",
+  "specCode": "adaptive-evidence-workflow-L3.1.1-profile",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取源码并确认 Profile 配置、Task 创建和测试基线",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成 L3/L2/templates 与相关源码/测试调查；基线 npm test 46 files / 572 tests passed。\",\"files\":[]}",
+      "reportedAt": "2026-06-16T00:58:28.453Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增共享项目工作流配置能力与公开导出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 workflow-profile 核心模块，支持 adaptiveWorkflow 配置读写、Profile 解析、覆盖理由校验和 public API 导出。\",\"files\":[\"src/core/workflow-profile.ts\",\"src/core/__tests__/workflow-profile.test.ts\",\"src/index.ts\"]}",
+      "reportedAt": "2026-06-16T01:09:01.976Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "增加 project workflow CLI 与 doctor 配置检查",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"增加 project workflow show/enable/disable CLI 与 doctor adaptive workflow 配置检查。\",\"files\":[\"src/cli/project.ts\",\"src/cli/__tests__/project-workflow.test.ts\",\"src/core/usability.ts\"]}",
+      "reportedAt": "2026-06-16T01:09:10.531Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "增加验收标准与关键 AC 解析校验",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增验收标准与关键 AC 解析，validate 对未知关键 AC 和非 L3 关键 AC 段给出 warning。\",\"files\":[\"src/core/spec-sections.ts\",\"src/core/validate.ts\",\"src/core/__tests__/spec-sections.test.ts\",\"src/core/__tests__/validate.test.ts\"]}",
+      "reportedAt": "2026-06-16T01:09:21.172Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "扩展 Task Profile 数据模型与 governed 创建准入",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 TaskRecord 和 createTask，写入 Profile 快照并阻断 governed 缺失或未知关键 AC。\",\"files\":[\"src/core/task.ts\",\"src/core/__tests__/task-cascade.test.ts\"]}",
+      "reportedAt": "2026-06-16T01:06:37.127Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "扩展 task create CLI 与 Harness Context",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 task create CLI Profile 参数与 Harness Context 的 Profile/关键 AC 输出。\",\"files\":[\"src/cli/task.ts\",\"src/core/harness.ts\",\"src/cli/__tests__/task.test.ts\",\"src/core/__tests__/harness.test.ts\"]}",
+      "reportedAt": "2026-06-16T01:09:27.541Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "同步模板、方法论、Agent 入口与契约测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"同步 L3 模板、方法论文档、Agent 入口和托管 skill 资产，并补充方法论契约测试。\",\"files\":[\"templates/L3-impl.md\",\"docs/methodology.md\",\"skill/SKILL.md\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"templates/agents/codebuddy-skill/SKILL.md\",\"AGENTS.md\",\"CLAUDE.md\",\"CODEBUDDY.md\",\"src/core/__tests__/methodology-contract.test.ts\"]}",
+      "reportedAt": "2026-06-16T01:06:48.918Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 Profile 创建矩阵、全量测试、lint、build、installed CLI 和 project doctor",
+      "status": "succeeded",
+      "toolName": "exec_command",
+      "outputJson": "{\"summary\":\"完成聚焦测试、全量测试、lint、build、installed CLI verification、project doctor、Spec 校验和 installed CLI smoke；全部通过。\",\"files\":[]}",
+      "reportedAt": "2026-06-16T01:09:34.345Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T00:58:01.312Z",
+  "finishedAt": "2026-06-16T01:09:47.643Z",
+  "created": "2026-06-16T00:58:01.178Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint && npm run build && npm run verify:installed-cli && spec-manager project doctor",
+      "exitCode": 0,
+      "summary": "All required verification passed: focused tests, full npm test 49 files/601 tests, lint, build, installed CLI verification, project doctor, installed CLI smoke.",
+      "artifacts": [
+        "dist/"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-16T01:08:29.299Z",
+      "layer": "functional"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ import {
   reportHarnessTaskStep,
 } from '../harness.js';
 import { createSpec, updateSpec } from '../spec-io.js';
-import { createTask, startTask } from '../task.js';
+import { addTaskVerification, createTask, startTask } from '../task.js';
 
 let project: TestProject;
 
@@ -42,6 +42,10 @@ function createHierarchy(opts?: { frozen?: boolean }): string {
 
 1. **AC-1**: Given frozen L3, When context is built, Then output SHALL include status gate.
 2. **AC-2**: Given JSON format, When rendered, Then fields SHALL be stable.
+
+## 关键验收标准
+
+- AC-1
 
 ## 验证命令
 
@@ -89,6 +93,8 @@ describe('harness task context', () => {
     expect(context.summary).toBe('Login context summary');
     expect(context.acceptanceCriteria).toHaveLength(2);
     expect(context.acceptanceCriteria[0]).toContain('AC-1');
+    expect(context.criticalAcceptanceCriteria).toEqual(['AC-1: Given frozen L3, When context is built, Then output SHALL include status gate.']);
+    expect(context.workflowProfile).toBe('legacy');
     expect(context.suggestedVerification).toContain('npm run build');
     expect(context.nextCommands).toContain(`spec-manager task create ${code} --plan ./plan.json`);
   });
@@ -118,7 +124,30 @@ describe('harness task context', () => {
     expect(rendered).toContain('Task Context');
     expect(rendered).toContain('Status Gate');
     expect(rendered).toContain('Acceptance Criteria');
+    expect(rendered).toContain('Critical Acceptance Criteria');
+    expect(rendered).toContain('Workflow Profile: legacy');
     expect(rendered).toContain('Next');
+  });
+
+  it('includes evidence coverage when a task exists', () => {
+    const specCode = createTaskForReport();
+    addTaskVerification({
+      paths: project.paths,
+      taskId: 'T-001',
+      specCode,
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+      coversAc: ['AC-1'],
+    });
+
+    const context = buildHarnessTaskContext(project.paths, specCode);
+    const rendered = renderHarnessTaskContextText(context);
+
+    expect(context.evidenceCoverage?.summary).toEqual({ required: 1, covered: 1, failed: 0, uncovered: 0 });
+    expect(context.evidenceCoverage?.criteria).toEqual([{ id: 'AC-1', status: 'covered', verificationIds: ['V-001'] }]);
+    expect(rendered).toContain('Evidence Coverage: 1/1 critical AC covered');
+    expect(rendered).toContain('- AC-1: covered (V-001)');
   });
 });
 

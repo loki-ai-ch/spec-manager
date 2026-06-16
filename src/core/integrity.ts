@@ -3,11 +3,13 @@ import type { TaskRecord } from './task.js';
 import { isActiveDecision } from './decision.js';
 import { exemptionTaskKey, readIntegrityExemptions } from './integrity-exemptions.js';
 import { buildProjectSnapshot, isFullProjectSnapshot, taskKey, type ProjectSnapshot } from './project-snapshot.js';
+import { buildTaskEvidence, evaluateEvidenceCoverage } from './task-evidence.js';
 
 export type IntegrityIssueKind =
   | 'dangling-reference'
   | 'conflicting-active-task'
   | 'missing-verification'
+  | 'missing-evidence-coverage'
   | 'missing-decision'
   | 'immutable-history-violation'
   | 'invalid-exemption'
@@ -105,6 +107,29 @@ export function inspectProjectIntegrity(paths: ProjectPaths, opts?: { snapshot?:
         message: `completed task ${task.id} (${task.specCode}) has no successful verification`,
         remediation: 'Create a follow-up task; completed task history is immutable.',
       });
+    }
+    if (task.status === 'completed' && task.profile === 'governed') {
+      try {
+        const evidence = buildTaskEvidence(paths, task.id, task.specCode);
+        const evaluation = evaluateEvidenceCoverage(evidence);
+        if (!evaluation.satisfied) {
+          issues.push({
+            kind: 'missing-evidence-coverage',
+            sourceFile: taskFileHint(paths, snapshot, task),
+            sourceId: key,
+            message: `completed governed task ${task.id} (${task.specCode}) lacks successful evidence for critical AC: ${evaluation.blockingCriteria.join(', ')}`,
+            remediation: 'Create a follow-up task; completed task history is immutable.',
+          });
+        }
+      } catch (err) {
+        issues.push({
+          kind: 'missing-evidence-coverage',
+          sourceFile: taskFileHint(paths, snapshot, task),
+          sourceId: key,
+          message: `completed governed task ${task.id} (${task.specCode}) has invalid evidence projection: ${err instanceof Error ? err.message : String(err)}`,
+          remediation: 'Repair the L3 critical AC references through an explicit follow-up change.',
+        });
+      }
     }
     if ((task.status === 'completed' || task.status === 'failed') && (task.steps ?? []).some(step => step.status !== 'succeeded')) {
       issues.push({

@@ -6,6 +6,7 @@ import { registerTaskCommands } from '../task.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 import { createSpec, findSpecByCode, updateSpec } from '../../core/spec-io.js';
 import { addTaskVerification, createTask, findTask, reportStep, startTask } from '../../core/task.js';
+import { writeAdaptiveWorkflowConfig } from '../../core/workflow-profile.js';
 
 let project: TestProject;
 let oldSpecManagerRoot: string | undefined;
@@ -112,6 +113,47 @@ npm test -- --run src/cli/__tests__/task.test.ts
   return 'auth-L3.1.1-login';
 }
 
+function createFrozenL3WithoutTask(opts?: { critical?: boolean }): string {
+  createSpec({ paths: project.paths, code: 'profile-L1', level: 'L1', title: 'Profile', topic: 'profile', parentCode: null });
+  updateSpec(project.paths, 'profile-L1', { status: 'confirmed' });
+  createSpec({ paths: project.paths, code: 'profile-L2.1', level: 'L2', title: 'Profile design', topic: 'profile', parentCode: 'profile-L1' });
+  updateSpec(project.paths, 'profile-L2.1', { status: 'confirmed' });
+  createSpec({ paths: project.paths, code: 'profile-L3.1.1-work', level: 'L3', title: 'Profile work', topic: 'profile', parentCode: 'profile-L2.1' });
+  updateSpec(project.paths, 'profile-L3.1.1-work', {
+    content: `# Profile work
+
+## 目标
+\`src/core/task.ts\`
+
+## 实施步骤
+steps
+
+## 验收标准
+1. **AC-1**: Given task creation, When profile is resolved, Then task SHALL store profile.
+
+${opts?.critical === false ? '' : `## 关键验收标准
+- AC-1
+`}
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`,
+    aiSummary: 'Profile work summary',
+  });
+  updateSpec(project.paths, 'profile-L3.1.1-work', { status: 'frozen' });
+  return 'profile-L3.1.1-work';
+}
+
+function writePlanFile(specCode: string): string {
+  const planFile = join(project.root, 'plan.json');
+  writeFileSync(planFile, JSON.stringify({
+    coveredSpecs: [specCode],
+    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+  }), 'utf8');
+  return planFile;
+}
+
 function createDraftL3(): string {
   createSpec({ paths: project.paths, code: 'draft-L1', level: 'L1', title: 'Draft', topic: 'draft', parentCode: null });
   updateSpec(project.paths, 'draft-L1', { status: 'confirmed' });
@@ -122,6 +164,40 @@ function createDraftL3(): string {
 }
 
 describe('task CLI', () => {
+  it('creates legacy task from CLI when adaptive workflow is disabled', async () => {
+    const specCode = createFrozenL3WithoutTask();
+
+    await makeProgram().parseAsync(['task', 'create', specCode, '--plan', writePlanFile(specCode)], { from: 'user' });
+
+    expect(output()).toContain('profile: legacy (legacy)');
+    expect(findTask(project.paths, specCode, 'T-001')?.profile).toBe('legacy');
+  });
+
+  it('creates governed task from CLI when enabled and critical AC exists', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    writeAdaptiveWorkflowConfig(project.paths, { enabled: true, defaultProfile: 'standard' });
+
+    await makeProgram().parseAsync([
+      'task', 'create', specCode,
+      '--plan', writePlanFile(specCode),
+      '--profile', 'governed',
+      '--profile-reason', 'high risk',
+    ], { from: 'user' });
+
+    expect(output()).toContain('profile: governed (explicit)');
+    expect(findTask(project.paths, specCode, 'T-001')?.profileOverrideReason).toBe('high risk');
+  });
+
+  it('rejects governed task from CLI when critical AC is missing', async () => {
+    const specCode = createFrozenL3WithoutTask({ critical: false });
+    writeAdaptiveWorkflowConfig(project.paths, { enabled: true, defaultProfile: 'governed' });
+
+    await expect(makeProgram().parseAsync(['task', 'create', specCode, '--plan', writePlanFile(specCode)], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('GOVERNED_CRITICAL_AC_REQUIRED');
+  });
+
   it('rejects deprecated force and points to scoped bypasses', async () => {
     const specCode = createFrozenL3WithTask();
 
@@ -312,6 +388,105 @@ describe('task CLI', () => {
     expect(output()).toContain('verification V-001 recorded');
     expect(output()).toContain('exitCode: 0');
     expect(task?.verifications?.[0].coversAc).toEqual(['AC-1']);
+  });
+
+  it('prints task evidence as text', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    const { task } = createTask({
+      paths: project.paths,
+      specCode,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: [specCode],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      },
+    });
+    startTask(project.paths, task.id, specCode);
+    addTaskVerification({
+      paths: project.paths,
+      taskId: task.id,
+      specCode,
+      command: 'npm test',
+      exitCode: 0,
+      summary: 'passed',
+      artifacts: ['coverage/index.html'],
+      coversAc: ['AC-1'],
+    });
+
+    await makeProgram().parseAsync(['task', 'evidence', task.id, '--spec', specCode], { from: 'user' });
+
+    expect(output()).toContain(`Task Evidence: ${specCode} / ${task.id}`);
+    expect(output()).toContain('Profile: legacy (legacy)');
+    expect(output()).toContain('Coverage: 1/1 critical AC covered');
+    expect(output()).toContain('✓ AC-1 covered by V-001');
+    expect(output()).toContain('- coverage/index.html');
+  });
+
+  it('prints task evidence as json', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    const { task } = createTask({
+      paths: project.paths,
+      specCode,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: [specCode],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      },
+    });
+
+    await makeProgram().parseAsync(['task', 'evidence', task.id, '--spec', specCode, '--format', 'json'], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed.schemaVersion).toBe('task-evidence.experimental.v1');
+    expect(parsed.specCode).toBe(specCode);
+    expect(parsed.summary).toEqual({ required: 1, covered: 0, failed: 0, uncovered: 1 });
+  });
+
+  it('rejects invalid task evidence format', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    const { task } = createTask({
+      paths: project.paths,
+      specCode,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: [specCode],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      },
+    });
+
+    await expect(makeProgram().parseAsync(['task', 'evidence', task.id, '--spec', specCode, '--format', 'xml'], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('task evidence --format 必须是 text 或 json');
+  });
+
+  it('maps task evidence projection errors to exit code 2', async () => {
+    await expect(makeProgram().parseAsync(['task', 'evidence', 'T-404'], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+    expect(stderr()).toContain('TASK_NOT_FOUND: T-404');
+  });
+
+  it('rejects task evidence when critical AC references become invalid', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    const { task } = createTask({
+      paths: project.paths,
+      specCode,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: [specCode],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      },
+    });
+    const spec = findSpecByCode(project.paths, specCode)!;
+    updateSpec(project.paths, specCode, {
+      content: spec.content.replace('- AC-1', '- AC-9'),
+      aiSummary: spec.fm.aiSummary,
+    });
+
+    await expect(makeProgram().parseAsync(['task', 'evidence', task.id, '--spec', specCode], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('UNKNOWN_CRITICAL_AC: AC-9');
   });
 
   it('records verification from input json', async () => {

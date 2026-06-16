@@ -1,0 +1,93 @@
+{
+  "id": "T-001",
+  "specCode": "adaptive-workflow-adoption-L3.1.1-preview",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取本 L3、adaptive-workflow-adoption-L2.1 与 workflow/profile metrics/spec sections/project CLI 基线",
+      "status": "succeeded",
+      "toolName": "spec-manager/sed",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, project workflow CLI, profile metrics core, and critical AC parsing baseline; confirmed reuse points for adoption preview.\",\"files\":[\"specs/adaptive-workflow-adoption/adaptive-workflow-adoption-L3.1.1-preview.md\",\"specs/adaptive-workflow-adoption/adaptive-workflow-adoption-L2.1.md\",\"src/cli/project.ts\",\"src/core/profile-metrics.ts\",\"src/core/spec-sections.ts\"]}",
+      "reportedAt": "2026-06-16T07:17:57.045Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 adoption preview core API 与公开导出",
+      "status": "succeeded",
+      "toolName": "apply_patch/vitest/tsc",
+      "outputJson": "{\"summary\":\"Added adaptive workflow adoption preview core module and public export with schema, workflow status, profile metrics projection, governed readiness, recommendation, and history policy.\",\"files\":[\"src/core/adaptive-workflow-adoption.ts\",\"src/index.ts\"]}",
+      "reportedAt": "2026-06-16T07:23:33.495Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "实现 governed readiness、history policy、default profile recommendation 与 core 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch/vitest",
+      "outputJson": "{\"summary\":\"Implemented active L3 governed readiness, unknown critical AC gap handling, legacy history policy, default profile recommendation, and core tests.\",\"files\":[\"src/core/adaptive-workflow-adoption.ts\",\"src/core/__tests__/adaptive-workflow-adoption.test.ts\"]}",
+      "reportedAt": "2026-06-16T07:19:49.409Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "新增 project workflow preview CLI 并增强 enable/disable 输出",
+      "status": "succeeded",
+      "toolName": "apply_patch/vitest/tsc",
+      "outputJson": "{\"summary\":\"Added project workflow preview text/json CLI and enhanced workflow enable/disable output with future snapshot, historical task, and metrics audit guidance.\",\"files\":[\"src/cli/project.ts\",\"src/cli/__tests__/project-workflow.test.ts\"]}",
+      "reportedAt": "2026-06-16T07:21:11.392Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "同步方法论、skill 与 Agent managed assets",
+      "status": "succeeded",
+      "toolName": "apply_patch/perl/spec-manager",
+      "outputJson": "{\"summary\":\"Updated methodology, contract tests, skill and agent entry rules to recommend workflow preview before enabling adaptive workflow; synchronized managed Claude and CodeBuddy assets; doctor passed.\",\"files\":[\"docs/methodology.md\",\"src/core/__tests__/methodology-contract.test.ts\",\"skill/SKILL.md\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"templates/agents/codebuddy-skill/SKILL.md\",\".claude/skills/spec-manager/SKILL.md\",\".codebuddy/skills/spec-manager/SKILL.md\"]}",
+      "reportedAt": "2026-06-16T07:22:15.138Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检",
+      "status": "succeeded",
+      "toolName": "vitest/npm/spec-manager/node",
+      "outputJson": "{\"summary\":\"Verification suite passed: focused adoption/workflow/methodology tests, full test suite, lint, build, installed CLI verification, installed workflow preview smoke, project doctor, spec validate, and plan validate.\",\"evidence\":\"focused vitest: 3 files / 19 tests passed; npm test: 54 files / 646 tests passed; npm run lint passed; npm run build passed; npm run verify:installed-cli passed; installed workflow preview smoke passed; project doctor ok; spec validate ok; validate-plan ok\"}",
+      "reportedAt": "2026-06-16T07:23:09.126Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T07:17:43.880Z",
+  "finishedAt": "2026-06-16T07:24:04.816Z",
+  "created": "2026-06-16T07:17:34.489Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "legacy",
+  "profileSource": "legacy",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npx vitest run src/core/__tests__/adaptive-workflow-adoption.test.ts src/cli/__tests__/project-workflow.test.ts src/core/__tests__/methodology-contract.test.ts --reporter=dot; npm test -- --reporter=dot; npm run lint; npm run build; npm run verify:installed-cli; node .spec-manager/tmp-workflow-preview-smoke.mjs; spec-manager project doctor; spec-manager spec validate adaptive-workflow-adoption-L3.1.1-preview; spec-manager spec validate-plan --from-spec adaptive-workflow-adoption-L3.1.1-preview",
+      "exitCode": 0,
+      "summary": "Adaptive workflow adoption preview verified: focused tests 19 passed, full suite 646 passed, lint/build passed, installed CLI and installed workflow preview smoke passed, doctor/spec/plan validation passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-16T07:23:21.490Z",
+      "layer": "functional"
+    }
+  ]
+}

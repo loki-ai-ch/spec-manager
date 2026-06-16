@@ -73,6 +73,13 @@ Expert guidelines:
 ...
 ```
 
+## 关键验收标准
+
+<可选。仅在项目启用 adaptive workflow 且 Task 使用 governed Profile 时必填；列出本 L3 ## 验收标准 中必须由成功 verification 覆盖的 AC ID。governed Task 完成前必须用 exitCode=0 的 verification evidence 覆盖全部关键 AC；standard Task 缺口会作为 warning 展示。示例：
+- AC-1
+- AC-3
+>
+
 ## step_report 模板
 
 <每步完成后调用 `spec-manager task step` 时使用此格式。必须在工作完成后调用,不得预报>

@@ -1,0 +1,119 @@
+{
+  "id": "T-001",
+  "specCode": "adaptive-evidence-workflow-L3.1.2-evidence",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "读取 adaptive-evidence-workflow-L3.1.1-profile、adaptive-evidence-workflow-L2.1 和完成链路基线",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"读取 L3/L2/Profile 前置规格、completion/integrity/usability/audit 代码基线，并运行聚焦基线测试 5 files / 101 tests passed。\",\"files\":[\"src/core/task-completion.ts\",\"src/core/integrity.ts\",\"src/core/usability.ts\",\"src/core/audit.ts\",\"specs/adaptive-evidence-workflow/adaptive-evidence-workflow-L3.1.2-evidence.md\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:16:25.010Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "新增 Evidence 投影核心模块与公开导出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task-evidence 动态投影模块、公开导出和单元测试；投影测试 4 tests passed，build passed。\",\"files\":[\"src/core/task-evidence.ts\",\"src/core/__tests__/task-evidence.test.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:18:44.247Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "接入 task complete evidence coverage gate",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"将 evidence-coverage gate 接入 task complete，覆盖 legacy 兼容、standard warning、governed 阻断与成功路径；task-evidence + task-completion 聚焦测试 18 tests passed。\",\"files\":[\"src/core/task-completion.ts\",\"src/core/__tests__/task-completion.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:20:41.173Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "新增 task evidence CLI 与 text/json presenter",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 task evidence CLI text/json 输出、错误映射，并扩展 task complete 文本输出 evidence coverage 摘要；CLI task 测试 30 tests passed，build passed。\",\"files\":[\"src/cli/task.ts\",\"src/cli/__tests__/task.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:22:04.562Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "mcp_tool",
+      "name": "同步完成输出与 Harness evidence 上下文",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"同步 task complete 文本 evidence 输出与 Harness evidenceCoverage 上下文；harness/completion/CLI 聚焦测试 59 tests passed。\",\"files\":[\"src/cli/task.ts\",\"src/core/harness.ts\",\"src/core/__tests__/harness.test.ts\",\"src/cli/__tests__/task.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:22:50.236Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "mcp_tool",
+      "name": "补充 doctor、integrity 与 audit 诊断",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 integrity/audit 对 completed governed Task 关键 AC coverage 缺口的动态投影诊断，并保持 legacy 不误报；diagnostic 聚焦测试 61 tests passed。\",\"files\":[\"src/core/integrity.ts\",\"src/core/audit.ts\",\"src/core/__tests__/integrity.test.ts\",\"src/core/__tests__/audit.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:25:44.506Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "mcp_tool",
+      "name": "同步方法论、模板与 Agent managed 资产",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"更新方法论文档、L3 模板、skill 与多 Agent 入口规则，并同步 claude/codebuddy managed 资产；方法论契约测试 8 tests passed。\",\"files\":[\"docs/methodology.md\",\"templates/L3-impl.md\",\"skill/SKILL.md\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"templates/agents/codebuddy-skill/SKILL.md\",\"AGENTS.md\",\"CLAUDE.md\",\"CODEBUDDY.md\",\".claude/skills/spec-manager/SKILL.md\",\".codebuddy/skills/spec-manager/SKILL.md\",\"src/core/__tests__/methodology-contract.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:27:08.712Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "mcp_tool",
+      "name": "验证 Evidence 聚焦测试、全量测试、lint、build、installed CLI 和 project doctor",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成全链路验证：聚焦测试 8 files/137 tests passed，全量测试 50 files/619 tests passed，lint/build/verify:installed-cli/project doctor/spec validate/validate-plan/installed CLI evidence smoke 均通过。\",\"files\":[]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-16T01:29:19.221Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T01:15:56.068Z",
+  "finishedAt": "2026-06-16T01:30:08.271Z",
+  "created": "2026-06-16T01:15:47.538Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "legacy",
+  "profileSource": "legacy",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npx vitest run src/core/__tests__/task-evidence.test.ts src/core/__tests__/task-completion.test.ts src/core/__tests__/task-cascade.test.ts src/cli/__tests__/task.test.ts src/core/__tests__/usability.test.ts src/core/__tests__/integrity.test.ts src/core/__tests__/harness.test.ts src/core/__tests__/methodology-contract.test.ts --reporter=dot && npm test -- --reporter=dot && npm run lint && npm run build && npm run verify:installed-cli && spec-manager project doctor && spec-manager spec validate adaptive-evidence-workflow-L3.1.2-evidence && spec-manager spec validate-plan --from-spec adaptive-evidence-workflow-L3.1.2-evidence && node .spec-manager/tmp-installed-evidence-smoke.mjs",
+      "exitCode": 0,
+      "summary": "Evidence projection, task evidence CLI, completion coverage gate, diagnostics, docs, full regression, installed CLI verification, doctor, spec validation, and installed CLI evidence smoke passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-06-16T01:29:32.252Z",
+      "layer": "functional"
+    }
+  ]
+}
