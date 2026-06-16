@@ -1,18 +1,18 @@
 {
   "rules": {
-    "R1": 65,
-    "R2": 115,
-    "R3": 1,
-    "R4": 95,
+    "R1": 66,
+    "R2": 116,
+    "R3": 2,
+    "R4": 96,
     "R5": 4,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 115,
-    "R10": 8,
+    "R9": 116,
+    "R10": 9,
     "R11": 0,
-    "R12": 3,
-    "R13": 64,
+    "R12": 4,
+    "R13": 65,
     "R14": 0,
     "R15": 0,
     "R16": 15,
@@ -21,7 +21,7 @@
     "R19": 97,
     "R20": 0,
     "R21": 0,
-    "R22": 64,
+    "R22": 65,
     "R23": 0,
     "R24": 0
   },
@@ -4001,9 +4001,63 @@
       "timestamp": "2026-06-16T08:52:13.259Z",
       "specCode": "critical-ac-readiness-L3.1.3-topic-scope",
       "reported": false
+    },
+    {
+      "ruleId": "R3",
+      "timestamp": "2026-06-16T09:09:04.792Z",
+      "specCode": "spec-manager-ai-ux-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-16T09:09:14.300Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-16T09:09:46.103Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-16T09:09:46.105Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-16T09:09:46.106Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-16T09:10:05.401Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-16T09:10:05.402Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-16T09:10:09.855Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R12",
+      "timestamp": "2026-06-16T09:10:23.200Z",
+      "specCode": "spec-manager-ai-ux-L3.1.7",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-16T08:52:13.259Z",
+  "lastUpdated": "2026-06-16T09:10:23.200Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

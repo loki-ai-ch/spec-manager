@@ -18,6 +18,32 @@ You do not need to understand the full methodology before trying it. Start with 
 
 Everything is local: markdown + git storage, no backend, no network dependency, no MCP requirement.
 
+## How It Works
+
+spec-manager keeps the work product in your repo: PRD, design, implementation spec, task history, decisions, and verification evidence.
+
+For a typical request, the flow is:
+
+`L1 PRD -> L2 Design -> L3 Impl -> Agent Task -> Verification`
+
+That gives AI agents a frozen implementation target and gives humans a clear record of what changed and why.
+
+## Adaptive Harness Governance
+
+Version `v0.4.2` adds a stronger path for tasks that need explicit evidence coverage.
+
+- Task creation records a Profile snapshot.
+- `standard` stays lightweight and reports missing coverage as warnings.
+- `governed` requires critical AC in the frozen L3 and verification evidence that covers them.
+- Read-only commands like `project profile recommend`, `project profile metrics`, `project workflow preview`, and `project readiness critical` help preview and audit without hiding gates.
+
+Example:
+
+```bash
+spec-manager project profile recommend --request "Add SSO login"
+spec-manager project readiness critical
+```
+
 ## 3-Minute Start
 
 ```bash

@@ -1,0 +1,66 @@
+{
+  "id": "T-001",
+  "specCode": "spec-manager-ai-ux-L3.1.7",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "mcp_tool",
+      "name": "Review README structure and release context for v0.4.2",
+      "status": "succeeded",
+      "toolName": "sed/spec-manager",
+      "outputJson": "{\"summary\":\"Reviewed README structure, v0.4.2 release context, and frozen spec scope.\"}",
+      "reportedAt": "2026-06-16T09:11:18.265Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "mcp_tool",
+      "name": "Update README with a concise overview and adaptive harness governance section",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Updated README with How It Works and Adaptive Harness Governance sections.\"}",
+      "reportedAt": "2026-06-16T09:11:51.389Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "mcp_tool",
+      "name": "Run documentation format checks and relevant validation",
+      "status": "succeeded",
+      "toolName": "git",
+      "outputJson": "{\"summary\":\"git diff --check passed with no whitespace or patch-format issues.\"}",
+      "reportedAt": "2026-06-16T09:11:58.683Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "mcp_tool",
+      "name": "Verify git diff --check and commit README update without staging local personal settings",
+      "status": "succeeded",
+      "toolName": "git/spec-manager",
+      "outputJson": "{\"summary\":\"Prepared README, spec, task, and audit records for commit; local personal settings remain unstaged.\"}",
+      "reportedAt": "2026-06-16T09:12:32.767Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T09:10:58.831Z",
+  "finishedAt": "2026-06-16T09:12:56.922Z",
+  "created": "2026-06-16T09:10:33.481Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "git diff --check",
+      "exitCode": 0,
+      "summary": "README documentation diff passed whitespace and patch-format checks.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-16T09:12:52.542Z",
+      "layer": "smoke"
+    }
+  ]
+}
