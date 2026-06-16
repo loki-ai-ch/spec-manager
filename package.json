@@ -1,6 +1,6 @@
 {
   "name": "spec-manager",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "spec-manager: local-first spec-driven development platform. Pure markdown storage, no network, no MCP. Portable CLI + multi-agent instructions.",
   "type": "module",
   "license": "MIT",
