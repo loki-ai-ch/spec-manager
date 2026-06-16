@@ -234,7 +234,7 @@ export function validatePlanJson(plan: unknown): ValidationWarning[] {
       warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}] 缺 stepType（INC-005: 禁止用 type）` });
     } else {
       const t = String(s.stepType);
-      if (!['llm_call', 'tool_action', 'human_gate'].includes(t)) {
+      if (!['llm_call', 'tool_action', 'human_gate', 'mcp_tool'].includes(t)) {
         warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}].stepType="${t}" 不在 [llm_call, tool_action, human_gate]` });
       }
     }

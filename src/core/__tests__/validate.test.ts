@@ -538,6 +538,14 @@ describe('validatePlanJson — planJson 校验', () => {
     expect(parsed.steps[0].stepType).toBe('tool_action');
   });
 
+  it('does not warn for legacy stepType mcp_tool', () => {
+    const warnings = validatePlanJson({
+      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+    });
+
+    expect(warnings.some(w => w.message.includes('mcp_tool') && w.message.includes('不在'))).toBe(false);
+  });
+
   it('合法 planJson 无 warning', () => {
     const plan = {
       steps: [

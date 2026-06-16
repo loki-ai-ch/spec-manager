@@ -157,13 +157,14 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     }
     throw new Error(message);
   }
+  const normalizedPlan = parsedPlan.data;
   const planWarnings = validatePlanJson(input.planJson);
   const r10 = planWarnings.find(w => w.rule === 'R10');
   if (r10) {
     recordAuditHit({ paths: input.paths, ruleId: 'R10', specCode: input.specCode }, input.auditSink);
     throw new Error(r10.message);
   }
-  if (!input.planJson.coveredSpecs?.includes(input.specCode)) {
+  if (!normalizedPlan.coveredSpecs?.includes(input.specCode)) {
     recordAuditHit({ paths: input.paths, ruleId: 'R12', specCode: input.specCode }, input.auditSink);
     throw new Error(
       `R12: planJson.coveredSpecs 必须包含当前 L3 specCode (${input.specCode})，禁止凭记忆写 planJson\n` +
@@ -193,7 +194,7 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
     id: taskId,
     specCode: input.specCode,
     status: 'draft',
-    steps: input.planJson.steps.map((ps) => ({
+    steps: normalizedPlan.steps.map((ps) => ({
       stepNo: ps.stepNo,
       stepType: ps.stepType,
       name: ps.name,

@@ -1,18 +1,18 @@
 {
   "rules": {
-    "R1": 69,
-    "R2": 118,
+    "R1": 70,
+    "R2": 119,
     "R3": 2,
-    "R4": 98,
+    "R4": 99,
     "R5": 5,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 118,
+    "R9": 119,
     "R10": 10,
     "R11": 0,
     "R12": 4,
-    "R13": 68,
+    "R13": 69,
     "R14": 0,
     "R15": 0,
     "R16": 15,
@@ -21,7 +21,7 @@
     "R19": 97,
     "R20": 0,
     "R21": 0,
-    "R22": 68,
+    "R22": 69,
     "R23": 0,
     "R24": 0
   },
@@ -4157,9 +4157,45 @@
       "timestamp": "2026-06-16T09:30:19.850Z",
       "specCode": "workflow-hardening-L3.1.6",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-16T09:37:13.167Z",
+      "specCode": "workflow-hardening-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-16T09:38:04.815Z",
+      "specCode": "workflow-hardening-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-16T09:38:04.816Z",
+      "specCode": "workflow-hardening-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-16T09:38:04.817Z",
+      "specCode": "workflow-hardening-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-16T09:38:26.580Z",
+      "specCode": "workflow-hardening-L3.1.7",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-16T09:38:26.581Z",
+      "specCode": "workflow-hardening-L3.1.7",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-16T09:30:19.850Z",
+  "lastUpdated": "2026-06-16T09:38:26.581Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

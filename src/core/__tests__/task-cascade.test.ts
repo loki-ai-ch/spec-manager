@@ -308,6 +308,23 @@ describe('R3 / R7 audit hit (P1 修复)', () => {
 });
 
 describe('R10 / R12 planJson 门禁', () => {
+  it('createTask normalizes legacy stepType mcp_tool before writing task and spec steps', () => {
+    const { l3Code } = createFrozenHierarchy('legacy-step-type');
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson: {
+        coveredSpecs: [l3Code],
+        steps: [{ stepNo: 1, stepType: 'mcp_tool' as unknown as 'tool_action', name: 'run verify test' }],
+      },
+    });
+
+    expect(task.steps?.[0].stepType).toBe('tool_action');
+    expect(findTask(paths, l3Code, task.id)?.steps?.[0].stepType).toBe('tool_action');
+    expect(findSpecByCode(paths, l3Code)?.fm.steps?.[0].stepType).toBe('tool_action');
+  });
+
   it('末步不是验证步骤时 createTask 拒绝并记录 R10', () => {
     const { l3Code } = createFrozenHierarchy('auth');
     expect(() => createTask({
