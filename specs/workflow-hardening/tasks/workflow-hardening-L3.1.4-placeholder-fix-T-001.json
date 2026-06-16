@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 workflow-hardening-L3.1.4-placeholder-fix、workflow-hardening-L2.1 和 templates/agent-plan.json 并复现误判",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"完成 placeholder 判定调用链分析并复现 workflow-hardening L1/L2 示例引用误判\",\"files\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/validate.ts 统一 validate placeholder 判定",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"抽取独立 placeholder 判定模块并统一 validateSpecContent 使用\",\"files\":[\"src/core/placeholder.ts\",\"src/core/spec-io.ts\",\"src/core/validate.ts\"]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/usability.ts 统一 flow guide doctor placeholder 判定",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"统一 flow、guide、doctor 使用 isPlaceholderContent 判定\",\"files\":[\"src/core/usability.ts\"]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 spec-io.test.ts 和 validate.test.ts 增加核心判定回归测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"增加真实占位与完整 marker 示例的核心判定和 validate 回归测试\",\"files\":[\"src/core/__tests__/spec-io.test.ts\",\"src/core/__tests__/validate.test.ts\"]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 usability.test.ts 和 CLI spec 测试增加流程误判回归测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"增加 doctor、flow、next action 和 CLI validate 的 placeholder 误判回归测试\",\"files\":[\"src/core/__tests__/usability.test.ts\",\"src/cli/__tests__/spec.test.ts\"]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 workflow-hardening L1/L2 不再误判且真实占位仍被 R22 阻断",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"workflow-hardening L1/L2 validate 不再误判，flow 不再要求重写正文，真实占位 R22 测试仍通过\",\"files\":[]}",
@@ -53,7 +53,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "运行 placeholder targeted tests、build 和完整测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"targeted tests 5 files/103 tests 通过，build 通过，完整测试 21 files/323 tests 通过，L1/L2/L3 和 planJson 校验通过\",\"files\":[]}",

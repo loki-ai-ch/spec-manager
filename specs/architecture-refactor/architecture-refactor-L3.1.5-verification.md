@@ -13,31 +13,31 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集 verification 上下文
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 public API contract 测试
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 CLI architecture smoke 测试
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 强化 installed CLI drift 验证测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行架构专项测试与 export 搜索
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 build、installed CLI 验证与相关测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行全量验证并完成 task
     status: pending
 relations:
@@ -226,7 +226,7 @@ spec-manager project doctor
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -240,13 +240,13 @@ spec-manager project doctor
 {
   "coveredSpecs": ["architecture-refactor-L3.1.5-verification"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集 verification 上下文: 读取 architecture-refactor-L3.1.5-verification、architecture-refactor-L2.1、历史任务、agent-plan 和验证源码测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增公共导出契约测试: 编辑 src/core/__tests__/public-api.test.ts"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "新增 CLI 架构 smoke 测试: 编辑 src/cli/__tests__/architecture-smoke.test.ts"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "补强 installed CLI 验证: 编辑 src/core/__tests__/installed-cli-verification.test.ts"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "回归架构重构专项测试组: 运行 task-completion、spec-policy、project-snapshot、archive-plan、public-api、architecture-smoke 测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证发布产物和 installed CLI: 运行 npm run build、npm run verify:installed-cli、installed-cli-verification 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 architecture-refactor 全链路: 运行 npm test、npm run lint、spec-manager project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集 verification 上下文: 读取 architecture-refactor-L3.1.5-verification、architecture-refactor-L2.1、历史任务、agent-plan 和验证源码测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增公共导出契约测试: 编辑 src/core/__tests__/public-api.test.ts"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "新增 CLI 架构 smoke 测试: 编辑 src/cli/__tests__/architecture-smoke.test.ts"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "补强 installed CLI 验证: 编辑 src/core/__tests__/installed-cli-verification.test.ts"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "回归架构重构专项测试组: 运行 task-completion、spec-policy、project-snapshot、archive-plan、public-api、architecture-smoke 测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证发布产物和 installed CLI: 运行 npm run build、npm run verify:installed-cli、installed-cli-verification 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 architecture-refactor 全链路: 运行 npm test、npm run lint、spec-manager project doctor"}
   ]
 }
 ```

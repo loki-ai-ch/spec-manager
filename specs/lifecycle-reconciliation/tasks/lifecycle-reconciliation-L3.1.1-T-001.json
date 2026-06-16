@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "收集生命周期调用关系并记录 completed Task 摘要",
       "status": "succeeded",
       "toolName": "exec_command",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 lifecycle.ts 分层 readiness 判断",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "修改 spec-io.ts 实现受控 transition authority",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "修改 task.ts 使用统一递归生命周期级联",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增生命周期和 Task 级联自动化测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -55,7 +55,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证测试构建与 completed Task 字节不变",
       "status": "succeeded",
       "toolName": "exec_command",

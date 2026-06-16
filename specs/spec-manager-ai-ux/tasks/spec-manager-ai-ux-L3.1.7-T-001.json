@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Review README structure and release context for v0.4.2",
       "status": "succeeded",
       "toolName": "sed/spec-manager",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Update README with a concise overview and adaptive harness governance section",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Run documentation format checks and relevant validation",
       "status": "succeeded",
       "toolName": "git",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Verify git diff --check and commit README update without staging local personal settings",
       "status": "succeeded",
       "toolName": "git/spec-manager",

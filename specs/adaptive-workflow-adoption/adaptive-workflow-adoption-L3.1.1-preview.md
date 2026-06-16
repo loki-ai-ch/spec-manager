@@ -13,31 +13,31 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取本 L3、adaptive-workflow-adoption-L2.1 与 workflow/profile metrics/spec
       sections/project CLI 基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 adoption preview core API 与公开导出
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       实现 governed readiness、history policy、default profile recommendation 与 core
       测试
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 project workflow preview CLI 并增强 enable/disable 输出
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步方法论、skill 与 Agent managed assets
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检
     status: pending
 created: '2026-06-16T07:12:33.720Z'
@@ -206,12 +206,12 @@ JSON 输出必须是 `AdaptiveWorkflowAdoptionPreview`。
   "coveredSpecs": ["adaptive-workflow-adoption-L3.1.1-preview"],
   "profile": "standard",
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取本 L3、adaptive-workflow-adoption-L2.1 与 workflow/profile metrics/spec sections/project CLI 基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 adoption preview core API 与公开导出"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现 governed readiness、history policy、default profile recommendation 与 core 测试"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 project workflow preview CLI 并增强 enable/disable 输出"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "同步方法论、skill 与 Agent managed assets"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取本 L3、adaptive-workflow-adoption-L2.1 与 workflow/profile metrics/spec sections/project CLI 基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 adoption preview core API 与公开导出"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现 governed readiness、history policy、default profile recommendation 与 core 测试"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 project workflow preview CLI 并增强 enable/disable 输出"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "同步方法论、skill 与 Agent managed assets"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检"}
   ]
 }
 ```

@@ -12,29 +12,29 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取本 L3、critical-ac-readiness-L2.1、spec section/parser、adoption preview 和
       profile metrics 基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 critical readiness core 类型和 buildCriticalReadinessReport API
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 active L3 扫描、topic 过滤和 missing/empty/unknown/ready 分类
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 summary、recommendations、governed upgrade 和 public export
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 core 单元测试与 schema 断言
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 vitest、build、spec validate 和 plan validate
     status: pending
 created: '2026-06-16T08:13:20.642Z'
@@ -181,12 +181,12 @@ buildCriticalReadinessReport(paths: ProjectPaths, opts?: {
   "coveredSpecs": ["critical-ac-readiness-L3.1.1-core"],
   "profile": "standard",
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取本 L3、critical-ac-readiness-L2.1、spec section/parser、adoption preview 和 profile metrics 基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 critical readiness core 类型和 buildCriticalReadinessReport API"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现 active L3 扫描、topic 过滤和 missing/empty/unknown/ready 分类"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "实现 summary、recommendations、governed upgrade 和 public export"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "补充 core 单元测试与 schema 断言"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "运行聚焦测试、build、spec validate 和 plan validate"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取本 L3、critical-ac-readiness-L2.1、spec section/parser、adoption preview 和 profile metrics 基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 critical readiness core 类型和 buildCriticalReadinessReport API"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现 active L3 扫描、topic 过滤和 missing/empty/unknown/ready 分类"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "实现 summary、recommendations、governed upgrade 和 public export"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "补充 core 单元测试与 schema 断言"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "运行聚焦测试、build、spec validate 和 plan validate"}
   ]
 }
 ```

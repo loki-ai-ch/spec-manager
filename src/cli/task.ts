@@ -241,7 +241,7 @@ export function registerTaskCommands(program: Command): void {
     .requiredOption('--no <stepNo>', '步骤编号', (v) => v)
     .requiredOption('--status <status>', '状态: pending|running|succeeded|failed|skipped')
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
-    .option('--type <type>', '步骤类型（llm_call|mcp_tool|human_gate）')
+    .option('--type <type>', '步骤类型（llm_call|tool_action|human_gate）')
     .option('--name <name>', '步骤名称')
     .option('--tool <toolName>', '工具名（如 Read/Write）')
     .option('--input-json <json>', '输入 JSON 字符串')

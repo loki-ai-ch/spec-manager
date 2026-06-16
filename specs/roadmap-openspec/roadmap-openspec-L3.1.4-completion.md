@@ -13,37 +13,37 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 roadmap-openspec-L3.1.4-completion、roadmap-openspec-L2.1 和
       templates/agent-plan.json 并完成文件级分析
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/core/completion.ts 实现脚本生成安装路径和安装卸载
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/completion.ts 实现 zsh bash fish 命令与动态 spec code 补全
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/cli/completion.ts 并编辑 src/cli/index.ts 注册 completion 命令
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/core/__tests__/completion.test.ts 覆盖生成安装卸载
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/cli/__tests__/completion.test.ts 覆盖 CLI 正反向行为
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 README.md 增加 shell completion 使用说明
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 completion targeted tests、build、完整测试和临时 home smoke
     status: pending
 ---
@@ -226,7 +226,7 @@ HOME=/tmp/spec-manager-completion-smoke node dist/cli/index.js completion uninst
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -240,14 +240,14 @@ HOME=/tmp/spec-manager-completion-smoke node dist/cli/index.js completion uninst
 {
   "coveredSpecs": ["roadmap-openspec-L3.1.4-completion"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 roadmap-openspec-L3.1.4-completion、roadmap-openspec-L2.1 和 templates/agent-plan.json 并完成文件级分析"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 src/core/completion.ts 实现脚本生成安装路径和安装卸载"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/completion.ts 实现 zsh bash fish 命令与动态 spec code 补全"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 src/cli/completion.ts 并编辑 src/cli/index.ts 注册 completion 命令"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增 src/core/__tests__/completion.test.ts 覆盖生成安装卸载"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "新增 src/cli/__tests__/completion.test.ts 覆盖 CLI 正反向行为"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 README.md 增加 shell completion 使用说明"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "运行 completion targeted tests、build、完整测试和临时 home smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 roadmap-openspec-L3.1.4-completion、roadmap-openspec-L2.1 和 templates/agent-plan.json 并完成文件级分析"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 src/core/completion.ts 实现脚本生成安装路径和安装卸载"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/completion.ts 实现 zsh bash fish 命令与动态 spec code 补全"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 src/cli/completion.ts 并编辑 src/cli/index.ts 注册 completion 命令"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增 src/core/__tests__/completion.test.ts 覆盖生成安装卸载"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "新增 src/cli/__tests__/completion.test.ts 覆盖 CLI 正反向行为"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 README.md 增加 shell completion 使用说明"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "运行 completion targeted tests、build、完整测试和临时 home smoke"}
   ]
 }
 ```

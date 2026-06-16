@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 L3/L2、agents 实现、CLI 测试、README 和 MiMo-Code AGENTS.md",
       "status": "succeeded",
       "toolName": "multi_tool_use.parallel",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/agents.ts 和 src/cli/project.ts 新增 mimocode provider",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 provider 单元测试和 CLI 测试覆盖 mimocode",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 README.md 和 readme_zh.md 补充 MiMo-Code 使用方式",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 targeted tests、npm test、npm run build 和 provider list smoke",
       "status": "succeeded",
       "toolName": "multi_tool_use.parallel",

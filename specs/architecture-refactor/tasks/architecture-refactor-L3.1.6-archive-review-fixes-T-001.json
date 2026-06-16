@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充多 rename 与 planning audit 只读性回归测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "修复归档引用更新应用边界",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "恢复 planArchiveChange 默认只读并保留 archiveChange R24 审计",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证修复：运行归档专项测试、全量测试、lint 和 project doctor",
       "status": "succeeded",
       "toolName": "exec_command",

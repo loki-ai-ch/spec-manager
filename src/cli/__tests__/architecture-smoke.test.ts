@@ -111,8 +111,8 @@ describe('architecture CLI smoke', () => {
     const planFile = writeFixture('plan.json', JSON.stringify({
       coveredSpecs: ['architecture-smoke-L3.1.1-flow'],
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'exercise architecture smoke lifecycle' },
-        { stepNo: 2, stepType: 'mcp_tool', name: '验证 architecture smoke lifecycle' },
+        { stepNo: 1, stepType: 'tool_action', name: 'exercise architecture smoke lifecycle' },
+        { stepNo: 2, stepType: 'tool_action', name: '验证 architecture smoke lifecycle' },
       ],
     }, null, 2));
     await run(['task', 'create', 'architecture-smoke-L3.1.1-flow', '--plan', planFile]);

@@ -12,19 +12,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 snapshot 范围错误消费者回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 增加 ProjectSnapshot scope 元数据与范围 helper
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 加固 integrity、doctor、flow、readiness 和 advice 消费者
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 snapshot 专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-11T09:11:18.838Z'
@@ -100,10 +100,10 @@ spec-manager project doctor
 {
   "coveredSpecs": ["architecture-refactor-L3.1.8-snapshot-scope-safety"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充 snapshot 范围错误消费者回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "增加 ProjectSnapshot scope 元数据与范围 helper"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "加固 integrity、doctor、flow、readiness 和 advice 消费者"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证 snapshot 专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充 snapshot 范围错误消费者回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "增加 ProjectSnapshot scope 元数据与范围 helper"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "加固 integrity、doctor、flow、readiness 和 advice 消费者"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证 snapshot 专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```

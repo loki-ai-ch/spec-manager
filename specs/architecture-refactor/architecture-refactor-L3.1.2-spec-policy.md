@@ -12,36 +12,36 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       收集 spec policy 上下文: 读取
       architecture-refactor-L3.1.2-spec-policy、architecture-refactor-L2.1、历史任务、agent-plan
       和相关源码测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: '新增 spec policy 模块: 编辑 src/core/spec-policy.ts'
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       委托 createSpec 和 updateSpec 到 spec policy: 编辑 src/core/spec-io.ts 和
       src/core/spec-policy.ts
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: '导出 spec policy 并检查调用路径: 编辑 src/index.ts 并检查 src/cli/spec.ts'
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: '新增 spec policy 单元测试: 编辑 src/core/__tests__/spec-policy.test.ts'
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: '回归 spec policy 相关测试: 运行 spec-policy、spec-io、cli spec 测试'
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证 spec policy 重构: 运行 npm test、npm run lint、spec-manager project doctor'
     status: pending
 relations:
@@ -218,7 +218,7 @@ spec-manager project doctor
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -232,13 +232,13 @@ spec-manager project doctor
 {
   "coveredSpecs": ["architecture-refactor-L3.1.2-spec-policy"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集 spec policy 上下文: 读取 architecture-refactor-L3.1.2-spec-policy、architecture-refactor-L2.1、历史任务、agent-plan 和相关源码测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 spec policy 模块: 编辑 src/core/spec-policy.ts"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "委托 createSpec 和 updateSpec 到 spec policy: 编辑 src/core/spec-io.ts 和 src/core/spec-policy.ts"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "导出 spec policy 并检查调用路径: 编辑 src/index.ts 并检查 src/cli/spec.ts"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增 spec policy 单元测试: 编辑 src/core/__tests__/spec-policy.test.ts"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "回归 spec policy 相关测试: 运行 spec-policy、spec-io、cli spec 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 spec policy 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集 spec policy 上下文: 读取 architecture-refactor-L3.1.2-spec-policy、architecture-refactor-L2.1、历史任务、agent-plan 和相关源码测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 spec policy 模块: 编辑 src/core/spec-policy.ts"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "委托 createSpec 和 updateSpec 到 spec policy: 编辑 src/core/spec-io.ts 和 src/core/spec-policy.ts"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "导出 spec policy 并检查调用路径: 编辑 src/index.ts 并检查 src/cli/spec.ts"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增 spec policy 单元测试: 编辑 src/core/__tests__/spec-policy.test.ts"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "回归 spec policy 相关测试: 运行 spec-policy、spec-io、cli spec 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 spec policy 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
   ]
 }
 ```

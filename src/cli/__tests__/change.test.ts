@@ -81,7 +81,7 @@ function createFrozenL3WithTask(): string {
     autoConfirm: false,
     planJson: {
       coveredSpecs: ['auth-L3.1.1-login'],
-      steps: [{ stepNo: 1, stepType: 'mcp_tool' as const, name: '运行验证' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action' as const, name: '运行验证' }],
     },
   });
   return 'auth-L3.1.1-login';

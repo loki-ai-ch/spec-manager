@@ -8,27 +8,27 @@ status: implemented
 aiSummary: 实现固定 repository-remediation-v1 清单、计划器、dry-run、事务化决策与豁免迁移及显式 CLI。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集迁移上下文并记录历史 Task 字节摘要
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 remediation.ts 固定清单与计划器
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现事务化决策与豁免迁移执行器
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 project remediate CLI 与公共导出
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增迁移核心与 CLI 自动化测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证测试构建并确认当前仓库未真实迁移
     status: pending
 created: '2026-06-08T09:57:38.644Z'
@@ -103,7 +103,7 @@ git diff --check
 ## step_report 模板
 
 ```json
-{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"mcp_tool","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
+{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"tool_action","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
 ```
 
 ## planJson (final)
@@ -112,12 +112,12 @@ git diff --check
 {
   "coveredSpecs": ["repository-remediation-L3.1.2"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集迁移上下文并记录历史 Task 字节摘要"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 remediation.ts 固定清单与计划器"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现事务化决策与豁免迁移执行器"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 project remediate CLI 与公共导出"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增迁移核心与 CLI 自动化测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "运行测试构建并确认当前仓库未真实迁移"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集迁移上下文并记录历史 Task 字节摘要"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 remediation.ts 固定清单与计划器"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现事务化决策与豁免迁移执行器"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 project remediate CLI 与公共导出"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增迁移核心与 CLI 自动化测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "运行测试构建并确认当前仓库未真实迁移"}
   ]
 }
 ```

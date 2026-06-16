@@ -10,19 +10,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 REMOVED 成功目录一致性与失败目录清理回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 统一 removed spec 与 change 元数据归档目标
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 加固归档事务创建目录回滚
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证归档专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-11T09:33:33.355Z'
@@ -97,10 +97,10 @@ git diff --check
 {
   "coveredSpecs": ["architecture-refactor-L3.1.10"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充 REMOVED 成功目录一致性与失败目录清理回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "统一 removed spec 与 change 元数据归档目标"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "加固归档事务创建目录回滚"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充 REMOVED 成功目录一致性与失败目录清理回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "统一 removed spec 与 change 元数据归档目标"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "加固归档事务创建目录回滚"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```

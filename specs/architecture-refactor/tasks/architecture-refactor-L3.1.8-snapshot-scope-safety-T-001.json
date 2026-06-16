@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充 snapshot 范围错误消费者回归测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "增加 ProjectSnapshot scope 元数据与范围 helper",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "加固 integrity、doctor、flow、readiness 和 advice 消费者",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 snapshot 专项测试、全量测试、lint 和 project doctor",
       "status": "succeeded",
       "toolName": "exec_command",

@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "收集上下文并记录历史 Task 字节摘要",
       "status": "succeeded",
       "toolName": "exec_command",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 integrity-exemptions.ts 登记读取与严格合并",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "修改 integrity.ts 接入有效豁免与无效登记报告",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增完整性豁免单元测试与公共导出",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证测试构建并比较历史 Task 字节摘要",
       "status": "succeeded",
       "toolName": "exec_command",

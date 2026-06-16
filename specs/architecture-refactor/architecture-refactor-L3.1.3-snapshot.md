@@ -13,46 +13,46 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       收集 snapshot 上下文: 读取
       architecture-refactor-L3.1.3-snapshot、architecture-refactor-L2.1、历史任务、agent-plan
       和只读模块源码
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: '新增 ProjectSnapshot 模块: 编辑 src/core/project-snapshot.ts'
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: '接入 integrity 快照索引: 编辑 src/core/integrity.ts 和 src/core/project-snapshot.ts'
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       接入 usability 和 view 快照读取: 编辑 src/core/usability.ts、src/core/view.ts 和
       src/core/project-snapshot.ts
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       接入 lifecycle readiness 快照索引: 编辑 src/core/lifecycle.ts 和
       src/core/project-snapshot.ts
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       导出 ProjectSnapshot 并新增专项测试: 编辑 src/index.ts 和
       src/core/__tests__/project-snapshot.test.ts
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       回归 snapshot 相关只读链路: 运行 project-snapshot、integrity、usability、view、lifecycle
       测试
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       验证 ProjectSnapshot 重构: 运行 npm test、npm run lint、spec-manager project
       doctor
@@ -231,7 +231,7 @@ spec-manager project doctor
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -245,14 +245,14 @@ spec-manager project doctor
 {
   "coveredSpecs": ["architecture-refactor-L3.1.3-snapshot"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集 snapshot 上下文: 读取 architecture-refactor-L3.1.3-snapshot、architecture-refactor-L2.1、历史任务、agent-plan 和只读模块源码"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 ProjectSnapshot 模块: 编辑 src/core/project-snapshot.ts"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "接入 integrity 快照索引: 编辑 src/core/integrity.ts 和 src/core/project-snapshot.ts"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "接入 usability 和 view 快照读取: 编辑 src/core/usability.ts、src/core/view.ts 和 src/core/project-snapshot.ts"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "接入 lifecycle readiness 快照索引: 编辑 src/core/lifecycle.ts 和 src/core/project-snapshot.ts"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "导出 ProjectSnapshot 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/project-snapshot.test.ts"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "回归 snapshot 相关只读链路: 运行 project-snapshot、integrity、usability、view、lifecycle 测试"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 ProjectSnapshot 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集 snapshot 上下文: 读取 architecture-refactor-L3.1.3-snapshot、architecture-refactor-L2.1、历史任务、agent-plan 和只读模块源码"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 ProjectSnapshot 模块: 编辑 src/core/project-snapshot.ts"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "接入 integrity 快照索引: 编辑 src/core/integrity.ts 和 src/core/project-snapshot.ts"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "接入 usability 和 view 快照读取: 编辑 src/core/usability.ts、src/core/view.ts 和 src/core/project-snapshot.ts"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "接入 lifecycle readiness 快照索引: 编辑 src/core/lifecycle.ts 和 src/core/project-snapshot.ts"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "导出 ProjectSnapshot 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/project-snapshot.test.ts"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "回归 snapshot 相关只读链路: 运行 project-snapshot、integrity、usability、view、lifecycle 测试"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 ProjectSnapshot 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
   ]
 }
 ```

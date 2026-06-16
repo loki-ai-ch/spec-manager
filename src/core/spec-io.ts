@@ -49,7 +49,7 @@ export interface SpecFrontmatter {
 
 export interface StepFrontmatter {
   stepNo: number | string;
-  stepType: 'llm_call' | 'mcp_tool' | 'human_gate';
+  stepType: 'llm_call' | 'tool_action' | 'human_gate';
   name: string;
   status: 'pending' | 'running' | 'succeeded' | 'failed' | 'skipped';
   toolName?: string;

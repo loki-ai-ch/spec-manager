@@ -1,0 +1,84 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-hardening-L3.1.6",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 stepType schema、task core、CLI、模板和历史数据使用点",
+      "status": "succeeded",
+      "toolName": "rg/sed",
+      "outputJson": "{\"summary\":\"Reviewed stepType schema, task core, CLI help, templates, agent assets, tests, and historical spec/task records.\"}",
+      "reportedAt": "2026-06-16T09:28:28.918Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 schema/runtime 将 tool_action 作为新工具执行类型并兼容 mcp_tool",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Updated StepTypeSchema to normalize legacy mcp_tool to tool_action and changed runtime fallback to tool_action.\"}",
+      "reportedAt": "2026-06-16T09:30:38.586Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "更新 CLI help、模板、agent 资产和文档示例",
+      "status": "succeeded",
+      "toolName": "perl/apply_patch",
+      "outputJson": "{\"summary\":\"Updated CLI help, templates, skill assets, and documentation examples to recommend tool_action.\"}",
+      "reportedAt": "2026-06-16T09:28:28.978Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "迁移仓库 specs/tasks 中的 stepType 历史值",
+      "status": "succeeded",
+      "toolName": "find/perl",
+      "outputJson": "{\"summary\":\"Migrated repository spec and task stepType records from mcp_tool to tool_action, leaving only compatibility references.\"}",
+      "reportedAt": "2026-06-16T09:29:09.711Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "更新测试 fixture 并补充兼容性覆盖",
+      "status": "succeeded",
+      "toolName": "apply_patch/npm test",
+      "outputJson": "{\"summary\":\"Updated test fixtures to tool_action and added legacy mcp_tool normalization coverage.\"}",
+      "reportedAt": "2026-06-16T09:29:09.807Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "验证 targeted tests、build、doctor、rg mcp_tool 和 git diff --check",
+      "status": "succeeded",
+      "toolName": "npm/spec-manager/rg/git",
+      "outputJson": "{\"summary\":\"Targeted tests, build, doctor, mcp_tool residue search, and git diff --check passed.\"}",
+      "reportedAt": "2026-06-16T09:30:11.819Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-16T09:26:13.354Z",
+  "finishedAt": "2026-06-16T09:30:47.523Z",
+  "created": "2026-06-16T09:26:06.173Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/task-cascade.test.ts src/core/__tests__/validate.test.ts src/cli/__tests__/task.test.ts && npm run build && spec-manager project doctor && rg 'mcp_tool' src templates skill .claude/skills/spec-manager .codebuddy/skills/spec-manager specs && git diff --check",
+      "exitCode": 0,
+      "summary": "Targeted tests, build, project doctor, compatibility residue search, and diff check passed.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-16T09:30:01.751Z",
+      "layer": "functional"
+    }
+  ]
+}

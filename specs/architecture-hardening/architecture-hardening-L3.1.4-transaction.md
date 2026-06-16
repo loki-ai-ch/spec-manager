@@ -8,31 +8,31 @@ status: implemented
 aiSummary: 实现项目锁与文件事务，迁移复合写操作，并通过 rename 计划完整迁移结构化引用；已记录 audit 临时文件并发冲突复现。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取 archive task audit 与原子写实现
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现项目锁和文件事务模块
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 迁移 audit report 与 task complete 事务
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 Spec rename 引用迁移计划
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 迁移 archive rename 到事务提交
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充锁冲突故障注入和 rename 测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证事务 archive task audit 测试
     status: pending
 created: '2026-06-08T09:35:15.375Z'
@@ -68,13 +68,13 @@ changeSummary: 'cascade: task complete'
 {
   "coveredSpecs": ["architecture-hardening-L3.1.4-transaction"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 archive task audit 与原子写实现"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "实现项目锁和文件事务模块"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "迁移 audit report 与 task complete 事务"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "实现 Spec rename 引用迁移计划"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "迁移 archive rename 到事务提交"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "补充锁冲突故障注入和 rename 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证事务 archive task audit 测试"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 archive task audit 与原子写实现"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "实现项目锁和文件事务模块"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "迁移 audit report 与 task complete 事务"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "实现 Spec rename 引用迁移计划"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "迁移 archive rename 到事务提交"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "补充锁冲突故障注入和 rename 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证事务 archive task audit 测试"}
   ]
 }
 ```

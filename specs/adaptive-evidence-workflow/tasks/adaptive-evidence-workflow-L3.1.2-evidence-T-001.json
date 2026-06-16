@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 adaptive-evidence-workflow-L3.1.1-profile、adaptive-evidence-workflow-L2.1 和完成链路基线",
       "status": "succeeded",
       "toolName": "shell",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 Evidence 投影核心模块与公开导出",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "接入 task complete evidence coverage gate",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 task evidence CLI 与 text/json presenter",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "同步完成输出与 Harness evidence 上下文",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -55,7 +55,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充 doctor、integrity 与 audit 诊断",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -65,7 +65,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "同步方法论、模板与 Agent managed 资产",
       "status": "succeeded",
       "toolName": "shell",
@@ -75,7 +75,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 Evidence 聚焦测试、全量测试、lint、build、installed CLI 和 project doctor",
       "status": "succeeded",
       "toolName": "shell",

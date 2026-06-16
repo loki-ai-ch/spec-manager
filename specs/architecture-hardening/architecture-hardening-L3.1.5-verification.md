@@ -8,27 +8,27 @@ status: implemented
 aiSummary: 补齐旧数据兼容、端到端验证、提示和文档，确保加固规则可诊断且不自动改写历史。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取新增规则错误码和现有用户文档
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充旧数据兼容和端到端测试
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 更新 README 与方法论文档
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 校准 completion guide 与 flow 提示
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行全量测试类型检查和 doctor
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证全部架构加固验收标准
     status: pending
 created: '2026-06-08T09:35:15.492Z'
@@ -64,12 +64,12 @@ changeSummary: 'cascade: task complete'
 {
   "coveredSpecs": ["architecture-hardening-L3.1.5-verification"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取新增规则错误码和现有用户文档"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "补充旧数据兼容和端到端测试"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "更新 README 与方法论文档"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "校准 completion guide 与 flow 提示"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "运行全量测试类型检查和 doctor"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证全部架构加固验收标准"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取新增规则错误码和现有用户文档"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "补充旧数据兼容和端到端测试"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "更新 README 与方法论文档"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "校准 completion guide 与 flow 提示"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "运行全量测试类型检查和 doctor"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证全部架构加固验收标准"}
   ]
 }
 ```

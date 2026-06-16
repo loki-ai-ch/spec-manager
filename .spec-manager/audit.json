@@ -1,18 +1,18 @@
 {
   "rules": {
-    "R1": 67,
-    "R2": 117,
+    "R1": 69,
+    "R2": 118,
     "R3": 2,
-    "R4": 97,
-    "R5": 4,
+    "R4": 98,
+    "R5": 5,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 117,
+    "R9": 118,
     "R10": 10,
     "R11": 0,
     "R12": 4,
-    "R13": 66,
+    "R13": 68,
     "R14": 0,
     "R15": 0,
     "R16": 15,
@@ -21,7 +21,7 @@
     "R19": 97,
     "R20": 0,
     "R21": 0,
-    "R22": 66,
+    "R22": 68,
     "R23": 0,
     "R24": 0
   },
@@ -4097,9 +4097,69 @@
       "timestamp": "2026-06-16T09:16:37.131Z",
       "specCode": "spec-manager-ai-ux-L3.1.8",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-16T09:21:15.906Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-16T09:21:53.745Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-16T09:21:53.747Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-16T09:21:53.747Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-16T09:22:12.559Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-16T09:22:12.560Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-16T09:22:12.561Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-16T09:22:31.649Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-16T09:22:31.650Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-16T09:30:19.850Z",
+      "specCode": "workflow-hardening-L3.1.6",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-16T09:16:37.131Z",
+  "lastUpdated": "2026-06-16T09:30:19.850Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

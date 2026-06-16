@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 audit.ts、audit.test.ts 与 cli/audit.ts 既有实现",
       "status": "succeeded",
       "toolName": "review",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "修正 audit.ts 的 R18 合规基线注释",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "强化 audit.test.ts 的 compliance 精确格式断言",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 audit 专项测试与真实 CLI 输出",
       "status": "succeeded",
       "toolName": "shell",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 npm test + npm run lint + npm run build",
       "status": "succeeded",
       "toolName": "shell",

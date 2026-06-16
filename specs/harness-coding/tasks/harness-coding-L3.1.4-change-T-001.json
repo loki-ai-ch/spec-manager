@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 harness-coding-L3.1.4-change、harness-coding-L2.1、harness-coding-L3.1.2-report、harness-coding-L3.1.3-verification、templates/agent-plan.json 并检查 delta/change/task/audit 测试基线",
       "status": "succeeded",
       "toolName": "shell",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/delta.ts 扩展 task-linked proposal frontmatter 类型",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/delta.ts 新增 create/list/resolve task-linked change proposal",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/change.ts 接入 change propose/resolve 并扩展 list/show",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/audit.ts 增加 unresolved task-linked proposal warning",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -50,7 +50,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/__tests__/delta.test.ts 补充 task-linked proposal core 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -59,7 +59,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/__tests__/change.test.ts 和 src/core/__tests__/audit.test.ts 补充 CLI/audit 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -68,7 +68,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 npm test targeted、npm run build、dist CLI change propose smoke",
       "status": "succeeded",
       "toolName": "shell",

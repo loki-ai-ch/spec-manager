@@ -12,23 +12,23 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 audit.ts、audit.test.ts 与 cli/audit.ts 既有实现
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修正 audit.ts 的 R18 合规基线注释
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 强化 audit.test.ts 的 compliance 精确格式断言
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 audit 专项测试与真实 CLI 输出
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test + npm run lint + npm run build
     status: pending
 created: '2026-06-10T14:00:00.000Z'
@@ -160,7 +160,7 @@ node dist/cli/index.js audit show
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "shell",
   "latencyMs": "<实际耗时>",
@@ -174,11 +174,11 @@ node dist/cli/index.js audit show
 {
   "coveredSpecs": ["constraint-closed-loop-L3.1.3-audit"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "核对 audit.ts、audit.test.ts 与 cli/audit.ts 既有实现"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "修正 audit.ts 的 R18 合规基线注释"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "强化 audit.test.ts 的 compliance 精确格式断言"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证 audit 专项测试与真实 CLI 输出"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "验证 npm test + npm run lint + npm run build"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "核对 audit.ts、audit.test.ts 与 cli/audit.ts 既有实现"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "修正 audit.ts 的 R18 合规基线注释"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "强化 audit.test.ts 的 compliance 精确格式断言"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证 audit 专项测试与真实 CLI 输出"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "验证 npm test + npm run lint + npm run build"}
   ]
 }
 ```

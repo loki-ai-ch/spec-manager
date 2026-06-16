@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 repository doctor 与元数据模型",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed integrity step 1\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "实现仓库引用与生命周期扫描器",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed integrity step 2\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "接入 project doctor 诊断输出",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed integrity step 3\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "导出结构化完整性公共接口",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed integrity step 4\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充完整性和 doctor 回归测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed integrity step 5\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证完整性测试与类型检查",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed integrity step 6\",\"files\":[],\"tests\":[],\"risks\":[]}",

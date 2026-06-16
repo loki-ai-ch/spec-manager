@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取路径 change 和 Spec Core 实现",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 1\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "实现 change 名称与目录边界守卫",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 2\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "收口 Spec schema 状态与 relation 校验",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 3\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "更新公共 API 导出契约",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 4\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充路径穿越和 Core 绕过测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 5\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证路径 Core 测试与类型检查",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed Core/path step 6\",\"files\":[],\"tests\":[],\"risks\":[]}",

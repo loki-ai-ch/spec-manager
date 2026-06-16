@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 L3/L2、历史任务、plan 模板与方法论事实来源",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"读取 L3/L2、历史任务、plan 模板、当前方法论文档与规则实现事实，确认仅增量修改两个目标文件\",\"files\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 docs/methodology.md 重构规范性契约与门禁分级",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"重构方法论文档规范性契约，修正独立状态流、门禁分级、R8/quick、L3/Task定位和审计基线\",\"files\":[\"docs/methodology.md\"]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 docs/methodology.md 修正运行机制边界与实践启发表述",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"修正失败处理、verification边界和真实环境验收表述，将无来源外部验证降级为实践启发并整理文档结构\",\"files\":[\"docs/methodology.md\"]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 methodology-contract.test.ts 锁定文档事实契约",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增方法论文档契约测试，锁定正确事实并阻止已知过度承诺回归\",\"files\":[\"src/core/__tests__/methodology-contract.test.ts\"]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: 运行专项测试、全量测试、lint、build 与 diff 检查",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"专项契约测试6项、全量测试464项、lint、build和diff检查通过；本Task仅修改方法论文档并新增契约测试\",\"files\":[\"docs/methodology.md\",\"src/core/__tests__/methodology-contract.test.ts\"],\"tests\":[\"npx vitest run src/core/__tests__/methodology-contract.test.ts\",\"npm test\",\"npm run lint\",\"npm run build\",\"git diff --check\"]}",

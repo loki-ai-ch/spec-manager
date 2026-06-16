@@ -8,27 +8,27 @@ status: implemented
 aiSummary: 实现 Claude skill merge-missing 安全补齐，执行固定迁移并验证 Decision、豁免、人工文件不可变和 doctor 归零。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集资产上下文并记录人工文件与历史 Task 摘要
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 agents.ts 实现目录 merge-missing
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 接入 remediation.ts 资产计划执行与 doctor 指引
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 merge-missing 与端到端迁移测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 预览并执行 repository-remediation-v1 当前仓库迁移
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证完整测试、doctor 归零与迁移幂等
     status: pending
 created: '2026-06-08T09:57:42.513Z'
@@ -106,7 +106,7 @@ git diff --check
 ## step_report 模板
 
 ```json
-{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"mcp_tool","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
+{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"tool_action","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
 ```
 
 ## planJson (final)
@@ -115,12 +115,12 @@ git diff --check
 {
   "coveredSpecs": ["repository-remediation-L3.1.3"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集资产上下文并记录人工文件与历史 Task 摘要"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "修改 agents.ts 实现目录 merge-missing"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "接入 remediation.ts 资产计划执行与 doctor 指引"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 merge-missing 与端到端迁移测试"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "预览并执行 repository-remediation-v1 当前仓库迁移"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "运行完整验证并确认 doctor 归零与迁移幂等"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集资产上下文并记录人工文件与历史 Task 摘要"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "修改 agents.ts 实现目录 merge-missing"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "接入 remediation.ts 资产计划执行与 doctor 指引"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 merge-missing 与端到端迁移测试"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "预览并执行 repository-remediation-v1 当前仓库迁移"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "运行完整验证并确认 doctor 归零与迁移幂等"}
   ]
 }
 ```

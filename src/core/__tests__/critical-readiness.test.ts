@@ -164,7 +164,7 @@ npm test
 ## planJson (final)
 
 \`\`\`json
-{"coveredSpecs":["x"],"steps":[{"stepNo":1,"stepType":"mcp_tool","name":"run verify test"}]}
+{"coveredSpecs":["x"],"steps":[{"stepNo":1,"stepType":"tool_action","name":"run verify test"}]}
 \`\`\`
 
 ## 回滚方案

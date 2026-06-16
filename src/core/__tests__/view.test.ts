@@ -62,8 +62,8 @@ describe('buildViewModel', () => {
     const planJson = {
       coveredSpecs: [l3],
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool' as const, name: 'inspect source files' },
-        { stepNo: 2, stepType: 'mcp_tool' as const, name: 'run verify test' },
+        { stepNo: 1, stepType: 'tool_action' as const, name: 'inspect source files' },
+        { stepNo: 2, stepType: 'tool_action' as const, name: 'run verify test' },
       ],
     };
     const { task } = createTask({ paths: project.paths, specCode: l3, autoConfirm: false, planJson });

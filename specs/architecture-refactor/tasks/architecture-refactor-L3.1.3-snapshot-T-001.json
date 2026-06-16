@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "收集 snapshot 上下文: 读取 architecture-refactor-L3.1.3-snapshot、architecture-refactor-L2.1、历史任务、agent-plan 和只读模块源码",
       "status": "succeeded",
       "toolName": "multi_tool_use.parallel",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 ProjectSnapshot 模块: 编辑 src/core/project-snapshot.ts",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "接入 integrity 快照索引: 编辑 src/core/integrity.ts 和 src/core/project-snapshot.ts",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "接入 usability 和 view 快照读取: 编辑 src/core/usability.ts、src/core/view.ts 和 src/core/project-snapshot.ts",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "接入 lifecycle readiness 快照索引: 编辑 src/core/lifecycle.ts 和 src/core/project-snapshot.ts",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -55,7 +55,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "导出 ProjectSnapshot 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/project-snapshot.test.ts",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -65,7 +65,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "回归 snapshot 相关只读链路: 运行 project-snapshot、integrity、usability、view、lifecycle 测试",
       "status": "succeeded",
       "toolName": "npm",
@@ -75,7 +75,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 ProjectSnapshot 重构: 运行 npm test、npm run lint、spec-manager project doctor",
       "status": "succeeded",
       "toolName": "multi_tool_use.parallel",

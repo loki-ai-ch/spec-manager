@@ -171,8 +171,8 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
       `{\n` +
       `  "coveredSpecs": ["${input.specCode}"],\n` +
       `  "steps": [\n` +
-      `    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 ${input.specCode} 并检查 templates/agent-plan.json"},\n` +
-      `    {"stepNo": "N", "stepType": "mcp_tool", "name": "验证 npm test"}\n` +
+      `    {"stepNo": 1, "stepType": "tool_action", "name": "读取 ${input.specCode} 并检查 templates/agent-plan.json"},\n` +
+      `    {"stepNo": "N", "stepType": "tool_action", "name": "验证 npm test"}\n` +
       `  ]\n` +
       `}`,
     );
@@ -319,7 +319,7 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
   }
   const step: StepFrontmatter = {
     stepNo: input.stepNo,
-    stepType: (steps[idx]?.stepType ?? 'mcp_tool') as StepTypeT,
+    stepType: (steps[idx]?.stepType ?? 'tool_action') as StepTypeT,
     name: steps[idx]?.name ?? '(unnamed)',
     status: input.status,
     toolName: input.toolName,

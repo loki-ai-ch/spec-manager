@@ -35,9 +35,9 @@ function createFrozenL3(): string {
 const plan = {
   coveredSpecs: ['test-L3'],
   steps: [
-    { stepNo: 1, stepType: 'mcp_tool' as const, name: 'step one' },
-    { stepNo: 2, stepType: 'mcp_tool' as const, name: 'step two' },
-    { stepNo: 3, stepType: 'mcp_tool' as const, name: 'run verify test' },
+    { stepNo: 1, stepType: 'tool_action' as const, name: 'step one' },
+    { stepNo: 2, stepType: 'tool_action' as const, name: 'step two' },
+    { stepNo: 3, stepType: 'tool_action' as const, name: 'run verify test' },
   ],
 };
 

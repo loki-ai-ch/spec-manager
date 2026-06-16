@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 harness-coding-L3.1.1-context、harness-coding-L2.1、templates/agent-plan.json 并检查 spec-io/task/decision/CLI task 测试基线",
       "status": "succeeded",
       "toolName": "shell",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/core/harness.ts 定义 HarnessTaskContext、buildHarnessTaskContext、renderHarnessTaskContextText",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "实现 L3 frozen/implemented 准入、summary、关联 spec 与 decision 读取",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "实现 objectives、nonGoals、acceptanceCriteria、suggestedVerification 的 markdown 提取",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "实现 task context text/json 输出格式和 nextCommands",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -50,7 +50,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/task.ts 接入 task context <l3Code> --format text|json",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -59,7 +59,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/core/__tests__/harness.test.ts 覆盖 context 构建与 renderer",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -68,7 +68,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/__tests__/task.test.ts 覆盖 task context CLI text/json/错误场景",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -77,7 +77,7 @@
     },
     {
       "stepNo": "9",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 targeted tests、npm run build、dist CLI text/json smoke",
       "status": "succeeded",
       "toolName": "shell",

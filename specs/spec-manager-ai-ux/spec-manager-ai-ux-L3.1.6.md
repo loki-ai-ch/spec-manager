@@ -10,23 +10,23 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取 README/readme_zh、spec-manager-ai-ux-L2.1 和现有命令入口'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 README.md 简化首屏、Quick Start 和 AI agent 接入
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 readme_zh.md 同步中文新手路径
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收纳复杂教程和命令参考，避免首屏过载
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 targeted tests、npm run build 和 git diff --check
     status: pending
 created: '2026-06-12T10:29:25.686Z'
@@ -99,7 +99,7 @@ git diff --check
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -115,27 +115,27 @@ git diff --check
   "steps": [
     {
       "stepNo": 1,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 README/readme_zh、spec-manager-ai-ux-L2.1 和现有命令入口"
     },
     {
       "stepNo": 2,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 README.md 简化首屏、Quick Start 和 AI agent 接入"
     },
     {
       "stepNo": 3,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 readme_zh.md 同步中文新手路径"
     },
     {
       "stepNo": 4,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "收纳复杂教程和命令参考，避免首屏过载"
     },
     {
       "stepNo": 5,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 targeted tests、npm run build 和 git diff --check"
     }
   ]

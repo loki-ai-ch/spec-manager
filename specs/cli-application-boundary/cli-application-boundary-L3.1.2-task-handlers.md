@@ -14,37 +14,37 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       上下文收集: 读取
       cli-application-boundary-L3.1.2-task-handlers、cli-application-boundary-L2.1、历史任务、agent-plan
       和 task CLI 锚点源码测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/cli/task-handlers.ts 实现 task report/verify handler
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/task-handlers.ts 新增 task report/verify presenter
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/task.ts 接入 task report/verify handler 和 presenter
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/cli/__tests__/task-handlers.test.ts 覆盖 task handler 和 presenter
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       验证: npm test -- src/cli/__tests__/task-handlers.test.ts
       src/cli/__tests__/task.test.ts src/cli/__tests__/common.test.ts && npm
       test -- src/cli/__tests__/architecture-smoke.test.ts
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       验证: npm run lint && spec-manager project doctor && npm test --
       src/cli/__tests__/spec.test.ts
@@ -236,7 +236,7 @@ spec-manager project doctor
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -250,13 +250,13 @@ spec-manager project doctor
 {
   "coveredSpecs": ["cli-application-boundary-L3.1.2-task-handlers"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取 cli-application-boundary-L3.1.2-task-handlers、cli-application-boundary-L2.1、历史任务、agent-plan 和 task CLI 锚点源码测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 src/cli/task-handlers.ts 实现 task report/verify handler"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/cli/task-handlers.ts 新增 task report/verify presenter"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/cli/task.ts 接入 task report/verify handler 和 presenter"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增 src/cli/__tests__/task-handlers.test.ts 覆盖 task handler 和 presenter"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证: npm test -- src/cli/__tests__/task-handlers.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/common.test.ts && npm test -- src/cli/__tests__/architecture-smoke.test.ts"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证: npm run lint && spec-manager project doctor && npm test -- src/cli/__tests__/spec.test.ts"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取 cli-application-boundary-L3.1.2-task-handlers、cli-application-boundary-L2.1、历史任务、agent-plan 和 task CLI 锚点源码测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 src/cli/task-handlers.ts 实现 task report/verify handler"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/cli/task-handlers.ts 新增 task report/verify presenter"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/cli/task.ts 接入 task report/verify handler 和 presenter"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增 src/cli/__tests__/task-handlers.test.ts 覆盖 task handler 和 presenter"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证: npm test -- src/cli/__tests__/task-handlers.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/common.test.ts && npm test -- src/cli/__tests__/architecture-smoke.test.ts"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证: npm run lint && spec-manager project doctor && npm test -- src/cli/__tests__/spec.test.ts"}
   ]
 }
 ```

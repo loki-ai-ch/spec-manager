@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "收集 verification 上下文",
       "status": "succeeded",
       "toolName": "multi_tool_use.parallel",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 public API contract 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 CLI architecture smoke 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "强化 installed CLI drift 验证测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "运行架构专项测试与 export 搜索",
       "status": "succeeded",
       "toolName": "npm-test-rg",
@@ -55,7 +55,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "运行 build、installed CLI 验证与相关测试",
       "status": "succeeded",
       "toolName": "npm-build-verify-installed-cli",
@@ -65,7 +65,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "运行全量验证并完成 task",
       "status": "succeeded",
       "toolName": "npm-test-lint-doctor",

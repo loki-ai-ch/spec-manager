@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 harness-coding-L3.1.2-report、harness-coding-L2.1、harness-coding-L3.1.1-context、templates/agent-plan.json 并检查 harness/task/CLI task 测试基线",
       "status": "succeeded",
       "toolName": "shell",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/harness.ts 新增 HarnessTaskReportPayload/Input 和 normalizeHarnessTaskReportPayload",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/harness.ts 新增 reportHarnessTaskStep 写入下一个 task step",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/task.ts 接入 task report <taskId> flags/input/json 子命令",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/__tests__/harness.test.ts 补充 report payload 与 reportHarnessTaskStep 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -50,7 +50,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/__tests__/task.test.ts 补充 task report CLI flags/input/json/错误场景测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -59,7 +59,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 npm test targeted、npm run build、dist CLI task report smoke",
       "status": "succeeded",
       "toolName": "shell",

@@ -10,19 +10,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充带引用同 code 替换与 rename-replace 回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 基于最终活动 code 集合校验 REMOVED 引用
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 保持真正删除引用阻断与替换兼容
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证归档专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-12T01:41:01.103Z'
@@ -97,10 +97,10 @@ git diff --check
 {
   "coveredSpecs": ["architecture-refactor-L3.1.16"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充带引用同 code 替换与 rename-replace 回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "基于最终活动 code 集合校验 REMOVED 引用"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "保持真正删除引用阻断与替换兼容"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充带引用同 code 替换与 rename-replace 回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "基于最终活动 code 集合校验 REMOVED 引用"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "保持真正删除引用阻断与替换兼容"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```

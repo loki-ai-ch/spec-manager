@@ -11,37 +11,37 @@ aiSummary: 实施 L3 单次批准冻结：调整状态转换、confirm/approve�
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 l3-approval-L3.1.1-single-freeze、l3-approval-L2.1 和
       templates/agent-plan.json 并完成文件级分析
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/status.ts 和 status.test.ts 扩展 draft 到 frozen 转换
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/spec.ts 和 src/cli/usability.ts 统一 L3 单次批准目标状态
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/usability.ts 和 usability.test.ts 更新 flow guide 建议
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 CLI spec task 测试覆盖单次批准和门禁兼容
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 flow-control README skill 同步 L3 单次批准规则
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑根 AGENTS agent 模板和 agents.test.ts 同步统一规则
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 targeted tests build 完整测试 CLI smoke 和残留检查
     status: pending
 ---
@@ -225,7 +225,7 @@ rg -n "L3 needs two confirmations|用户再批准|L3 confirmed→frozen|draft ->
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -239,14 +239,14 @@ rg -n "L3 needs two confirmations|用户再批准|L3 confirmed→frozen|draft ->
 {
   "coveredSpecs": ["l3-approval-L3.1.1-single-freeze"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 l3-approval-L3.1.1-single-freeze、l3-approval-L2.1 和 templates/agent-plan.json 并完成文件级分析"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/status.ts 和 status.test.ts 扩展 draft 到 frozen 转换"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/cli/spec.ts 和 src/cli/usability.ts 统一 L3 单次批准目标状态"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/core/usability.ts 和 usability.test.ts 更新 flow guide 建议"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 CLI spec task 测试覆盖单次批准和门禁兼容"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 flow-control README skill 同步 L3 单次批准规则"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑根 AGENTS agent 模板和 agents.test.ts 同步统一规则"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "运行 targeted tests build 完整测试 CLI smoke 和残留检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 l3-approval-L3.1.1-single-freeze、l3-approval-L2.1 和 templates/agent-plan.json 并完成文件级分析"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/status.ts 和 status.test.ts 扩展 draft 到 frozen 转换"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/cli/spec.ts 和 src/cli/usability.ts 统一 L3 单次批准目标状态"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/core/usability.ts 和 usability.test.ts 更新 flow guide 建议"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 CLI spec task 测试覆盖单次批准和门禁兼容"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 flow-control README skill 同步 L3 单次批准规则"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑根 AGENTS agent 模板和 agents.test.ts 同步统一规则"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "运行 targeted tests build 完整测试 CLI smoke 和残留检查"}
   ]
 }
 ```

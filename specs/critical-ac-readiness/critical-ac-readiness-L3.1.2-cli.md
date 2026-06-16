@@ -12,23 +12,23 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取本 L3、critical-readiness core、project CLI、方法论和 Agent 资产基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 project readiness critical CLI text/json 输出和错误处理
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 CLI 测试覆盖 text、json、topic 过滤和非法 topic
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步方法论、skill、Agent 入口和契约测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 vitest、build、doctor、spec validate 和 plan validate
     status: pending
 created: '2026-06-16T08:27:57.455Z'
@@ -151,11 +151,11 @@ JSON 输出必须是 `CriticalReadinessReport`。
   "coveredSpecs": ["critical-ac-readiness-L3.1.2-cli"],
   "profile": "standard",
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取本 L3、critical-readiness core、project CLI、方法论和 Agent 资产基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 project readiness critical CLI text/json 输出和错误处理"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "补充 CLI 测试覆盖 text、json、topic 过滤和非法 topic"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "同步方法论、skill、Agent 入口和契约测试"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "运行 vitest、build、doctor、spec validate 和 plan validate"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取本 L3、critical-readiness core、project CLI、方法论和 Agent 资产基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 project readiness critical CLI text/json 输出和错误处理"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "补充 CLI 测试覆盖 text、json、topic 过滤和非法 topic"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "同步方法论、skill、Agent 入口和契约测试"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "运行 vitest、build、doctor、spec validate 和 plan validate"}
   ]
 }
 ```

@@ -13,37 +13,37 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 workflow-hardening-L3.1.2-hints 与 workflow-hardening-L2.1 并检查
       templates/agent-plan.json
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/usability.ts 增加 DoctorCheck blocking 分层
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/usability.ts 输出 guide advisory
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/usability.ts 增加 upstream frozen advice
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/task.ts 与 src/cli/task.ts 修正 task show shownSteps totalSteps
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 usability core 和 CLI 测试补充 guide advisory 与 upstream advice
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 task core 和 CLI 测试补充 shown total 断言
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test targeted、npm run build、guide advisory 和 task show smoke
     status: pending
 ---
@@ -193,7 +193,7 @@ node dist/cli/index.js task show T-001 --spec workflow-hardening-L3.1.1-cli
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -207,14 +207,14 @@ node dist/cli/index.js task show T-001 --spec workflow-hardening-L3.1.1-cli
 {
   "coveredSpecs": ["workflow-hardening-L3.1.2-hints"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 workflow-hardening-L3.1.2-hints 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/usability.ts 增加 DoctorCheck blocking 分层"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/cli/usability.ts 输出 guide advisory"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/core/usability.ts 增加 upstream frozen advice"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/core/task.ts 与 src/cli/task.ts 修正 task show shownSteps totalSteps"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 usability core 和 CLI 测试补充 guide advisory 与 upstream advice"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 task core 和 CLI 测试补充 shown total 断言"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 npm test targeted、npm run build、guide advisory 和 task show smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 workflow-hardening-L3.1.2-hints 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/usability.ts 增加 DoctorCheck blocking 分层"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/cli/usability.ts 输出 guide advisory"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/core/usability.ts 增加 upstream frozen advice"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/core/task.ts 与 src/cli/task.ts 修正 task show shownSteps totalSteps"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 usability core 和 CLI 测试补充 guide advisory 与 upstream advice"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 task core 和 CLI 测试补充 shown total 断言"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 npm test targeted、npm run build、guide advisory 和 task show smoke"}
   ]
 }
 ```

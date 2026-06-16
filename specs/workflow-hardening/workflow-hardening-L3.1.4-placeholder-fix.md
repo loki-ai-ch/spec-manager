@@ -13,33 +13,33 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 workflow-hardening-L3.1.4-placeholder-fix、workflow-hardening-L2.1 和
       templates/agent-plan.json 并复现误判
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/validate.ts 统一 validate placeholder 判定
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/usability.ts 统一 flow guide doctor placeholder 判定
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 spec-io.test.ts 和 validate.test.ts 增加核心判定回归测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 usability.test.ts 和 CLI spec 测试增加流程误判回归测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 workflow-hardening L1/L2 不再误判且真实占位仍被 R22 阻断
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 placeholder targeted tests、build 和完整测试
     status: pending
 ---
@@ -185,7 +185,7 @@ spec-manager spec validate <真实占位测试-spec-code>
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -199,13 +199,13 @@ spec-manager spec validate <真实占位测试-spec-code>
 {
   "coveredSpecs": ["workflow-hardening-L3.1.4-placeholder-fix"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 workflow-hardening-L3.1.4-placeholder-fix、workflow-hardening-L2.1 和 templates/agent-plan.json 并复现误判"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/validate.ts 统一 validate placeholder 判定"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/usability.ts 统一 flow guide doctor placeholder 判定"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 spec-io.test.ts 和 validate.test.ts 增加核心判定回归测试"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 usability.test.ts 和 CLI spec 测试增加流程误判回归测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证 workflow-hardening L1/L2 不再误判且真实占位仍被 R22 阻断"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "运行 placeholder targeted tests、build 和完整测试"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 workflow-hardening-L3.1.4-placeholder-fix、workflow-hardening-L2.1 和 templates/agent-plan.json 并复现误判"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/validate.ts 统一 validate placeholder 判定"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/usability.ts 统一 flow guide doctor placeholder 判定"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 spec-io.test.ts 和 validate.test.ts 增加核心判定回归测试"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 usability.test.ts 和 CLI spec 测试增加流程误判回归测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证 workflow-hardening L1/L2 不再误判且真实占位仍被 R22 阻断"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "运行 placeholder targeted tests、build 和完整测试"}
   ]
 }
 ```

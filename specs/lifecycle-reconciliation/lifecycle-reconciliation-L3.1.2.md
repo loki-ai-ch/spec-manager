@@ -10,27 +10,27 @@ aiSummary: >-
   并诊断 stale-confirmed-parent。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集 flow、guide、doctor 与 readiness 调用上下文
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 usability.ts 修正 flow 下一步判断
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 usability.ts 修正 upstream advice
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 integrity.ts 新增滞留 confirmed 诊断
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 flow、doctor 与完整性只读测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证测试构建与只读命令零写入
     status: pending
 created: '2026-06-09T01:23:51.622Z'
@@ -96,7 +96,7 @@ git diff --check
 ## step_report 模板
 
 ```json
-{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"mcp_tool","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
+{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"tool_action","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
 ```
 
 ## planJson (final)
@@ -105,12 +105,12 @@ git diff --check
 {
   "coveredSpecs": ["lifecycle-reconciliation-L3.1.2"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集 flow、guide、doctor 与 readiness 调用上下文"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "修改 usability.ts 修正 flow 下一步判断"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "修改 usability.ts 修正 upstream advice"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "修改 integrity.ts 新增滞留 confirmed 诊断"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增 flow、doctor 与完整性只读测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证测试构建与只读命令零写入"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集 flow、guide、doctor 与 readiness 调用上下文"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "修改 usability.ts 修正 flow 下一步判断"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "修改 usability.ts 修正 upstream advice"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "修改 integrity.ts 新增滞留 confirmed 诊断"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增 flow、doctor 与完整性只读测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证测试构建与只读命令零写入"}
   ]
 }
 ```

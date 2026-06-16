@@ -14,52 +14,52 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取
       harness-coding-L3.1.3-verification、harness-coding-L2.1、harness-coding-L3.1.2-report、templates/agent-plan.json
       并检查 harness/task/audit/CLI 测试基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: '编辑 src/core/task.ts 扩展 TaskRecord verifications[] 并新增 addTaskVerification'
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/harness.ts 新增 HarnessTaskVerificationPayload/Input 和
       normalizeHarnessTaskVerificationPayload
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/harness.ts 新增 recordHarnessTaskVerification 写入 task
       verification evidence
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/task.ts 接入 task verify <taskId> flags/input/json 子命令
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/task.ts、src/cli/task.ts、src/core/audit.ts 展示 verification 并增加
       audit warning
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/__tests__/harness.test.ts 和
       src/core/__tests__/task-cascade.test.ts 补充 verification core 测试
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/cli/__tests__/task.test.ts 和 src/core/__tests__/audit.test.ts 补充
       task verify CLI/audit 测试
     status: pending
   - stepNo: 9
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test targeted、npm run build、dist CLI task verify smoke
     status: pending
 ---
@@ -289,7 +289,7 @@ node dist/cli/index.js task verify T-001 --spec harness-coding-L3.1.3-verificati
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -303,15 +303,15 @@ node dist/cli/index.js task verify T-001 --spec harness-coding-L3.1.3-verificati
 {
   "coveredSpecs": ["harness-coding-L3.1.3-verification"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 harness-coding-L3.1.3-verification、harness-coding-L2.1、harness-coding-L3.1.2-report、templates/agent-plan.json 并检查 harness/task/audit/CLI 测试基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/task.ts 扩展 TaskRecord verifications[] 并新增 addTaskVerification"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/harness.ts 新增 HarnessTaskVerificationPayload/Input 和 normalizeHarnessTaskVerificationPayload"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/core/harness.ts 新增 recordHarnessTaskVerification 写入 task verification evidence"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/cli/task.ts 接入 task verify <taskId> flags/input/json 子命令"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/core/task.ts、src/cli/task.ts、src/core/audit.ts 展示 verification 并增加 audit warning"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/harness.test.ts 和 src/core/__tests__/task-cascade.test.ts 补充 verification core 测试"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "编辑 src/cli/__tests__/task.test.ts 和 src/core/__tests__/audit.test.ts 补充 task verify CLI/audit 测试"},
-    {"stepNo": 9, "stepType": "mcp_tool", "name": "验证 npm test targeted、npm run build、dist CLI task verify smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 harness-coding-L3.1.3-verification、harness-coding-L2.1、harness-coding-L3.1.2-report、templates/agent-plan.json 并检查 harness/task/audit/CLI 测试基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/task.ts 扩展 TaskRecord verifications[] 并新增 addTaskVerification"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/harness.ts 新增 HarnessTaskVerificationPayload/Input 和 normalizeHarnessTaskVerificationPayload"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/core/harness.ts 新增 recordHarnessTaskVerification 写入 task verification evidence"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/cli/task.ts 接入 task verify <taskId> flags/input/json 子命令"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/core/task.ts、src/cli/task.ts、src/core/audit.ts 展示 verification 并增加 audit warning"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 src/core/__tests__/harness.test.ts 和 src/core/__tests__/task-cascade.test.ts 补充 verification core 测试"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "编辑 src/cli/__tests__/task.test.ts 和 src/core/__tests__/audit.test.ts 补充 task verify CLI/audit 测试"},
+    {"stepNo": 9, "stepType": "tool_action", "name": "验证 npm test targeted、npm run build、dist CLI task verify smoke"}
   ]
 }
 ```

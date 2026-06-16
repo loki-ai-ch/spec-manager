@@ -109,7 +109,7 @@ describe('buildAdaptiveWorkflowAdoptionPreview', () => {
 function planFor(specCode: string) {
   return {
     coveredSpecs: [specCode],
-    steps: [{ stepNo: 1, stepType: 'mcp_tool' as const, name: 'run verify test' }],
+    steps: [{ stepNo: 1, stepType: 'tool_action' as const, name: 'run verify test' }],
   };
 }
 
@@ -157,7 +157,7 @@ npm test
 ## planJson (final)
 
 \`\`\`json
-{"coveredSpecs":["x"],"steps":[{"stepNo":1,"stepType":"mcp_tool","name":"验证 test"}]}
+{"coveredSpecs":["x"],"steps":[{"stepNo":1,"stepType":"tool_action","name":"验证 test"}]}
 \`\`\`
 
 ## 回滚方案

@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码",
       "status": "succeeded",
       "toolName": "shell",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对数据模型扩展: VerificationLayer + TaskVerificationRecord.layer + TaskRecord.lastFailedOutput",
       "status": "succeeded",
       "toolName": "review",
@@ -24,7 +24,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 addTaskVerification layer 参数",
       "status": "succeeded",
       "toolName": "review",
@@ -33,7 +33,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 reportStep 失败时持久化 outputJson 到 lastFailedOutput",
       "status": "succeeded",
       "toolName": "review",
@@ -42,7 +42,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 task complete 验证命令和 @verify 自动执行",
       "status": "succeeded",
       "toolName": "review",
@@ -51,7 +51,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 showTask verification 按 layer 分组",
       "status": "succeeded",
       "toolName": "review",
@@ -60,7 +60,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 invariants 按 layer 检查 verification",
       "status": "succeeded",
       "toolName": "review",
@@ -69,7 +69,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 harness buildHarnessTaskContext 注入 lastFailedOutput",
       "status": "succeeded",
       "toolName": "review",
@@ -78,7 +78,7 @@
     },
     {
       "stepNo": "9",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 cli task complete skip/reason 语义和 force 废弃路径",
       "status": "succeeded",
       "toolName": "review",
@@ -87,7 +87,7 @@
     },
     {
       "stepNo": "10",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 cli task verify --layer 参数",
       "status": "succeeded",
       "toolName": "review",
@@ -96,7 +96,7 @@
     },
     {
       "stepNo": "11",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 cli task show 按 layer 分组显示",
       "status": "succeeded",
       "toolName": "review",
@@ -105,7 +105,7 @@
     },
     {
       "stepNo": "12",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 task complete 验证钩子测试",
       "status": "succeeded",
       "toolName": "vitest",
@@ -114,7 +114,7 @@
     },
     {
       "stepNo": "13",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 step failed 上下文注入测试",
       "status": "succeeded",
       "toolName": "vitest",
@@ -123,7 +123,7 @@
     },
     {
       "stepNo": "14",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 verification layer 测试",
       "status": "succeeded",
       "toolName": "vitest",
@@ -132,7 +132,7 @@
     },
     {
       "stepNo": "15",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: npm test + npm run lint + npm run build",
       "status": "succeeded",
       "toolName": "shell",

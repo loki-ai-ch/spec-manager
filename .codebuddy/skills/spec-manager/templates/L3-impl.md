@@ -88,7 +88,7 @@ Expert guidelines:
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -104,10 +104,10 @@ Expert guidelines:
 {
   "coveredSpecs": ["<本 L3 specCode>"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: spec-manager spec show(L3 + 父 L2)"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "<动词+宾语+文件>"},
-    {"stepNo": "N-1", "stepType": "mcp_tool", "name": "部署(若涉及后端)"},
-    {"stepNo": "N", "stepType": "mcp_tool", "name": "验证: <命令 + 预期输出>"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: spec-manager spec show(L3 + 父 L2)"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "<动词+宾语+文件>"},
+    {"stepNo": "N-1", "stepType": "tool_action", "name": "部署(若涉及后端)"},
+    {"stepNo": "N", "stepType": "tool_action", "name": "验证: <命令 + 预期输出>"}
   ]
 }
 ```

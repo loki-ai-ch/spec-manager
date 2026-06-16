@@ -8,23 +8,23 @@ status: implemented
 aiSummary: 建立独立历史 verification 豁免登记，严格校验精确 Task 匹配并接入完整性扫描，不修改终态 Task。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集上下文并记录历史 Task 字节摘要
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 integrity-exemptions.ts 登记读取与严格合并
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 integrity.ts 接入有效豁免与无效登记报告
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增完整性豁免单元测试与公共导出
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证测试构建并比较历史 Task 字节摘要
     status: pending
 created: '2026-06-08T09:57:31.254Z'
@@ -92,7 +92,7 @@ git diff --check
 ## step_report 模板
 
 ```json
-{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"mcp_tool","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
+{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"tool_action","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
 ```
 
 ## planJson (final)
@@ -101,11 +101,11 @@ git diff --check
 {
   "coveredSpecs": ["repository-remediation-L3.1.1"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集上下文并记录历史 Task 字节摘要"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 integrity-exemptions.ts 登记读取与严格合并"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "修改 integrity.ts 接入有效豁免与无效登记报告"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增完整性豁免单元测试与公共导出"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "运行测试构建并比较历史 Task 字节摘要"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集上下文并记录历史 Task 字节摘要"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 integrity-exemptions.ts 登记读取与严格合并"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "修改 integrity.ts 接入有效豁免与无效登记报告"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增完整性豁免单元测试与公共导出"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "运行测试构建并比较历史 Task 字节摘要"}
   ]
 }
 ```

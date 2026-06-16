@@ -10,19 +10,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: Review readme_zh.md and English README v0.4.2 sections
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: Add Chinese workflow overview and adaptive harness governance sections
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: Verify git diff --check and record verification evidence
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       Verify git diff --check and commit Chinese README update without staging
       local personal settings
@@ -82,22 +82,22 @@ git diff --check
   "steps": [
     {
       "stepNo": 1,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Review readme_zh.md and English README v0.4.2 sections"
     },
     {
       "stepNo": 2,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Add Chinese workflow overview and adaptive harness governance sections"
     },
     {
       "stepNo": 3,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Verify git diff --check and record verification evidence"
     },
     {
       "stepNo": 4,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Commit Chinese README update without staging local personal settings"
     }
   ]

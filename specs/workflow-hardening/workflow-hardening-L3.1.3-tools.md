@@ -13,39 +13,39 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 workflow-hardening-L3.1.3-tools 与 workflow-hardening-L2.1 并检查
       templates/agent-plan.json
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/agents.ts 增加 cursor windsurf provider
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 templates/agents/CURSOR.md 和 templates/agents/WINDSURF.md
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑现有 agents 模板和 skill/SKILL.md 同步统一规则
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/__tests__/agents.test.ts 和
       src/cli/__tests__/project-agents.test.ts 补充 provider 测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/__tests__/agents.test.ts 增加模板规则覆盖测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/project.ts 更新 provider help
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       验证 agents targeted tests、npm run build、完整 npm test、provider list 和 dry-run
       smoke
@@ -217,7 +217,7 @@ node dist/cli/index.js project agents --provider cursor,windsurf --dry-run
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -231,14 +231,14 @@ node dist/cli/index.js project agents --provider cursor,windsurf --dry-run
 {
   "coveredSpecs": ["workflow-hardening-L3.1.3-tools"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 workflow-hardening-L3.1.3-tools 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/agents.ts 增加 cursor windsurf provider"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "新增 templates/agents/CURSOR.md 和 templates/agents/WINDSURF.md"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑现有 agents 模板和 skill/SKILL.md 同步统一规则"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/agents.test.ts 和 src/cli/__tests__/project-agents.test.ts 补充 provider 测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/agents.test.ts 增加模板规则覆盖测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 src/cli/project.ts 更新 provider help"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 agents targeted tests、npm run build、完整 npm test、provider list 和 dry-run smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 workflow-hardening-L3.1.3-tools 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/agents.ts 增加 cursor windsurf provider"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "新增 templates/agents/CURSOR.md 和 templates/agents/WINDSURF.md"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑现有 agents 模板和 skill/SKILL.md 同步统一规则"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/core/__tests__/agents.test.ts 和 src/cli/__tests__/project-agents.test.ts 补充 provider 测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/core/__tests__/agents.test.ts 增加模板规则覆盖测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 src/cli/project.ts 更新 provider help"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 agents targeted tests、npm run build、完整 npm test、provider list 和 dry-run smoke"}
   ]
 }
 ```

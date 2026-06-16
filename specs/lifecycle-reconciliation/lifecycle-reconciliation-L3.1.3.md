@@ -10,27 +10,27 @@ aiSummary: >-
   不可变与幂等。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集对账上下文并记录 completed Task 与目标 spec 摘要
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 reconciliation.ts 固定清单与计划器
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现事务化状态与 Decision 对账执行器
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 project reconcile CLI 与自动化测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 预览并执行当前仓库历史状态对账
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 doctor、flow、幂等与 completed Task 字节不变
     status: pending
 created: '2026-06-09T01:23:51.739Z'
@@ -111,7 +111,7 @@ git diff --check
 ## step_report 模板
 
 ```json
-{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"mcp_tool","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
+{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"tool_action","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
 ```
 
 ## planJson (final)
@@ -120,12 +120,12 @@ git diff --check
 {
   "coveredSpecs": ["lifecycle-reconciliation-L3.1.3"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集对账上下文并记录 completed Task 与目标 spec 摘要"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 reconciliation.ts 固定清单与计划器"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现事务化状态与 Decision 对账执行器"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 project reconcile CLI 与自动化测试"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "预览并执行当前仓库历史状态对账"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证 doctor、flow、幂等与 completed Task 字节不变"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集对账上下文并记录 completed Task 与目标 spec 摘要"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 reconciliation.ts 固定清单与计划器"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现事务化状态与 Decision 对账执行器"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 project reconcile CLI 与自动化测试"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "预览并执行当前仓库历史状态对账"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证 doctor、flow、幂等与 completed Task 字节不变"}
   ]
 }
 ```

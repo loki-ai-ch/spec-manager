@@ -8,27 +8,27 @@ status: implemented
 aiSummary: 统一 change 路径边界校验，并将 Spec schema、状态转换和 relation 引用规则收口到 Core API。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取路径 change 和 Spec Core 实现
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 change 名称与目录边界守卫
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收口 Spec schema 状态与 relation 校验
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 更新公共 API 导出契约
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充路径穿越和 Core 绕过测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证路径 Core 测试与类型检查
     status: pending
 created: '2026-06-08T09:35:15.118Z'
@@ -63,12 +63,12 @@ changeSummary: 'cascade: task complete'
 {
   "coveredSpecs": ["architecture-hardening-L3.1.2-core"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取路径 change 和 Spec Core 实现"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "实现 change 名称与目录边界守卫"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "收口 Spec schema 状态与 relation 校验"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "更新公共 API 导出契约"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "补充路径穿越和 Core 绕过测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证路径 Core 测试与类型检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取路径 change 和 Spec Core 实现"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "实现 change 名称与目录边界守卫"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "收口 Spec schema 状态与 relation 校验"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "更新公共 API 导出契约"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "补充路径穿越和 Core 绕过测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证路径 Core 测试与类型检查"}
   ]
 }
 ```

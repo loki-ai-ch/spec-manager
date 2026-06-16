@@ -13,23 +13,23 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取 L3/L2、历史任务、plan 模板与方法论事实来源'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 docs/methodology.md 重构规范性契约与门禁分级
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 docs/methodology.md 修正运行机制边界与实践启发表述
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 methodology-contract.test.ts 锁定文档事实契约
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: 运行专项测试、全量测试、lint、build 与 diff 检查'
     status: pending
 created: '2026-06-11T01:41:57.793Z'
@@ -138,7 +138,7 @@ git diff --name-only
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -152,11 +152,11 @@ git diff --name-only
 {
   "coveredSpecs": ["methodology-hardening-L3.1.1-doc-contract"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取 L3/L2、历史任务、plan 模板与方法论事实来源"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 docs/methodology.md 重构规范性契约与门禁分级"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 docs/methodology.md 修正运行机制边界与实践启发表述"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 methodology-contract.test.ts 锁定文档事实契约"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "验证: 运行专项测试、全量测试、lint、build 与 diff 检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取 L3/L2、历史任务、plan 模板与方法论事实来源"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 docs/methodology.md 重构规范性契约与门禁分级"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 docs/methodology.md 修正运行机制边界与实践启发表述"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 methodology-contract.test.ts 锁定文档事实契约"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "验证: 运行专项测试、全量测试、lint、build 与 diff 检查"}
   ]
 }
 ```

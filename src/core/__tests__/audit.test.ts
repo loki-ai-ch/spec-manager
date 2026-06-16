@@ -374,7 +374,7 @@ function createCompletedTask(topic: string, removeVerification = false): string 
     autoConfirm: false,
     planJson: {
       coveredSpecs: [l3Code],
-      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
     },
   });
   startTask(paths, 'T-001', l3Code);
@@ -432,7 +432,7 @@ npm test
     id: 'T-001',
     specCode,
     status: 'completed',
-    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
+    steps: [{ stepNo: 1, stepType: 'tool_action', name: 'verify', status: 'succeeded' }],
     verifications: [{
       id: 'V-001',
       command: 'npm test',

@@ -14,33 +14,33 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 roadmap-openspec-L3.1.2-agents 与 roadmap-openspec-L2.1 并检查
       templates/agent-plan.json
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/agents.ts 新增 detectAgentProviders
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/project.ts 调整 project agents 默认检测
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/__tests__/agents.test.ts 补充 provider 检测测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/__tests__/project-agents.test.ts 补充 CLI 自动检测测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/project.ts 更新 project agents help
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 agents targeted tests、npm run build、完整 npm test 和 auto-detect smoke
     status: pending
 ---
@@ -204,7 +204,7 @@ SPEC_MANAGER_ROOT=$PWD node /Users/loki/code/github/spec-manager/dist/cli/index.
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -218,13 +218,13 @@ SPEC_MANAGER_ROOT=$PWD node /Users/loki/code/github/spec-manager/dist/cli/index.
 {
   "coveredSpecs": ["roadmap-openspec-L3.1.2-agents"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 roadmap-openspec-L3.1.2-agents 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/agents.ts 新增 detectAgentProviders"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/cli/project.ts 调整 project agents 默认检测"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/agents.test.ts 补充 provider 检测测试"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/cli/__tests__/project-agents.test.ts 补充 CLI 自动检测测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/cli/project.ts 更新 project agents help"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 agents targeted tests、npm run build、完整 npm test 和 auto-detect smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 roadmap-openspec-L3.1.2-agents 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/agents.ts 新增 detectAgentProviders"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/cli/project.ts 调整 project agents 默认检测"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/core/__tests__/agents.test.ts 补充 provider 检测测试"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/cli/__tests__/project-agents.test.ts 补充 CLI 自动检测测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/cli/project.ts 更新 project agents help"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 agents targeted tests、npm run build、完整 npm test 和 auto-detect smoke"}
   ]
 }
 ```

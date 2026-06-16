@@ -12,19 +12,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取本 L3、critical readiness core 和 project readiness CLI 测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修正 topic 过滤时 governed upgrade note 和 readyForGovernedDefault 语义
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 更新 core/CLI 测试覆盖 topic 局部 ready 但项目未全局 ready
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 运行 vitest、build、spec validate 和 plan validate
     status: pending
 created: '2026-06-16T08:40:21.713Z'
@@ -103,10 +103,10 @@ changeSummary: 'cascade: task-complete'
   "coveredSpecs": ["critical-ac-readiness-L3.1.3-topic-scope"],
   "profile": "standard",
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取本 L3、critical readiness core 和 project readiness CLI 测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "修正 topic 过滤时 governed upgrade note 和 readyForGovernedDefault 语义"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "更新 core/CLI 测试覆盖 topic 局部 ready 但项目未全局 ready"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "运行 vitest、build、spec validate 和 plan validate"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取本 L3、critical readiness core 和 project readiness CLI 测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "修正 topic 过滤时 governed upgrade note 和 readyForGovernedDefault 语义"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "更新 core/CLI 测试覆盖 topic 局部 ready 但项目未全局 ready"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "运行 vitest、build、spec validate 和 plan validate"}
   ]
 }
 ```

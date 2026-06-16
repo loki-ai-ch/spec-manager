@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 L2、Task/Evidence/Profile 现有实现和 CLI 基线",
       "status": "succeeded",
       "toolName": "sed/spec-manager",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 Profile metrics core API 与类型导出",
       "status": "succeeded",
       "toolName": "apply_patch/vitest/tsc",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "实现 coverage、standard warning、invalid projection 和 topic 过滤规则",
       "status": "succeeded",
       "toolName": "apply_patch/vitest",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 project profile metrics CLI text/json 输出与错误处理",
       "status": "succeeded",
       "toolName": "apply_patch/vitest/tsc",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "同步方法论、skill 与 Agent managed assets",
       "status": "succeeded",
       "toolName": "apply_patch/perl/spec-manager",
@@ -50,7 +50,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检",
       "status": "succeeded",
       "toolName": "vitest/npm/spec-manager/node",

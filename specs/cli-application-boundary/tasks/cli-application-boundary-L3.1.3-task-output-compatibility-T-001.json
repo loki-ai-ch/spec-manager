@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充 task CLI warning、JSON 与 stderr 精确兼容测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "增加 CLI warning presenter 通道并保护 JSON 输出",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "恢复 task report/verify 前置校验 stderr 文本",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 task CLI 专项测试、全量测试、lint 和 project doctor",
       "status": "succeeded",
       "toolName": "exec_command",

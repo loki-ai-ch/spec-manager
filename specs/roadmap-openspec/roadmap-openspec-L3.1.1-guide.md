@@ -14,37 +14,37 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 roadmap-openspec-L3.1.1-guide 与 roadmap-openspec-L2.1 并检查
       templates/agent-plan.json
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/validate.ts 导出 REQUIRED_SECTIONS
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/usability.ts 新增 readProjectContext
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/usability.ts 新增 renderRichGuide
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/usability.ts 接入 guide --format text|rich
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/__tests__/usability.test.ts 补充 rich guide 测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/__tests__/usability.test.ts 补充 guide format CLI 测试
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test targeted、npm run build、node dist/cli/index.js guide smoke
     status: pending
 ---
@@ -189,7 +189,7 @@ node dist/cli/index.js guide roadmap-openspec-L3.1.1-guide --format json
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -202,14 +202,14 @@ node dist/cli/index.js guide roadmap-openspec-L3.1.1-guide --format json
 ```json
 {
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 roadmap-openspec-L3.1.1-guide 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/validate.ts 导出 REQUIRED_SECTIONS"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/usability.ts 新增 readProjectContext"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/core/usability.ts 新增 renderRichGuide"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/cli/usability.ts 接入 guide --format text|rich"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/usability.test.ts 补充 rich guide 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 src/cli/__tests__/usability.test.ts 补充 guide format CLI 测试"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 npm test targeted、npm run build、node dist/cli/index.js guide smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 roadmap-openspec-L3.1.1-guide 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/validate.ts 导出 REQUIRED_SECTIONS"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/usability.ts 新增 readProjectContext"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/core/usability.ts 新增 renderRichGuide"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/cli/usability.ts 接入 guide --format text|rich"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/core/__tests__/usability.test.ts 补充 rich guide 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 src/cli/__tests__/usability.test.ts 补充 guide format CLI 测试"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 npm test targeted、npm run build、node dist/cli/index.js guide smoke"}
   ]
 }
 ```

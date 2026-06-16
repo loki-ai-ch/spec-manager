@@ -34,7 +34,7 @@ function createFrozenL3(): string {
 }
 
 const plan = {
-  steps: [{ stepNo: 1, stepType: 'mcp_tool' as const, name: 'run test' }],
+  steps: [{ stepNo: 1, stepType: 'tool_action' as const, name: 'run test' }],
 };
 
 describe('addTaskVerification — AC-4 layer 参数', () => {

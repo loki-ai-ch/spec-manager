@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 roadmap-openspec-L3.1.4-completion、roadmap-openspec-L2.1 和 templates/agent-plan.json 并完成文件级分析",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"完成 completion L3/L2/agent-plan、CLI 注册、spec 读取和测试基线分析\",\"files\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/core/completion.ts 实现脚本生成安装路径和安装卸载",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增 completion 核心脚本生成、标准安装路径和安装卸载模块\",\"files\":[\"src/core/completion.ts\"]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/completion.ts 实现 zsh bash fish 命令与动态 spec code 补全",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"实现 zsh bash fish 一级命令、子命令、completion shell 和动态 spec code 补全\",\"files\":[\"src/core/completion.ts\"]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/cli/completion.ts 并编辑 src/cli/index.ts 注册 completion 命令",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增 completion install/uninstall CLI 并注册主命令树\",\"files\":[\"src/cli/completion.ts\",\"src/cli/index.ts\"]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/core/__tests__/completion.test.ts 覆盖生成安装卸载",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增 completion 生成、安装路径、安装卸载核心测试\",\"files\":[\"src/core/__tests__/completion.test.ts\"]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/cli/__tests__/completion.test.ts 覆盖 CLI 正反向行为",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增 completion CLI 安装卸载和错误路径测试\",\"files\":[\"src/cli/__tests__/completion.test.ts\"]}",
@@ -53,7 +53,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 README.md 增加 shell completion 使用说明",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"更新 README 加入 shell completion 安装卸载说明\",\"files\":[\"README.md\"]}",
@@ -61,7 +61,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "运行 completion targeted tests、build、完整测试和临时 home smoke",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"targeted tests 12 passed，build 通过，完整测试 21 files/317 tests 通过，zsh/bash 语法和临时 home 安装卸载 smoke 通过；fish 二进制不可用但生成测试通过\",\"files\":[]}",

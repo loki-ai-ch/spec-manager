@@ -8,27 +8,27 @@ status: implemented
 aiSummary: 收紧 Task 生命周期：活动任务唯一、完成前成功 verification、终态不可变，并弃用 batch 自动成功。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取 Task 生命周期实现与现有测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 创建 Task 领域守卫模块
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收紧 Task create report verify complete
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 弃用 task batch 自动成功路径
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 Task 生命周期回归测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 Task 测试与类型检查
     status: pending
 created: '2026-06-08T09:35:15.004Z'
@@ -64,12 +64,12 @@ changeSummary: 'cascade: task complete'
 {
   "coveredSpecs": ["architecture-hardening-L3.1.1-task"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 Task 生命周期实现与现有测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "创建 Task 领域守卫模块"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "收紧 Task create report verify complete"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "弃用 task batch 自动成功路径"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "补充 Task 生命周期回归测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证 Task 测试与类型检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 Task 生命周期实现与现有测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "创建 Task 领域守卫模块"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "收紧 Task create report verify complete"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "弃用 task batch 自动成功路径"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "补充 Task 生命周期回归测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证 Task 测试与类型检查"}
   ]
 }
 ```

@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取 workflow-hardening-L3.1.1-cli 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json",
       "status": "succeeded",
       "toolName": "exec_command",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/validate.ts 新增 extractPlanJsonFromSpecContent",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/validate.ts 新增 placeholder_marker warning",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/spec.ts 接入 validate-plan --from-spec",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/task.ts 与 templates/L3-impl.md 和 templates/agent-plan.json 统一 coveredSpecs",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -55,7 +55,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/__tests__/validate.test.ts 补充 planJson 抽取和 placeholder 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -65,7 +65,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/__tests__/task-cascade.test.ts 与 CLI 测试补充 coveredSpecs 和 validate-plan 测试",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -75,7 +75,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 npm test targeted、npm run build、validate-plan from-spec 和 R12 smoke",
       "status": "succeeded",
       "toolName": "exec_command",

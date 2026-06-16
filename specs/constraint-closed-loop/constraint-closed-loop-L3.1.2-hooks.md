@@ -13,65 +13,65 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取 L3/L2 spec + 受影响模块源码'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       核对数据模型扩展: VerificationLayer + TaskVerificationRecord.layer +
       TaskRecord.lastFailedOutput
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 addTaskVerification layer 参数
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 reportStep 失败时持久化 outputJson 到 lastFailedOutput
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 task complete 验证命令和 @verify 自动执行
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 showTask verification 按 layer 分组
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 invariants 按 layer 检查 verification
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 harness buildHarnessTaskContext 注入 lastFailedOutput
     status: pending
   - stepNo: 9
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 cli task complete skip/reason 语义和 force 废弃路径
     status: pending
   - stepNo: 10
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 cli task verify --layer 参数
     status: pending
   - stepNo: 11
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 cli task show 按 layer 分组显示
     status: pending
   - stepNo: 12
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 task complete 验证钩子测试
     status: pending
   - stepNo: 13
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 step failed 上下文注入测试
     status: pending
   - stepNo: 14
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 verification layer 测试
     status: pending
   - stepNo: 15
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: npm test + npm run lint + npm run build'
     status: pending
 created: '2026-06-10T14:00:00.000Z'
@@ -546,7 +546,7 @@ npm run build
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "shell",
   "latencyMs": "<实际耗时>",
@@ -560,21 +560,21 @@ npm run build
 {
   "coveredSpecs": ["constraint-closed-loop-L3.1.2-hooks"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "数据模型扩展: VerificationLayer 类型 + TaskVerificationRecord.layer + TaskRecord.lastFailedOutput"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "修改 addTaskVerification 增加 layer 参数"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "修改 reportStep 失败时持久化 outputJson 到 lastFailedOutput"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "修改 runTaskCompletion 增加验证命令+@verify 自动执行"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "修改 showTask verification 按 layer 分组"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "修改 invariants 按 layer 检查 verification"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "修改 harness buildHarnessTaskContext 注入 lastFailedOutput"},
-    {"stepNo": 9, "stepType": "mcp_tool", "name": "修改 cli task complete 增加 --skip-verification/--skip-verify/--reason，保留 --force 废弃错误路径"},
-    {"stepNo": 10, "stepType": "mcp_tool", "name": "修改 cli task verify 增加 --layer 参数"},
-    {"stepNo": 11, "stepType": "mcp_tool", "name": "修改 cli task show 按 layer 分组显示"},
-    {"stepNo": 12, "stepType": "mcp_tool", "name": "测试: task complete 验证钩子(通过/失败/skip-verification/skip-verify/reason/force-deprecated)"},
-    {"stepNo": 13, "stepType": "mcp_tool", "name": "测试: step failed 上下文注入(持久化/warnings)"},
-    {"stepNo": 14, "stepType": "mcp_tool", "name": "测试: verification layer(默认值/分组/按 layer 检查)"},
-    {"stepNo": 15, "stepType": "mcp_tool", "name": "验证: npm test + npm run lint + npm run build"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "数据模型扩展: VerificationLayer 类型 + TaskVerificationRecord.layer + TaskRecord.lastFailedOutput"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "修改 addTaskVerification 增加 layer 参数"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "修改 reportStep 失败时持久化 outputJson 到 lastFailedOutput"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "修改 runTaskCompletion 增加验证命令+@verify 自动执行"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "修改 showTask verification 按 layer 分组"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "修改 invariants 按 layer 检查 verification"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "修改 harness buildHarnessTaskContext 注入 lastFailedOutput"},
+    {"stepNo": 9, "stepType": "tool_action", "name": "修改 cli task complete 增加 --skip-verification/--skip-verify/--reason，保留 --force 废弃错误路径"},
+    {"stepNo": 10, "stepType": "tool_action", "name": "修改 cli task verify 增加 --layer 参数"},
+    {"stepNo": 11, "stepType": "tool_action", "name": "修改 cli task show 按 layer 分组显示"},
+    {"stepNo": 12, "stepType": "tool_action", "name": "测试: task complete 验证钩子(通过/失败/skip-verification/skip-verify/reason/force-deprecated)"},
+    {"stepNo": 13, "stepType": "tool_action", "name": "测试: step failed 上下文注入(持久化/warnings)"},
+    {"stepNo": 14, "stepType": "tool_action", "name": "测试: verification layer(默认值/分组/按 layer 检查)"},
+    {"stepNo": 15, "stepType": "tool_action", "name": "验证: npm test + npm run lint + npm run build"}
   ]
 }
 ```

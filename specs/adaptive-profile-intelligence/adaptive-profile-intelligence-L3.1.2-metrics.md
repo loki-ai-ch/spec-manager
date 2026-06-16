@@ -13,27 +13,27 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取 L2、Task/Evidence/Profile 现有实现和 CLI 基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 Profile metrics core API 与类型导出
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 coverage、standard warning、invalid projection 和 topic 过滤规则
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 project profile metrics CLI text/json 输出与错误处理
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步方法论、skill 与 Agent managed assets
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检
     status: pending
 created: '2026-06-16T06:56:17.371Z'
@@ -244,42 +244,42 @@ JSON 输出必须是 `ProfileMetricsReport`，不得依赖自然语言解析。
     {
       "stepNo": 1,
       "name": "读取 L2、Task/Evidence/Profile 现有实现和 CLI 基线",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "status": "pending",
       "evidence": "确认可复用 ProjectSnapshot/TaskRecord/buildTaskEvidence/readAdaptiveWorkflowConfig 与 project profile CLI 结构"
     },
     {
       "stepNo": 2,
       "name": "新增 Profile metrics core API 与类型导出",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "status": "pending",
       "evidence": "src/core/profile-metrics.ts 与 src/index.ts 支持 profile buckets、totals、evidence、overrides"
     },
     {
       "stepNo": 3,
       "name": "实现 coverage、standard warning、invalid projection 和 topic 过滤规则",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "status": "pending",
       "evidence": "core 单元测试覆盖 AC-1 到 AC-6、AC-9"
     },
     {
       "stepNo": 4,
       "name": "新增 project profile metrics CLI text/json 输出与错误处理",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "status": "pending",
       "evidence": "CLI 测试覆盖 --json、--topic、非法 topic、legacy note 和 exit code"
     },
     {
       "stepNo": 5,
       "name": "同步方法论、skill 与 Agent managed assets",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "status": "pending",
       "evidence": "docs/methodology.md、skill/SKILL.md、templates/agents/* 与 managed assets 更新并通过契约测试"
     },
     {
       "stepNo": 6,
       "name": "验证聚焦、全量、构建、安装版 CLI 和 spec-manager 自检",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "status": "pending",
       "evidence": "验证计划全部通过，并记录 task verification evidence"
     }

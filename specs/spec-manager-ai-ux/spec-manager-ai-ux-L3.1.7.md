@@ -10,21 +10,21 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: Review README structure and release context for v0.4.2
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       Update README with a concise overview and adaptive harness governance
       section
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: Run documentation format checks and relevant validation
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       Verify git diff --check and commit README update without staging local
       personal settings
@@ -88,22 +88,22 @@ git diff --check
   "steps": [
     {
       "stepNo": 1,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Review README and v0.4.2 release context"
     },
     {
       "stepNo": 2,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Add concise project overview and adaptive harness governance README section"
     },
     {
       "stepNo": 3,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Run git diff --check"
     },
     {
       "stepNo": 4,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Commit README and spec-manager records"
     }
   ]

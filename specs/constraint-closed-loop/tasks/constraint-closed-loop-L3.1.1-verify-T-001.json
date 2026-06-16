@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码",
       "status": "succeeded",
       "toolName": "shell",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 verify.ts 类型定义(VerifyRule/VerifyResult)",
       "status": "succeeded",
       "toolName": "shell",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 parseVerifyRules 三种规则解析",
       "status": "succeeded",
       "toolName": "shell",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 executeVerifyRules 三种规则执行",
       "status": "succeeded",
       "toolName": "shell",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 verify.ts 导出注册到 index.ts",
       "status": "succeeded",
       "toolName": "shell",
@@ -50,7 +50,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 validateSpecContent @verify 语法校验",
       "status": "succeeded",
       "toolName": "shell",
@@ -59,7 +59,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 verify.test.ts 测试(parse + execute)",
       "status": "succeeded",
       "toolName": "shell",
@@ -68,7 +68,7 @@
     },
     {
       "stepNo": "8",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 validate.test.ts @verify 校验测试",
       "status": "succeeded",
       "toolName": "shell",
@@ -77,7 +77,7 @@
     },
     {
       "stepNo": "9",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: npm test + npm run lint + npm run build",
       "status": "succeeded",
       "toolName": "shell",

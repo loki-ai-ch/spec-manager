@@ -14,40 +14,40 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取
       harness-coding-L3.1.4-change、harness-coding-L2.1、harness-coding-L3.1.2-report、harness-coding-L3.1.3-verification、templates/agent-plan.json
       并检查 delta/change/task/audit 测试基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/delta.ts 扩展 task-linked proposal frontmatter 类型
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/delta.ts 新增 create/list/resolve task-linked change proposal
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/change.ts 接入 change propose/resolve 并扩展 list/show
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/audit.ts 增加 unresolved task-linked proposal warning
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/__tests__/delta.test.ts 补充 task-linked proposal core 测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/cli/__tests__/change.test.ts 和 src/core/__tests__/audit.test.ts 补充
       CLI/audit 测试
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test targeted、npm run build、dist CLI change propose smoke
     status: pending
 ---
@@ -251,7 +251,7 @@ node dist/cli/index.js change resolve <name>
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -265,14 +265,14 @@ node dist/cli/index.js change resolve <name>
 {
   "coveredSpecs": ["harness-coding-L3.1.4-change"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 harness-coding-L3.1.4-change、harness-coding-L2.1、harness-coding-L3.1.2-report、harness-coding-L3.1.3-verification、templates/agent-plan.json 并检查 delta/change/task/audit 测试基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/delta.ts 扩展 task-linked proposal frontmatter 类型"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/delta.ts 新增 create/list/resolve task-linked change proposal"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/cli/change.ts 接入 change propose/resolve 并扩展 list/show"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/core/audit.ts 增加 unresolved task-linked proposal warning"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/delta.test.ts 补充 task-linked proposal core 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 src/cli/__tests__/change.test.ts 和 src/core/__tests__/audit.test.ts 补充 CLI/audit 测试"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 npm test targeted、npm run build、dist CLI change propose smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 harness-coding-L3.1.4-change、harness-coding-L2.1、harness-coding-L3.1.2-report、harness-coding-L3.1.3-verification、templates/agent-plan.json 并检查 delta/change/task/audit 测试基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/delta.ts 扩展 task-linked proposal frontmatter 类型"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/delta.ts 新增 create/list/resolve task-linked change proposal"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/cli/change.ts 接入 change propose/resolve 并扩展 list/show"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/core/audit.ts 增加 unresolved task-linked proposal warning"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/core/__tests__/delta.test.ts 补充 task-linked proposal core 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 src/cli/__tests__/change.test.ts 和 src/core/__tests__/audit.test.ts 补充 CLI/audit 测试"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 npm test targeted、npm run build、dist CLI change propose smoke"}
   ]
 }
 ```

@@ -11,7 +11,7 @@ updated: '2026-06-05T17:55:22+08:00'
 changeSummary: 同步方法论 R12：planJson coveredSpecs 使用 canonical specCode
 steps:
   - stepNo: '1'
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: README.md + readme_zh.md'
     status: succeeded
     toolName: Read
@@ -31,7 +31,7 @@ steps:
     latencyMs: 1000
     reportedAt: '2026-06-05T04:34:52.580Z'
   - stepNo: '3'
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编写英文 README Usage scenarios 章节
     status: succeeded
     toolName: Edit
@@ -41,7 +41,7 @@ steps:
     latencyMs: 2000
     reportedAt: '2026-06-05T04:35:14.722Z'
   - stepNo: '4'
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编写中文 README 使用场景章节
     status: succeeded
     toolName: Edit
@@ -49,7 +49,7 @@ steps:
     latencyMs: 2000
     reportedAt: '2026-06-05T04:35:33.576Z'
   - stepNo: '5'
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: 场景数量 + EN/ZH 同步'
     status: succeeded
     toolName: Bash
@@ -129,11 +129,11 @@ grep -c "^###" readme_zh.md
 {
   "coveredSpecs": ["spec-manager-ai-ux-L3.1.1-readme"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: README.md + readme_zh.md"},
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: README.md + readme_zh.md"},
     {"stepNo": 2, "stepType": "llm_call", "name": "设计 5 个使用场景(quick/research/full/delta/postmortem)"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编写英文 README Usage scenarios 章节"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编写中文 README 使用场景章节"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "验证: 场景数量 + EN/ZH 同步"}
+    {"stepNo": 3, "stepType": "tool_action", "name": "编写英文 README Usage scenarios 章节"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编写中文 README 使用场景章节"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "验证: 场景数量 + EN/ZH 同步"}
   ]
 }
 ```

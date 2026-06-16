@@ -10,27 +10,27 @@ aiSummary: >-
   frozen L3、confirmed L2/L1 按层级条件递归 implemented。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收集生命周期调用关系并记录 completed Task 摘要
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 lifecycle.ts 分层 readiness 判断
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 spec-io.ts 实现受控 transition authority
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修改 task.ts 使用统一递归生命周期级联
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增生命周期和 Task 级联自动化测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证测试构建与 completed Task 字节不变
     status: pending
 created: '2026-06-09T01:23:46.867Z'
@@ -99,7 +99,7 @@ git diff --check
 ## step_report 模板
 
 ```json
-{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"mcp_tool","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
+{"taskId":"<task id>","stepNo":<stepNo>,"stepType":"tool_action","status":"succeeded","toolName":"<实际工具>","latencyMs":"<实际耗时>","outputJson":"{\"summary\":\"<完成内容>\",\"files\":[\"<变更文件>\"]}"}
 ```
 
 ## planJson (final)
@@ -108,12 +108,12 @@ git diff --check
 {
   "coveredSpecs": ["lifecycle-reconciliation-L3.1.1"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集生命周期调用关系并记录 completed Task 摘要"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 lifecycle.ts 分层 readiness 判断"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "修改 spec-io.ts 实现受控 transition authority"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "修改 task.ts 使用统一递归生命周期级联"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增生命周期和 Task 级联自动化测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证测试构建与 completed Task 字节不变"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集生命周期调用关系并记录 completed Task 摘要"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 lifecycle.ts 分层 readiness 判断"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "修改 spec-io.ts 实现受控 transition authority"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "修改 task.ts 使用统一递归生命周期级联"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增生命周期和 Task 级联自动化测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证测试构建与 completed Task 字节不变"}
   ]
 }
 ```

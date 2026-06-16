@@ -13,27 +13,27 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取 R18 L3/L2、历史任务、plan 模板与核心文件'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/decision.ts 允许 confirmed 或 implemented L1 建卡
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 decision.test.ts 覆盖合法与非法 L1 状态
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 task-cascade.test.ts 覆盖 R18 正常闭环与事务回滚
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 CLI、R18 规则、README 与 impl skill 同步预建卡片流程
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: 运行 R18 专项测试、全量测试、lint、build、doctor 与 diff 检查'
     status: pending
 created: '2026-06-11T01:54:13.918Z'
@@ -149,7 +149,7 @@ git diff -- src/core/decision.ts src/core/__tests__/decision.test.ts src/core/__
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -163,12 +163,12 @@ git diff -- src/core/decision.ts src/core/__tests__/decision.test.ts src/core/__
 {
   "coveredSpecs": ["r18-decision-lifecycle-L3.1.1-core"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取 R18 L3/L2、历史任务、plan 模板与核心文件"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/decision.ts 允许 confirmed 或 implemented L1 建卡"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 decision.test.ts 覆盖合法与非法 L1 状态"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 task-cascade.test.ts 覆盖 R18 正常闭环与事务回滚"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 CLI、R18 规则、README 与 impl skill 同步预建卡片流程"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证: 运行 R18 专项测试、全量测试、lint、build、doctor 与 diff 检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取 R18 L3/L2、历史任务、plan 模板与核心文件"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/decision.ts 允许 confirmed 或 implemented L1 建卡"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 decision.test.ts 覆盖合法与非法 L1 状态"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 task-cascade.test.ts 覆盖 R18 正常闭环与事务回滚"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 CLI、R18 规则、README 与 impl skill 同步预建卡片流程"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证: 运行 R18 专项测试、全量测试、lint、build、doctor 与 diff 检查"}
   ]
 }
 ```

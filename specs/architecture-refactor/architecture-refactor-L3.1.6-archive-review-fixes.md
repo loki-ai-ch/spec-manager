@@ -10,19 +10,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充多 rename 与 planning audit 只读性回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 修复归档引用更新应用边界
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 恢复 planArchiveChange 默认只读并保留 archiveChange R24 审计
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证修复：运行归档专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-11T09:00:23.822Z'
@@ -102,10 +102,10 @@ spec-manager project doctor
 {
   "coveredSpecs": ["architecture-refactor-L3.1.6-archive-review-fixes"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充多 rename 与 planning audit 只读性回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "修复归档引用更新应用边界"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "恢复 planArchiveChange 默认只读并保留 archiveChange R24 审计"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "运行归档专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充多 rename 与 planning audit 只读性回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "修复归档引用更新应用边界"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "恢复 planArchiveChange 默认只读并保留 archiveChange R24 审计"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "运行归档专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```

@@ -79,7 +79,7 @@ function seedMigrationTargets(): void {
       id: taskId,
       specCode,
       status: 'completed',
-      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'legacy', status: 'succeeded' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action', name: 'legacy', status: 'succeeded' }],
       created: '2026-06-01T00:00:00.000Z',
     }), 'utf8');
   }

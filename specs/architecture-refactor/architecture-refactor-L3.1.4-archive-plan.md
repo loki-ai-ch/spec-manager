@@ -13,36 +13,36 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       收集 archive plan 上下文: 读取
       architecture-refactor-L3.1.4-archive-plan、architecture-refactor-L2.1、历史任务、agent-plan
       和归档源码测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: '新增 archive plan 模块: 编辑 src/core/archive-plan.ts'
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: '迁出归档预检规则: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts'
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: '拆分归档应用边界: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts'
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       导出 archive-plan 并新增专项测试: 编辑 src/index.ts 和
       src/core/__tests__/archive-plan.test.ts
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: '回归归档链路: 运行 archive-plan、archive、paths、CLI change 测试'
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证 archive plan 重构: 运行 npm test、npm run lint、spec-manager project doctor'
     status: pending
 relations:
@@ -212,7 +212,7 @@ spec-manager project doctor
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -226,13 +226,13 @@ spec-manager project doctor
 {
   "coveredSpecs": ["architecture-refactor-L3.1.4-archive-plan"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集 archive plan 上下文: 读取 architecture-refactor-L3.1.4-archive-plan、architecture-refactor-L2.1、历史任务、agent-plan 和归档源码测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 archive plan 模块: 编辑 src/core/archive-plan.ts"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "迁出归档预检规则: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "拆分归档应用边界: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "导出 archive-plan 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/archive-plan.test.ts"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "回归归档链路: 运行 archive-plan、archive、paths、CLI change 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 archive plan 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集 archive plan 上下文: 读取 architecture-refactor-L3.1.4-archive-plan、architecture-refactor-L2.1、历史任务、agent-plan 和归档源码测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 archive plan 模块: 编辑 src/core/archive-plan.ts"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "迁出归档预检规则: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "拆分归档应用边界: 编辑 src/core/archive.ts 和 src/core/archive-plan.ts"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "导出 archive-plan 并新增专项测试: 编辑 src/index.ts 和 src/core/__tests__/archive-plan.test.ts"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "回归归档链路: 运行 archive-plan、archive、paths、CLI change 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 archive plan 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
   ]
 }
 ```

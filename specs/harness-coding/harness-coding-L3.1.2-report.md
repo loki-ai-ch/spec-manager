@@ -14,40 +14,40 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取
       harness-coding-L3.1.2-report、harness-coding-L2.1、harness-coding-L3.1.1-context、templates/agent-plan.json
       并检查 harness/task/CLI task 测试基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/harness.ts 新增 HarnessTaskReportPayload/Input 和
       normalizeHarnessTaskReportPayload
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/harness.ts 新增 reportHarnessTaskStep 写入下一个 task step
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/task.ts 接入 task report <taskId> flags/input/json 子命令
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/__tests__/harness.test.ts 补充 report payload 与
       reportHarnessTaskStep 测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/cli/__tests__/task.test.ts 补充 task report CLI
       flags/input/json/错误场景测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test targeted、npm run build、dist CLI task report smoke
     status: pending
 ---
@@ -223,7 +223,7 @@ node dist/cli/index.js task report T-001 --spec harness-coding-L3.1.2-report
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -237,13 +237,13 @@ node dist/cli/index.js task report T-001 --spec harness-coding-L3.1.2-report
 {
   "coveredSpecs": ["harness-coding-L3.1.2-report"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 harness-coding-L3.1.2-report、harness-coding-L2.1、harness-coding-L3.1.1-context、templates/agent-plan.json 并检查 harness/task/CLI task 测试基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/harness.ts 新增 HarnessTaskReportPayload/Input 和 normalizeHarnessTaskReportPayload"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/harness.ts 新增 reportHarnessTaskStep 写入下一个 task step"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/cli/task.ts 接入 task report <taskId> flags/input/json 子命令"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/harness.test.ts 补充 report payload 与 reportHarnessTaskStep 测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/cli/__tests__/task.test.ts 补充 task report CLI flags/input/json/错误场景测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 npm test targeted、npm run build、dist CLI task report smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 harness-coding-L3.1.2-report、harness-coding-L2.1、harness-coding-L3.1.1-context、templates/agent-plan.json 并检查 harness/task/CLI task 测试基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/harness.ts 新增 HarnessTaskReportPayload/Input 和 normalizeHarnessTaskReportPayload"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/harness.ts 新增 reportHarnessTaskStep 写入下一个 task step"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/cli/task.ts 接入 task report <taskId> flags/input/json 子命令"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/core/__tests__/harness.test.ts 补充 report payload 与 reportHarnessTaskStep 测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/cli/__tests__/task.test.ts 补充 task report CLI flags/input/json/错误场景测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 npm test targeted、npm run build、dist CLI task report smoke"}
   ]
 }
 ```

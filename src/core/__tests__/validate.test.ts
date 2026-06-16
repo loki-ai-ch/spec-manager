@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { PlanJsonSchema } from '../../schemas/spec.js';
 import { extractPlanJsonFromSpecContent, validateSpecContent, validatePlanJson } from '../validate.js';
 
 describe('validateSpecContent — 必填段校验', () => {
@@ -498,8 +499,8 @@ describe('extractPlanJsonFromSpecContent', () => {
 {
   "coveredSpecs": ["auth-L3.1.1-login"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 auth-L3.1.1-login 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "验证 npm test"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 auth-L3.1.1-login 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "验证 npm test"}
   ]
 }
 \`\`\`
@@ -508,8 +509,8 @@ describe('extractPlanJsonFromSpecContent', () => {
     expect(plan).toEqual({
       coveredSpecs: ['auth-L3.1.1-login'],
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: '读取 auth-L3.1.1-login 并检查 templates/agent-plan.json' },
-        { stepNo: 2, stepType: 'mcp_tool', name: '验证 npm test' },
+        { stepNo: 1, stepType: 'tool_action', name: '读取 auth-L3.1.1-login 并检查 templates/agent-plan.json' },
+        { stepNo: 2, stepType: 'tool_action', name: '验证 npm test' },
       ],
     });
   });
@@ -529,12 +530,20 @@ describe('extractPlanJsonFromSpecContent', () => {
 });
 
 describe('validatePlanJson — planJson 校验', () => {
+  it('normalizes legacy stepType mcp_tool to tool_action', () => {
+    const parsed = PlanJsonSchema.parse({
+      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+    });
+
+    expect(parsed.steps[0].stepType).toBe('tool_action');
+  });
+
   it('合法 planJson 无 warning', () => {
     const plan = {
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'read source file' },
+        { stepNo: 1, stepType: 'tool_action', name: 'read source file' },
         { stepNo: 2, stepType: 'llm_call', name: 'generate code' },
-        { stepNo: 3, stepType: 'mcp_tool', name: 'run verify test' },
+        { stepNo: 3, stepType: 'tool_action', name: 'run verify test' },
       ],
     };
     expect(validatePlanJson(plan)).toEqual([]);
@@ -558,7 +567,7 @@ describe('validatePlanJson — planJson 校验', () => {
   it('steps 超过 20 返回 R11 warning', () => {
     const steps = Array.from({ length: 21 }, (_, i) => ({
       stepNo: i + 1,
-      stepType: 'mcp_tool',
+      stepType: 'tool_action',
       name: `step ${i + 1} do something`,
     }));
     const warnings = validatePlanJson({ steps });
@@ -567,7 +576,7 @@ describe('validatePlanJson — planJson 校验', () => {
 
   it('steps 缺 stepNo 返回 INC-005 warning', () => {
     const plan = {
-      steps: [{ stepType: 'mcp_tool', name: 'do something' }],
+      steps: [{ stepType: 'tool_action', name: 'do something' }],
     };
     const warnings = validatePlanJson(plan);
     expect(warnings.some(w => w.message.includes('stepNo'))).toBe(true);
@@ -583,7 +592,7 @@ describe('validatePlanJson — planJson 校验', () => {
 
   it('steps 缺 name 返回 INC-005 warning', () => {
     const plan = {
-      steps: [{ stepNo: 1, stepType: 'mcp_tool' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action' }],
     };
     const warnings = validatePlanJson(plan);
     expect(warnings.some(w => w.message.includes('name'))).toBe(true);
@@ -599,7 +608,7 @@ describe('validatePlanJson — planJson 校验', () => {
 
   it('name 长度 <5 返回 warning', () => {
     const plan = {
-      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'do' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action', name: 'do' }],
     };
     const warnings = validatePlanJson(plan);
     expect(warnings.some(w => w.message.includes('<5'))).toBe(true);
@@ -608,7 +617,7 @@ describe('validatePlanJson — planJson 校验', () => {
   it('末步不含验证字样返回 R10 info', () => {
     const plan = {
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'read source file' },
+        { stepNo: 1, stepType: 'tool_action', name: 'read source file' },
         { stepNo: 2, stepType: 'llm_call', name: 'generate code' },
       ],
     };
@@ -619,8 +628,8 @@ describe('validatePlanJson — planJson 校验', () => {
   it('末步含"验证"则无 R10 warning', () => {
     const plan = {
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'read source file' },
-        { stepNo: 2, stepType: 'mcp_tool', name: 'run verify tests' },
+        { stepNo: 1, stepType: 'tool_action', name: 'read source file' },
+        { stepNo: 2, stepType: 'tool_action', name: 'run verify tests' },
       ],
     };
     const warnings = validatePlanJson(plan);
@@ -630,8 +639,8 @@ describe('validatePlanJson — planJson 校验', () => {
   it('修改类 plan 前两步未调研时返回 R8 warning', () => {
     const plan = {
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'edit source file' },
-        { stepNo: 2, stepType: 'mcp_tool', name: 'run verify tests' },
+        { stepNo: 1, stepType: 'tool_action', name: 'edit source file' },
+        { stepNo: 2, stepType: 'tool_action', name: 'run verify tests' },
       ],
     };
     const warnings = validatePlanJson(plan);

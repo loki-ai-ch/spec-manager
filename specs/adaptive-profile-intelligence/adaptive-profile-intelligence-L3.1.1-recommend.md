@@ -12,27 +12,27 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取 adaptive-profile-intelligence-L2.1、workflow-profile 与 project CLI 基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 Profile 推荐核心模块与公开导出
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 governed/standard/quick 确定性推荐规则
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 project profile recommend CLI text/json 输出
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步方法论、skill 和 Agent 入口推荐规则
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证推荐聚焦测试、全量测试、lint、build、installed CLI 和 project doctor
     status: pending
 created: '2026-06-16T06:30:43.784Z'
@@ -179,7 +179,7 @@ spec-manager spec validate-plan --from-spec adaptive-profile-intelligence-L3.1.1
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -193,12 +193,12 @@ spec-manager spec validate-plan --from-spec adaptive-profile-intelligence-L3.1.1
 {
   "coveredSpecs": ["adaptive-profile-intelligence-L3.1.1-recommend"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 adaptive-profile-intelligence-L2.1、workflow-profile 与 project CLI 基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 Profile 推荐核心模块与公开导出"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现 governed/standard/quick 确定性推荐规则"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 project profile recommend CLI text/json 输出"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "同步方法论、skill 和 Agent 入口推荐规则"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证推荐聚焦测试、全量测试、lint、build、installed CLI 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 adaptive-profile-intelligence-L2.1、workflow-profile 与 project CLI 基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 Profile 推荐核心模块与公开导出"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现 governed/standard/quick 确定性推荐规则"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 project profile recommend CLI text/json 输出"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "同步方法论、skill 和 Agent 入口推荐规则"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证推荐聚焦测试、全量测试、lint、build、installed CLI 和 project doctor"}
   ]
 }
 ```

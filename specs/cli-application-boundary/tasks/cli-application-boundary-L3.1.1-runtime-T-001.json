@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 cli-application-boundary-L3.1.1-runtime、cli-application-boundary-L2.1、历史任务、agent-plan 和 CLI 锚点源码测试",
       "status": "succeeded",
       "toolName": "multi_tool_use.parallel",
@@ -15,7 +15,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/common.ts 新增 CLI action context 和默认 context",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -25,7 +25,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/common.ts 新增 CSV、JSON 和 presenter helper",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -35,7 +35,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/cli/common.ts 新增 runCliAction 已知错误映射 helper",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增 src/cli/__tests__/common.test.ts 覆盖 runtime helper 行为",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -55,7 +55,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: npm test -- src/cli/__tests__/common.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/spec.test.ts",
       "status": "succeeded",
       "toolName": "npm-test",
@@ -65,7 +65,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: npm run lint && spec-manager project doctor && npm test -- src/cli/__tests__/architecture-smoke.test.ts",
       "status": "succeeded",
       "toolName": "lint-doctor-smoke",

@@ -13,23 +13,23 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 change proposal、父 L2/L3.1.2 与完成门禁实现
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 对账 constraint-closed-loop-L2.1 完成门禁契约
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 对账 constraint-closed-loop-L3.1.2-hooks 实施记录
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证规格一致性与完成门禁专项测试
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 解除 change proposal 并验证 npm test + lint + build + project doctor
     status: pending
 created: '2026-06-15T09:32:16.807Z'
@@ -177,7 +177,7 @@ spec-manager project doctor
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "shell",
   "latencyMs": "<实际耗时>",
@@ -191,11 +191,11 @@ spec-manager project doctor
 {
   "coveredSpecs": ["constraint-closed-loop-L3.1.4-contract-sync"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "核对 change proposal、constraint-closed-loop-L2.1/L3.1.2 与完成门禁实现"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "对账 constraint-closed-loop-L2.1 完成门禁契约"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "对账 constraint-closed-loop-L3.1.2-hooks 实施记录"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证规格一致性与完成门禁专项测试"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "解除 change proposal 并验证 npm test + lint + build + project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "核对 change proposal、constraint-closed-loop-L2.1/L3.1.2 与完成门禁实现"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "对账 constraint-closed-loop-L2.1 完成门禁契约"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "对账 constraint-closed-loop-L3.1.2-hooks 实施记录"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证规格一致性与完成门禁专项测试"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "解除 change proposal 并验证 npm test + lint + build + project doctor"}
   ]
 }
 ```

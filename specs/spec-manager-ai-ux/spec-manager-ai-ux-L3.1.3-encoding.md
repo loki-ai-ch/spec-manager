@@ -135,7 +135,7 @@ pnpm test
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "Read",
   "latencyMs": "<实际耗时>",
@@ -149,14 +149,14 @@ pnpm test
 {
   "coveredSpecs": ["spec-manager-ai-ux-L3.1.3-encoding"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: spec-io.ts + paths.ts + spec.ts + paths.test.ts"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "修改 generateSpecCode() 为 topic-L<N> 格式"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "修改 specFilePath() 适配 canonical code.md"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "修改 spec new CLI 命令适配新编码"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "修改 createSpec() 适配新文件路径"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "更新 paths.test.ts 测试用例"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编写 spec migrate-paths 迁移命令"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证: pnpm test + 手动测试新格式"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: spec-io.ts + paths.ts + spec.ts + paths.test.ts"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "修改 generateSpecCode() 为 topic-L<N> 格式"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "修改 specFilePath() 适配 canonical code.md"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "修改 spec new CLI 命令适配新编码"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "修改 createSpec() 适配新文件路径"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "更新 paths.test.ts 测试用例"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编写 spec migrate-paths 迁移命令"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证: pnpm test + 手动测试新格式"}
   ]
 }
 ```

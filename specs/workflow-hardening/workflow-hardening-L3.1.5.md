@@ -12,23 +12,23 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取 L3/L2、agents 实现、CLI 测试、README 和 MiMo-Code AGENTS.md'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/agents.ts 和 src/cli/project.ts 新增 mimocode provider
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 provider 单元测试和 CLI 测试覆盖 mimocode
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 README.md 和 readme_zh.md 补充 MiMo-Code 使用方式
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 targeted tests、npm test、npm run build 和 provider list smoke
     status: pending
 created: '2026-06-12T02:15:09.497Z'
@@ -136,7 +136,7 @@ node dist/cli/index.js project agents --provider list
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -152,27 +152,27 @@ node dist/cli/index.js project agents --provider list
   "steps": [
     {
       "stepNo": 1,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取 L3/L2、agents 实现、CLI 测试、README 和 MiMo-Code AGENTS.md"
     },
     {
       "stepNo": 2,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 src/core/agents.ts 和 src/cli/project.ts 新增 mimocode provider"
     },
     {
       "stepNo": 3,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 provider 单元测试和 CLI 测试覆盖 mimocode"
     },
     {
       "stepNo": 4,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 README.md 和 readme_zh.md 补充 MiMo-Code 使用方式"
     },
     {
       "stepNo": 5,
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证 targeted tests、npm test、npm run build 和 provider list smoke"
     }
   ]

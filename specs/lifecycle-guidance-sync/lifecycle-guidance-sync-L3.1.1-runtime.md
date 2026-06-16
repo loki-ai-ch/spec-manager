@@ -10,27 +10,27 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取运行时 L3/L2、历史任务、plan 模板与 Task/Decision/Audit 实现'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Decision、Task 与 Integrity Core 共用活跃决策判定
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Task complete CLI/Core 拆分跳过参数并拒绝旧 force
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Audit 事件记录 Task complete 绕过能力与原因
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑运行时测试覆盖活跃决策、独立绕过、原因和审计
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: 运行运行时专项测试、全量测试、lint、build 与 diff 检查'
     status: pending
 created: '2026-06-11T02:17:01.153Z'
@@ -94,12 +94,12 @@ git diff --check
 {
   "coveredSpecs": ["lifecycle-guidance-sync-L3.1.1-runtime"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取运行时 L3/L2、历史任务、plan 模板与 Task/Decision/Audit 实现"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 Decision、Task 与 Integrity Core 共用活跃决策判定"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 Task complete CLI/Core 拆分跳过参数并拒绝旧 force"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 Audit 事件记录 Task complete 绕过能力与原因"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑运行时测试覆盖活跃决策、独立绕过、原因和审计"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证: 运行运行时专项测试、全量测试、lint、build 与 diff 检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取运行时 L3/L2、历史任务、plan 模板与 Task/Decision/Audit 实现"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 Decision、Task 与 Integrity Core 共用活跃决策判定"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 Task complete CLI/Core 拆分跳过参数并拒绝旧 force"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 Audit 事件记录 Task complete 绕过能力与原因"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑运行时测试覆盖活跃决策、独立绕过、原因和审计"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证: 运行运行时专项测试、全量测试、lint、build 与 diff 检查"}
   ]
 }
 ```

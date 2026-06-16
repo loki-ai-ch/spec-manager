@@ -13,39 +13,39 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取 L3/L2 spec + 受影响模块源码'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 verify.ts 类型定义(VerifyRule/VerifyResult)
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 parseVerifyRules 三种规则解析
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 executeVerifyRules 三种规则执行
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 verify.ts 导出注册到 index.ts
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 validateSpecContent @verify 语法校验
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 verify.test.ts 测试(parse + execute)
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 核对 validate.test.ts @verify 校验测试
     status: pending
   - stepNo: 9
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: npm test + npm run lint + npm run build'
     status: pending
 created: '2026-06-10T14:00:00.000Z'
@@ -398,7 +398,7 @@ console.log('PASS');
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "shell",
   "latencyMs": "<实际耗时>",
@@ -412,15 +412,15 @@ console.log('PASS');
 {
   "coveredSpecs": ["constraint-closed-loop-L3.1.1-verify"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 verify.ts 类型定义(VerifyRule/VerifyResult)"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现 parseVerifyRules 三种规则解析"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "实现 executeVerifyRules 三种规则执行"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "verify.ts 导出注册到 index.ts"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "扩展 validateSpecContent 增加 @verify 语法校验"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "新增 verify.test.ts 测试(parse + execute)"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "更新 validate.test.ts 增加 @verify 校验测试"},
-    {"stepNo": 9, "stepType": "mcp_tool", "name": "验证: npm test + npm run lint + npm run build"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取 L3/L2 spec + 受影响模块源码"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 verify.ts 类型定义(VerifyRule/VerifyResult)"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现 parseVerifyRules 三种规则解析"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "实现 executeVerifyRules 三种规则执行"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "verify.ts 导出注册到 index.ts"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "扩展 validateSpecContent 增加 @verify 语法校验"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "新增 verify.test.ts 测试(parse + execute)"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "更新 validate.test.ts 增加 @verify 校验测试"},
+    {"stepNo": 9, "stepType": "tool_action", "name": "验证: npm test + npm run lint + npm run build"}
   ]
 }
 ```

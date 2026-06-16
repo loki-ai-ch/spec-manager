@@ -13,38 +13,38 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       收集 task completion 上下文: 读取
       architecture-refactor-L3.1.1-task-completion、architecture-refactor-L2.1、历史任务、agent-plan
       和相关源码测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: '新增 task completion gate 模块: 编辑 src/core/task-completion.ts'
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       委托 completeTask 到 runTaskCompletion: 编辑 src/core/task.ts 和
       src/core/task-completion.ts
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       收口 completion 依赖导出: 检查
       src/core/task.ts、src/core/task-completion.ts、src/index.ts
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: '新增 task completion 单元测试: 编辑 src/core/__tests__/task-completion.test.ts'
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: '回归 CLI 和 harness 调用路径: 检查 src/cli/task.ts 和 src/core/harness.ts'
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       验证 task completion 重构: 运行 npm test、npm run lint、spec-manager project
       doctor
@@ -219,7 +219,7 @@ npm test -- src/core/__tests__/task-completion.test.ts
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -233,13 +233,13 @@ npm test -- src/core/__tests__/task-completion.test.ts
 {
   "coveredSpecs": ["architecture-refactor-L3.1.1-task-completion"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "收集 task completion 上下文: 读取 architecture-refactor-L3.1.1-task-completion、architecture-refactor-L2.1、历史任务、agent-plan 和相关源码测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 task completion gate 模块: 编辑 src/core/task-completion.ts"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "委托 completeTask 到 runTaskCompletion: 编辑 src/core/task.ts 和 src/core/task-completion.ts"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "收口 completion 依赖导出: 检查 src/core/task.ts、src/core/task-completion.ts、src/index.ts"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增 task completion 单元测试: 编辑 src/core/__tests__/task-completion.test.ts"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "回归 CLI 和 harness 调用路径: 检查 src/cli/task.ts 和 src/core/harness.ts"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 task completion 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "收集 task completion 上下文: 读取 architecture-refactor-L3.1.1-task-completion、architecture-refactor-L2.1、历史任务、agent-plan 和相关源码测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 task completion gate 模块: 编辑 src/core/task-completion.ts"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "委托 completeTask 到 runTaskCompletion: 编辑 src/core/task.ts 和 src/core/task-completion.ts"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "收口 completion 依赖导出: 检查 src/core/task.ts、src/core/task-completion.ts、src/index.ts"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增 task completion 单元测试: 编辑 src/core/__tests__/task-completion.test.ts"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "回归 CLI 和 harness 调用路径: 检查 src/cli/task.ts 和 src/core/harness.ts"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 task completion 重构: 运行 npm test、npm run lint、spec-manager project doctor"}
   ]
 }
 ```

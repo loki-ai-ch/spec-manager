@@ -79,8 +79,8 @@ npm test
 {
   "coveredSpecs": ["auth-L3.1.1-login"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 auth-L3.1.1-login 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "验证 npm test"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 auth-L3.1.1-login 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "验证 npm test"}
   ]
 }
 \`\`\`

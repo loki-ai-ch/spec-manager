@@ -104,7 +104,7 @@ npm test -- --run src/cli/__tests__/task.test.ts
       coveredSpecs: ['auth-L3.1.1-login'],
       steps: Array.from({ length: 8 }, (_, i) => ({
         stepNo: i + 1,
-        stepType: 'mcp_tool' as const,
+        stepType: 'tool_action' as const,
         name: i === 7 ? 'run verify test' : `inspect file ${i + 1}`,
       })),
     },
@@ -149,7 +149,7 @@ function writePlanFile(specCode: string): string {
   const planFile = join(project.root, 'plan.json');
   writeFileSync(planFile, JSON.stringify({
     coveredSpecs: [specCode],
-    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+    steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
   }), 'utf8');
   return planFile;
 }
@@ -398,7 +398,7 @@ describe('task CLI', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: [specCode],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     });
     startTask(project.paths, task.id, specCode);
@@ -430,7 +430,7 @@ describe('task CLI', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: [specCode],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     });
 
@@ -450,7 +450,7 @@ describe('task CLI', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: [specCode],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     });
 
@@ -474,7 +474,7 @@ describe('task CLI', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: [specCode],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     });
     const spec = findSpecByCode(project.paths, specCode)!;

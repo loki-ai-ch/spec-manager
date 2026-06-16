@@ -13,33 +13,33 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 roadmap-openspec-L3.1.3-view 与 roadmap-openspec-L2.1 并检查
       templates/agent-plan.json
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/core/view.ts 构建 view 展示模型
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/cli/view.ts 实现交互式 view 命令
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/index.ts 和 package.json 注册 view 依赖
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/core/__tests__/view.test.ts 覆盖 view 模型
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/cli/__tests__/view.test.ts 覆盖 prompt mock
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 view targeted tests、npm run build、完整 npm test 和 CLI smoke
     status: pending
 ---
@@ -192,7 +192,7 @@ node dist/cli/index.js view --topic roadmap-openspec
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -206,13 +206,13 @@ node dist/cli/index.js view --topic roadmap-openspec
 {
   "coveredSpecs": ["roadmap-openspec-L3.1.3-view"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 roadmap-openspec-L3.1.3-view 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 src/core/view.ts 构建 view 展示模型"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "新增 src/cli/view.ts 实现交互式 view 命令"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/cli/index.ts 和 package.json 注册 view 依赖"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "新增 src/core/__tests__/view.test.ts 覆盖 view 模型"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "新增 src/cli/__tests__/view.test.ts 覆盖 prompt mock"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证 view targeted tests、npm run build、完整 npm test 和 CLI smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 roadmap-openspec-L3.1.3-view 与 roadmap-openspec-L2.1 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 src/core/view.ts 构建 view 展示模型"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "新增 src/cli/view.ts 实现交互式 view 命令"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/cli/index.ts 和 package.json 注册 view 依赖"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "新增 src/core/__tests__/view.test.ts 覆盖 view 模型"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "新增 src/cli/__tests__/view.test.ts 覆盖 prompt mock"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证 view targeted tests、npm run build、完整 npm test 和 CLI smoke"}
   ]
 }
 ```

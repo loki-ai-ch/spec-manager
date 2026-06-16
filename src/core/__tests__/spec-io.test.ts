@@ -229,7 +229,7 @@ describe('updateSpec — 更新 spec', () => {
     createSpec({ paths, code: 'auth-L2', level: 'L2', title: 'Auth Design', topic: 'auth', parentCode: 'auth-L1' });
     confirmSpec('auth-L2');
     createSpec({ paths, code: 'auth-L3', level: 'L3', title: 'Auth Impl', topic: 'auth', parentCode: 'auth-L2' });
-    const step = { stepNo: 1, stepType: 'mcp_tool' as const, name: 'read file', status: 'succeeded' as const };
+    const step = { stepNo: 1, stepType: 'tool_action' as const, name: 'read file', status: 'succeeded' as const };
     const { record } = updateSpec(paths, 'auth-L3', { appendStep: step });
     expect(record.fm.steps).toHaveLength(1);
     expect(record.fm.steps![0].stepNo).toBe(1);
@@ -242,7 +242,7 @@ describe('updateSpec — 更新 spec', () => {
     confirmSpec('auth-L2');
     createSpec({ paths, code: 'auth-L3', level: 'L3', title: 'Auth Impl', topic: 'auth', parentCode: 'auth-L2' });
     updateSpec(paths, 'auth-L3', {
-      appendStep: { stepNo: 1, stepType: 'mcp_tool', name: 'old', status: 'pending' },
+      appendStep: { stepNo: 1, stepType: 'tool_action', name: 'old', status: 'pending' },
     });
     const { record } = updateSpec(paths, 'auth-L3', {
       replaceStep: { no: 1, step: { stepNo: 1, stepType: 'llm_call', name: 'new', status: 'succeeded' } },

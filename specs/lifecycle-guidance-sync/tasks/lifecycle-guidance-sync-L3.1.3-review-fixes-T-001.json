@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取补救 L3/L2、历史 Task、审查发现与相关实现测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"读取补救 L3/L2、历史任务、审查发现与 Audit/Task/doctor/发布验证实现\",\"files\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Audit 与 Task Core 分离 bypass 事件和规则成功计数",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"bypass 事件保留 pending metadata 但不增加规则成功计数\",\"files\":[\"src/core/audit.ts\",\"src/core/task.ts\"]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Task complete 修复 R18 命令提示并前置无副作用门禁",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"修复 R18 可执行提示并将 frozen、步骤、verification 门禁前置\",\"files\":[\"src/core/task.ts\"]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑发布验证脚本递归比较完整 dist 文件集合与摘要",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"发布验证递归比较完整 dist 文件集合与内容并支持测试覆盖根目录\",\"files\":[\"scripts/verify-installed-cli.mjs\"]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 doctor 统一 Claude 与 CodeBuddy 安全同步提示",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"doctor 统一 Claude 与 CodeBuddy 使用 sync-managed dry-run 安全提示\",\"files\":[\"src/core/usability.ts\"]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑回归测试覆盖审查发现的五项失败场景",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增五项审查回归测试，定向 114 项测试通过\",\"files\":[\"src/core/__tests__/audit.test.ts\",\"src/core/__tests__/task-cascade.test.ts\",\"src/core/__tests__/task-complete-verify.test.ts\",\"src/core/__tests__/usability.test.ts\",\"src/core/__tests__/installed-cli-verification.test.ts\"]}",
@@ -53,7 +53,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: 运行专项和全量测试、lint、build、doctor、发布验证与 diff 检查",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"481 tests、lint、build、doctor、完整 dist 发布验证与 diff 检查通过，用户级 CLI 已更新\",\"files\":[]}",

@@ -73,8 +73,8 @@ function createTaskForReport(): string {
     planJson: {
       coveredSpecs: [specCode],
       steps: [
-        { stepNo: 1, stepType: 'mcp_tool', name: 'inspect source files' },
-        { stepNo: 2, stepType: 'mcp_tool', name: 'run verify test' },
+        { stepNo: 1, stepType: 'tool_action', name: 'inspect source files' },
+        { stepNo: 2, stepType: 'tool_action', name: 'run verify test' },
       ],
     },
   });

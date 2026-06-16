@@ -9,7 +9,10 @@ export type SpecStatusT = z.infer<typeof SpecStatusSchema>;
 
 export const StepStatusSchema = z.enum(['pending', 'running', 'succeeded', 'failed', 'skipped']);
 export type StepStatusT = z.infer<typeof StepStatusSchema>;
-export const StepTypeSchema = z.enum(['llm_call', 'mcp_tool', 'human_gate']);
+export const StepTypeSchema = z.preprocess(
+  value => value === 'mcp_tool' ? 'tool_action' : value,
+  z.enum(['llm_call', 'tool_action', 'human_gate']),
+);
 export type StepTypeT = z.infer<typeof StepTypeSchema>;
 
 export const StepFrontmatterSchema = z.object({

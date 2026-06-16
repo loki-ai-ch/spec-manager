@@ -8,27 +8,27 @@ status: implemented
 aiSummary: 新增只读仓库完整性扫描器，检查悬空引用、生命周期矛盾和缺失审计证据，并接入 project doctor。
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取 repository doctor 与元数据模型
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现仓库引用与生命周期扫描器
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 接入 project doctor 诊断输出
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 导出结构化完整性公共接口
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充完整性和 doctor 回归测试
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证完整性测试与类型检查
     status: pending
 created: '2026-06-08T09:35:15.249Z'
@@ -63,12 +63,12 @@ changeSummary: 'cascade: task complete'
 {
   "coveredSpecs": ["architecture-hardening-L3.1.3-integrity"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 repository doctor 与元数据模型"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "实现仓库引用与生命周期扫描器"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "接入 project doctor 诊断输出"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "导出结构化完整性公共接口"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "补充完整性和 doctor 回归测试"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "验证完整性测试与类型检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 repository doctor 与元数据模型"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "实现仓库引用与生命周期扫描器"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "接入 project doctor 诊断输出"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "导出结构化完整性公共接口"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "补充完整性和 doctor 回归测试"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "验证完整性测试与类型检查"}
   ]
 }
 ```

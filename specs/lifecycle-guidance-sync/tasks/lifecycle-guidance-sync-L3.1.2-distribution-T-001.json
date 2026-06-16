@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取分发 L3/L2、历史任务、plan 模板、Agent/doctor 与入口文档",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"读取分发 L3/L2、Agent、doctor、入口文档与已安装资产差异\",\"files\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Agent 与 doctor Core 检测托管资产 missing 和 drift",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"doctor 逐文件检测托管资产 missing 与 drift\",\"files\":[\"src/core/agents.ts\",\"src/core/usability.ts\",\"src/cli/project.ts\"]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Agent 同步能力支持 dry-run、显式覆盖与逐文件报告",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"实现 sync-managed dry-run 与安全逐文件同步，保留用户入口文件和额外文件\",\"files\":[\"src/core/agents.ts\",\"src/cli/project.ts\"]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 README、methodology、rules、Skill 与已安装 Claude 托管副本统一语义",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"同步 README、中文 README、methodology、rules、Skill、Claude 与 CodeBuddy 托管副本\",\"files\":[\"README.md\",\"readme_zh.md\",\"docs/methodology.md\",\"rules/quality-gate.md\",\"skill/subskills/impl.md\",\".claude/skills/spec-manager\",\".codebuddy/skills/spec-manager\"]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑方法论与分发测试验证行为契约和内容漂移",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"增加 doctor 漂移、安全同步、CLI 绕过和方法论契约测试\",\"files\":[\"src/core/__tests__/agents.test.ts\",\"src/core/__tests__/usability.test.ts\",\"src/core/__tests__/methodology-contract.test.ts\",\"src/cli/__tests__/task.test.ts\"]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "新增发布验证脚本比较实际 spec-manager 与当前构建",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"新增 verify:installed-cli 发布验证，已准确检出全局 CLI 漂移\",\"files\":[\"scripts/verify-installed-cli.mjs\",\"package.json\"]}",
@@ -53,7 +53,7 @@
     },
     {
       "stepNo": "7",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: dry-run 同步并运行 doctor、发布验证、全量测试、lint、build 与 diff 检查",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"dry-run 与托管资产同步完成；doctor ok；476 tests、lint、build、diff check 与实际 PATH CLI 发布验证通过\",\"files\":[\".claude/skills/spec-manager\",\".codebuddy/skills/spec-manager\",\"scripts/verify-installed-cli.mjs\"]}",

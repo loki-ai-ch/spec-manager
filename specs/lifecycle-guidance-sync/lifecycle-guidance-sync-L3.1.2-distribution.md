@@ -10,31 +10,31 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取分发 L3/L2、历史任务、plan 模板、Agent/doctor 与入口文档'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Agent 与 doctor Core 检测托管资产 missing 和 drift
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Agent 同步能力支持 dry-run、显式覆盖与逐文件报告
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 README、methodology、rules、Skill 与已安装 Claude 托管副本统一语义
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑方法论与分发测试验证行为契约和内容漂移
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增发布验证脚本比较实际 spec-manager 与当前构建
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: dry-run 同步并运行 doctor、发布验证、全量测试、lint、build 与 diff 检查'
     status: pending
 created: '2026-06-11T02:17:01.256Z'
@@ -107,13 +107,13 @@ git diff --check
 {
   "coveredSpecs": ["lifecycle-guidance-sync-L3.1.2-distribution"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取分发 L3/L2、历史任务、plan 模板、Agent/doctor 与入口文档"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 Agent 与 doctor Core 检测托管资产 missing 和 drift"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 Agent 同步能力支持 dry-run、显式覆盖与逐文件报告"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 README、methodology、rules、Skill 与已安装 Claude 托管副本统一语义"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑方法论与分发测试验证行为契约和内容漂移"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "新增发布验证脚本比较实际 spec-manager 与当前构建"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证: dry-run 同步并运行 doctor、发布验证、全量测试、lint、build 与 diff 检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取分发 L3/L2、历史任务、plan 模板、Agent/doctor 与入口文档"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 Agent 与 doctor Core 检测托管资产 missing 和 drift"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 Agent 同步能力支持 dry-run、显式覆盖与逐文件报告"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 README、methodology、rules、Skill 与已安装 Claude 托管副本统一语义"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑方法论与分发测试验证行为契约和内容漂移"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "新增发布验证脚本比较实际 spec-manager 与当前构建"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证: dry-run 同步并运行 doctor、发布验证、全量测试、lint、build 与 diff 检查"}
   ]
 }
 ```

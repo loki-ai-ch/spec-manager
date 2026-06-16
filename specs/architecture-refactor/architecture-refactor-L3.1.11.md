@@ -12,19 +12,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 completeTask facade 与 CLI JSON 精确 shape 回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 收窄 completeTask facade 运行时结果
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 保持 runTaskCompletion gate diagnostics 公共契约
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 completion 专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-11T09:40:33.968Z'
@@ -101,10 +101,10 @@ git diff --check
 {
   "coveredSpecs": ["architecture-refactor-L3.1.11"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充 completeTask facade 与 CLI JSON 精确 shape 回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "收窄 completeTask facade 运行时结果"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "保持 runTaskCompletion gate diagnostics 公共契约"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证 completion 专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充 completeTask facade 与 CLI JSON 精确 shape 回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "收窄 completeTask facade 运行时结果"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "保持 runTaskCompletion gate diagnostics 公共契约"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证 completion 专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```

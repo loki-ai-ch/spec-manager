@@ -10,31 +10,31 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: '上下文收集: 读取补救 L3/L2、历史 Task、审查发现与相关实现测试'
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Audit 与 Task Core 分离 bypass 事件和规则成功计数
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 Task complete 修复 R18 命令提示并前置无副作用门禁
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑发布验证脚本递归比较完整 dist 文件集合与摘要
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 doctor 统一 Claude 与 CodeBuddy 安全同步提示
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑回归测试覆盖审查发现的五项失败场景
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: '验证: 运行专项和全量测试、lint、build、doctor、发布验证与 diff 检查'
     status: pending
 created: '2026-06-11T02:31:31.634Z'
@@ -108,13 +108,13 @@ git diff --check
 {
   "coveredSpecs": ["lifecycle-guidance-sync-L3.1.3-review-fixes"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 读取补救 L3/L2、历史 Task、审查发现与相关实现测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 Audit 与 Task Core 分离 bypass 事件和规则成功计数"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 Task complete 修复 R18 命令提示并前置无副作用门禁"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑发布验证脚本递归比较完整 dist 文件集合与摘要"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 doctor 统一 Claude 与 CodeBuddy 安全同步提示"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑回归测试覆盖审查发现的五项失败场景"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "验证: 运行专项和全量测试、lint、build、doctor、发布验证与 diff 检查"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 读取补救 L3/L2、历史 Task、审查发现与相关实现测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 Audit 与 Task Core 分离 bypass 事件和规则成功计数"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 Task complete 修复 R18 命令提示并前置无副作用门禁"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑发布验证脚本递归比较完整 dist 文件集合与摘要"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 doctor 统一 Claude 与 CodeBuddy 安全同步提示"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑回归测试覆盖审查发现的五项失败场景"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "验证: 运行专项和全量测试、lint、build、doctor、发布验证与 diff 检查"}
   ]
 }
 ```

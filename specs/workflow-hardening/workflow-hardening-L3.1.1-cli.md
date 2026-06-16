@@ -14,41 +14,41 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取 workflow-hardening-L3.1.1-cli 与 workflow-hardening-L2.1 并检查
       templates/agent-plan.json
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/validate.ts 新增 extractPlanJsonFromSpecContent
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/validate.ts 新增 placeholder_marker warning
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/spec.ts 接入 validate-plan --from-spec
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/task.ts 与 templates/L3-impl.md 和 templates/agent-plan.json 统一
       coveredSpecs
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/core/__tests__/validate.test.ts 补充 planJson 抽取和 placeholder 测试
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       编辑 src/core/__tests__/task-cascade.test.ts 与 CLI 测试补充 coveredSpecs 和
       validate-plan 测试
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 npm test targeted、npm run build、validate-plan from-spec 和 R12 smoke
     status: pending
 ---
@@ -203,7 +203,7 @@ node dist/cli/index.js task create workflow-hardening-L3.1.1-cli --plan /tmp/pla
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -217,14 +217,14 @@ node dist/cli/index.js task create workflow-hardening-L3.1.1-cli --plan /tmp/pla
 {
   "coveredSpecs": ["workflow-hardening-L3.1.1-cli"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 workflow-hardening-L3.1.1-cli 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编辑 src/core/validate.ts 新增 extractPlanJsonFromSpecContent"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编辑 src/core/validate.ts 新增 placeholder_marker warning"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编辑 src/cli/spec.ts 接入 validate-plan --from-spec"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编辑 src/core/task.ts 与 templates/L3-impl.md 和 templates/agent-plan.json 统一 coveredSpecs"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/validate.test.ts 补充 planJson 抽取和 placeholder 测试"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编辑 src/core/__tests__/task-cascade.test.ts 与 CLI 测试补充 coveredSpecs 和 validate-plan 测试"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 npm test targeted、npm run build、validate-plan from-spec 和 R12 smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 workflow-hardening-L3.1.1-cli 与 workflow-hardening-L2.1 并检查 templates/agent-plan.json"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 src/core/validate.ts 新增 extractPlanJsonFromSpecContent"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编辑 src/core/validate.ts 新增 placeholder_marker warning"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编辑 src/cli/spec.ts 接入 validate-plan --from-spec"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编辑 src/core/task.ts 与 templates/L3-impl.md 和 templates/agent-plan.json 统一 coveredSpecs"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/core/__tests__/validate.test.ts 补充 planJson 抽取和 placeholder 测试"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编辑 src/core/__tests__/task-cascade.test.ts 与 CLI 测试补充 coveredSpecs 和 validate-plan 测试"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 npm test targeted、npm run build、validate-plan from-spec 和 R12 smoke"}
   ]
 }
 ```

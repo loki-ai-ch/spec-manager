@@ -141,14 +141,14 @@ pnpm test
 {
   "coveredSpecs": ["spec-manager-ai-ux-L3.1.5-tests"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: 现有测试 + validate.ts + frontmatter.ts + status.ts + audit.ts"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "编写 spec-io.test.ts"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编写 validate.test.ts"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "编写 frontmatter.test.ts"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "编写 status.test.ts"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编写 audit.test.ts"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "编写 delta.test.ts"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证: pnpm test 全部通过"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: 现有测试 + validate.ts + frontmatter.ts + status.ts + audit.ts"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "编写 spec-io.test.ts"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编写 validate.test.ts"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "编写 frontmatter.test.ts"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "编写 status.test.ts"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编写 audit.test.ts"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "编写 delta.test.ts"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证: pnpm test 全部通过"}
   ]
 }
 ```

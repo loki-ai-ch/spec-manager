@@ -43,7 +43,7 @@ describe('inspectProjectIntegrity', () => {
       id: 'T-001',
       specCode: 'auth-L1',
       status: 'completed',
-      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action', name: 'verify', status: 'succeeded' }],
       created: new Date().toISOString(),
     }), 'utf8');
     expect(inspectProjectIntegrity(project.paths).some(issue => issue.kind === 'missing-verification')).toBe(true);
@@ -126,7 +126,7 @@ function writeLegacyTask(specCode: string, taskId: string): void {
     id: taskId,
     specCode,
     status: 'completed',
-    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
+    steps: [{ stepNo: 1, stepType: 'tool_action', name: 'verify', status: 'succeeded' }],
     created: new Date().toISOString(),
   }), 'utf8');
 }
@@ -172,7 +172,7 @@ npm test
     id: 'T-001',
     specCode,
     status: 'completed',
-    steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'verify', status: 'succeeded' }],
+    steps: [{ stepNo: 1, stepType: 'tool_action', name: 'verify', status: 'succeeded' }],
     verifications: [{
       id: 'V-001',
       command: 'npm test',

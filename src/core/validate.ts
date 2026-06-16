@@ -196,7 +196,7 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
  */
 export interface PlanStep {
   stepNo: number | string;
-  stepType: 'llm_call' | 'mcp_tool' | 'human_gate';
+  stepType: 'llm_call' | 'tool_action' | 'human_gate';
   name: string;
 }
 
@@ -234,8 +234,8 @@ export function validatePlanJson(plan: unknown): ValidationWarning[] {
       warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}] 缺 stepType（INC-005: 禁止用 type）` });
     } else {
       const t = String(s.stepType);
-      if (!['llm_call', 'mcp_tool', 'human_gate'].includes(t)) {
-        warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}].stepType="${t}" 不在 [llm_call, mcp_tool, human_gate]` });
+      if (!['llm_call', 'tool_action', 'human_gate'].includes(t)) {
+        warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}].stepType="${t}" 不在 [llm_call, tool_action, human_gate]` });
       }
     }
     if (!('name' in s)) {

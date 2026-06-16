@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Review readme_zh.md and English README v0.4.2 sections",
       "status": "succeeded",
       "toolName": "sed/spec-manager",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Add Chinese workflow overview and adaptive harness governance sections",
       "status": "succeeded",
       "toolName": "apply_patch",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Verify git diff --check and record verification evidence",
       "status": "succeeded",
       "toolName": "git/spec-manager",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "Verify git diff --check and commit Chinese README update without staging local personal settings",
       "status": "succeeded",
       "toolName": "git/spec-manager",

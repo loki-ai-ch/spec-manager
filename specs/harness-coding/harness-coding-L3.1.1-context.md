@@ -13,46 +13,46 @@ aiSummary: >-
 changeSummary: 'cascade: task complete'
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取
       harness-coding-L3.1.1-context、harness-coding-L2.1、templates/agent-plan.json
       并检查 spec-io/task/decision/CLI task 测试基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       新增 src/core/harness.ts 定义
       HarnessTaskContext、buildHarnessTaskContext、renderHarnessTaskContextText
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 L3 frozen/implemented 准入、summary、关联 spec 与 decision 读取
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       实现 objectives、nonGoals、acceptanceCriteria、suggestedVerification 的 markdown
       提取
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 实现 task context text/json 输出格式和 nextCommands
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/task.ts 接入 task context <l3Code> --format text|json
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 src/core/__tests__/harness.test.ts 覆盖 context 构建与 renderer
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 编辑 src/cli/__tests__/task.test.ts 覆盖 task context CLI text/json/错误场景
     status: pending
   - stepNo: 9
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 targeted tests、npm run build、dist CLI text/json smoke
     status: pending
 ---
@@ -254,7 +254,7 @@ node dist/cli/index.js task context harness-coding-L3.1.1-context
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -268,15 +268,15 @@ node dist/cli/index.js task context harness-coding-L3.1.1-context
 {
   "coveredSpecs": ["harness-coding-L3.1.1-context"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 harness-coding-L3.1.1-context、harness-coding-L2.1、templates/agent-plan.json 并检查 spec-io/task/decision/CLI task 测试基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 src/core/harness.ts 定义 HarnessTaskContext、buildHarnessTaskContext、renderHarnessTaskContextText"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "实现 L3 frozen/implemented 准入、summary、关联 spec 与 decision 读取"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "实现 objectives、nonGoals、acceptanceCriteria、suggestedVerification 的 markdown 提取"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "实现 task context text/json 输出格式和 nextCommands"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "编辑 src/cli/task.ts 接入 task context <l3Code> --format text|json"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "新增 src/core/__tests__/harness.test.ts 覆盖 context 构建与 renderer"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "编辑 src/cli/__tests__/task.test.ts 覆盖 task context CLI text/json/错误场景"},
-    {"stepNo": 9, "stepType": "mcp_tool", "name": "验证 targeted tests、npm run build、dist CLI text/json smoke"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 harness-coding-L3.1.1-context、harness-coding-L2.1、templates/agent-plan.json 并检查 spec-io/task/decision/CLI task 测试基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 src/core/harness.ts 定义 HarnessTaskContext、buildHarnessTaskContext、renderHarnessTaskContextText"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "实现 L3 frozen/implemented 准入、summary、关联 spec 与 decision 读取"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "实现 objectives、nonGoals、acceptanceCriteria、suggestedVerification 的 markdown 提取"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "实现 task context text/json 输出格式和 nextCommands"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "编辑 src/cli/task.ts 接入 task context <l3Code> --format text|json"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "新增 src/core/__tests__/harness.test.ts 覆盖 context 构建与 renderer"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "编辑 src/cli/__tests__/task.test.ts 覆盖 task context CLI text/json/错误场景"},
+    {"stepNo": 9, "stepType": "tool_action", "name": "验证 targeted tests、npm run build、dist CLI text/json smoke"}
   ]
 }
 ```

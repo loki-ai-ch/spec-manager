@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "读取新增规则错误码和现有用户文档",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed verification step 1\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "补充旧数据兼容和端到端测试",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed verification step 2\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "更新 README 与方法论文档",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed verification step 3\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "校准 completion guide 与 flow 提示",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed verification step 4\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "运行全量测试类型检查和 doctor",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed verification step 5\",\"files\":[],\"tests\":[],\"risks\":[]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证全部架构加固验收标准",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"Implemented and reviewed verification step 6\",\"files\":[],\"tests\":[],\"risks\":[]}",

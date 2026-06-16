@@ -77,10 +77,10 @@ pnpm test src/core/__tests__/task-batch.test.ts
 {
   "coveredSpecs": ["spec-manager-ai-ux-L3.1.4-batch"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "上下文收集: task.ts CLI + core/task.ts + task-cascade.test.ts"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "在 src/cli/task.ts 新增 batch 子命令"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "编写 task-batch.test.ts 测试"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证: pnpm test + 手动测试 batch"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: task.ts CLI + core/task.ts + task-cascade.test.ts"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "在 src/cli/task.ts 新增 batch 子命令"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "编写 task-batch.test.ts 测试"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证: pnpm test + 手动测试 batch"}
   ]
 }
 ```

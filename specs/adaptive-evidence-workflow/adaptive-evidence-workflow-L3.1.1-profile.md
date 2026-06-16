@@ -12,35 +12,35 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 读取源码并确认 Profile 配置、Task 创建和测试基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增共享项目工作流配置能力与公开导出
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 增加 project workflow CLI 与 doctor 配置检查
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 增加验收标准与关键 AC 解析校验
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 扩展 Task Profile 数据模型与 governed 创建准入
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 扩展 task create CLI 与 Harness Context
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步模板、方法论、Agent 入口与契约测试
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 Profile 创建矩阵、全量测试、lint、build、installed CLI 和 project doctor
     status: pending
 created: '2026-06-15T10:07:32.497Z'
@@ -205,7 +205,7 @@ spec-manager spec validate-plan --from-spec adaptive-evidence-workflow-L3.1.1-pr
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -219,14 +219,14 @@ spec-manager spec validate-plan --from-spec adaptive-evidence-workflow-L3.1.1-pr
 {
   "coveredSpecs": ["adaptive-evidence-workflow-L3.1.1-profile"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取源码并确认 Profile 配置、Task 创建和测试基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增共享项目工作流配置能力与公开导出"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "增加 project workflow CLI 与 doctor 配置检查"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "增加验收标准与关键 AC 解析校验"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "扩展 Task Profile 数据模型与 governed 创建准入"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "扩展 task create CLI 与 Harness Context"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "同步模板、方法论、Agent 入口与契约测试"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 Profile 创建矩阵、全量测试、lint、build、installed CLI 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取源码并确认 Profile 配置、Task 创建和测试基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增共享项目工作流配置能力与公开导出"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "增加 project workflow CLI 与 doctor 配置检查"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "增加验收标准与关键 AC 解析校验"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "扩展 Task Profile 数据模型与 governed 创建准入"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "扩展 task create CLI 与 Harness Context"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "同步模板、方法论、Agent 入口与契约测试"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 Profile 创建矩阵、全量测试、lint、build、installed CLI 和 project doctor"}
   ]
 }
 ```

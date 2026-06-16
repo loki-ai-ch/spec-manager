@@ -12,19 +12,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充同文件与跨文件重复 MODIFIED 回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 增加重复 MODIFIED planning 冲突校验
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 保持独立 MODIFIED 与组合操作兼容
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证归档专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-12T01:24:57.566Z'
@@ -98,10 +98,10 @@ git diff --check
 {
   "coveredSpecs": ["architecture-refactor-L3.1.14"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充同文件与跨文件重复 MODIFIED 回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "增加重复 MODIFIED planning 冲突校验"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "保持独立 MODIFIED 与组合操作兼容"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充同文件与跨文件重复 MODIFIED 回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "增加重复 MODIFIED planning 冲突校验"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "保持独立 MODIFIED 与组合操作兼容"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```

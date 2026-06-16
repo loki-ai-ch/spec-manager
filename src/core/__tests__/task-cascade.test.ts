@@ -32,7 +32,7 @@ function markPlanSucceeded(paths: ProjectPaths, specCode: string, planJson: { st
   addTaskVerification({ paths, taskId, specCode, command: 'npm test', exitCode: 0, summary: 'passed' });
 }
 
-function planFor(specCode: string, steps = [{ stepNo: 1, stepType: 'mcp_tool' as const, name: 'run verify test' }]) {
+function planFor(specCode: string, steps = [{ stepNo: 1, stepType: 'tool_action' as const, name: 'run verify test' }]) {
   return { coveredSpecs: [specCode], steps };
 }
 
@@ -191,8 +191,8 @@ describe('R5 跳步检测 (P1 修复)', () => {
     const { l3Code } = createFrozenHierarchy('auth');
 
     const planJson = planFor(l3Code, [
-      { stepNo: 1, stepType: 'mcp_tool' as const, name: 'inspect source files' },
-      { stepNo: 2, stepType: 'mcp_tool' as const, name: 'run verify test' },
+      { stepNo: 1, stepType: 'tool_action' as const, name: 'inspect source files' },
+      { stepNo: 2, stepType: 'tool_action' as const, name: 'run verify test' },
     ]);
     const { task } = createTask({
       paths,
@@ -209,8 +209,8 @@ describe('R5 跳步检测 (P1 修复)', () => {
     const { l3Code } = createFrozenHierarchy('auth');
 
     const planJson = planFor(l3Code, [
-      { stepNo: 1, stepType: 'mcp_tool' as const, name: 'inspect source files' },
-      { stepNo: 2, stepType: 'mcp_tool' as const, name: 'run verify test' },
+      { stepNo: 1, stepType: 'tool_action' as const, name: 'inspect source files' },
+      { stepNo: 2, stepType: 'tool_action' as const, name: 'run verify test' },
     ]);
     const { task } = createTask({
       paths,
@@ -316,7 +316,7 @@ describe('R10 / R12 planJson 门禁', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: [l3Code],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'edit source files' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'edit source files' }],
       },
     })).toThrow(/R10/);
     const audit = readAudit(paths);
@@ -331,7 +331,7 @@ describe('R10 / R12 planJson 门禁', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: ['other-L3.1.1'],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     })).toThrow(new RegExp(`R12[\\s\\S]*coveredSpecs[\\s\\S]*${l3Code}[\\s\\S]*Example`));
     const audit = readAudit(paths);
@@ -345,7 +345,7 @@ describe('R10 / R12 planJson 门禁', () => {
       specCode: l3Code,
       autoConfirm: false,
       planJson: {
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     })).toThrow(new RegExp(`"coveredSpecs": \\["${l3Code}"\\]`));
   });
@@ -354,7 +354,7 @@ describe('R10 / R12 planJson 门禁', () => {
     const { l3Code } = createFrozenHierarchy('auth');
     const steps = Array.from({ length: 21 }, (_, i) => ({
       stepNo: i + 1,
-      stepType: 'mcp_tool' as const,
+      stepType: 'tool_action' as const,
       name: i === 20 ? 'run verify test' : `inspect file ${i + 1}`,
     }));
     expect(() => createTask({
@@ -594,7 +594,7 @@ describe('T-001 跨 spec 冲突修复 (specCode scoped lookup)', () => {
       l3Code,
       Array.from({ length: 8 }, (_, i) => ({
         stepNo: i + 1,
-        stepType: 'mcp_tool' as const,
+        stepType: 'tool_action' as const,
         name: i === 7 ? 'run verify test' : `inspect file ${i + 1}`,
       })),
     );

@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "上下文收集: 读取运行时 L3/L2、历史任务、plan 模板与 Task/Decision/Audit 实现",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"读取运行时 L3/L2、Task、Decision、Integrity、Audit 与相关测试\",\"files\":[]}",
@@ -13,7 +13,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Decision、Task 与 Integrity Core 共用活跃决策判定",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"提取 active 决策判定并接入 Task complete 与 Integrity\",\"files\":[\"src/core/decision.ts\",\"src/core/task.ts\",\"src/core/integrity.ts\"]}",
@@ -21,7 +21,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Task complete CLI/Core 拆分跳过参数并拒绝旧 force",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"拆分完成跳过参数、强制原因并拒绝旧 force\",\"files\":[\"src/cli/task.ts\",\"src/core/task.ts\"]}",
@@ -29,7 +29,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑 Audit 事件记录 Task complete 绕过能力与原因",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"扩展审计 metadata 并记录 task-complete-bypass 原因\",\"files\":[\"src/core/audit.ts\",\"src/core/task.ts\"]}",
@@ -37,7 +37,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "编辑运行时测试覆盖活跃决策、独立绕过、原因和审计",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"增加 active 决策、bypass 原因与审计回归测试，专项 96 项通过\",\"files\":[\"src/core/__tests__/task-cascade.test.ts\",\"src/core/__tests__/integrity.test.ts\",\"src/core/__tests__/task-complete-verify.test.ts\"]}",
@@ -45,7 +45,7 @@
     },
     {
       "stepNo": "6",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证: 运行运行时专项测试、全量测试、lint、build 与 diff 检查",
       "status": "succeeded",
       "outputJson": "{\"summary\":\"运行时专项、全量 476 项测试、lint、build 与 diff 检查通过\",\"files\":[]}",

@@ -85,8 +85,8 @@ echo ok
 }
 
 function planFor(specCode: string, steps = [
-  { stepNo: 1, stepType: 'mcp_tool' as const, name: 'edit task completion module' },
-  { stepNo: 2, stepType: 'mcp_tool' as const, name: 'run task completion test' },
+  { stepNo: 1, stepType: 'tool_action' as const, name: 'edit task completion module' },
+  { stepNo: 2, stepType: 'tool_action' as const, name: 'run task completion test' },
 ]) {
   return { coveredSpecs: [specCode], steps };
 }

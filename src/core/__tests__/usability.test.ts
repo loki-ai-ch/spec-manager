@@ -150,7 +150,7 @@ describe('getFlowStatus', () => {
       autoConfirm: false,
       planJson: {
         coveredSpecs: ['billing-L3'],
-        steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],
+        steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
       },
     });
 

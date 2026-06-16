@@ -12,38 +12,38 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: >-
       读取
       adaptive-evidence-workflow-L3.1.1-profile、adaptive-evidence-workflow-L2.1
       和完成链路基线
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 Evidence 投影核心模块与公开导出
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 接入 task complete evidence coverage gate
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 新增 task evidence CLI 与 text/json presenter
     status: pending
   - stepNo: 5
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步完成输出与 Harness evidence 上下文
     status: pending
   - stepNo: 6
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 doctor、integrity 与 audit 诊断
     status: pending
   - stepNo: 7
-    stepType: mcp_tool
+    stepType: tool_action
     name: 同步方法论、模板与 Agent managed 资产
     status: pending
   - stepNo: 8
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证 Evidence 聚焦测试、全量测试、lint、build、installed CLI 和 project doctor
     status: pending
 created: '2026-06-15T10:07:32.630Z'
@@ -211,7 +211,7 @@ spec-manager spec validate-plan --from-spec adaptive-evidence-workflow-L3.1.2-ev
 {
   "taskId": "<task id>",
   "stepNo": 1,
-  "stepType": "mcp_tool",
+  "stepType": "tool_action",
   "status": "succeeded",
   "toolName": "<实际调用的工具名>",
   "latencyMs": "<实际耗时>",
@@ -225,14 +225,14 @@ spec-manager spec validate-plan --from-spec adaptive-evidence-workflow-L3.1.2-ev
 {
   "coveredSpecs": ["adaptive-evidence-workflow-L3.1.2-evidence"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "读取 adaptive-evidence-workflow-L3.1.1-profile、adaptive-evidence-workflow-L2.1 和完成链路基线"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "新增 Evidence 投影核心模块与公开导出"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "接入 task complete evidence coverage gate"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "新增 task evidence CLI 与 text/json presenter"},
-    {"stepNo": 5, "stepType": "mcp_tool", "name": "同步完成输出与 Harness evidence 上下文"},
-    {"stepNo": 6, "stepType": "mcp_tool", "name": "补充 doctor、integrity 与 audit 诊断"},
-    {"stepNo": 7, "stepType": "mcp_tool", "name": "同步方法论、模板与 Agent managed 资产"},
-    {"stepNo": 8, "stepType": "mcp_tool", "name": "验证 Evidence 聚焦测试、全量测试、lint、build、installed CLI 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 adaptive-evidence-workflow-L3.1.1-profile、adaptive-evidence-workflow-L2.1 和完成链路基线"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "新增 Evidence 投影核心模块与公开导出"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "接入 task complete evidence coverage gate"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "新增 task evidence CLI 与 text/json presenter"},
+    {"stepNo": 5, "stepType": "tool_action", "name": "同步完成输出与 Harness evidence 上下文"},
+    {"stepNo": 6, "stepType": "tool_action", "name": "补充 doctor、integrity 与 audit 诊断"},
+    {"stepNo": 7, "stepType": "tool_action", "name": "同步方法论、模板与 Agent managed 资产"},
+    {"stepNo": 8, "stepType": "tool_action", "name": "验证 Evidence 聚焦测试、全量测试、lint、build、installed CLI 和 project doctor"}
   ]
 }
 ```

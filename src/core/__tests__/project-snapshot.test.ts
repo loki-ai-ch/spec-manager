@@ -47,7 +47,7 @@ function createAuthGraph(): { l1: string; l2: string; l3: string; taskId: string
     autoConfirm: false,
     planJson: {
       coveredSpecs: [l3],
-      steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run snapshot test' }],
+      steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run snapshot test' }],
     },
   });
   const change = createTaskLinkedChangeProposal({

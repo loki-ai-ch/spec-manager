@@ -5,7 +5,7 @@
   "steps": [
     {
       "stepNo": "1",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "核对 change proposal、父 L2/L3.1.2 与完成门禁实现",
       "status": "succeeded",
       "toolName": "review",
@@ -14,7 +14,7 @@
     },
     {
       "stepNo": "2",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "对账 constraint-closed-loop-L2.1 完成门禁契约",
       "status": "succeeded",
       "toolName": "spec-manager",
@@ -23,7 +23,7 @@
     },
     {
       "stepNo": "3",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "对账 constraint-closed-loop-L3.1.2-hooks 实施记录",
       "status": "succeeded",
       "toolName": "spec-manager",
@@ -32,7 +32,7 @@
     },
     {
       "stepNo": "4",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "验证规格一致性与完成门禁专项测试",
       "status": "succeeded",
       "toolName": "shell",
@@ -41,7 +41,7 @@
     },
     {
       "stepNo": "5",
-      "stepType": "mcp_tool",
+      "stepType": "tool_action",
       "name": "解除 change proposal 并验证 npm test + lint + build + project doctor",
       "status": "succeeded",
       "toolName": "shell",

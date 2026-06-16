@@ -10,19 +10,19 @@ coveredTasks:
   - T-001
 steps:
   - stepNo: 1
-    stepType: mcp_tool
+    stepType: tool_action
     name: 补充 REMOVED 存活引用与组合操作回归测试
     status: pending
   - stepNo: 2
-    stepType: mcp_tool
+    stepType: tool_action
     name: 增加归档最终投影引用完整性校验
     status: pending
   - stepNo: 3
-    stepType: mcp_tool
+    stepType: tool_action
     name: 保持无引用删除与同批删除兼容
     status: pending
   - stepNo: 4
-    stepType: mcp_tool
+    stepType: tool_action
     name: 验证归档专项测试、全量测试、lint 和 project doctor
     status: pending
 created: '2026-06-12T01:34:27.678Z'
@@ -99,10 +99,10 @@ git diff --check
 {
   "coveredSpecs": ["architecture-refactor-L3.1.15"],
   "steps": [
-    {"stepNo": 1, "stepType": "mcp_tool", "name": "补充 REMOVED 存活引用与组合操作回归测试"},
-    {"stepNo": 2, "stepType": "mcp_tool", "name": "增加归档最终投影引用完整性校验"},
-    {"stepNo": 3, "stepType": "mcp_tool", "name": "保持无引用删除与同批删除兼容"},
-    {"stepNo": 4, "stepType": "mcp_tool", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
+    {"stepNo": 1, "stepType": "tool_action", "name": "补充 REMOVED 存活引用与组合操作回归测试"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "增加归档最终投影引用完整性校验"},
+    {"stepNo": 3, "stepType": "tool_action", "name": "保持无引用删除与同批删除兼容"},
+    {"stepNo": 4, "stepType": "tool_action", "name": "验证归档专项测试、全量测试、lint 和 project doctor"}
   ]
 }
 ```
