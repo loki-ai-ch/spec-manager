@@ -1,6 +1,6 @@
 # Spec-Driven Development
 
-This project uses `spec-manager` for local-first spec-driven development. CodeBuddy should use the project skill at `.codebuddy/skills/spec-manager/` when the user asks for `/spec-manager` or asks to follow the spec-manager workflow.
+This project uses `spec-manager` for spec-driven AI coding workflows. CodeBuddy should use the project skill at `.codebuddy/skills/spec-manager/` when the user asks for `/spec-manager` or asks to follow the spec-manager workflow.
 
 ## Unified Rules
 

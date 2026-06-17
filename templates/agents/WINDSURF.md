@@ -2,7 +2,7 @@
 
 This file is the spec-manager entrypoint for Windsurf. Windsurf reads project rules from `.windsurfrules`; route feature work through `spec-manager`.
 
-This project uses `spec-manager` for local-first spec-driven development. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
+This project uses `spec-manager` for spec-driven AI coding workflows. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
 
 ## Unified Rules
 

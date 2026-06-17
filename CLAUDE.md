@@ -27,7 +27,7 @@ The project requires Node >= 18 and uses ESM (`"type": "module"`). TypeScript ta
 
 ## Architecture
 
-Local-first spec-driven development CLI. Pure markdown + YAML frontmatter storage. No database, no network.
+Spec-driven development CLI for AI coding agents. Pure markdown + YAML frontmatter storage. No database, no network.
 
 ### Source Layout
 

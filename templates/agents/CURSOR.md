@@ -2,7 +2,7 @@
 
 This file is the spec-manager entrypoint for Cursor. Cursor reads project rules from `.cursorrules`; route feature work through `spec-manager`.
 
-This project uses `spec-manager` for local-first spec-driven development. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
+This project uses `spec-manager` for spec-driven AI coding workflows. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
 
 ## Unified Rules
 

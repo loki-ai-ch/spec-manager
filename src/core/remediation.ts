@@ -57,7 +57,7 @@ export const REPOSITORY_REMEDIATION_V1_DECISIONS: Omit<CreateDecisionInput, 'pat
     docCode: 'roadmap-openspec-L1',
     topic: 'roadmap-openspec',
     what: '以本地文件为事实源，补齐 rich guide、agent 检测、交互视图与 shell completion。',
-    why: '提升 spec-manager 的可发现性与跨 agent 使用体验，同时保持 local-first。',
+    why: '提升 spec-manager 的可发现性与跨 agent 使用体验，同时保持 markdown/JSON 仓库记录可迁移。',
   },
   {
     docCode: 'spec-manager-ai-ux-L1',

@@ -6,7 +6,7 @@
 
 [中文说明](readme_zh.md)
 
-**Make AI coding work traceable.** spec-manager is a local-first workflow layer for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, Windsurf, and other coding agents.
+**Make AI coding work traceable.** spec-manager is an SDD workflow layer for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, Windsurf, and other coding agents.
 
 You do not need to understand the full methodology before trying it. Start with one project, one request, and one command.
 
@@ -16,7 +16,7 @@ You do not need to understand the full methodology before trying it. Start with 
 - **Better handoff**: specs, tasks, decisions, and verification records live in markdown/JSON files in your repo.
 - **Works with your agent**: install the right workflow file for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, or Windsurf.
 
-Everything is local: markdown + git storage, no backend, no network dependency, no MCP requirement.
+Everything is repo-native: markdown/JSON + git storage, no backend, no network dependency, no MCP requirement.
 
 ## How It Works
 

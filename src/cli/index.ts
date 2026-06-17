@@ -20,7 +20,7 @@ const { version } = require('../../package.json');
 const program = new Command();
 program
   .name('spec-manager')
-  .description('spec-manager: local-first spec-driven development platform. Portable CLI + multi-agent instructions.')
+  .description('spec-manager: SDD workflow layer for AI coding agents. Portable CLI + multi-agent instructions.')
   .version(version);
 
 registerProject(program);

@@ -2,7 +2,7 @@
 
 This file is the spec-manager skill-like entrypoint for Codex, OpenCode, and other `AGENTS.md`-compatible tools. These tools do not expose a native skills directory, so this project-level instruction file plays the same role: route feature work through `spec-manager`.
 
-This project uses `spec-manager` for local-first spec-driven development. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
+This project uses `spec-manager` for spec-driven AI coding workflows. Specs, tasks, decisions, changes, and audit data are stored as markdown/JSON files in the repository.
 
 ## Mandatory Workflow
 
