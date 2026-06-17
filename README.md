@@ -6,14 +6,15 @@
 
 [中文说明](readme_zh.md)
 
-**Make AI coding work traceable.** spec-manager is an SDD workflow layer for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, Windsurf, and other coding agents.
+**Make AI coding deliverable, reviewable, and traceable.** spec-manager is an SDD workflow layer for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, Windsurf, and other coding agents.
 
-You do not need to understand the full methodology before trying it. Start with one project, one request, and one command.
+You do not need to adopt a heavy process before trying it. Start with one project, one request, and turn agent output into repo-native delivery records.
 
 ## Why Use It
 
-- **Less chaos**: AI agents write code after a lightweight spec, not from a vague prompt.
-- **Better handoff**: specs, tasks, decisions, and verification records live in markdown/JSON files in your repo.
+- **Less drift**: AI agents work against approved intent, design boundaries, and implementation targets instead of a vague prompt.
+- **Better review**: specs, tasks, decisions, and verification records show what changed, why it changed, and how it was checked.
+- **Portable memory**: the workflow lives in markdown/JSON files, so humans and different agents can resume from the same repo state.
 - **Works with your agent**: install the right workflow file for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, or Windsurf.
 
 Everything is repo-native: markdown/JSON + git storage, no backend, no network dependency, no MCP requirement.
@@ -26,16 +27,16 @@ For a typical request, the flow is:
 
 `L1 PRD -> L2 Design -> L3 Impl -> Agent Task -> Verification`
 
-That gives AI agents a frozen implementation target and gives humans a clear record of what changed and why.
+That gives AI agents a frozen implementation target and gives humans a clear record of scope, rationale, execution, and verification.
 
 ## Adaptive Harness Governance
 
-Version `v0.4.2` adds a stronger path for tasks that need explicit evidence coverage.
+Some changes need speed; others need stronger proof that important acceptance criteria were actually verified.
 
-- Task creation records a Profile snapshot.
-- `standard` stays lightweight and reports missing coverage as warnings.
-- `governed` requires critical AC in the frozen L3 and verification evidence that covers them.
-- Read-only commands like `project profile recommend`, `project profile metrics`, `project workflow preview`, and `project readiness critical` help preview and audit without hiding gates.
+- Task creation records a Profile snapshot, so later config changes do not rewrite the delivery contract.
+- `standard` keeps the workflow lightweight while surfacing missing evidence as warnings.
+- `governed` turns critical AC coverage into a completion gate for high-risk work.
+- Read-only commands like `project profile recommend`, `project profile metrics`, `project workflow preview`, and `project readiness critical` help teams choose the right rigor and audit gaps without hidden automation.
 
 Example:
 

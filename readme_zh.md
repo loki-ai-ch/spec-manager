@@ -6,14 +6,15 @@
 
 [English](README.md)
 
-**让 AI 写代码的过程可追踪。** spec-manager 是 Claude Code、Codex、OpenCode、MiMo-Code、CodeBuddy、Cursor、Windsurf 等 AI 编程工具的本地工作流层。
+**让 AI 编程可交付、可审查、可追踪。** spec-manager 是 Claude Code、Codex、OpenCode、MiMo-Code、CodeBuddy、Cursor、Windsurf 等 AI 编程工具的本地工作流层。
 
-你不需要一上来理解完整流程。先在一个项目里跑起来，再慢慢加深。
+你不需要一上来采用很重的流程。先在一个项目里跑起来，把 Agent 输出变成仓库里的交付记录。
 
 ## 为什么用它
 
-- **少失控**：AI 不再只凭一句模糊 prompt 直接改代码，而是先留下轻量规格。
-- **好交接**：需求、任务、决策、验证记录都落在仓库里的 markdown / JSON 文件。
+- **少跑偏**：AI 按已确认的目标、设计边界和实施规格工作，而不是凭模糊 prompt 猜。
+- **好审查**：需求、任务、决策、验证记录说明改了什么、为什么改、怎么确认。
+- **可接力**：工作流产物落在仓库里的 markdown / JSON 文件，人和不同 Agent 都能从同一份上下文继续。
 - **不挑工具**：Claude Code、Codex、OpenCode、MiMo-Code、CodeBuddy、Cursor、Windsurf 都能接入。
 
 所有数据都在本地：markdown + git 存储，无后端、无网络依赖、无 MCP 要求。
@@ -26,16 +27,16 @@ spec-manager 把工作产物保存在你的仓库里：PRD、设计、实现规�
 
 `L1 PRD -> L2 Design -> L3 Impl -> Agent Task -> Verification`
 
-这样 AI agent 有明确冻结的实现目标，人也能回看每次改动为什么做、怎么做、验证过什么。
+这样 AI agent 有明确冻结的实现目标，人也能回看范围、原因、执行过程和验证证据。
 
 ## 自适应 Harness 治理
 
-`v0.4.2` 增加了一条更适合关键任务的验收证据路径。
+有些改动需要速度，有些改动需要更强的证据来证明关键验收标准真的被验证过。
 
-- 创建 Task 时记录 Profile 快照。
-- `standard` 保持轻量，缺少覆盖时以 warning 暴露。
-- `governed` 要求 frozen L3 声明 critical AC，并提供覆盖这些 AC 的验证证据。
-- `project profile recommend`、`project profile metrics`、`project workflow preview`、`project readiness critical` 等只读命令用于预览和审计，不做隐藏门禁。
+- 创建 Task 时记录 Profile 快照，避免后续配置变化改写当时的交付契约。
+- `standard` 保持轻量，把缺失证据作为 warning 暴露出来。
+- `governed` 把关键 AC 覆盖变成高风险任务的完成门禁。
+- `project profile recommend`、`project profile metrics`、`project workflow preview`、`project readiness critical` 等只读命令帮助团队选择合适强度、审计缺口，而且不做隐藏自动化。
 
 示例：
 
