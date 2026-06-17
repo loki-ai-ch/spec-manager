@@ -13,6 +13,14 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 - `/spec-manager <需求>` — 从需求开始走完整链路
 - `/spec-manager run <taskId>` — 执行已有 Agent Task
 
+新功能或非平凡工作先生成 Agent Brief，收集本地上下文、历史 lessons、风险和下一步：
+
+```bash
+spec-manager assist guide --request "<需求>"
+```
+
+执行阶段可用 `spec-manager assist next <taskId> --spec <L3-code>` / `spec-manager assist drift <taskId> --spec <L3-code>` 对齐下一步和变更范围；验收前用 `spec-manager assist acceptance <taskId> --spec <L3-code>` 汇总证据、人工验收项和残余风险；最终回复前用 `spec-manager assist delivery <taskId> --spec <L3-code>` 生成面向用户的交付摘要。
+
 ## 入口路由
 
 收到 `/spec-manager <用户输入>` 时，按下表匹配子 skill；不确定时用当前工具的用户提问能力澄清。关键词重叠按 # 小者优先。
@@ -90,6 +98,7 @@ L3:    draft → frozen → implemented
 - `change new|archive|list|show` — Delta spec
 - `incident new|list` — 事故记录
 - `audit hit|report|show` — 规则审计
+- `assist guide|brief|lessons|critique|next|drift|acceptance|delivery` — 能力补偿入口：生成推荐、Agent Brief、审查、导航、漂移检查、验收报告、交付摘要与本地经验 lessons
 
 ### Relations 工作流
 

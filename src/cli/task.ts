@@ -310,9 +310,10 @@ export function registerTaskCommands(program: Command): void {
         skipVerify: opts.skipVerify,
         bypassReason: opts.reason,
       });
+      const nextCommand = deliverySummaryCommand(result.task.id, result.task.specCode);
       if (opts.json) {
         const { gateResults: _gateResults, ...legacyResult } = result;
-        console.log(JSON.stringify(legacyResult, null, 2));
+        console.log(JSON.stringify({ ...legacyResult, nextCommand }, null, 2));
         return;
       }
       console.log(`✓ Task ${result.task.id} → completed`);
@@ -358,6 +359,9 @@ export function registerTaskCommands(program: Command): void {
           console.log(`  ✓ ${code} — ${existing.length} 张 (active: ${active.length})`);
         }
       }
+      console.log('');
+      console.log('Next:');
+      console.log(`  ${nextCommand}`);
     });
 
   task
@@ -486,6 +490,10 @@ export function registerTaskCommands(program: Command): void {
       console.error('✗ TASK_BATCH_DEPRECATED: use task create, start, report/step, verify, then complete');
       process.exit(2);
     });
+}
+
+function deliverySummaryCommand(taskId: string, specCode: string): string {
+  return `spec-manager assist delivery ${taskId} --spec ${specCode}`;
 }
 
 function renderTaskEvidenceText(evidence: TaskEvidence): string {

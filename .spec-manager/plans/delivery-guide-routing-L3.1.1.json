@@ -1,0 +1,25 @@
+{
+  "coveredSpecs": ["delivery-guide-routing-L3.1.1"],
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepType": "tool_action",
+      "name": "读取 delivery-guide-routing-L3.1.1 与现有 guided assist 实现和测试"
+    },
+    {
+      "stepNo": 2,
+      "stepType": "tool_action",
+      "name": "扩展 GuidedAssistStage 并实现 delivery intent 路由"
+    },
+    {
+      "stepNo": 3,
+      "stepType": "tool_action",
+      "name": "补 core 和 CLI tests 覆盖 delivery/acceptance/task-next 路由"
+    },
+    {
+      "stepNo": 4,
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate"
+    }
+  ]
+}

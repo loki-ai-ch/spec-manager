@@ -1,0 +1,25 @@
+{
+  "coveredSpecs": ["task-complete-delivery-hint-L3.1.1"],
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepType": "tool_action",
+      "name": "读取 task-complete-delivery-hint-L3.1.1 与 task complete CLI 实现/测试"
+    },
+    {
+      "stepNo": 2,
+      "stepType": "tool_action",
+      "name": "在 task complete 成功 text/json 输出中增加 delivery nextCommand"
+    },
+    {
+      "stepNo": 3,
+      "stepType": "tool_action",
+      "name": "补 CLI tests 覆盖 text/json/失败路径"
+    },
+    {
+      "stepNo": 4,
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate"
+    }
+  ]
+}

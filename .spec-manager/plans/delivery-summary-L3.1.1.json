@@ -1,0 +1,25 @@
+{
+  "coveredSpecs": ["delivery-summary-L3.1.1"],
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepType": "tool_action",
+      "name": "读取 delivery-summary-L3.1.1 与相关 acceptance/task 类型，确认实现边界"
+    },
+    {
+      "stepNo": 2,
+      "stepType": "tool_action",
+      "name": "新增 DeliverySummaryReport 相关类型与 buildDeliverySummary core projection"
+    },
+    {
+      "stepNo": 3,
+      "stepType": "tool_action",
+      "name": "新增 core tests 覆盖 passed/failed/no verification/not completed/missing resource/只读性"
+    },
+    {
+      "stepNo": 4,
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate"
+    }
+  ]
+}

@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 70,
-    "R2": 119,
+    "R1": 99,
+    "R2": 139,
     "R3": 2,
-    "R4": 99,
-    "R5": 5,
+    "R4": 119,
+    "R5": 8,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 119,
+    "R9": 139,
     "R10": 10,
     "R11": 0,
     "R12": 4,
-    "R13": 69,
+    "R13": 98,
     "R14": 0,
     "R15": 0,
-    "R16": 15,
+    "R16": 20,
     "R17": 0,
-    "R18": 15,
-    "R19": 97,
+    "R18": 24,
+    "R19": 126,
     "R20": 0,
     "R21": 0,
-    "R22": 69,
+    "R22": 98,
     "R23": 0,
     "R24": 0
   },
@@ -4193,9 +4193,1167 @@
       "timestamp": "2026-06-16T09:38:26.581Z",
       "specCode": "workflow-hardening-L3.1.7",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-17T03:37:21.773Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T03:37:21.777Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:37:28.257Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:37:28.258Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:37:28.259Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:38:44.360Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:38:44.361Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:38:44.362Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T03:40:28.296Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T03:40:28.298Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T03:40:33.847Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T03:41:02.368Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:43:01.427Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:43:01.428Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:43:01.429Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:44:40.505Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:44:40.506Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:44:40.507Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T03:44:48.658Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T03:45:25.267Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T03:45:25.268Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T03:45:30.948Z",
+      "specCode": "ai-capability-compensation-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T03:46:35.459Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:47:34.649Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:47:34.650Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:47:34.651Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:48:32.740Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:48:32.741Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:48:32.742Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T03:49:35.284Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T03:49:35.285Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T03:49:35.286Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T03:49:43.705Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T03:50:16.351Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T03:50:16.353Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-17T03:59:24.734Z",
+      "specCode": "ai-capability-compensation-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T04:00:00.522Z",
+      "specCode": "ai-capability-compensation-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T04:01:16.212Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T04:02:21.804Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T04:02:21.805Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T04:02:21.805Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T04:02:34.997Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T04:07:06.301Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T04:07:06.302Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-17T04:14:09.974Z",
+      "specCode": "ai-capability-compensation-L3.1.2-critic",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T05:17:24.742Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T05:18:27.548Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T05:18:27.549Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T05:18:27.550Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T05:18:38.155Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T05:19:05.430Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T05:19:05.431Z",
+      "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T05:28:58.430Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T05:29:57.567Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T05:29:57.568Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T05:29:57.569Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T05:30:56.063Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T05:32:28.947Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T05:32:28.948Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T05:40:36.342Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T05:40:58.577Z",
+      "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-17T05:42:50.653Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T05:42:50.657Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T05:43:38.414Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T05:43:38.415Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T05:43:38.415Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T05:44:13.256Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T05:44:13.257Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T05:44:13.258Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T05:45:16.941Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T05:47:37.743Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T05:47:37.744Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T05:47:45.542Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T05:49:03.428Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T05:49:03.429Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T05:49:03.430Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T05:49:28.273Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T05:49:28.274Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T05:49:28.275Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T05:50:28.224Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T05:59:32.882Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T05:59:32.883Z",
+      "specCode": "guided-assist-workflow-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T05:59:45.891Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T06:00:42.011Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T06:00:42.012Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T06:00:42.013Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T06:01:03.841Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T06:01:03.842Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T06:01:03.843Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T06:01:13.703Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T06:02:35.006Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T06:03:21.608Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T06:03:21.610Z",
+      "specCode": "guided-assist-workflow-L3.1.1-core",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T06:15:17.499Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T06:16:10.046Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T06:25:32.974Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T06:28:15.085Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T06:28:15.086Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T06:28:15.087Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T06:29:45.520Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T06:30:30.848Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T06:30:30.849Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T06:30:48.132Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-17T06:57:00.760Z",
+      "specCode": "guided-assist-workflow-L3.1.2-cli",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-17T06:59:43.777Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T06:59:43.780Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:04:11.656Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:04:11.657Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:04:11.658Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:06:11.434Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T07:08:41.551Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T07:08:41.552Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T07:12:08.769Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:13:21.643Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:13:21.644Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:13:21.645Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:14:20.888Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:14:20.890Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:14:20.890Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:14:31.801Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T07:15:16.746Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T07:15:16.747Z",
+      "specCode": "delivery-summary-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T07:15:32.507Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:16:20.470Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:16:20.471Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:16:20.472Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:17:12.028Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:17:12.029Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:17:12.030Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:17:19.876Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T07:20:09.058Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T07:20:09.059Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T07:41:47.192Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T07:42:33.013Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:42:45.703Z",
+      "specCode": "delivery-summary-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T07:44:28.699Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:45:35.169Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:45:35.170Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:45:35.171Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:45:49.200Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T07:46:17.270Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T07:46:17.272Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:54:39.651Z",
+      "specCode": "delivery-summary-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-17T07:57:04.344Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T07:57:04.348Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T07:57:38.020Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T07:57:38.021Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T07:57:38.022Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T07:58:34.693Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T07:59:26.927Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T07:59:26.928Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T07:59:37.215Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T08:00:24.577Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T08:00:24.578Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T08:00:24.579Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:00:34.101Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T08:01:04.350Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T08:01:04.351Z",
+      "specCode": "delivery-guide-routing-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T08:01:19.922Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T08:02:00.001Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T08:02:00.002Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T08:02:00.003Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:02:10.013Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T08:08:45.013Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T08:08:45.014Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T08:15:24.205Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T08:15:59.920Z",
+      "specCode": "delivery-guide-routing-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:16:10.455Z",
+      "specCode": "delivery-guide-routing-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-17T08:20:27.522Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T08:20:27.526Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T08:21:02.217Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T08:21:02.218Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T08:21:02.219Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:21:35.865Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T08:27:15.354Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T08:27:15.356Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T08:27:49.924Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T08:28:30.891Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T08:28:30.892Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T08:28:30.893Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:28:48.485Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T08:29:26.293Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T08:29:26.294Z",
+      "specCode": "task-complete-delivery-hint-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-17T08:29:42.663Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-17T08:30:18.034Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-17T08:30:18.037Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-17T08:30:18.038Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:30:35.190Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-17T08:35:48.265Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-17T08:35:48.266Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T08:41:49.847Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-17T08:42:27.526Z",
+      "specCode": "task-complete-delivery-hint-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-17T08:42:45.336Z",
+      "specCode": "task-complete-delivery-hint-L3.1.1",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-16T09:38:26.581Z",
+  "lastUpdated": "2026-06-17T08:42:45.336Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

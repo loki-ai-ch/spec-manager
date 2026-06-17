@@ -122,6 +122,12 @@ You can drive the workflow yourself without memorizing the full process:
 
 ```bash
 spec-manager guide "add user authentication"     # prints the next useful step
+spec-manager assist guide --request "add user authentication"  # local context + next-command recommendation
+spec-manager assist critique auth-L1             # review spec quality gaps before approval
+spec-manager assist next T-001 --spec auth-L3.1.1 # task navigation and evidence summary
+spec-manager assist drift T-001 --spec auth-L3.1.1 # compare changed files to declared scope
+spec-manager assist acceptance T-001 --spec auth-L3.1.1 # summarize evidence, human acceptance, and residual risk
+spec-manager assist delivery T-001 --spec auth-L3.1.1 # prepare a user-facing handoff summary
 spec-manager new feature --topic auth "User authentication"
 spec-manager flow status --topic auth            # see where the work is blocked
 spec-manager view --topic auth                   # interactive browser

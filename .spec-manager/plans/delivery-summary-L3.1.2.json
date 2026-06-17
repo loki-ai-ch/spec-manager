@@ -1,0 +1,30 @@
+{
+  "coveredSpecs": ["delivery-summary-L3.1.2"],
+  "steps": [
+    {
+      "stepNo": 1,
+      "stepType": "tool_action",
+      "name": "读取 delivery-summary-L3.1.2 与现有 CLI/文档，确认实现边界"
+    },
+    {
+      "stepNo": 2,
+      "stepType": "tool_action",
+      "name": "新增 assist delivery CLI 与 text/json 渲染"
+    },
+    {
+      "stepNo": 3,
+      "stepType": "tool_action",
+      "name": "新增 CLI tests 覆盖 text/json/error/只读性"
+    },
+    {
+      "stepNo": 4,
+      "stepType": "tool_action",
+      "name": "更新 README、readme_zh、skill 和 templates 的交付提示"
+    },
+    {
+      "stepNo": 5,
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate"
+    }
+  ]
+}

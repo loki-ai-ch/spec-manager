@@ -1,0 +1,100 @@
+{
+  "id": "T-001",
+  "specCode": "guided-assist-workflow-L3.1.2-cli",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 guided-assist-workflow-L3.1.2-cli 与 capability/completion/documentation 上下文",
+      "status": "succeeded",
+      "toolName": "spec-manager/sed/rg",
+      "outputJson": "{\"summary\":\"已读取冻结 L3、src/cli/capability.ts、completion core/test、README/readme_zh、skill 和 agent templates 的 assist 文案位置。\"}",
+      "reportedAt": "2026-06-17T06:31:45.545Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 完善 assist guide 错误处理和 presenter",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已补 assist guide 空 request 和 task 缺 spec 的 exit 2；资源错误继续走现有 SPEC/TASK exit 1。\"}",
+      "reportedAt": "2026-06-17T06:33:03.761Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/__tests__/capability.test.ts 覆盖 assist guide CLI 错误和输出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已扩展 capability CLI tests 覆盖 assist guide JSON/text、empty request、task without spec、missing spec/task。\"}",
+      "reportedAt": "2026-06-17T06:57:29.151Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/completion.ts 和 src/core/__tests__/completion.test.ts 增加 assist guide completion",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已把 assist 加入顶层 completion，并加入 guide/brief/critique/next/drift/acceptance/lessons 子命令断言。\"}",
+      "reportedAt": "2026-06-17T06:34:15.076Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 README.md readme_zh.md skill/SKILL.md templates/agents/* 默认引导到 assist guide",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已将 README/readme_zh、skill、agent templates 的默认 assist 入口更新为 assist guide，并保留直达 acceptance/next/drift 命令。\"}",
+      "reportedAt": "2026-06-17T06:34:15.107Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "运行 targeted tests build full tests spec validate 和 assist guide smoke",
+      "status": "succeeded",
+      "toolName": "npm/test/build/node",
+      "outputJson": "{\"summary\":\"capability CLI targeted tests passed 15 tests; completion targeted tests passed 6 tests; npm run build passed; full tests passed 64 files/700 tests; spec validate passed; local dist assist guide JSON smoke passed.\"}",
+      "reportedAt": "2026-06-17T06:56:23.550Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T06:31:33.938Z",
+  "finishedAt": "2026-06-17T06:57:44.634Z",
+  "created": "2026-06-17T06:31:16.653Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "explicit",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/capability.test.ts && npm test -- src/core/__tests__/completion.test.ts && npm test",
+      "exitCode": 0,
+      "summary": "targeted capability/completion and full tests passed: 64 files, 700 tests",
+      "artifacts": [
+        "src/cli/__tests__/capability.test.ts",
+        "src/core/__tests__/completion.test.ts"
+      ],
+      "coversAc": [],
+      "created": "2026-06-17T06:56:35.071Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && spec-manager spec validate guided-assist-workflow-L3.1.2-cli && node dist/cli/index.js assist guide --request add auth --topic auth --json",
+      "exitCode": 0,
+      "summary": "build, spec validation, and local dist assist guide JSON smoke passed",
+      "artifacts": [
+        "dist/cli/capability.js",
+        "dist/core/completion.js"
+      ],
+      "coversAc": [],
+      "created": "2026-06-17T06:56:46.211Z",
+      "layer": "compile"
+    }
+  ]
+}

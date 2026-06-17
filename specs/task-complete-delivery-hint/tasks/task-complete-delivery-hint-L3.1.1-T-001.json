@@ -1,0 +1,100 @@
+{
+  "id": "T-001",
+  "specCode": "task-complete-delivery-hint-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 task-complete-delivery-hint-L3.1.1 与 task complete CLI 实现/测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3 and task complete CLI/tests; identified successful text/json output points and existing completion tests.\"}",
+      "reportedAt": "2026-06-17T08:37:33.495Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "在 task complete 成功 text/json 输出中增加 delivery nextCommand",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added task complete delivery nextCommand to successful text and JSON CLI output.\"}",
+      "reportedAt": "2026-06-17T08:38:45.902Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "补 CLI tests 覆盖 text/json/失败路径",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated task CLI tests for delivery nextCommand in JSON/text output and failure path suppression.\"}",
+      "reportedAt": "2026-06-17T08:39:00.227Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Validated task complete delivery hint with targeted task CLI tests, full test suite, TypeScript build, and spec validate.\"}",
+      "reportedAt": "2026-06-17T08:40:01.569Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T08:36:52.586Z",
+  "finishedAt": "2026-06-17T08:42:27.502Z",
+  "created": "2026-06-17T08:36:33.576Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/task.test.ts",
+      "exitCode": 0,
+      "summary": "task CLI tests passed: 30 tests including delivery nextCommand text/json/failure path",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-17T08:40:22.964Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full test suite passed: 65 files, 712 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-17T08:40:40.401Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-17T08:40:59.602Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "spec-manager spec validate task-complete-delivery-hint-L3.1.1",
+      "exitCode": 0,
+      "summary": "L3 validation passed with required sections and no RFC 2119 warnings",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-17T08:41:20.046Z",
+      "layer": "smoke"
+    }
+  ]
+}

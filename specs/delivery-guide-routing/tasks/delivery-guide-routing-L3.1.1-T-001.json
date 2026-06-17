@@ -1,0 +1,112 @@
+{
+  "id": "T-001",
+  "specCode": "delivery-guide-routing-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 delivery-guide-routing-L3.1.1 与现有 guided assist 实现和测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, guided-assist implementation, core tests, and CLI tests; confirmed scope is guided assist delivery stage routing only.\"}",
+      "reportedAt": "2026-06-17T08:09:45.584Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "扩展 GuidedAssistStage 并实现 delivery intent 路由",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended guided assist with delivery stage routing and updated stage/intent helpers.\"}",
+      "reportedAt": "2026-06-17T08:12:44.770Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "补 core 和 CLI tests 覆盖 delivery/acceptance/task-next 路由",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added core and CLI tests for delivery, acceptance evidence, and task-next routing behavior.\"}",
+      "reportedAt": "2026-06-17T08:13:19.672Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Validated delivery guide routing with targeted core/CLI tests, full test suite, TypeScript build, and spec validate.\"}",
+      "reportedAt": "2026-06-17T08:13:50.909Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T08:09:15.013Z",
+  "finishedAt": "2026-06-17T08:15:59.899Z",
+  "created": "2026-06-17T08:09:07.129Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/guided-assist.test.ts",
+      "exitCode": 0,
+      "summary": "guided assist routing tests passed: 9 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T08:14:06.212Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test -- src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "assist CLI tests passed: 19 tests including guide delivery JSON/text route",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T08:14:21.725Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full test suite passed: 65 files, 712 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T08:14:32.753Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-004",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T08:14:45.086Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-005",
+      "command": "spec-manager spec validate delivery-guide-routing-L3.1.1",
+      "exitCode": 0,
+      "summary": "L3 validation passed with required sections and no RFC 2119 warnings",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T08:14:55.116Z",
+      "layer": "smoke"
+    }
+  ]
+}

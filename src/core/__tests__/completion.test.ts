@@ -40,6 +40,11 @@ describe('generateCompletionScript', () => {
     expect(script).toContain('spec-manager spec list');
     expect(script).toContain('install');
     expect(script).toContain('uninstall');
+    expect(script).toContain('assist');
+    expect(script).toContain('guide');
+    expect(script).toContain('brief');
+    expect(script).toContain('acceptance');
+    expect(script).toContain('delivery');
   });
 });
 

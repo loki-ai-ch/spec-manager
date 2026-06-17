@@ -1,0 +1,109 @@
+{
+  "id": "T-001",
+  "specCode": "ai-capability-compensation-L3.1.4-acceptance",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 ai-capability-compensation-L3.1.4-acceptance 与相关 evidence/CLI 测试上下文",
+      "status": "succeeded",
+      "toolName": "spec-manager/sed",
+      "outputJson": "{\"summary\":\"已读取冻结 L3、task-evidence core、capability CLI、现有 core/CLI 测试模式。\"}",
+      "reportedAt": "2026-06-17T05:33:38.470Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/capability-types.ts 和 src/core/acceptance-report.ts 新增 AcceptanceReport projection",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已新增 AcceptanceReport/AcceptanceCriterionReport 类型和 buildAcceptanceReport projection。\"}",
+      "reportedAt": "2026-06-17T05:34:55.424Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 注册 assist acceptance 命令与文本输出",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已注册 assist acceptance <taskId> --spec <specCode> --json，并添加文本 presenter 与 task/spec 错误处理。\"}",
+      "reportedAt": "2026-06-17T05:35:02.312Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 README.md readme_zh.md skill/SKILL.md templates/agents/* 补齐 brief 到 acceptance 引导",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已在 README/readme_zh、skill 与 agent templates 增加 assist acceptance 短引导和示例。\"}",
+      "reportedAt": "2026-06-17T05:36:59.417Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/acceptance-report.test.ts 和 src/cli/__tests__/capability.test.ts 覆盖 core/CLI 行为",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已新增 acceptance-report core 测试，并扩展 capability CLI 测试覆盖 acceptance JSON/text/错误路径。\"}",
+      "reportedAt": "2026-06-17T05:38:07.094Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "运行 npm test -- src/core/__tests__/acceptance-report.test.ts 与 npm test -- src/cli/__tests__/capability.test.ts",
+      "status": "succeeded",
+      "toolName": "npm test",
+      "outputJson": "{\"summary\":\"targeted tests passed: acceptance-report.test.ts 3 tests, capability.test.ts 11 tests。\"}",
+      "reportedAt": "2026-06-17T05:39:00.706Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "运行 npm test npm run build spec-manager spec validate ai-capability-compensation-L3.1.4-acceptance 和 assist acceptance smoke",
+      "status": "succeeded",
+      "toolName": "npm/spec-manager/node",
+      "outputJson": "{\"summary\":\"full tests passed 63 files/689 tests; npm run build passed; L3 validate passed; local dist assist acceptance JSON/text smoke passed after recording verifications V-001/V-002。\"}",
+      "reportedAt": "2026-06-17T05:40:27.069Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T05:33:32.126Z",
+  "finishedAt": "2026-06-17T05:40:50.456Z",
+  "created": "2026-06-17T05:33:07.389Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "explicit",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/acceptance-report.test.ts && npm test -- src/cli/__tests__/capability.test.ts && npm test",
+      "exitCode": 0,
+      "summary": "targeted and full tests passed: 63 files, 689 tests",
+      "artifacts": [
+        "src/core/__tests__/acceptance-report.test.ts",
+        "src/cli/__tests__/capability.test.ts"
+      ],
+      "coversAc": [],
+      "created": "2026-06-17T05:40:02.589Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && spec-manager spec validate ai-capability-compensation-L3.1.4-acceptance && node dist/cli/index.js assist acceptance T-001 --spec ai-capability-compensation-L3.1.4-acceptance --json",
+      "exitCode": 0,
+      "summary": "build, L3 validation, and local dist CLI acceptance smoke passed",
+      "artifacts": [
+        "dist/cli/capability.js",
+        "dist/core/acceptance-report.js"
+      ],
+      "coversAc": [],
+      "created": "2026-06-17T05:40:10.333Z",
+      "layer": "compile"
+    }
+  ]
+}

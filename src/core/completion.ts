@@ -7,7 +7,7 @@ export type CompletionShell = (typeof COMPLETION_SHELLS)[number];
 
 const TOP_LEVEL_COMMANDS = [
   'project', 'spec', 'task', 'decision', 'change', 'incident', 'audit', 'dict',
-  'flow', 'guide', 'new', 'approve', 'run', 'template', 'view', 'completion',
+  'flow', 'guide', 'assist', 'new', 'approve', 'run', 'template', 'view', 'completion',
 ];
 
 const SUBCOMMANDS: Record<string, string[]> = {
@@ -20,6 +20,7 @@ const SUBCOMMANDS: Record<string, string[]> = {
   audit: ['session', 'hit', 'report', 'show'],
   dict: ['register', 'query', 'list'],
   flow: ['status'],
+  assist: ['guide', 'brief', 'critique', 'next', 'drift', 'acceptance', 'delivery', 'lessons'],
   new: ['feature'],
   completion: ['install', 'uninstall'],
 };

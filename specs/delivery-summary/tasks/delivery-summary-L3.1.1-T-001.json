@@ -1,0 +1,102 @@
+{
+  "id": "T-001",
+  "specCode": "delivery-summary-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 delivery-summary-L3.1.1 与相关 acceptance/task 类型，确认实现边界",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3 and related acceptance/task/evidence implementations; confirmed this slice is core-only and read-only.\"}",
+      "reportedAt": "2026-06-17T07:25:31.407Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "新增 DeliverySummaryReport 相关类型与 buildDeliverySummary core projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added delivery summary core types and buildDeliverySummary read-only projection.\"}",
+      "reportedAt": "2026-06-17T07:35:10.766Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "新增 core tests 覆盖 passed/failed/no verification/not completed/missing resource/只读性",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added delivery-summary core tests for passed, failed, missing verification, incomplete task, missing resources, and read-only behavior.\"}",
+      "reportedAt": "2026-06-17T07:35:20.011Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "运行 targeted tests、full tests、build 与 spec validate",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Validated delivery summary implementation with npm test, npm run build, and spec validate.\"}",
+      "reportedAt": "2026-06-17T07:40:58.857Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T07:21:37.491Z",
+  "finishedAt": "2026-06-17T07:42:32.993Z",
+  "created": "2026-06-17T07:21:28.029Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/delivery-summary.test.ts",
+      "exitCode": 0,
+      "summary": "delivery summary targeted core tests passed: 6 tests",
+      "artifacts": [
+        "src/core/__tests__/delivery-summary.test.ts"
+      ],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T07:41:10.912Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full test suite passed: 65 files, 706 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T07:41:22.367Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T07:41:32.534Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "spec-manager spec validate delivery-summary-L3.1.1",
+      "exitCode": 0,
+      "summary": "L3 spec validation passed with required sections and no RFC 2119 warnings",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-17T07:41:40.474Z",
+      "layer": "smoke"
+    }
+  ]
+}

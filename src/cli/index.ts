@@ -12,6 +12,7 @@ import { registerDictCommands } from './dict.js';
 import { registerUsabilityCommands } from './usability.js';
 import { registerViewCommands } from './view.js';
 import { registerCompletionCommands } from './completion.js';
+import { registerCapabilityCommands } from './capability.js';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../../package.json');
@@ -33,6 +34,7 @@ registerDictCommands(program);
 registerUsabilityCommands(program);
 registerViewCommands(program);
 registerCompletionCommands(program);
+registerCapabilityCommands(program);
 
 program.parseAsync(process.argv).catch((e) => {
   console.error('✗ ' + (e?.message ?? e));

@@ -212,6 +212,7 @@ describe('task CLI', () => {
     await expect(
       makeProgram().parseAsync(['task', 'complete', 'T-001', '--spec', specCode, '--skip-r18'], { from: 'user' }),
     ).rejects.toThrow(/BYPASS_REASON_REQUIRED/);
+    expect(output()).not.toContain('spec-manager assist delivery');
   });
 
   it('prints shownSteps and totalSteps for truncated task show', async () => {
@@ -553,7 +554,7 @@ describe('task CLI', () => {
     expect(output()).toContain('V-001:');
   });
 
-  it('keeps task complete json limited to the legacy result fields', async () => {
+  it('prints task complete json with delivery next command and legacy fields', async () => {
     const specCode = createFrozenL3WithTask();
     for (let stepNo = 1; stepNo <= 8; stepNo += 1) {
       reportStep({
@@ -584,13 +585,12 @@ describe('task CLI', () => {
     ], { from: 'user' });
 
     const result = JSON.parse(output());
-    expect(Object.keys(result).sort()).toEqual([
-      'cascadedL1Specs',
-      'cascadedSpecs',
-      'skippedSpecs',
-      'task',
-    ]);
+    expect(result.task.id).toBe('T-001');
+    expect(result.cascadedSpecs).toEqual(expect.any(Array));
+    expect(result.cascadedL1Specs).toEqual(expect.any(Array));
+    expect(result.skippedSpecs).toEqual(expect.any(Array));
     expect(result.gateResults).toBeUndefined();
+    expect(result.nextCommand).toBe(`spec-manager assist delivery T-001 --spec ${specCode}`);
   });
 
   it('prints successful verification gate summaries', async () => {
@@ -628,5 +628,7 @@ describe('task CLI', () => {
 
     expect(output()).toContain('✓ 验证命令通过 (1/1)');
     expect(output()).toContain('✓ @verify 规则通过 (0/0)');
+    expect(output()).toContain('Next:');
+    expect(output()).toContain(`spec-manager assist delivery T-001 --spec ${specCode}`);
   });
 });

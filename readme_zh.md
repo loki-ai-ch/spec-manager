@@ -122,6 +122,12 @@ spec-manager project agents --provider mimocode --dry-run
 
 ```bash
 spec-manager guide "新增用户认证"           # 告诉你下一步该做什么
+spec-manager assist guide --request "新增用户认证"  # 为 Agent 生成本地上下文与下一步建议
+spec-manager assist critique auth-L1        # 确认前审查规格质量缺口
+spec-manager assist next T-001 --spec auth-L3.1.1   # 导航任务下一步和证据
+spec-manager assist drift T-001 --spec auth-L3.1.1  # 对账实际变更与声明范围
+spec-manager assist acceptance T-001 --spec auth-L3.1.1 # 汇总证据、人工验收和残余风险
+spec-manager assist delivery T-001 --spec auth-L3.1.1   # 生成面向用户的交付摘要
 spec-manager new feature --topic auth "用户认证"
 spec-manager flow status --topic auth       # 看进度和阻塞点
 spec-manager view --topic auth              # 交互式浏览

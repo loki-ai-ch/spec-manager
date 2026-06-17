@@ -1,0 +1,122 @@
+{
+  "id": "T-001",
+  "specCode": "ai-capability-compensation-L3.1.3-next-drift",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 frozen L3 task evidence task APIs 和 assist CLI",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen next/drift L3, task evidence, task APIs, project snapshot, and existing assist CLI. Scope confirmed as assist next and assist drift only.\"}",
+      "reportedAt": "2026-06-17T05:21:09.151Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/capability-types.ts 新增 TaskNextReport DriftCheckReport 类型",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended src/core/capability-types.ts with TaskNextReport, DriftCheckReport, TaskStepSummary, and DriftFile schemas.\"}",
+      "reportedAt": "2026-06-17T05:22:38.736Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/task-next.ts 新增 task next projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/task-next.ts to build task-next reports from task state, incomplete steps, last failure, and task evidence.\"}",
+      "reportedAt": "2026-06-17T05:22:46.872Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/drift-check.ts 新增 drift check projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/drift-check.ts to compare declared scope and git changed files with conservative path-level drift detection.\"}",
+      "reportedAt": "2026-06-17T05:22:56.624Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 新增 assist next drift 命令",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended assist CLI with next and drift commands plus text presenters and shared error handling.\"}",
+      "reportedAt": "2026-06-17T05:23:05.040Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 core CLI tests 覆盖 task next drift check",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added task-next, drift-check, and capability CLI tests covering next JSON, drift text, missing resources, failed steps, missing verification, and undeclared files.\"}",
+      "reportedAt": "2026-06-17T05:26:26.426Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "编辑 README readme_zh 增加 assist next drift 示例",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated README.md and readme_zh.md with assist next and assist drift command examples.\"}",
+      "reportedAt": "2026-06-17T05:26:35.408Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- src/core/__tests__/task-next.test.ts src/core/__tests__/drift-check.test.ts src/cli/__tests__/capability.test.ts",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted task-next and drift-check tests passed with capability CLI coverage.\"}",
+      "reportedAt": "2026-06-17T05:27:10.140Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "tool_action",
+      "name": "验证: npm run build && npm test && spec-manager spec validate ai-capability-compensation-L3.1.3-next-drift",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Full verification passed: npm run build, spec validate, and npm test passed with 62 files and 684 tests.\"}",
+      "reportedAt": "2026-06-17T05:27:10.179Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T05:19:59.403Z",
+  "finishedAt": "2026-06-17T05:28:07.172Z",
+  "created": "2026-06-17T05:19:53.232Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "explicit",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build && npm test && spec-manager spec validate ai-capability-compensation-L3.1.3-next-drift",
+      "exitCode": 0,
+      "summary": "Full build, full test suite, and L3 spec validation passed: 62 files, 684 tests.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T05:27:10.318Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test -- src/core/__tests__/task-next.test.ts src/core/__tests__/drift-check.test.ts src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "Targeted task-next, drift-check, and capability CLI tests passed: 3 files, 15 tests.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T05:27:36.141Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "node dist/cli/index.js assist next T-001 --spec ai-capability-compensation-L3.1.3-next-drift --json && node dist/cli/index.js assist drift T-001 --spec ai-capability-compensation-L3.1.3-next-drift --json",
+      "exitCode": 0,
+      "summary": "CLI smoke passed for assist next and assist drift JSON output.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T05:27:44.582Z",
+      "layer": "smoke"
+    }
+  ]
+}

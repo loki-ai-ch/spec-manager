@@ -1,0 +1,100 @@
+{
+  "id": "T-001",
+  "specCode": "guided-assist-workflow-L3.1.1-core",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 guided-assist-workflow-L3.1.1-core 与相关 core API 测试上下文",
+      "status": "succeeded",
+      "toolName": "spec-manager/sed/rg",
+      "outputJson": "{\"summary\":\"已读取冻结 L3、capability types、spec/task APIs、drift/acceptance/task-next/brief 测试和 CLI capability 结构。\"}",
+      "reportedAt": "2026-06-17T06:06:49.497Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/capability-types.ts 增加 GuidedAssistReport 类型",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已新增 GuidedAssistStage、GuidedAssistAlternative、GuidedAssistReport 类型。\"}",
+      "reportedAt": "2026-06-17T06:07:03.510Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/guided-assist.ts 实现 stage 判定与推荐规则",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已新增 buildGuidedAssistReport，实现 request/topic/spec/task/git 的固定优先级 stage 判定与推荐规则。\"}",
+      "reportedAt": "2026-06-17T06:07:17.919Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/guided-assist.test.ts 覆盖 request spec task drift acceptance 场景",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已新增 guided-assist core tests 覆盖 request-only、draft spec、running task、drift、acceptance、needs-input 和 missing resource 场景。\"}",
+      "reportedAt": "2026-06-17T06:09:18.025Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "运行 npm test -- src/core/__tests__/guided-assist.test.ts",
+      "status": "succeeded",
+      "toolName": "npm test",
+      "outputJson": "{\"summary\":\"guided-assist core targeted tests passed: 7 tests. CLI capability targeted tests also passed: 14 tests; build passed.\"}",
+      "reportedAt": "2026-06-17T06:10:15.261Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "运行 npm test npm run build spec-manager spec validate guided-assist-workflow-L3.1.1-core",
+      "status": "succeeded",
+      "toolName": "npm/test/build/node",
+      "outputJson": "{\"summary\":\"full tests passed 64 files/699 tests; npm run build passed; spec validate passed; local dist assist guide JSON smoke passed; missing-spec smoke returned expected SPEC_NOT_FOUND.\"}",
+      "reportedAt": "2026-06-17T06:14:56.766Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T06:04:04.839Z",
+  "finishedAt": "2026-06-17T06:16:10.024Z",
+  "created": "2026-06-17T06:03:48.991Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "explicit",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/guided-assist.test.ts && npm test -- src/cli/__tests__/capability.test.ts && npm test",
+      "exitCode": 0,
+      "summary": "targeted core/CLI and full tests passed: 64 files, 699 tests",
+      "artifacts": [
+        "src/core/__tests__/guided-assist.test.ts",
+        "src/cli/__tests__/capability.test.ts"
+      ],
+      "coversAc": [],
+      "created": "2026-06-17T06:14:35.705Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && spec-manager spec validate guided-assist-workflow-L3.1.1-core && node dist/cli/index.js assist guide --request auth --topic auth --json",
+      "exitCode": 0,
+      "summary": "build, spec validation, and local dist assist guide smoke passed",
+      "artifacts": [
+        "dist/core/guided-assist.js",
+        "dist/cli/capability.js"
+      ],
+      "coversAc": [],
+      "created": "2026-06-17T06:14:35.732Z",
+      "layer": "compile"
+    }
+  ]
+}

@@ -1,0 +1,122 @@
+{
+  "id": "T-001",
+  "specCode": "ai-capability-compensation-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 frozen L3 父 L2 历史任务与相关 core CLI 文件",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, task/decision/incident repository APIs, plan template, and profile recommendation output. Scope confirmed as assist brief and assist lessons only.\"}",
+      "reportedAt": "2026-06-17T03:51:30.153Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/capability-types.ts 新增 assist shared schemas",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/capability-types.ts with shared assist severity, source refs, findings, lesson, brief refs, AgentBrief, and LessonsReport schemas.\"}",
+      "reportedAt": "2026-06-17T03:59:46.513Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/lessons.ts 新增 lessons aggregation projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/lessons.ts to aggregate failed task, decision, and incident lessons with deterministic confidence and advisory output.\"}",
+      "reportedAt": "2026-06-17T03:54:31.219Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/capability-brief.ts 新增 agent brief projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/capability-brief.ts to build AgentBrief with topic inference, profile recommendation, relevant specs decisions tasks, lessons, suggested reads, and next command.\"}",
+      "reportedAt": "2026-06-17T03:54:31.128Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 和 src/cli/index.ts 新增 assist CLI",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/cli/capability.ts and registered assist commands in src/cli/index.ts for assist brief and assist lessons text/json output.\"}",
+      "reportedAt": "2026-06-17T03:54:31.223Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 agent templates skill README 增加 brief 引导",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated agent templates, CodeBuddy skill, main skill, README, and Chinese README with concise assist brief guidance for non-trivial work.\"}",
+      "reportedAt": "2026-06-17T03:58:03.129Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "编辑 core CLI tests 覆盖 lessons brief assist 输出",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added lessons, capability brief, and assist CLI tests covering JSON contract, text advisory output, topic inference, profile injection, decisions, and failed task lessons.\"}",
+      "reportedAt": "2026-06-17T03:58:03.145Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- src/core/__tests__/lessons.test.ts src/core/__tests__/capability-brief.test.ts src/cli/__tests__/capability.test.ts",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted tests passed: lessons, capability-brief, and assist CLI test files all passed (9 tests).\"}",
+      "reportedAt": "2026-06-17T03:58:21.660Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "tool_action",
+      "name": "验证: npm run build && spec-manager spec validate ai-capability-compensation-L3.1.1",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Full verification passed: npm run build succeeded, spec validate passed, and npm test passed with 59 files and 666 tests.\"}",
+      "reportedAt": "2026-06-17T03:58:48.293Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T03:51:09.633Z",
+  "finishedAt": "2026-06-17T04:00:00.502Z",
+  "created": "2026-06-17T03:51:03.982Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "explicit",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/lessons.test.ts src/core/__tests__/capability-brief.test.ts src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "Targeted assist brief and lessons tests passed: 3 files, 9 tests.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T03:58:21.670Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && spec-manager spec validate ai-capability-compensation-L3.1.1 && npm test",
+      "exitCode": 0,
+      "summary": "Full build, L3 spec validation, and full test suite passed: 59 files, 666 tests.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T03:58:48.384Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "node dist/cli/index.js assist brief --request 'implement assist brief' --topic ai-capability-compensation --json && node dist/cli/index.js assist lessons --topic ai-capability-compensation --json",
+      "exitCode": 0,
+      "summary": "CLI smoke passed for assist brief and assist lessons JSON output.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T03:59:16.527Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "id": "T-001",
+  "specCode": "ai-capability-compensation-L3.1.2-critic",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 frozen L3 父 L2 已实现 assist 文件和测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen Spec Critic L3, parent L2, existing capability types, assist CLI, and current capability tests. Scope confirmed as assist critique only.\"}",
+      "reportedAt": "2026-06-17T04:08:38.082Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/capability-types.ts 新增 SpecCritiqueReport 类型",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended src/core/capability-types.ts with SpecCritiqueReport schema for blocking, warning, and advisory critique summaries.\"}",
+      "reportedAt": "2026-06-17T04:14:31.963Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/spec-critic.ts 新增 section parser 和分层规则",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/spec-critic.ts with section parser, L1/L2/L3 deterministic rules, advisory scope check, and SpecCritiqueReport builder.\"}",
+      "reportedAt": "2026-06-17T04:10:23.518Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 新增 assist critique 命令和 presenter",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added assist critique CLI command and text presenter in src/cli/capability.ts with JSON/text output and exit code handling.\"}",
+      "reportedAt": "2026-06-17T04:10:23.619Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 core CLI tests 覆盖 spec critic 和 assist critique",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/__tests__/spec-critic.test.ts and extended src/cli/__tests__/capability.test.ts for critique JSON, text, and missing-spec behavior.\"}",
+      "reportedAt": "2026-06-17T04:12:13.629Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 README readme_zh 增加 assist critique 示例",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated README.md and readme_zh.md with assist critique examples next to assist brief examples.\"}",
+      "reportedAt": "2026-06-17T04:14:44.480Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- src/core/__tests__/spec-critic.test.ts src/cli/__tests__/capability.test.ts",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted Spec Critic tests passed: spec-critic core and capability CLI tests passed with 12 tests.\"}",
+      "reportedAt": "2026-06-17T04:14:52.914Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: npm run build && npm test && spec-manager spec validate ai-capability-compensation-L3.1.2-critic",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Full verification passed: npm run build, L3 spec validate, and full npm test passed with 60 files and 675 tests.\"}",
+      "reportedAt": "2026-06-17T04:13:06.851Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-17T04:08:15.075Z",
+  "finishedAt": "2026-06-17T04:15:05.361Z",
+  "created": "2026-06-17T04:08:05.021Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "explicit",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/spec-critic.test.ts src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "Targeted assist critique tests passed: 2 files, 12 tests.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T04:12:38.725Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && npm test && spec-manager spec validate ai-capability-compensation-L3.1.2-critic",
+      "exitCode": 0,
+      "summary": "Full build, full test suite, and L3 spec validation passed: 60 files, 675 tests.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T04:13:06.982Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "node dist/cli/index.js assist critique ai-capability-compensation-L3.1.2-critic --json && node dist/cli/index.js assist critique ai-capability-compensation-L3.1.2-critic",
+      "exitCode": 0,
+      "summary": "CLI smoke passed for assist critique JSON and text output.",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-06-17T04:13:53.149Z",
+      "layer": "smoke"
+    }
+  ]
+}
