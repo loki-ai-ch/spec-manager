@@ -161,6 +161,37 @@ describe('buildTaskEvidence', () => {
     });
   });
 
+  it('projects successful design-lint verification as covered evidence', () => {
+    writeAdaptiveWorkflowConfig(paths, { enabled: true, defaultProfile: 'standard' });
+    const specCode = createFrozenL3('design-lint-evidence');
+    const { task } = createTask({ paths, specCode, planJson: planFor(specCode), autoConfirm: false });
+    startTask(paths, task.id, specCode);
+    addTaskVerification({
+      paths,
+      specCode,
+      taskId: task.id,
+      command: 'design-lint(DESIGN.md)',
+      exitCode: 0,
+      summary: 'DESIGN.md lint passed',
+      artifacts: ['DESIGN.md'],
+      coversAc: ['AC-1'],
+      layer: 'functional',
+    });
+
+    const evidence = buildTaskEvidence(paths, task.id, specCode);
+
+    expect(evidence.criticalCriteria.find(item => item.id === 'AC-1')).toMatchObject({
+      id: 'AC-1',
+      status: 'covered',
+      verificationIds: ['V-001'],
+    });
+    expect(evidence.verifications[0]).toMatchObject({
+      command: 'design-lint(DESIGN.md)',
+      exitCode: 0,
+      coversAc: ['AC-1'],
+    });
+  });
+
   it('throws stable errors for missing task, missing spec, and unknown critical AC', () => {
     expect(() => buildTaskEvidence(paths, 'T-404')).toThrow(/TASK_NOT_FOUND: T-404/);
 

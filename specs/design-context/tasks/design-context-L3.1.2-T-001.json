@@ -1,0 +1,149 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec-manager spec show design-context-L3.1.2 + design-context-L2.1 + task list + 读 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 Step 1 上下文收集，确认 design-context-L3.1.2 frozen、父 L2 已 implemented、前序 core task 已 completed，planJson 字段为 stepNo/stepType/name。\",\"files\":[\"specs/design-context/design-context-L3.1.2.md\",\"specs/design-context/design-context-L2.1.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:53:06.684Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "文件级分析: 读取 capability-types.ts + capability-brief.ts + cli/capability.ts + design-context.ts + brief 测试",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 Step 2 文件级分析，确认 AgentBrief 可新增可选 designContext，brief builder 可在 suggestedReads 前合并 DESIGN.md source ref，CLI renderBriefText 可插入 Design Context 段落。\",\"files\":[\"src/core/capability-types.ts\",\"src/core/capability-brief.ts\",\"src/cli/capability.ts\",\"src/core/design-context.ts\",\"src/core/__tests__/capability-brief.test.ts\",\"src/cli/__tests__/capability.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:53:14.421Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "扩展 src/core/capability-types.ts AgentBrief designContext 字段",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 AgentBrief 类型，新增可选 designContext 字段承载 DesignContextReport。\",\"files\":[\"src/core/capability-types.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:54:20.117Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "更新 src/core/capability-brief.ts 注入 DESIGN.md designContext 和 suggestedReads",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"在 buildAgentBrief 中按 isDesignRelevantRequest 注入存在的 DESIGN.md designContext，并添加 config:DESIGN.md suggested read；缺失文件不新增噪音 finding。\",\"files\":[\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:54:27.749Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "更新 src/cli/capability.ts renderBriefText 展示 Design Context",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"更新 assist brief 文本 presenter，展示 Design Context 名称、路径、lint summary、token counts、prose 和最多 5 条 finding。\",\"files\":[\"src/cli/capability.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:54:38.149Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "新增 src/core/__tests__/capability-brief.test.ts designContext 单元测试",
+      "status": "succeeded",
+      "toolName": "apply_patch+npm test",
+      "outputJson": "{\"summary\":\"新增 buildAgentBrief designContext 单元测试，覆盖 UI 请求注入、suggestedReads、非 UI 请求不注入、缺失 DESIGN.md 不新增噪音 finding。\",\"files\":[\"src/core/__tests__/capability-brief.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:56:08.457Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "新增 src/cli/__tests__/capability.test.ts assist brief JSON/text 输出测试",
+      "status": "succeeded",
+      "toolName": "apply_patch+npm test",
+      "outputJson": "{\"summary\":\"新增 assist brief JSON/text designContext 输出测试，定向 capability 测试通过：2 files/28 tests passed。\",\"files\":[\"src/cli/__tests__/capability.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:56:15.637Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run capability-brief.test.ts capability.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 Step 8 验证：定向 capability 测试 2 files/28 tests passed，全量 npm test 66 files/724 tests passed，npm run lint 通过。\",\"commands\":[\"npm test -- --run src/core/__tests__/capability-brief.test.ts src/cli/__tests__/capability.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "latencyMs": 8000,
+      "reportedAt": "2026-06-26T02:57:23.117Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T02:52:56.510Z",
+  "finishedAt": "2026-06-26T02:58:19.444Z",
+  "created": "2026-06-26T02:52:50.392Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/capability-brief.test.ts src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "Agent Brief designContext 定向测试通过：core/CLI 两个测试文件、28 tests passed。",
+      "artifacts": [
+        "src/core/__tests__/capability-brief.test.ts",
+        "src/cli/__tests__/capability.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T02:57:43.910Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量回归通过：66 test files、724 tests passed。",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T02:57:50.794Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript 编译检查通过，AgentBrief designContext 合约和 CLI presenter 可编译。",
+      "artifacts": [
+        "src/core/capability-types.ts",
+        "src/core/capability-brief.ts",
+        "src/cli/capability.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T02:57:58.318Z",
+      "layer": "compile"
+    }
+  ]
+}

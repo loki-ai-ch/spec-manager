@@ -1,4 +1,5 @@
 import type { ProfileRecommendation } from './profile-recommendation.js';
+import type { DesignContextReport } from './design-context.js';
 import type { EvidenceCoverageStatus, TaskEvidenceSummary } from './task-evidence.js';
 import type { TaskVerificationRecord, VerificationLayer } from './task.js';
 import type { WorkflowProfile } from './workflow-profile.js';
@@ -71,6 +72,7 @@ export interface AgentBrief {
   relevantDecisions: BriefDecisionRef[];
   relevantTasks: BriefTaskRef[];
   lessons: Lesson[];
+  designContext?: DesignContextReport;
   suggestedReads: AssistSourceRef[];
   findings: AssistFinding[];
   nextCommand: string;

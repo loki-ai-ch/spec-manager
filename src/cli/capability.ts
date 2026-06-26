@@ -385,6 +385,25 @@ function renderBriefText(brief: Awaited<ReturnType<typeof buildAgentBrief>>): vo
     console.log('Lessons:');
     for (const lesson of brief.lessons) console.log(`  - ${lesson.id} [${lesson.confidence}] ${lesson.title}`);
   }
+  const design = brief.designContext;
+  const summary = design?.summary;
+  if (design && summary) {
+    console.log(`Design Context: ${summary.name ?? 'DESIGN.md'}`);
+    console.log(`  file: ${design.path}`);
+    console.log(`  lint: errors=${design.result.errors}, warnings=${design.result.warnings}, infos=${design.result.infos}`);
+    console.log(`  tokens: colors=${summary.tokenCounts.colors}, typography=${summary.tokenCounts.typography}, spacing=${summary.tokenCounts.spacing}, rounded=${summary.tokenCounts.rounded}, components=${summary.tokenCounts.components}`);
+    if (summary.proseSummary.length > 0) {
+      console.log('  Prose:');
+      for (const item of summary.proseSummary.slice(0, 5)) console.log(`    - ${item}`);
+    }
+    const notableFindings = design.findings.filter(item => item.severity !== 'info').slice(0, 5);
+    if (notableFindings.length > 0) {
+      console.log('  Findings:');
+      for (const finding of notableFindings) {
+        console.log(`    - [${finding.severity}]${finding.path ? ` ${finding.path}:` : ''} ${finding.message}`);
+      }
+    }
+  }
   if (brief.suggestedReads.length > 0) {
     console.log('Suggested Reads:');
     for (const read of brief.suggestedReads) console.log(`  - ${read.kind}:${read.id}${read.path ? ` (${read.path})` : ''}`);

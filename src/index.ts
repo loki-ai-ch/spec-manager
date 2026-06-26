@@ -8,6 +8,7 @@ export * from './core/spec-policy.js';
 export * from './core/project-snapshot.js';
 export * from './core/archive-plan.js';
 export * from './core/agents.js';
+export * from './core/design-context.js';
 export * from './core/audit-events.js';
 export * from './core/repository.js';
 export * from './core/usability.js';

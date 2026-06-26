@@ -1,0 +1,147 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec-manager spec show design-context-L3.1.1 + design-context-L2.1 + task list + 读 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "inputJson": "{\"commands\":[\"spec-manager spec show design-context-L3.1.1 --include-content\",\"spec-manager spec show design-context-L2.1 --include-content\",\"spec-manager task list --topic design-context\",\"sed -n 1,220p templates/agent-plan.json\"]}",
+      "outputJson": "{\"summary\":\"完成 Step 1 上下文收集，确认 L3 frozen、父 L2 confirmed、T-001 running，planJson 字段为 stepNo/stepType/name。\",\"files\":[\"specs/design-context/design-context-L3.1.1.md\",\"specs/design-context/design-context-L2.1.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:41:48.362Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "文件级分析: 读取 src/core/paths.ts + src/core/__tests__/project-fixture.ts + src/index.ts 并搜索 report 命名",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "inputJson": "{\"commands\":[\"sed -n 1,240p src/core/paths.ts\",\"sed -n 1,180p src/core/__tests__/project-fixture.ts\",\"sed -n 1,220p src/index.ts\",\"rg -n summary:|findings:|schemaVersion src/core src/cli\"]}",
+      "outputJson": "{\"summary\":\"完成 Step 2 文件级分析，确认 resolveWithin 可限制 DESIGN.md 相对路径，ProjectPaths.root 是默认搜索根，测试 fixture 可写临时 root，src/index.ts 是公共 API 导出入口。\",\"files\":[\"src/core/paths.ts\",\"src/core/__tests__/project-fixture.ts\",\"src/index.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:42:48.321Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "新增 src/core/design-context.ts 报告类型和文件发现入口",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 design-context core 报告类型、BuildDesignContextInput、buildDesignContextReport 入口和 DESIGN.md 默认/覆盖路径解析。\",\"files\":[\"src/core/design-context.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:43:58.911Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "实现 src/core/design-context.ts Markdown 与 YAML frontmatter 解析",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 DESIGN.md frontmatter 提取、yaml 解析和 H2 section 提取，未引入 remark/citty/Bun 依赖。\",\"files\":[\"src/core/design-context.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:44:05.660Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "实现 src/core/design-context.ts lint findings 与摘要投影",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 missing YAML、YAML parse failure、missing name、broken token reference、duplicate H2、section order lint，以及 prose/token summary 和 result 计数。\",\"files\":[\"src/core/design-context.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:44:12.222Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "导出 src/index.ts design-context core API",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"从 src/index.ts 导出 core/design-context.js，供后续 L3 和第三方入口复用。\",\"files\":[\"src/index.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:44:29.550Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "新增 src/core/__tests__/design-context.test.ts core 单元测试",
+      "status": "succeeded",
+      "toolName": "apply_patch+npm test",
+      "outputJson": "{\"summary\":\"新增 design-context core 单元测试，覆盖 valid、missing file、missing YAML、broken ref、duplicate section、section order 和公共入口导出；定向测试 7 passed。\",\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T02:45:17.135Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run src/core/__tests__/design-context.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 Step 8 验证：design-context 定向测试 7 passed，全量 npm test 66 files/719 tests passed，npm run lint 通过。\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "latencyMs": 7000,
+      "reportedAt": "2026-06-26T02:45:38.565Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T02:40:40.314Z",
+  "finishedAt": "2026-06-26T02:47:53.938Z",
+  "created": "2026-06-26T02:40:19.468Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts",
+      "exitCode": 0,
+      "summary": "design-context core 定向测试通过，覆盖 valid/missing/broken/duplicate/order/public export 场景。",
+      "artifacts": [
+        "src/core/__tests__/design-context.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T02:45:58.256Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量回归通过：66 test files、719 tests passed。",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T02:46:04.200Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript 编译检查通过，公共入口导出类型可编译。",
+      "artifacts": [
+        "src/index.ts",
+        "src/core/design-context.ts"
+      ],
+      "coversAc": [
+        "AC-3"
+      ],
+      "created": "2026-06-26T02:46:14.600Z",
+      "layer": "compile"
+    }
+  ]
+}

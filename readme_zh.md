@@ -148,6 +148,14 @@ spec-manager task create auth-L3.1.1 --plan ./plan.json
 
 这部分是可选深度。大多数人先从 `guide`、`new feature` 或 AI prompt 开始就够了。
 
+## 设计上下文
+
+做 UI、视觉或样式相关工作时，可以在项目根目录放一个 `DESIGN.md` 描述产品的设计上下文。spec-manager 会把它当作可选的本地上下文，而不是 L2 技术设计的替代品。
+
+- `spec-manager assist brief --request "<UI 需求>"` 会在需求命中设计相关意图且 `DESIGN.md` 存在时自动带上 Design Context。
+- L3 规格可以使用 `@verify: design-lint(DESIGN.md)`，把 DESIGN.md lint 结果记录为 verification evidence。
+- 第一版只读取、摘要、lint 和报告 DESIGN.md；不会自动生成 UI、改写组件，也不依赖外部 design CLI。
+
 ## 核心概念
 
 - **L1**：做什么，为什么做

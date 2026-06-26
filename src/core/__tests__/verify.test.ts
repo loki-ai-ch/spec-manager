@@ -37,6 +37,15 @@ describe('parseVerifyRules', () => {
     ]);
   });
 
+  it('解析 design-lint 规则', () => {
+    const md = `## 验收标准
+
+1. @verify: design-lint(DESIGN.md)
+`;
+    const rules = parseVerifyRules(md, '验收标准');
+    expect(rules).toEqual([{ type: 'design-lint', path: 'DESIGN.md' }]);
+  });
+
   it('混合解析三种规则', () => {
     const md = `## 验收标准
 
@@ -208,6 +217,54 @@ describe('executeVerifyRules', () => {
     expect(results[1].passed).toBe(false);
     expect(results[2].passed).toBe(true);
   });
+
+  it('design-lint: valid DESIGN.md → passed=true', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), validDesign('Valid'));
+    const results = executeVerifyRules([{ type: 'design-lint', path: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(true);
+    expect(results[0].message).toContain('lint passed');
+    expect(results[0].message).toContain('errors=0');
+  });
+
+  it('design-lint: missing DESIGN.md → passed=false', () => {
+    const results = executeVerifyRules([{ type: 'design-lint', path: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(false);
+    expect(results[0].message).toContain('DESIGN.md not found');
+  });
+
+  it('design-lint: broken token reference → passed=false', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
+      '---',
+      'name: Broken',
+      'colors:',
+      '  primary: "{colors.missing}"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Broken design.',
+    ].join('\n'));
+
+    const results = executeVerifyRules([{ type: 'design-lint', path: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(false);
+    expect(results[0].message).toContain('errors=1');
+    expect(results[0].message).toContain('Broken token reference');
+  });
+
+  it('design-lint: warning-only DESIGN.md → passed=true', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
+      '# Untokened design',
+      '',
+      '## Overview',
+      '',
+      'No YAML here.',
+    ].join('\n'));
+
+    const results = executeVerifyRules([{ type: 'design-lint', path: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(true);
+    expect(results[0].message).toContain('errors=0');
+    expect(results[0].message).toContain('warnings=1');
+  });
 });
 
 describe('splitArgs', () => {
@@ -227,3 +284,17 @@ describe('splitArgs', () => {
     expect(splitArgs('npm run lint && echo ok')).toEqual(['npm run lint && echo ok']);
   });
 });
+
+function validDesign(name: string): string {
+  return [
+    '---',
+    `name: ${name}`,
+    'colors:',
+    '  primary: "#1A1C1E"',
+    '---',
+    '',
+    '## Overview',
+    '',
+    'Valid design.',
+  ].join('\n');
+}

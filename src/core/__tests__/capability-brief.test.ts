@@ -62,6 +62,33 @@ describe('buildAgentBrief', () => {
     expect(() => buildAgentBrief({ paths: project.paths, request: '   ' }))
       .toThrow(/AGENT_BRIEF_REQUEST_REQUIRED/);
   });
+
+  it('includes design context for visual requests when DESIGN.md exists', () => {
+    writeDesignFixture();
+
+    const brief = buildAgentBrief({ paths: project.paths, request: 'update UI button styling', topic: 'auth' });
+
+    expect(brief.designContext?.schemaVersion).toBe('design-context.v1');
+    expect(brief.designContext?.summary?.name).toBe('Heritage');
+    expect(brief.designContext?.summary?.tokenCounts.colors).toBe(1);
+    expect(brief.suggestedReads.map(ref => `${ref.kind}:${ref.id}`)).toContain('config:DESIGN.md');
+  });
+
+  it('does not include design context for non-visual requests', () => {
+    writeDesignFixture();
+
+    const brief = buildAgentBrief({ paths: project.paths, request: 'auth permission change', topic: 'auth' });
+
+    expect(brief.designContext).toBeUndefined();
+    expect(brief.suggestedReads.map(ref => `${ref.kind}:${ref.id}`)).not.toContain('config:DESIGN.md');
+  });
+
+  it('does not add missing DESIGN.md findings for visual requests', () => {
+    const brief = buildAgentBrief({ paths: project.paths, request: 'polish frontend layout', topic: 'auth' });
+
+    expect(brief.designContext).toBeUndefined();
+    expect(brief.findings.some(finding => finding.detail.includes('DESIGN.md'))).toBe(false);
+  });
 });
 
 describe('inferTopic', () => {
@@ -69,3 +96,21 @@ describe('inferTopic', () => {
     expect(inferTopic('add ai-capability-compensation brief')).toBe('ai-capability-compensation');
   });
 });
+
+function writeDesignFixture(): void {
+  writeFileSync(
+    `${project.root}/DESIGN.md`,
+    [
+      '---',
+      'name: Heritage',
+      'colors:',
+      '  primary: "#1A1C1E"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Editorial design system.',
+    ].join('\n'),
+    'utf8',
+  );
+}

@@ -1,0 +1,136 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.1.3",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec-manager spec show design-context-L3.1.3 + design-context-L2.1 + task list + 读 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 Step 1 上下文收集，确认 design-context-L3.1.3 frozen，前序 L3.1.1/L3.1.2 tasks completed，planJson 字段为 stepNo/stepType/name。\",\"files\":[\"specs/design-context/design-context-L3.1.3.md\",\"specs/design-context/design-context-L2.1.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T03:07:48.338Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "文件级分析: 读取 verify.ts + design-context.ts + task-evidence.ts + acceptance-report.ts + verify/evidence 测试",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 Step 2 文件级分析，确认 verify.ts 可扩展 VerifyRule/VERIFY_TYPE_ARITY/executeOne，design-context report 可复用，task-evidence 已基于 TaskVerificationRecord 自动投影 AC 覆盖。\",\"files\":[\"src/core/verify.ts\",\"src/core/design-context.ts\",\"src/core/task-evidence.ts\",\"src/core/acceptance-report.ts\",\"src/core/__tests__/verify.test.ts\",\"src/core/__tests__/task-evidence.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T03:07:57.643Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "扩展 src/core/verify.ts VerifyRule 和 parseVerifyRules 支持 design-lint",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"扩展 VerifyRule union、VERIFY_TYPE_ARITY 和 parseVerifyRules，支持 @verify: design-lint(DESIGN.md)。\",\"files\":[\"src/core/verify.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T03:08:24.987Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "实现 src/core/verify.ts design-lint 执行逻辑复用 design-context report",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"实现 design-lint 执行分支，复用 buildDesignContextReport，以 errors>0 或文件缺失为失败，warning/info 不阻塞，并输出 lint summary。\",\"files\":[\"src/core/verify.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T03:08:33.584Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "新增 src/core/__tests__/verify.test.ts design-lint parser/executor 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch+npm test",
+      "outputJson": "{\"summary\":\"新增 design-lint parser/executor 测试，覆盖解析、valid 通过、missing 失败、broken reference 失败、warning-only 通过。\",\"files\":[\"src/core/__tests__/verify.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T03:10:04.883Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "新增 src/core/__tests__/task-evidence.test.ts design-lint evidence 覆盖测试",
+      "status": "succeeded",
+      "toolName": "apply_patch+npm test",
+      "outputJson": "{\"summary\":\"新增 task evidence 兼容测试，确认 successful design-lint verification 可覆盖关键 AC 并关联 verification id；定向 verify/evidence 测试 2 files/34 tests passed。\",\"files\":[\"src/core/__tests__/task-evidence.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-06-26T03:10:15.619Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run verify.test.ts task-evidence.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 Step 7 验证：定向 verify/evidence 测试 2 files/34 tests passed，全量 npm test 66 files/730 tests passed，npm run lint 通过。\",\"commands\":[\"npm test -- --run src/core/__tests__/verify.test.ts src/core/__tests__/task-evidence.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "latencyMs": 8000,
+      "reportedAt": "2026-06-26T03:10:36.658Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T03:07:35.055Z",
+  "finishedAt": "2026-06-26T03:11:22.970Z",
+  "created": "2026-06-26T03:07:28.151Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/verify.test.ts src/core/__tests__/task-evidence.test.ts",
+      "exitCode": 0,
+      "summary": "design-lint verify/evidence 定向测试通过：2 files、34 tests passed。",
+      "artifacts": [
+        "src/core/__tests__/verify.test.ts",
+        "src/core/__tests__/task-evidence.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T03:10:44.838Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量回归通过：66 test files、730 tests passed。",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T03:10:54.614Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript 编译检查通过，design-lint VerifyRule 和 executor 类型可编译。",
+      "artifacts": [
+        "src/core/verify.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2"
+      ],
+      "created": "2026-06-26T03:11:02.629Z",
+      "layer": "compile"
+    }
+  ]
+}

@@ -1,4 +1,5 @@
 import { listDecisions } from './decision.js';
+import { buildDesignContextReport, isDesignRelevantRequest } from './design-context.js';
 import type { ProjectPaths } from './paths.js';
 import { recommendWorkflowProfile } from './profile-recommendation.js';
 import { listAllSpecs } from './spec-io.js';
@@ -36,6 +37,12 @@ export function buildAgentBrief(input: BuildAgentBriefInput): AgentBrief {
   const relevantTasks = selectTasks(input.paths, topic);
   const lessons = buildLessonsReport(input.paths, { topic: topic ?? undefined, request, limit: MAX_BRIEF_LESSONS }).lessons;
   const findings = buildFindings(topic, relevantSpecs, relevantDecisions, relevantTasks, lessons);
+  const designContext = isDesignRelevantRequest(request)
+    ? buildDesignContextReport({ paths: input.paths })
+    : null;
+  const designRef = designContext?.exists
+    ? designContextSourceRef(designContext)
+    : null;
 
   return {
     schemaVersion: 'agent-brief.v1',
@@ -46,7 +53,8 @@ export function buildAgentBrief(input: BuildAgentBriefInput): AgentBrief {
     relevantDecisions,
     relevantTasks,
     lessons,
-    suggestedReads: buildSuggestedReads(relevantSpecs, relevantDecisions, relevantTasks),
+    ...(designContext?.exists ? { designContext } : {}),
+    suggestedReads: buildSuggestedReads(relevantSpecs, relevantDecisions, relevantTasks, designRef ? [designRef] : []),
     findings,
     nextCommand: nextCommandFor(request, topic, relevantSpecs),
   };
@@ -146,11 +154,13 @@ function buildSuggestedReads(
   specs: BriefSpecRef[],
   decisions: BriefDecisionRef[],
   tasks: BriefTaskRef[],
+  extraRefs: AssistSourceRef[] = [],
 ): AssistSourceRef[] {
   const refs = [
     ...specs.map(item => item.sourceRef),
     ...decisions.map(item => item.sourceRef),
     ...tasks.map(item => item.sourceRef),
+    ...extraRefs,
   ];
   const seen = new Set<string>();
   return refs.filter(ref => {
@@ -159,6 +169,17 @@ function buildSuggestedReads(
     seen.add(key);
     return true;
   });
+}
+
+function designContextSourceRef(designContext: NonNullable<AgentBrief['designContext']>): AssistSourceRef {
+  return {
+    kind: 'config',
+    id: 'DESIGN.md',
+    path: designContext.path,
+    summary: designContext.summary?.name
+      ? `Design context: ${designContext.summary.name}`
+      : 'Design context',
+  };
 }
 
 function nextCommandFor(request: string, topic: string | null, specs: BriefSpecRef[]): string {

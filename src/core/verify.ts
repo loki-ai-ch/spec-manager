@@ -6,12 +6,15 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import path from 'node:path';
+import { buildDesignContextReport } from './design-context.js';
+import { getPaths } from './paths.js';
 
 /** @verify 规则 — 从 L3 验收标准段解析，不持久化 */
 export type VerifyRule =
   | { type: 'file-exists'; path: string }
   | { type: 'export-exists'; file: string; symbol: string }
-  | { type: 'command'; cmd: string };
+  | { type: 'command'; cmd: string }
+  | { type: 'design-lint'; path: string };
 
 /** 单条规则执行结果 */
 export interface VerifyResult {
@@ -29,6 +32,7 @@ export const VERIFY_TYPE_ARITY: Record<string, number> = {
   'file-exists': 1,
   'export-exists': 2,
   'command': 1,
+  'design-lint': 1,
 };
 
 /**
@@ -60,6 +64,8 @@ export function parseVerifyRules(content: string, sectionName: string): VerifyRu
       rules.push({ type: 'export-exists', file: args[0], symbol: args[1] });
     } else if (type === 'command' && args.length === 1) {
       rules.push({ type: 'command', cmd: args[0] });
+    } else if (type === 'design-lint' && args.length === 1) {
+      rules.push({ type: 'design-lint', path: args[0] });
     }
   }
   return rules;
@@ -113,6 +119,30 @@ function executeOne(rule: VerifyRule, projectRoot: string): VerifyResult {
         message: result.exitCode === 0
           ? `${rule.cmd} → exit 0`
           : `${rule.cmd} → exit ${result.exitCode}${result.output ? ': ' + result.output : ''}`,
+      };
+    }
+    case 'design-lint': {
+      const design = buildDesignContextReport({ paths: getPaths(projectRoot), filePath: rule.path });
+      const summary = `errors=${design.result.errors}, warnings=${design.result.warnings}, infos=${design.result.infos}`;
+      if (!design.exists) {
+        return {
+          rule,
+          passed: false,
+          message: `${rule.path} not found (${summary})`,
+        };
+      }
+      if (design.result.errors > 0) {
+        const firstError = design.findings.find(finding => finding.severity === 'error');
+        return {
+          rule,
+          passed: false,
+          message: `${rule.path} lint failed (${summary})${firstError ? `: ${firstError.message}` : ''}`,
+        };
+      }
+      return {
+        rule,
+        passed: true,
+        message: `${rule.path} lint passed (${summary})`,
       };
     }
   }

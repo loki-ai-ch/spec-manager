@@ -148,6 +148,14 @@ spec-manager task create auth-L3.1.1 --plan ./plan.json
 
 Think of this as optional depth. Most people should start with `guide`, `new feature`, or an AI agent prompt.
 
+## Design Context
+
+For UI, visual, or styling work, you can add a root-level `DESIGN.md` to describe the product's design context. spec-manager treats this file as optional local context, not as an L2 technical design replacement.
+
+- `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `DESIGN.md` exists.
+- L3 specs can use `@verify: design-lint(DESIGN.md)` to record DESIGN.md lint results as verification evidence.
+- The first version reads, summarizes, lints, and reports DESIGN.md; it does not generate UI, rewrite components, or depend on an external design CLI.
+
 ## Core Ideas
 
 - **L1**: what and why

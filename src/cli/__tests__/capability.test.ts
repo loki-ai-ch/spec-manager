@@ -88,6 +88,24 @@ function taskFilePath(specCode: string, taskId: string): string {
   return join(siblingMetaDir(spec.filePath, 'tasks'), `${specCode}-${taskId}${TASK_FILE_EXT}`);
 }
 
+function writeDesignFixture(): void {
+  writeFileSync(
+    join(project.root, 'DESIGN.md'),
+    [
+      '---',
+      'name: Heritage',
+      'colors:',
+      '  primary: "#1A1C1E"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Editorial design system.',
+    ].join('\n'),
+    'utf8',
+  );
+}
+
 describe('assist CLI', () => {
   it('prints guided assist JSON contract', async () => {
     await makeProgram().parseAsync(['assist', 'guide', '--request', 'auth login', '--topic', 'auth', '--json'], { from: 'user' });
@@ -140,6 +158,29 @@ describe('assist CLI', () => {
     expect(json.schemaVersion).toBe('agent-brief.v1');
     expect(json.topic).toBe('auth');
     expect(json.nextCommand).toBe('spec-manager flow status --topic auth');
+  });
+
+  it('prints brief JSON with design context for visual requests', async () => {
+    writeDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'brief', '--request', 'polish UI styling', '--topic', 'auth', '--json'], { from: 'user' });
+
+    const json = JSON.parse(output());
+    expect(json.schemaVersion).toBe('agent-brief.v1');
+    expect(json.designContext.schemaVersion).toBe('design-context.v1');
+    expect(json.designContext.summary.name).toBe('Heritage');
+    expect(json.suggestedReads.map((ref: { kind: string; id: string }) => `${ref.kind}:${ref.id}`)).toContain('config:DESIGN.md');
+  });
+
+  it('prints brief text with design context summary for visual requests', async () => {
+    writeDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'brief', '--request', 'polish UI styling', '--topic', 'auth'], { from: 'user' });
+
+    expect(output()).toContain('Design Context: Heritage');
+    expect(output()).toContain('lint: errors=0, warnings=0, infos=0');
+    expect(output()).toContain('tokens: colors=1');
+    expect(output()).toContain('config:DESIGN.md');
   });
 
   it('prints lessons text with advisory when empty', async () => {
