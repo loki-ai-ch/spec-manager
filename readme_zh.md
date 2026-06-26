@@ -153,9 +153,12 @@ spec-manager task create auth-L3.1.1 --plan ./plan.json
 做 UI、视觉或样式相关工作时，可以在项目根目录放一个 `DESIGN.md` 描述产品的设计上下文。spec-manager 会把它当作可选的本地上下文，而不是 L2 技术设计的替代品。
 
 - `spec-manager assist brief --request "<UI 需求>"` 会在需求命中设计相关意图且 `DESIGN.md` 存在时自动带上 Design Context。
+- `spec-manager assist design-template --out DESIGN.md` 会写入 starter DESIGN.md；默认不覆盖已有文件，除非传 `--force`。
+- `spec-manager assist design-export --format tokens-json --path DESIGN.md` 会导出规范化 tokens；使用 `--format dtcg-json` 可输出当前 DESIGN.md schema 的 DTCG JSON 子集，使用 `--out <file>` 可写入本地文件。
 - L3 规格可以使用 `@verify: design-lint(DESIGN.md)`，把 DESIGN.md lint 结果记录为 verification evidence。
+- 面向 review 的 L3 规格可以使用 `@verify: design-diff(DESIGN.before.md, DESIGN.md)` 比较两个显式 DESIGN.md 文件。该规则只在 after 文件新增 lint error/warning、任一文件缺失或移除 design token 时失败；新增/修改 token 和 section prose 变化会作为结构 diff 摘要展示。
 - schema lint 会把无效颜色、尺寸、typography 和 component token 结构报告为 error；未知 component property 会报告为 warning。按 finding path 修复，例如 `colors.primary` 或 `components.button-primary.animation`。
-- 第一版只读取、摘要、lint 和报告 DESIGN.md；不会自动生成 UI、改写组件，也不依赖外部 design CLI。
+- 第一版只读取、摘要、lint、diff 和报告 DESIGN.md；不会自动生成 UI、改写组件、判断视觉美学质量，也不依赖外部 design CLI。
 
 ## 核心概念
 

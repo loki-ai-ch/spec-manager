@@ -44,6 +44,51 @@ export interface BuildDesignContextInput {
   filePath?: string;
 }
 
+export interface DesignContextDiffSet {
+  added: string[];
+  removed: string[];
+  modified: string[];
+}
+
+export interface DesignContextDiffReport {
+  schemaVersion: 'design-context-diff.v1';
+  before: DesignContextReport;
+  after: DesignContextReport;
+  tokens: Record<TokenGroup, DesignContextDiffSet>;
+  sections: DesignContextDiffSet;
+  findings: {
+    before: DesignContextReport['result'];
+    after: DesignContextReport['result'];
+    delta: {
+      errors: number;
+      warnings: number;
+      infos: number;
+    };
+  };
+  regression: boolean;
+}
+
+export interface BuildDesignContextDiffInput {
+  paths: ProjectPaths;
+  beforePath: string;
+  afterPath: string;
+}
+
+export type DesignContextExportFormat = 'tokens-json' | 'dtcg-json';
+
+export interface BuildDesignContextExportInput {
+  paths: ProjectPaths;
+  filePath?: string;
+  format: DesignContextExportFormat;
+}
+
+export interface DesignContextExportReport {
+  schemaVersion: 'design-context-export.v1';
+  source: DesignContextReport;
+  format: DesignContextExportFormat;
+  output: Record<string, unknown>;
+}
+
 interface DesignSection {
   heading: string;
   content: string;
@@ -54,8 +99,15 @@ interface ParsedFrontmatter {
   body: string;
 }
 
+interface DesignContextParts {
+  report: DesignContextReport;
+  tokens: Record<string, unknown> | null;
+  sections: DesignSection[];
+}
+
 const DESIGN_FILE = 'DESIGN.md';
 const TOKEN_GROUPS = ['colors', 'typography', 'spacing', 'rounded', 'components'] as const;
+type TokenGroup = typeof TOKEN_GROUPS[number];
 const KNOWN_SECTION_ORDER = [
   'Overview',
   'Colors',
@@ -112,6 +164,105 @@ const COMPONENT_FIELDS = new Set([
 ]);
 
 export function buildDesignContextReport(input: BuildDesignContextInput): DesignContextReport {
+  return readDesignContextParts(input).report;
+}
+
+export function buildDesignContextDiffReport(input: BuildDesignContextDiffInput): DesignContextDiffReport {
+  const beforeParts = readDesignContextParts({ paths: input.paths, filePath: input.beforePath });
+  const afterParts = readDesignContextParts({ paths: input.paths, filePath: input.afterPath });
+  const tokens = Object.fromEntries(
+    TOKEN_GROUPS.map(group => [
+      group,
+      diffRecordKeys(tokenGroup(beforeParts.tokens, group), tokenGroup(afterParts.tokens, group)),
+    ]),
+  ) as Record<TokenGroup, DesignContextDiffSet>;
+  const sections = diffRecordKeys(sectionMap(beforeParts.sections), sectionMap(afterParts.sections));
+  const findingDelta = {
+    errors: afterParts.report.result.errors - beforeParts.report.result.errors,
+    warnings: afterParts.report.result.warnings - beforeParts.report.result.warnings,
+    infos: afterParts.report.result.infos - beforeParts.report.result.infos,
+  };
+  return {
+    schemaVersion: 'design-context-diff.v1',
+    before: beforeParts.report,
+    after: afterParts.report,
+    tokens,
+    sections,
+    findings: {
+      before: beforeParts.report.result,
+      after: afterParts.report.result,
+      delta: findingDelta,
+    },
+    regression: findingDelta.errors > 0
+      || findingDelta.warnings > 0
+      || TOKEN_GROUPS.some(group => tokens[group].removed.length > 0),
+  };
+}
+
+export function buildDesignContextExportReport(input: BuildDesignContextExportInput): DesignContextExportReport {
+  const parts = readDesignContextParts({ paths: input.paths, filePath: input.filePath });
+  return {
+    schemaVersion: 'design-context-export.v1',
+    source: parts.report,
+    format: input.format,
+    output: parts.report.exists && parts.report.result.errors === 0
+      ? buildExportOutput(parts.tokens, input.format)
+      : {},
+  };
+}
+
+export function buildDesignContextTemplate(): string {
+  return [
+    '---',
+    'name: Product Design System',
+    'description: Starter design context for UI work.',
+    'colors:',
+    '  primary: "#1A1C1E"',
+    '  surface: "#FFFFFF"',
+    '  text: "#1A1C1E"',
+    'typography:',
+    '  body:',
+    '    fontFamily: Inter',
+    '    fontSize: 16px',
+    '    fontWeight: 400',
+    '    lineHeight: 1.5',
+    'spacing:',
+    '  sm: 8px',
+    '  md: 16px',
+    'rounded:',
+    '  sm: 4px',
+    'components:',
+    '  button-primary:',
+    '    backgroundColor: "{colors.primary}"',
+    '    textColor: "{colors.surface}"',
+    '    typography: "{typography.body}"',
+    '    rounded: "{rounded.sm}"',
+    '    padding: "{spacing.sm}"',
+    '---',
+    '',
+    '## Overview',
+    '',
+    'Describe the visual intent, product mood, and interface density.',
+    '',
+    '## Colors',
+    '',
+    'Explain how primary, surface, and text colors should be applied.',
+    '',
+    '## Typography',
+    '',
+    'Describe type hierarchy, rhythm, and reading density.',
+    '',
+    '## Components',
+    '',
+    'Document reusable component behavior and visual constraints.',
+  ].join('\n') + '\n';
+}
+
+export function isDesignRelevantRequest(request: string): boolean {
+  return /\b(ui|ux|visual|style|styles|styling|css|design|theme|color|typography|layout|component|frontend|front-end)\b|界面|视觉|样式|颜色|字体|排版|布局|组件/.test(request.toLowerCase());
+}
+
+function readDesignContextParts(input: BuildDesignContextInput): DesignContextParts {
   const filePath = resolveDesignPath(input.paths, input.filePath);
   const findings: DesignContextFinding[] = [];
   if (!existsSync(filePath)) {
@@ -120,7 +271,7 @@ export function buildDesignContextReport(input: BuildDesignContextInput): Design
       path: filePath,
       message: `${DESIGN_FILE} not found`,
     });
-    return report(filePath, false, null, findings);
+    return { report: report(filePath, false, null, findings), tokens: null, sections: [] };
   }
 
   const content = readFileSync(filePath, 'utf8');
@@ -146,11 +297,11 @@ export function buildDesignContextReport(input: BuildDesignContextInput): Design
     findings.push(...lintTokenReferences(rawTokens));
   }
 
-  return report(filePath, true, buildSummary(rawTokens, sections), findings);
-}
-
-export function isDesignRelevantRequest(request: string): boolean {
-  return /\b(ui|ux|visual|style|styles|styling|css|design|theme|color|typography|layout|component|frontend|front-end)\b|界面|视觉|样式|颜色|字体|排版|布局|组件/.test(request.toLowerCase());
+  return {
+    report: report(filePath, true, buildSummary(rawTokens, sections), findings),
+    tokens: rawTokens,
+    sections,
+  };
 }
 
 function resolveDesignPath(paths: ProjectPaths, filePath?: string): string {
@@ -504,6 +655,86 @@ function isValidTypographyField(field: string, value: unknown): boolean {
   if (field === 'fontWeight') return typeof value === 'number' || typeof value === 'string';
   if (field === 'lineHeight') return typeof value === 'number' || isDimensionValue(value);
   return true;
+}
+
+function buildExportOutput(tokens: Record<string, unknown> | null, format: DesignContextExportFormat): Record<string, unknown> {
+  if (!tokens) return {};
+  const normalized = exportableTokenGroups(tokens);
+  return format === 'tokens-json' ? normalized : toDtcgTokens(normalized);
+}
+
+function exportableTokenGroups(tokens: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const group of TOKEN_GROUPS) {
+    const value = tokens[group];
+    if (isPlainObject(value)) out[group] = stableNormalize(value);
+  }
+  return out;
+}
+
+function toDtcgTokens(tokens: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const group of TOKEN_GROUPS) {
+    const value = tokens[group];
+    if (!isPlainObject(value)) continue;
+    out[group] = Object.fromEntries(
+      Object.keys(value).sort().map(key => [key, dtcgToken(group, value[key])]),
+    );
+  }
+  return out;
+}
+
+function dtcgToken(group: TokenGroup, value: unknown): Record<string, unknown> {
+  const type = group === 'colors'
+    ? 'color'
+    : group === 'spacing' || group === 'rounded'
+      ? 'dimension'
+      : group === 'typography'
+        ? 'typography'
+        : 'component';
+  return {
+    $type: type,
+    $value: stableNormalize(value),
+  };
+}
+
+function tokenGroup(tokens: Record<string, unknown> | null, group: TokenGroup): Record<string, unknown> {
+  const value = tokens?.[group];
+  return isPlainObject(value) ? value : {};
+}
+
+function sectionMap(sections: DesignSection[]): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const section of sections) {
+    out[canonicalSection(section.heading)] = section.content;
+  }
+  return out;
+}
+
+function diffRecordKeys(before: Record<string, unknown>, after: Record<string, unknown>): DesignContextDiffSet {
+  const beforeKeys = Object.keys(before).sort();
+  const afterKeys = Object.keys(after).sort();
+  const beforeSet = new Set(beforeKeys);
+  const afterSet = new Set(afterKeys);
+  return {
+    added: afterKeys.filter(key => !beforeSet.has(key)),
+    removed: beforeKeys.filter(key => !afterSet.has(key)),
+    modified: afterKeys.filter(key => beforeSet.has(key) && stableStringify(before[key]) !== stableStringify(after[key])),
+  };
+}
+
+function stableStringify(value: unknown): string {
+  return JSON.stringify(stableNormalize(value));
+}
+
+function stableNormalize(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(stableNormalize);
+  if (!isPlainObject(value)) return value;
+  const sorted: Record<string, unknown> = {};
+  for (const key of Object.keys(value).sort()) {
+    sorted[key] = stableNormalize(value[key]);
+  }
+  return sorted;
 }
 
 function buildSummary(rawTokens: Record<string, unknown> | null, sections: DesignSection[]): DesignContextSummary {

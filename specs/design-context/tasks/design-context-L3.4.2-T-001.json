@@ -1,0 +1,125 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.4.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec show L3.4.2 + L2.4 + L3.4.1 + task list + templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 L3.4.2 冻结规格、父 L2.4、L3.4.1、历史任务和 agent-plan 模板上下文收集\",\"files\":[\"specs/design-context/design-context-L3.4.2.md\",\"specs/design-context/design-context-L2.4.md\",\"specs/design-context/design-context-L3.4.1.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 260,
+      "reportedAt": "2026-06-26T13:37:54.322Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "CLI 与文档调查: 读取 capability.ts + capability.test.ts + design-context.ts + README/readme_zh/skill",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 capability CLI、capability 测试、design-context export API 与 DESIGN.md 文档落点调查\",\"files\":[\"src/cli/capability.ts\",\"src/cli/__tests__/capability.test.ts\",\"src/core/design-context.ts\",\"README.md\",\"readme_zh.md\",\".agents/skills/spec-manager/SKILL.md\"]}",
+      "latencyMs": 240,
+      "reportedAt": "2026-06-26T13:40:18.624Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 新增 assist design-export 命令",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 assist design-export CLI 命令\",\"files\":[\"src/cli/capability.ts\"]}",
+      "reportedAt": "2026-06-26T13:40:18.766Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 新增 assist design-template 命令",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 assist design-template CLI 命令\",\"files\":[\"src/cli/capability.ts\"]}",
+      "reportedAt": "2026-06-26T13:40:18.905Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/__tests__/capability.test.ts 增加 design export/template CLI 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"增加 design-export 和 design-template CLI 测试\",\"files\":[\"src/cli/__tests__/capability.test.ts\"]}",
+      "reportedAt": "2026-06-26T13:40:19.041Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "更新 README/readme_zh/skill design export/template 文档",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"更新 design export/template 文档和 skill 指引\",\"files\":[\"README.md\",\"readme_zh.md\",\".agents/skills/spec-manager/SKILL.md\",\".agents/skills/spec-manager/templates/agents/codebuddy-skill/SKILL.md\"]}",
+      "reportedAt": "2026-06-26T13:40:19.176Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run capability.test.ts design-context.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"完成 Design Export CLI and Docs 验证\",\"commands\":[\"npm test -- --run src/cli/__tests__/capability.test.ts src/core/__tests__/design-context.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "reportedAt": "2026-06-26T13:40:58.535Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T13:36:18.269Z",
+  "finishedAt": "2026-06-26T13:41:05.376Z",
+  "created": "2026-06-26T13:36:18.124Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/cli/__tests__/capability.test.ts src/core/__tests__/design-context.test.ts",
+      "exitCode": 0,
+      "summary": "design export CLI directed tests passed: 2 files, 46 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:40:58.679Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full vitest suite passed: 66 files, 756 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:40:58.825Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint passed with tsc --noEmit",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:40:58.972Z",
+      "layer": "compile"
+    }
+  ]
+}

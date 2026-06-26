@@ -1,0 +1,125 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.4.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec show L3.4.1 + L2.4 + L3.3.1 + task list + templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 L3.4.1 冻结规格、父 L2.4、L3.3.1、历史任务和 agent-plan 模板上下文收集\",\"files\":[\"specs/design-context/design-context-L3.4.1.md\",\"specs/design-context/design-context-L2.4.md\",\"specs/design-context/design-context-L3.3.1.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 260,
+      "reportedAt": "2026-06-26T13:26:36.360Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "代码调查: 读取 design-context.ts + design-context.test.ts + index.ts 并搜索 export API",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 design-context.ts、design-context.test.ts、index.ts 和 export API 冲突搜索\",\"files\":[\"src/core/design-context.ts\",\"src/core/__tests__/design-context.test.ts\",\"src/index.ts\"]}",
+      "latencyMs": 240,
+      "reportedAt": "2026-06-26T13:26:54.976Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 新增 export core 类型和 API",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 Design Context export core 类型和 API\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-26T13:28:26.900Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 tokens-json 和 dtcg-json mapper",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现 tokens-json 和 dtcg-json export mapper\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-26T13:28:27.052Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 DESIGN.md starter template builder",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现 DESIGN.md starter template builder\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-26T13:28:27.198Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/design-context.test.ts 增加 export core 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"增加 Design Context export core 测试\",\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "reportedAt": "2026-06-26T13:28:27.341Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run design-context.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"完成 Design Context Export Core 验证\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "reportedAt": "2026-06-26T13:29:01.051Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T13:25:09.274Z",
+  "finishedAt": "2026-06-26T13:29:07.879Z",
+  "created": "2026-06-26T13:25:09.122Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts",
+      "exitCode": 0,
+      "summary": "design-context export core directed tests passed: 18 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:29:01.198Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full vitest suite passed: 66 files, 750 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:29:01.343Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint passed with tsc --noEmit",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:29:01.492Z",
+      "layer": "compile"
+    }
+  ]
+}

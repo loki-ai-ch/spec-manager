@@ -1,5 +1,7 @@
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { dirname } from 'node:path';
 import { Command } from 'commander';
-import { getPaths } from '../core/paths.js';
+import { getPaths, resolveWithin } from '../core/paths.js';
 import { buildAgentBrief } from '../core/capability-brief.js';
 import { buildLessonsReport } from '../core/lessons.js';
 import { buildSpecCritique } from '../core/spec-critic.js';
@@ -8,6 +10,11 @@ import { buildDriftCheckReport } from '../core/drift-check.js';
 import { buildAcceptanceReport } from '../core/acceptance-report.js';
 import { buildGuidedAssistReport } from '../core/guided-assist.js';
 import { buildDeliverySummary } from '../core/delivery-summary.js';
+import {
+  buildDesignContextExportReport,
+  buildDesignContextTemplate,
+  type DesignContextExportFormat,
+} from '../core/design-context.js';
 import { requireInitialized } from './common.js';
 
 export function registerCapabilityCommands(program: Command): void {
@@ -74,6 +81,62 @@ export function registerCapabilityCommands(program: Command): void {
         }
         throw err;
       }
+    });
+
+  assist
+    .command('design-export')
+    .description('导出 DESIGN.md tokens JSON')
+    .option('--format <format>', 'tokens-json | dtcg-json', 'tokens-json')
+    .option('--path <path>', 'DESIGN.md 路径', 'DESIGN.md')
+    .option('--out <path>', '项目内输出文件')
+    .option('--json', '输出完整 export report JSON', false)
+    .action((opts: { format: string; path: string; out?: string; json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const format = parseDesignExportFormat(opts.format);
+      if (!format) {
+        console.error(`✗ DESIGN_EXPORT_FORMAT_INVALID: ${opts.format}`);
+        process.exit(2);
+      }
+      const report = buildDesignContextExportReport({ paths, filePath: opts.path, format });
+      if (!report.source.exists || report.source.result.errors > 0) {
+        console.error(`✗ DESIGN_EXPORT_FAILED: ${opts.path} errors=${report.source.result.errors}, warnings=${report.source.result.warnings}, infos=${report.source.result.infos}`);
+        process.exit(1);
+      }
+      const payload = opts.json && !opts.out ? report : report.output;
+      const text = JSON.stringify(payload, null, 2);
+      if (opts.out) {
+        const outPath = resolveWithin(paths.root, opts.out);
+        mkdirSync(dirname(outPath), { recursive: true });
+        writeFileSync(outPath, `${JSON.stringify(report.output, null, 2)}\n`, 'utf8');
+        console.log(`✓ Design export written: ${opts.out}`);
+        return;
+      }
+      console.log(text);
+    });
+
+  assist
+    .command('design-template')
+    .description('生成 starter DESIGN.md')
+    .option('--out <path>', '项目内输出文件', 'DESIGN.md')
+    .option('--force', '覆盖已有文件', false)
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { out: string; force: boolean; json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const outPath = resolveWithin(paths.root, opts.out);
+      if (existsSync(outPath) && !opts.force) {
+        console.error(`✗ DESIGN_TEMPLATE_EXISTS: ${opts.out} already exists; pass --force to overwrite`);
+        process.exit(1);
+      }
+      const content = buildDesignContextTemplate();
+      mkdirSync(dirname(outPath), { recursive: true });
+      writeFileSync(outPath, content, 'utf8');
+      if (opts.json) {
+        console.log(JSON.stringify({ path: opts.out, written: true, content }, null, 2));
+        return;
+      }
+      console.log(`✓ Design template written: ${opts.out}`);
     });
 
   assist
@@ -213,6 +276,10 @@ function handleTaskSpecError(err: unknown): never {
     process.exit(2);
   }
   throw err;
+}
+
+function parseDesignExportFormat(value: string): DesignContextExportFormat | null {
+  return value === 'tokens-json' || value === 'dtcg-json' ? value : null;
 }
 
 function renderGuidedAssistText(report: Awaited<ReturnType<typeof buildGuidedAssistReport>>): void {

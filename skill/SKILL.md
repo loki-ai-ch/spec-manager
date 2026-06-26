@@ -64,6 +64,7 @@ UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-ma
 - `quick` remains a restricted lightweight exception and does not create the full L1/L2/L3/Task chain.
 - Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
 - Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
+- For UI/visual/style work, root `DESIGN.md` is optional local design context. Use `spec-manager assist brief --request "<UI request>"` to read it, `spec-manager assist design-template --out DESIGN.md` to create a starter file, and `spec-manager assist design-export --format tokens-json --path DESIGN.md` when implementation tooling needs tokens. Use `@verify: design-lint(DESIGN.md)` for lint evidence; use `@verify: design-diff(DESIGN.before.md, DESIGN.md)` in review-oriented L3 specs when comparing two explicit DESIGN.md files. `design-export --format dtcg-json` is a DTCG subset for the current DESIGN.md schema. `design-diff` reports structural summary, not visual-quality judgment.
 - ALL spec/task operations MUST go through `spec-manager` CLI. Never write raw markdown to spec files or JSON to task files — raw writes bypass status machine, audit hits, and cascade logic.
 - Before marking any L3 as implemented, an Agent Task MUST be created and completed via `spec-manager task create/start/step/complete`. Direct `spec implement` is forbidden for L3 (R3).
 - After creating any spec, establish relations: `spec-manager spec add-relation <code> --type based_on --target <parentCode>`. L3 MUST have at least `based_on` to its parent L2.

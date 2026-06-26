@@ -1,9 +1,19 @@
 import { writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
-import { buildDesignContextReport } from '../design-context.js';
+import {
+  buildDesignContextDiffReport,
+  buildDesignContextExportReport,
+  buildDesignContextReport,
+  buildDesignContextTemplate,
+} from '../design-context.js';
 import { createTestProject } from './project-fixture.js';
-import { buildDesignContextReport as exportedBuildDesignContextReport } from '../../index.js';
+import {
+  buildDesignContextDiffReport as exportedBuildDesignContextDiffReport,
+  buildDesignContextExportReport as exportedBuildDesignContextExportReport,
+  buildDesignContextReport as exportedBuildDesignContextReport,
+  buildDesignContextTemplate as exportedBuildDesignContextTemplate,
+} from '../../index.js';
 
 describe('design context core', () => {
   test('builds a summary for a valid DESIGN.md', () => {
@@ -311,11 +321,350 @@ describe('design context core', () => {
     }
   });
 
-  test('exports buildDesignContextReport from the public entrypoint', () => {
+  test('diffs token groups with stable added removed and modified keys', () => {
+    const project = createTestProject('design-context-diff-tokens-');
+    try {
+      writeDesignFile(project.root, 'DESIGN.before.md', [
+        '---',
+        'name: Diff Before',
+        'colors:',
+        '  primary: "#111111"',
+        '  secondary: "#222222"',
+        'spacing:',
+        '  sm: 8px',
+        'components:',
+        '  button:',
+        '    backgroundColor: "{colors.primary}"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Original design.',
+      ].join('\n'));
+      writeDesign(project.root, [
+        '---',
+        'name: Diff After',
+        'colors:',
+        '  accent: "#444444"',
+        '  primary: "#333333"',
+        'spacing:',
+        '  sm: 8px',
+        '  md: 16px',
+        'components:',
+        '  button:',
+        '    backgroundColor: "{colors.accent}"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Original design.',
+      ].join('\n'));
+
+      const diff = buildDesignContextDiffReport({
+        paths: project.paths,
+        beforePath: 'DESIGN.before.md',
+        afterPath: 'DESIGN.md',
+      });
+
+      expect(diff.schemaVersion).toBe('design-context-diff.v1');
+      expect(diff.tokens.colors.added).toEqual(['accent']);
+      expect(diff.tokens.colors.removed).toEqual(['secondary']);
+      expect(diff.tokens.colors.modified).toEqual(['primary']);
+      expect(diff.tokens.spacing.added).toEqual(['md']);
+      expect(diff.tokens.components.modified).toEqual(['button']);
+      expect(diff.regression).toBe(true);
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('diffs canonical H2 sections by prose content', () => {
+    const project = createTestProject('design-context-diff-sections-');
+    try {
+      writeDesignFile(project.root, 'DESIGN.before.md', [
+        '---',
+        'name: Sections Before',
+        'colors:',
+        '  primary: "#111111"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Static design overview.',
+        '',
+        '## Colors',
+        '',
+        'Palette remains.',
+        '',
+        '## Typography',
+        '',
+        'Type rules.',
+      ].join('\n'));
+      writeDesign(project.root, [
+        '---',
+        'name: Sections After',
+        'colors:',
+        '  primary: "#111111"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Changed design overview.',
+        '',
+        '## Colors',
+        '',
+        'Palette remains.',
+        '',
+        '## Components',
+        '',
+        'Component guidance.',
+      ].join('\n'));
+
+      const diff = buildDesignContextDiffReport({
+        paths: project.paths,
+        beforePath: 'DESIGN.before.md',
+        afterPath: 'DESIGN.md',
+      });
+
+      expect(diff.sections.added).toEqual(['Components']);
+      expect(diff.sections.removed).toEqual(['Typography']);
+      expect(diff.sections.modified).toEqual(['Overview']);
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('reports lint result delta as a regression when after findings increase', () => {
+    const project = createTestProject('design-context-diff-findings-');
+    try {
+      writeDesignFile(project.root, 'DESIGN.before.md', [
+        '---',
+        'name: Clean Before',
+        'colors:',
+        '  primary: "#111111"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Clean design.',
+      ].join('\n'));
+      writeDesign(project.root, [
+        '---',
+        'name: Broken After',
+        'colors:',
+        '  primary: "not a color"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Broken design.',
+      ].join('\n'));
+
+      const diff = buildDesignContextDiffReport({
+        paths: project.paths,
+        beforePath: 'DESIGN.before.md',
+        afterPath: 'DESIGN.md',
+      });
+
+      expect(diff.findings.before.errors).toBe(0);
+      expect(diff.findings.after.errors).toBe(1);
+      expect(diff.findings.delta.errors).toBe(1);
+      expect(diff.regression).toBe(true);
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('exports tokens-json with stable token groups', () => {
+    const project = createTestProject('design-context-export-tokens-');
+    try {
+      writeDesign(project.root, exportFixture());
+
+      const report = buildDesignContextExportReport({ paths: project.paths, format: 'tokens-json' });
+
+      expect(report.schemaVersion).toBe('design-context-export.v1');
+      expect(report.format).toBe('tokens-json');
+      expect(report.source.result.errors).toBe(0);
+      expect(report.output).toEqual({
+        colors: {
+          accent: '#445566',
+          primary: '#112233',
+        },
+        typography: {
+          body: {
+            fontFamily: 'Inter',
+            fontSize: '16px',
+            fontWeight: 400,
+            lineHeight: 1.5,
+          },
+        },
+        spacing: {
+          md: '16px',
+          sm: '8px',
+        },
+        rounded: {
+          sm: '4px',
+        },
+        components: {
+          'button-primary': {
+            backgroundColor: '{colors.primary}',
+            padding: '{spacing.sm}',
+            rounded: '{rounded.sm}',
+            typography: '{typography.body}',
+          },
+        },
+      });
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('exports dtcg-json with token type and value wrappers', () => {
+    const project = createTestProject('design-context-export-dtcg-');
+    try {
+      writeDesign(project.root, exportFixture());
+
+      const report = buildDesignContextExportReport({ paths: project.paths, format: 'dtcg-json' });
+
+      expect(report.output).toMatchObject({
+        colors: {
+          primary: {
+            $type: 'color',
+            $value: '#112233',
+          },
+        },
+        spacing: {
+          sm: {
+            $type: 'dimension',
+            $value: '8px',
+          },
+        },
+        rounded: {
+          sm: {
+            $type: 'dimension',
+            $value: '4px',
+          },
+        },
+        typography: {
+          body: {
+            $type: 'typography',
+            $value: {
+              fontFamily: 'Inter',
+              fontSize: '16px',
+              fontWeight: 400,
+              lineHeight: 1.5,
+            },
+          },
+        },
+        components: {
+          'button-primary': {
+            $type: 'component',
+            $value: {
+              backgroundColor: '{colors.primary}',
+              padding: '{spacing.sm}',
+              rounded: '{rounded.sm}',
+              typography: '{typography.body}',
+            },
+          },
+        },
+      });
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('returns empty export output while preserving source errors for invalid DESIGN.md', () => {
+    const project = createTestProject('design-context-export-invalid-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Invalid Export',
+        'colors:',
+        '  primary: not-a-color',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Invalid export fixture.',
+      ].join('\n'));
+
+      const report = buildDesignContextExportReport({ paths: project.paths, format: 'tokens-json' });
+
+      expect(report.source.exists).toBe(true);
+      expect(report.source.result.errors).toBe(1);
+      expect(report.output).toEqual({});
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('builds a starter DESIGN.md template that passes lint', () => {
+    const project = createTestProject('design-context-template-');
+    try {
+      writeDesign(project.root, buildDesignContextTemplate());
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.exists).toBe(true);
+      expect(report.result.errors).toBe(0);
+      expect(report.summary?.name).toBe('Product Design System');
+      expect(report.summary?.sections).toEqual(['Overview', 'Colors', 'Typography', 'Components']);
+      expect(report.summary?.tokenCounts).toMatchObject({
+        colors: 3,
+        typography: 1,
+        spacing: 2,
+        rounded: 1,
+        components: 1,
+      });
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('exports design context builders from the public entrypoint', () => {
     expect(exportedBuildDesignContextReport).toBe(buildDesignContextReport);
+    expect(exportedBuildDesignContextDiffReport).toBe(buildDesignContextDiffReport);
+    expect(exportedBuildDesignContextExportReport).toBe(buildDesignContextExportReport);
+    expect(exportedBuildDesignContextTemplate).toBe(buildDesignContextTemplate);
   });
 });
 
+function writeDesignFile(root: string, fileName: string, content: string): void {
+  writeFileSync(join(root, fileName), content, 'utf8');
+}
+
 function writeDesign(root: string, content: string): void {
-  writeFileSync(join(root, 'DESIGN.md'), content, 'utf8');
+  writeDesignFile(root, 'DESIGN.md', content);
+}
+
+function exportFixture(): string {
+  return [
+    '---',
+    'name: Export Fixture',
+    'colors:',
+    '  primary: "#112233"',
+    '  accent: "#445566"',
+    'typography:',
+    '  body:',
+    '    lineHeight: 1.5',
+    '    fontWeight: 400',
+    '    fontSize: 16px',
+    '    fontFamily: Inter',
+    'spacing:',
+    '  sm: 8px',
+    '  md: 16px',
+    'rounded:',
+    '  sm: 4px',
+    'components:',
+    '  button-primary:',
+    '    typography: "{typography.body}"',
+    '    rounded: "{rounded.sm}"',
+    '    padding: "{spacing.sm}"',
+    '    backgroundColor: "{colors.primary}"',
+    '---',
+    '',
+    '## Overview',
+    '',
+    'Export fixture.',
+  ].join('\n');
 }

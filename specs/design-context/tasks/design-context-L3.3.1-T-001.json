@@ -1,0 +1,114 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.3.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec-manager spec show design-context-L3.3.1 + design-context-L2.3 + task list + 读 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 L3.3.1 冻结规格、父 L2.3、历史任务和 agent-plan 模板上下文收集\",\"files\":[\"specs/design-context/design-context-L3.3.1.md\",\"specs/design-context/design-context-L2.3.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 250,
+      "reportedAt": "2026-06-26T12:48:17.887Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "代码调查: 读取 design-context.ts + design-context.test.ts + index.ts 并搜索 buildDesignContext",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 diff core 代码调查，确认可在 design-context.ts 内新增 API 并通过 index.ts 通配导出\",\"files\":[\"src/core/design-context.ts\",\"src/core/__tests__/design-context.test.ts\",\"src/index.ts\"]}",
+      "latencyMs": 220,
+      "reportedAt": "2026-06-26T12:48:39.846Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 新增 diff core 类型和 API",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 Design Context diff core 类型和 API\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-26T12:51:33.368Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 token section finding diff",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现 DESIGN.md token section finding diff 计算\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-26T12:51:33.514Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/design-context.test.ts 增加 diff core 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 diff core 单元测试和 public export 覆盖\",\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "reportedAt": "2026-06-26T12:51:33.652Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run design-context.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"完成 Design Context Diff Core 验证\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "reportedAt": "2026-06-26T12:52:12.079Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T12:48:06.880Z",
+  "finishedAt": "2026-06-26T12:52:18.551Z",
+  "created": "2026-06-26T12:47:58.381Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts",
+      "exitCode": 0,
+      "summary": "design-context diff core directed tests passed: 14 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T12:52:12.223Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full vitest suite passed: 66 files, 739 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T12:52:12.364Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint passed with tsc --noEmit",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T12:52:12.508Z",
+      "layer": "compile"
+    }
+  ]
+}

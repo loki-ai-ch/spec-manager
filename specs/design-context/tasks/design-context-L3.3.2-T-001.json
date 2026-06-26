@@ -1,0 +1,124 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.3.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec show L3.3.2 + L2.3 + L3.3.1 + task list + templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 L3.3.2 冻结规格、父 L2.3、L3.3.1、历史任务和 agent-plan 模板上下文收集\",\"files\":[\"specs/design-context/design-context-L3.3.2.md\",\"specs/design-context/design-context-L2.3.md\",\"specs/design-context/design-context-L3.3.1.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 260,
+      "reportedAt": "2026-06-26T13:07:46.455Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "代码与文档调查: verify.ts + verify/task-complete tests + README/readme_zh/skill",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 verify executor、verify/task-complete 测试和 README/readme_zh/skill 文档调查\",\"files\":[\"src/core/verify.ts\",\"src/core/__tests__/verify.test.ts\",\"src/core/__tests__/task-complete-verify.test.ts\",\"README.md\",\"readme_zh.md\",\".agents/skills/spec-manager/SKILL.md\"]}",
+      "latencyMs": 240,
+      "reportedAt": "2026-06-26T13:11:20.371Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/verify.ts 扩展 design-diff rule 解析",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"扩展 @verify 解析支持 design-diff(before, after)\",\"files\":[\"src/core/verify.ts\"]}",
+      "reportedAt": "2026-06-26T13:11:20.521Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/verify.ts 实现 design-diff verification 执行",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现 design-diff verification 执行和摘要输出\",\"files\":[\"src/core/verify.ts\"]}",
+      "reportedAt": "2026-06-26T13:11:20.669Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 verify.test.ts 和 task-complete-verify.test.ts 增加 design-diff 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"增加 design-diff verification 与 task completion 测试\",\"files\":[\"src/core/__tests__/verify.test.ts\",\"src/core/__tests__/task-complete-verify.test.ts\"]}",
+      "reportedAt": "2026-06-26T13:11:20.818Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "更新 README/readme_zh/skill design-diff 文档",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"更新 design-diff verification 文档和 skill 指引\",\"files\":[\"README.md\",\"readme_zh.md\",\".agents/skills/spec-manager/SKILL.md\",\".agents/skills/spec-manager/templates/agents/codebuddy-skill/SKILL.md\"]}",
+      "reportedAt": "2026-06-26T13:11:20.965Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run verify.test.ts task-complete-verify.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"完成 Design Diff Verification and Docs 验证\",\"commands\":[\"npm test -- --run src/core/__tests__/verify.test.ts src/core/__tests__/task-complete-verify.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "reportedAt": "2026-06-26T13:11:55.865Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T13:06:59.676Z",
+  "finishedAt": "2026-06-26T13:12:03.122Z",
+  "created": "2026-06-26T13:06:59.533Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/verify.test.ts src/core/__tests__/task-complete-verify.test.ts",
+      "exitCode": 0,
+      "summary": "design-diff verification directed tests passed: 2 files, 48 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T13:11:56.015Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full vitest suite passed: 66 files, 746 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:11:56.170Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint passed with tsc --noEmit",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-26T13:11:56.319Z",
+      "layer": "compile"
+    }
+  ]
+}

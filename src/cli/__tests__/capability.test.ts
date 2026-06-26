@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerCapabilityCommands } from '../capability.js';
@@ -225,6 +225,81 @@ describe('assist CLI', () => {
     expect(output()).toContain('[error] typography.body: Typography token');
     expect(output()).not.toContain('[error] components.button-primary: Component token');
     expect(output()).toContain('2 more Design Context finding(s) omitted');
+  });
+
+  it('prints design export report JSON for tokens-json', async () => {
+    writeDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tokens-json', '--json'], { from: 'user' });
+
+    const json = JSON.parse(output());
+    expect(json.schemaVersion).toBe('design-context-export.v1');
+    expect(json.format).toBe('tokens-json');
+    expect(json.source.result.errors).toBe(0);
+    expect(json.output.colors.primary).toBe('#1A1C1E');
+  });
+
+  it('prints design export output JSON for dtcg-json', async () => {
+    writeDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'dtcg-json'], { from: 'user' });
+
+    const json = JSON.parse(output());
+    expect(json.colors.primary).toEqual({
+      $type: 'color',
+      $value: '#1A1C1E',
+    });
+  });
+
+  it('writes design export output to a project file', async () => {
+    writeDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'dtcg-json', '--out', 'tokens.dtcg.json'], { from: 'user' });
+
+    const outPath = join(project.root, 'tokens.dtcg.json');
+    expect(existsSync(outPath)).toBe(true);
+    const json = JSON.parse(readFileSync(outPath, 'utf8'));
+    expect(json.colors.primary.$type).toBe('color');
+    expect(output()).toContain('Design export written: tokens.dtcg.json');
+  });
+
+  it('rejects invalid DESIGN.md during design export', async () => {
+    writeInvalidDesignFixture();
+
+    await expect(makeProgram().parseAsync(['assist', 'design-export', '--format', 'tokens-json'], { from: 'user' }))
+      .rejects.toThrow('process.exit:1');
+
+    expect(errorSpy.mock.calls.map((call) => String(call[0])).join('\n')).toContain('DESIGN_EXPORT_FAILED');
+  });
+
+  it('writes a starter design template that can be exported', async () => {
+    await makeProgram().parseAsync(['assist', 'design-template', '--out', 'DESIGN.md', '--json'], { from: 'user' });
+
+    const templatePath = join(project.root, 'DESIGN.md');
+    expect(existsSync(templatePath)).toBe(true);
+    const json = JSON.parse(output());
+    expect(json.path).toBe('DESIGN.md');
+    expect(json.written).toBe(true);
+    expect(json.content).toContain('Product Design System');
+
+    logSpy.mockClear();
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tokens-json', '--json'], { from: 'user' });
+    const exportJson = JSON.parse(output());
+    expect(exportJson.source.result.errors).toBe(0);
+    expect(exportJson.output.components['button-primary']).toBeTruthy();
+  });
+
+  it('does not overwrite an existing design template unless forced', async () => {
+    writeFileSync(join(project.root, 'DESIGN.md'), 'existing design', 'utf8');
+
+    await expect(makeProgram().parseAsync(['assist', 'design-template', '--out', 'DESIGN.md'], { from: 'user' }))
+      .rejects.toThrow('process.exit:1');
+    expect(errorSpy.mock.calls.map((call) => String(call[0])).join('\n')).toContain('DESIGN_TEMPLATE_EXISTS');
+
+    await makeProgram().parseAsync(['assist', 'design-template', '--out', 'DESIGN.md', '--force'], { from: 'user' });
+
+    expect(readFileSync(join(project.root, 'DESIGN.md'), 'utf8')).toContain('Product Design System');
+    expect(output()).toContain('Design template written: DESIGN.md');
   });
 
   it('prints lessons text with advisory when empty', async () => {

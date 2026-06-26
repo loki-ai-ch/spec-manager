@@ -46,6 +46,15 @@ describe('parseVerifyRules', () => {
     expect(rules).toEqual([{ type: 'design-lint', path: 'DESIGN.md' }]);
   });
 
+  it('解析 design-diff 规则', () => {
+    const md = `## 验收标准
+
+1. @verify: design-diff(DESIGN.before.md, DESIGN.md)
+`;
+    const rules = parseVerifyRules(md, '验收标准');
+    expect(rules).toEqual([{ type: 'design-diff', beforePath: 'DESIGN.before.md', afterPath: 'DESIGN.md' }]);
+  });
+
   it('混合解析三种规则', () => {
     const md = `## 验收标准
 
@@ -292,6 +301,85 @@ describe('executeVerifyRules', () => {
     expect(results[0].passed).toBe(true);
     expect(results[0].message).toContain('errors=0');
     expect(results[0].message).toContain('warnings=1');
+  });
+
+  it('design-diff: no regression → passed=true with summary', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.before.md'), validDesign('Before'));
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
+      '---',
+      'name: After',
+      'colors:',
+      '  accent: "#334455"',
+      '  primary: "#1A1C1E"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Updated design.',
+      '',
+      '## Components',
+      '',
+      'New component notes.',
+    ].join('\n'));
+
+    const results = executeVerifyRules([{ type: 'design-diff', beforePath: 'DESIGN.before.md', afterPath: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(true);
+    expect(results[0].message).toContain('design diff passed');
+    expect(results[0].message).toContain('errorsΔ=0');
+    expect(results[0].message).toContain('warningsΔ=0');
+    expect(results[0].message).toContain('removedTokens=none');
+    expect(results[0].message).toContain('sections=added=Components');
+  });
+
+  it('design-diff: removed token → passed=false', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.before.md'), [
+      '---',
+      'name: Before',
+      'colors:',
+      '  primary: "#1A1C1E"',
+      '  secondary: "#222222"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Before design.',
+    ].join('\n'));
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), validDesign('After'));
+
+    const results = executeVerifyRules([{ type: 'design-diff', beforePath: 'DESIGN.before.md', afterPath: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(false);
+    expect(results[0].message).toContain('design diff regression');
+    expect(results[0].message).toContain('removedTokens=colors: secondary');
+  });
+
+  it('design-diff: after lint warnings increase → passed=false', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.before.md'), validDesign('Before'));
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
+      '# Untokened design',
+      '',
+      '## Overview',
+      '',
+      'No YAML here.',
+    ].join('\n'));
+
+    const results = executeVerifyRules([{ type: 'design-diff', beforePath: 'DESIGN.before.md', afterPath: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(false);
+    expect(results[0].message).toContain('warningsΔ=+1');
+  });
+
+  it('design-diff: missing before or after → passed=false', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), validDesign('After'));
+
+    const missingBefore = executeVerifyRules([{ type: 'design-diff', beforePath: 'DESIGN.before.md', afterPath: 'DESIGN.md' }], tmpDir);
+    expect(missingBefore[0].passed).toBe(false);
+    expect(missingBefore[0].message).toContain('DESIGN.before.md not found');
+
+    writeFileSync(path.join(tmpDir, 'DESIGN.before.md'), validDesign('Before'));
+    rmSync(path.join(tmpDir, 'DESIGN.md'), { force: true });
+
+    const missingAfter = executeVerifyRules([{ type: 'design-diff', beforePath: 'DESIGN.before.md', afterPath: 'DESIGN.md' }], tmpDir);
+    expect(missingAfter[0].passed).toBe(false);
+    expect(missingAfter[0].message).toContain('DESIGN.md not found');
   });
 });
 

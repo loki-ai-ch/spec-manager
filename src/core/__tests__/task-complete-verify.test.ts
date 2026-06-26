@@ -319,6 +319,95 @@ echo ok
     expect(() => completeTask({ paths, taskId: task.id, skipR18Check: true, bypassReason: 'test fixture' })).toThrow(/@verify 规则失败/);
   });
 
+  it('@verify design-diff 通过时 complete 成功', () => {
+    writeFileSync(join(root, 'DESIGN.before.md'), validDesign('Before'));
+    writeFileSync(join(root, 'DESIGN.md'), [
+      '---',
+      'name: After',
+      'colors:',
+      '  accent: "#334455"',
+      '  primary: "#1A1C1E"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Updated design.',
+    ].join('\n'));
+
+    const content = `# L3
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+echo ok
+\`\`\`
+
+## 验收标准
+1. AC-1
+2. @verify: design-diff(DESIGN.before.md, DESIGN.md)
+
+## 代码调查
+\`src/core/verify.ts\`
+`;
+    const l3Code = createFrozenL3WithContent(content);
+    const plan = planFor(l3Code);
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: plan });
+    startTask(paths, task.id);
+    markStepsAndVerify(paths, task.id, l3Code);
+
+    const result = completeTask({ paths, taskId: task.id, skipR18Check: true, bypassReason: 'test fixture' });
+    expect(result.task.status).toBe('completed');
+  });
+
+  it('@verify design-diff regression 时拒绝 complete', () => {
+    writeFileSync(join(root, 'DESIGN.before.md'), [
+      '---',
+      'name: Before',
+      'colors:',
+      '  primary: "#1A1C1E"',
+      '  secondary: "#222222"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Before design.',
+    ].join('\n'));
+    writeFileSync(join(root, 'DESIGN.md'), validDesign('After'));
+
+    const content = `# L3
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+\`\`\`bash
+echo ok
+\`\`\`
+
+## 验收标准
+1. AC-1
+2. @verify: design-diff(DESIGN.before.md, DESIGN.md)
+
+## 代码调查
+\`src/core/verify.ts\`
+`;
+    const l3Code = createFrozenL3WithContent(content);
+    const plan = planFor(l3Code);
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson: plan });
+    startTask(paths, task.id);
+    markStepsAndVerify(paths, task.id, l3Code);
+
+    expect(() => completeTask({ paths, taskId: task.id, skipR18Check: true, bypassReason: 'test fixture' })).toThrow(/@verify 规则失败/);
+  });
+
   it('--skip-verify 跳过 @verify 规则执行', () => {
     const content = `# L3
 
@@ -377,3 +466,17 @@ echo ok
     expect(result.task.status).toBe('completed');
   });
 });
+
+function validDesign(name: string): string {
+  return [
+    '---',
+    `name: ${name}`,
+    'colors:',
+    '  primary: "#1A1C1E"',
+    '---',
+    '',
+    '## Overview',
+    '',
+    'Valid design.',
+  ].join('\n');
+}

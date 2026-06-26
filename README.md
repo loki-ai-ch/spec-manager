@@ -153,9 +153,12 @@ Think of this as optional depth. Most people should start with `guide`, `new fea
 For UI, visual, or styling work, you can add a root-level `DESIGN.md` to describe the product's design context. spec-manager treats this file as optional local context, not as an L2 technical design replacement.
 
 - `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `DESIGN.md` exists.
+- `spec-manager assist design-template --out DESIGN.md` writes a starter DESIGN.md; it refuses to overwrite unless `--force` is passed.
+- `spec-manager assist design-export --format tokens-json --path DESIGN.md` exports normalized tokens; use `--format dtcg-json` for the current DESIGN.md schema's DTCG JSON subset, and `--out <file>` to write it locally.
 - L3 specs can use `@verify: design-lint(DESIGN.md)` to record DESIGN.md lint results as verification evidence.
+- Review-oriented L3 specs can use `@verify: design-diff(DESIGN.before.md, DESIGN.md)` to compare two explicit DESIGN.md files. The rule fails only when the after file increases lint errors/warnings, either file is missing, or a design token is removed; added/modified tokens and section prose changes are reported as structural diff summary.
 - Schema lint reports invalid color, dimension, typography, and component token shapes as errors; unknown component properties are warnings. Fix findings by the reported path, such as `colors.primary` or `components.button-primary.animation`.
-- The first version reads, summarizes, lints, and reports DESIGN.md; it does not generate UI, rewrite components, or depend on an external design CLI.
+- The first version reads, summarizes, lints, diffs, and reports DESIGN.md; it does not generate UI, rewrite components, judge visual quality, or depend on an external design CLI.
 
 ## Core Ideas
 

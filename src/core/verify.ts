@@ -6,7 +6,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import path from 'node:path';
-import { buildDesignContextReport } from './design-context.js';
+import { buildDesignContextDiffReport, buildDesignContextReport, type DesignContextDiffSet } from './design-context.js';
 import { getPaths } from './paths.js';
 
 /** @verify 规则 — 从 L3 验收标准段解析，不持久化 */
@@ -14,7 +14,8 @@ export type VerifyRule =
   | { type: 'file-exists'; path: string }
   | { type: 'export-exists'; file: string; symbol: string }
   | { type: 'command'; cmd: string }
-  | { type: 'design-lint'; path: string };
+  | { type: 'design-lint'; path: string }
+  | { type: 'design-diff'; beforePath: string; afterPath: string };
 
 /** 单条规则执行结果 */
 export interface VerifyResult {
@@ -33,6 +34,7 @@ export const VERIFY_TYPE_ARITY: Record<string, number> = {
   'export-exists': 2,
   'command': 1,
   'design-lint': 1,
+  'design-diff': 2,
 };
 
 /**
@@ -66,6 +68,8 @@ export function parseVerifyRules(content: string, sectionName: string): VerifyRu
       rules.push({ type: 'command', cmd: args[0] });
     } else if (type === 'design-lint' && args.length === 1) {
       rules.push({ type: 'design-lint', path: args[0] });
+    } else if (type === 'design-diff' && args.length === 2) {
+      rules.push({ type: 'design-diff', beforePath: args[0], afterPath: args[1] });
     }
   }
   return rules;
@@ -149,7 +153,53 @@ function executeOne(rule: VerifyRule, projectRoot: string): VerifyResult {
         message: `${rule.path} lint passed (${summary})`,
       };
     }
+    case 'design-diff': {
+      const diff = buildDesignContextDiffReport({
+        paths: getPaths(projectRoot),
+        beforePath: rule.beforePath,
+        afterPath: rule.afterPath,
+      });
+      const summary = designDiffSummary(rule.beforePath, rule.afterPath, diff);
+      const missingPath = !diff.before.exists ? rule.beforePath : !diff.after.exists ? rule.afterPath : null;
+      if (missingPath) {
+        return {
+          rule,
+          passed: false,
+          message: `${missingPath} not found (${summary})`,
+        };
+      }
+      return {
+        rule,
+        passed: !diff.regression,
+        message: diff.regression ? `design diff regression (${summary})` : `design diff passed (${summary})`,
+      };
+    }
   }
+}
+
+type DesignDiffReport = ReturnType<typeof buildDesignContextDiffReport>;
+
+function designDiffSummary(beforePath: string, afterPath: string, diff: DesignDiffReport): string {
+  const delta = diff.findings.delta;
+  const removedTokens = Object.entries(diff.tokens)
+    .filter(([, value]) => value.removed.length > 0)
+    .map(([group, value]) => `${group}: ${value.removed.join(', ')}`)
+    .join('; ');
+  return [
+    `${beforePath} -> ${afterPath}`,
+    `errorsΔ=${formatDelta(delta.errors)}`,
+    `warningsΔ=${formatDelta(delta.warnings)}`,
+    `removedTokens=${removedTokens || 'none'}`,
+    `sections=${formatDiffSet(diff.sections)}`,
+  ].join('; ');
+}
+
+function formatDiffSet(set: DesignContextDiffSet): string {
+  return `added=${set.added.length ? set.added.join(', ') : 'none'}, removed=${set.removed.length ? set.removed.join(', ') : 'none'}, modified=${set.modified.length ? set.modified.join(', ') : 'none'}`;
+}
+
+function formatDelta(value: number): string {
+  return value > 0 ? `+${value}` : String(value);
 }
 
 export interface RunCommandResult {
