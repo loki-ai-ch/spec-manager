@@ -21,7 +21,7 @@ spec-manager assist guide --request "<需求>"
 
 执行阶段可用 `spec-manager assist next <taskId> --spec <L3-code>` / `spec-manager assist drift <taskId> --spec <L3-code>` 对齐下一步和变更范围；验收前用 `spec-manager assist acceptance <taskId> --spec <L3-code>` 汇总证据、人工验收项和残余风险；最终回复前用 `spec-manager assist delivery <taskId> --spec <L3-code>` 生成面向用户的交付摘要。
 
-UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-manager assist brief --request "<需求>"`，如果项目根目录存在 `DESIGN.md` 且需求命中设计相关意图，Agent Brief 会包含 Design Context 摘要、lint 概览和 source ref。涉及设计约束验收的 L3 可以声明 `@verify: design-lint(DESIGN.md)`。注意：`DESIGN.md` 是产品视觉/设计上下文，不是 L2 Design 技术设计的替代品。
+UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-manager assist brief --request "<需求>"`，如果项目根目录存在 `DESIGN.md` 且需求命中设计相关意图，Agent Brief 会包含 Design Context 摘要、lint 概览和 source ref。涉及设计约束验收的 L3 可以声明 `@verify: design-lint(DESIGN.md)`。看到 Design Context findings 时，先按 path 修复 `DESIGN.md`，再继续 UI 实现。注意：`DESIGN.md` 是产品视觉/设计上下文，不是 L2 Design 技术设计的替代品。
 
 ## 入口路由
 

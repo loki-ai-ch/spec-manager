@@ -154,6 +154,7 @@ For UI, visual, or styling work, you can add a root-level `DESIGN.md` to describ
 
 - `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `DESIGN.md` exists.
 - L3 specs can use `@verify: design-lint(DESIGN.md)` to record DESIGN.md lint results as verification evidence.
+- Schema lint reports invalid color, dimension, typography, and component token shapes as errors; unknown component properties are warnings. Fix findings by the reported path, such as `colors.primary` or `components.button-primary.animation`.
 - The first version reads, summarizes, lints, and reports DESIGN.md; it does not generate UI, rewrite components, or depend on an external design CLI.
 
 ## Core Ideas

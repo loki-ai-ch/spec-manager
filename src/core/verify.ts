@@ -132,11 +132,15 @@ function executeOne(rule: VerifyRule, projectRoot: string): VerifyResult {
         };
       }
       if (design.result.errors > 0) {
-        const firstError = design.findings.find(finding => finding.severity === 'error');
+        const errors = design.findings.filter(finding => finding.severity === 'error').slice(0, 3);
+        const errorDetails = errors.map(finding => {
+          const location = finding.path ? `${finding.path}: ` : '';
+          return `[${finding.severity}] ${location}${finding.message}`;
+        }).join('; ');
         return {
           rule,
           passed: false,
-          message: `${rule.path} lint failed (${summary})${firstError ? `: ${firstError.message}` : ''}`,
+          message: `${rule.path} lint failed (${summary})${errorDetails ? `: ${errorDetails}` : ''}`,
         };
       }
       return {

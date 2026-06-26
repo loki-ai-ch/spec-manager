@@ -402,6 +402,10 @@ function renderBriefText(brief: Awaited<ReturnType<typeof buildAgentBrief>>): vo
       for (const finding of notableFindings) {
         console.log(`    - [${finding.severity}]${finding.path ? ` ${finding.path}:` : ''} ${finding.message}`);
       }
+      const remainingFindings = design.findings.filter(item => item.severity !== 'info').length - notableFindings.length;
+      if (remainingFindings > 0) {
+        console.log(`    - ... ${remainingFindings} more Design Context finding(s) omitted`);
+      }
     }
   }
   if (brief.suggestedReads.length > 0) {

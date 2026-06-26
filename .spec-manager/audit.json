@@ -1,32 +1,267 @@
 {
   "rules": {
-    "R1": 108,
-    "R2": 145,
+    "R1": 116,
+    "R2": 148,
     "R3": 2,
-    "R4": 125,
+    "R4": 128,
     "R5": 8,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 145,
+    "R9": 148,
     "R10": 10,
     "R11": 0,
     "R12": 4,
-    "R13": 107,
+    "R13": 115,
     "R14": 0,
     "R15": 0,
     "R16": 21,
     "R17": 0,
     "R18": 26,
-    "R19": 137,
+    "R19": 143,
     "R20": 0,
     "R21": 0,
-    "R22": 107,
+    "R22": 115,
     "R23": 0,
     "R24": 0
   },
-  "pending": [],
-  "lastUpdated": "2026-06-26T07:51:13.930Z",
+  "pending": [
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-26T08:02:02.543Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:03:07.144Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:03:07.145Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:03:07.146Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:03:54.598Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:03:54.599Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:03:54.599Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:04:21.877Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:04:21.878Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:04:21.878Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:04:37.748Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:04:37.749Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:04:37.749Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:05:24.655Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:05:24.656Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:05:24.656Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-26T08:05:44.503Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-26T08:06:43.610Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-26T08:17:45.407Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-26T08:17:45.407Z",
+      "specCode": "design-context-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-26T08:19:32.239Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:20:36.681Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:20:36.682Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:20:36.682Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:20:49.979Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:20:49.980Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:20:49.981Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-26T08:21:24.455Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-26T08:22:53.173Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-26T08:22:53.174Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-26T08:30:10.560Z",
+      "specCode": "design-context-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-26T08:30:53.034Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-26T08:32:07.273Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-26T08:32:07.274Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-26T08:32:07.275Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-26T08:32:56.918Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-26T08:33:29.778Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-26T08:33:29.779Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-26T08:40:31.697Z",
+      "specCode": "design-context-L3.2.2",
+      "reported": false
+    }
+  ],
+  "lastUpdated": "2026-06-26T08:40:31.697Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

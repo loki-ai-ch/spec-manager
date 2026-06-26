@@ -1,0 +1,122 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.2.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec-manager spec show design-context-L3.2.1 + design-context-L2.2 + task list + 读 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 L3.2.1 冻结规格、父 L2.2、历史任务和 agent-plan 模板上下文收集\",\"files\":[\"specs/design-context/design-context-L3.2.1.md\",\"specs/design-context/design-context-L2.2.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 250,
+      "reportedAt": "2026-06-26T08:24:49.235Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "代码调查: 读取 design-context.ts + design-context.test.ts + verify.test.ts 并搜索 design-lint",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 design-context core、core 测试和 verify 测试调查，确认 schema lint 增强可保持公共 API 不变\",\"files\":[\"src/core/design-context.ts\",\"src/core/__tests__/design-context.test.ts\",\"src/core/__tests__/verify.test.ts\"]}",
+      "latencyMs": 180,
+      "reportedAt": "2026-06-26T08:25:21.614Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 增加 token schema lint helper",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"增强 design-context core schema lint\",\"files\":[\"src/core/design-context.ts\"]}",
+      "latencyMs": 300,
+      "reportedAt": "2026-06-26T08:27:27.558Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/design-context.test.ts 增加 schema lint 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"增加 DESIGN.md schema lint 单元测试\",\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "latencyMs": 250,
+      "reportedAt": "2026-06-26T08:27:36.307Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/verify.test.ts 增加 invalid schema design-lint 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"增加 design-lint invalid schema verification 测试\",\"files\":[\"src/core/__tests__/verify.test.ts\"]}",
+      "latencyMs": 150,
+      "reportedAt": "2026-06-26T08:27:44.135Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run design-context.test.ts verify.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 Design Token Schema Lint 验证；定向测试 2 files/41 tests、全量测试 66 files/735 tests、lint 均通过\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts src/core/__tests__/verify.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "latencyMs": 6500,
+      "reportedAt": "2026-06-26T08:29:10.626Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T08:24:29.303Z",
+  "finishedAt": "2026-06-26T08:29:49.987Z",
+  "created": "2026-06-26T08:24:19.881Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts src/core/__tests__/verify.test.ts",
+      "exitCode": 0,
+      "summary": "定向测试通过：design-context/verify 共 2 files、41 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T08:29:21.806Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量测试通过：66 files、735 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T08:29:28.684Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint 通过：tsc --noEmit 无错误",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T08:29:36.082Z",
+      "layer": "compile"
+    }
+  ]
+}

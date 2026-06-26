@@ -154,6 +154,7 @@ spec-manager task create auth-L3.1.1 --plan ./plan.json
 
 - `spec-manager assist brief --request "<UI 需求>"` 会在需求命中设计相关意图且 `DESIGN.md` 存在时自动带上 Design Context。
 - L3 规格可以使用 `@verify: design-lint(DESIGN.md)`，把 DESIGN.md lint 结果记录为 verification evidence。
+- schema lint 会把无效颜色、尺寸、typography 和 component token 结构报告为 error；未知 component property 会报告为 warning。按 finding path 修复，例如 `colors.primary` 或 `components.button-primary.animation`。
 - 第一版只读取、摘要、lint 和报告 DESIGN.md；不会自动生成 UI、改写组件，也不依赖外部 design CLI。
 
 ## 核心概念

@@ -72,6 +72,44 @@ const SECTION_ALIASES: Record<string, string> = {
   Elevation: 'Elevation & Depth',
 };
 const TOKEN_REF_RE = /\{([a-zA-Z0-9_.-]+)\}/g;
+const DIMENSION_RE = /^-?(?:\d+|\d*\.\d+)(?:px|em|rem)$/;
+const HEX_COLOR_RE = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+const SIMPLE_COLOR_FUNCTION_RE = /^(?:rgb|rgba|hsl|hsla)\(.+\)$/i;
+const MODERN_COLOR_FUNCTION_RE = /^(?:oklch|oklab|lch|lab|hwb|color|color-mix)\(.+\)$/i;
+const NAMED_COLORS = new Set([
+  'black',
+  'blue',
+  'cornflowerblue',
+  'currentcolor',
+  'gray',
+  'green',
+  'grey',
+  'orange',
+  'purple',
+  'red',
+  'transparent',
+  'white',
+  'yellow',
+]);
+const TYPOGRAPHY_FIELDS = new Set([
+  'fontFamily',
+  'fontSize',
+  'fontWeight',
+  'lineHeight',
+  'letterSpacing',
+  'fontFeature',
+  'fontVariation',
+]);
+const COMPONENT_FIELDS = new Set([
+  'backgroundColor',
+  'textColor',
+  'typography',
+  'rounded',
+  'padding',
+  'size',
+  'height',
+  'width',
+]);
 
 export function buildDesignContextReport(input: BuildDesignContextInput): DesignContextReport {
   const filePath = resolveDesignPath(input.paths, input.filePath);
@@ -104,6 +142,7 @@ export function buildDesignContextReport(input: BuildDesignContextInput): Design
     });
   }
   if (rawTokens) {
+    findings.push(...lintDesignTokenSchema(rawTokens));
     findings.push(...lintTokenReferences(rawTokens));
   }
 
@@ -233,12 +272,173 @@ function lintTokenReferences(rawTokens: Record<string, unknown>): DesignContextF
   const findings: DesignContextFinding[] = [];
   const refs = collectReferences(rawTokens);
   for (const ref of refs) {
-    if (!hasTokenPath(rawTokens, ref.ref)) {
+    const target = getTokenPath(rawTokens, ref.ref);
+    if (target === undefined) {
       findings.push({
         severity: 'error',
         path: ref.path,
         message: `Broken token reference: {${ref.ref}}`,
       });
+    } else if (isPlainObject(target) && !allowsCompositeReference(ref.path, ref.ref)) {
+      findings.push({
+        severity: 'error',
+        path: ref.path,
+        message: `Token reference must point to a primitive value: {${ref.ref}}`,
+      });
+    }
+  }
+  return findings;
+}
+
+function lintDesignTokenSchema(rawTokens: Record<string, unknown>): DesignContextFinding[] {
+  return [
+    ...lintTokenGroups(rawTokens),
+    ...lintColorTokens(rawTokens),
+    ...lintDimensionGroup(rawTokens, 'spacing'),
+    ...lintDimensionGroup(rawTokens, 'rounded'),
+    ...lintTypographyTokens(rawTokens),
+    ...lintComponentTokens(rawTokens),
+  ];
+}
+
+function lintTokenGroups(rawTokens: Record<string, unknown>): DesignContextFinding[] {
+  const findings: DesignContextFinding[] = [];
+  for (const group of TOKEN_GROUPS) {
+    const value = rawTokens[group];
+    if (value === undefined || isPlainObject(value)) continue;
+    findings.push({
+      severity: 'error',
+      path: group,
+      message: `Token group '${group}' must be an object.`,
+    });
+  }
+  return findings;
+}
+
+function lintColorTokens(rawTokens: Record<string, unknown>): DesignContextFinding[] {
+  const colors = rawTokens['colors'];
+  if (!isPlainObject(colors)) return [];
+
+  const findings: DesignContextFinding[] = [];
+  for (const [name, value] of Object.entries(colors)) {
+    const path = `colors.${name}`;
+    if (isTokenReferenceString(value)) continue;
+    if (typeof value !== 'string') {
+      findings.push({
+        severity: 'error',
+        path,
+        message: `Color token '${name}' must be a string color value or token reference.`,
+      });
+      continue;
+    }
+    const normalized = value.trim();
+    if (isSupportedColor(normalized)) continue;
+    if (MODERN_COLOR_FUNCTION_RE.test(normalized)) {
+      findings.push({
+        severity: 'warning',
+        path,
+        message: `Color token '${name}' uses a modern CSS color function that is accepted without full parsing.`,
+      });
+      continue;
+    }
+    findings.push({
+      severity: 'error',
+      path,
+      message: `Color token '${name}' is not a supported color value.`,
+    });
+  }
+  return findings;
+}
+
+function lintDimensionGroup(rawTokens: Record<string, unknown>, group: 'spacing' | 'rounded'): DesignContextFinding[] {
+  const values = rawTokens[group];
+  if (!isPlainObject(values)) return [];
+
+  const findings: DesignContextFinding[] = [];
+  for (const [name, value] of Object.entries(values)) {
+    if (isTokenReferenceString(value) || isDimensionValue(value)) continue;
+    findings.push({
+      severity: 'error',
+      path: `${group}.${name}`,
+      message: `${group} token '${name}' must be a number, px/em/rem dimension, or token reference.`,
+    });
+  }
+  return findings;
+}
+
+function lintTypographyTokens(rawTokens: Record<string, unknown>): DesignContextFinding[] {
+  const typography = rawTokens['typography'];
+  if (!isPlainObject(typography)) return [];
+
+  const findings: DesignContextFinding[] = [];
+  for (const [name, value] of Object.entries(typography)) {
+    const path = `typography.${name}`;
+    if (!isPlainObject(value)) {
+      findings.push({
+        severity: 'error',
+        path,
+        message: `Typography token '${name}' must be an object.`,
+      });
+      continue;
+    }
+    if (typeof value['fontFamily'] !== 'string') {
+      findings.push({
+        severity: 'warning',
+        path: `${path}.fontFamily`,
+        message: `Typography token '${name}' should define fontFamily.`,
+      });
+    }
+    if (!isDimensionValue(value['fontSize'])) {
+      findings.push({
+        severity: 'warning',
+        path: `${path}.fontSize`,
+        message: `Typography token '${name}' should define fontSize as a dimension.`,
+      });
+    }
+    for (const [field, fieldValue] of Object.entries(value)) {
+      if (!TYPOGRAPHY_FIELDS.has(field)) {
+        findings.push({
+          severity: 'warning',
+          path: `${path}.${field}`,
+          message: `Unknown typography property '${field}'.`,
+        });
+        continue;
+      }
+      if (!isValidTypographyField(field, fieldValue)) {
+        findings.push({
+          severity: 'error',
+          path: `${path}.${field}`,
+          message: `Typography property '${field}' has an invalid value.`,
+        });
+      }
+    }
+  }
+  return findings;
+}
+
+function lintComponentTokens(rawTokens: Record<string, unknown>): DesignContextFinding[] {
+  const components = rawTokens['components'];
+  if (!isPlainObject(components)) return [];
+
+  const findings: DesignContextFinding[] = [];
+  for (const [name, value] of Object.entries(components)) {
+    const path = `components.${name}`;
+    if (!isPlainObject(value)) {
+      findings.push({
+        severity: 'error',
+        path,
+        message: `Component token '${name}' must be an object.`,
+      });
+      continue;
+    }
+    for (const property of Object.keys(value)) {
+      if (!COMPONENT_FIELDS.has(property)) {
+        findings.push({
+          severity: 'warning',
+          path: `${path}.${property}`,
+          message: `Unknown component property '${property}'.`,
+        });
+      }
     }
   }
   return findings;
@@ -260,15 +460,50 @@ function collectReferences(value: unknown, path = ''): Array<{ path: string; ref
   return refs;
 }
 
-function hasTokenPath(rawTokens: Record<string, unknown>, ref: string): boolean {
+function getTokenPath(rawTokens: Record<string, unknown>, ref: string): unknown {
   const parts = ref.split('.');
   let current: unknown = rawTokens;
   for (const part of parts) {
-    if (!current || typeof current !== 'object' || Array.isArray(current)) return false;
-    if (!(part in current)) return false;
+    if (!isPlainObject(current)) return undefined;
+    if (!(part in current)) return undefined;
     current = (current as Record<string, unknown>)[part];
   }
-  return current !== undefined;
+  return current;
+}
+
+function allowsCompositeReference(path: string, ref: string): boolean {
+  return path.startsWith('components.') && path.endsWith('.typography') && ref.startsWith('typography.');
+}
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isTokenReferenceString(value: unknown): value is string {
+  return typeof value === 'string' && /^\{[a-zA-Z0-9_.-]+\}$/.test(value.trim());
+}
+
+function isDimensionValue(value: unknown): boolean {
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value !== 'string') return false;
+  const text = value.trim();
+  return isTokenReferenceString(text) || DIMENSION_RE.test(text);
+}
+
+function isSupportedColor(value: string): boolean {
+  const normalized = value.trim();
+  return HEX_COLOR_RE.test(normalized)
+    || SIMPLE_COLOR_FUNCTION_RE.test(normalized)
+    || NAMED_COLORS.has(normalized.toLowerCase());
+}
+
+function isValidTypographyField(field: string, value: unknown): boolean {
+  if (isTokenReferenceString(value)) return true;
+  if (field === 'fontFamily' || field === 'fontFeature' || field === 'fontVariation') return typeof value === 'string';
+  if (field === 'fontSize' || field === 'letterSpacing') return isDimensionValue(value);
+  if (field === 'fontWeight') return typeof value === 'number' || typeof value === 'string';
+  if (field === 'lineHeight') return typeof value === 'number' || isDimensionValue(value);
+  return true;
 }
 
 function buildSummary(rawTokens: Record<string, unknown> | null, sections: DesignSection[]): DesignContextSummary {

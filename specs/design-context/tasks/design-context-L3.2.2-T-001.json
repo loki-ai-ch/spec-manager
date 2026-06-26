@@ -1,0 +1,132 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.2.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: spec-manager spec show design-context-L3.2.2 + design-context-L2.2 + task list + 读 templates/agent-plan.json",
+      "status": "succeeded",
+      "toolName": "spec-manager+sed",
+      "outputJson": "{\"summary\":\"完成 L3.2.2 冻结规格、父 L2.2、历史任务和 agent-plan 模板上下文收集\",\"files\":[\"specs/design-context/design-context-L3.2.2.md\",\"specs/design-context/design-context-L2.2.md\",\"templates/agent-plan.json\"]}",
+      "latencyMs": 250,
+      "reportedAt": "2026-06-26T08:34:57.914Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "代码与文档调查: 读取 capability.ts + verify.ts + capability/verify 测试 + README/readme_zh/skill",
+      "status": "succeeded",
+      "toolName": "sed+rg",
+      "outputJson": "{\"summary\":\"完成 diagnostics UX 代码与文档调查，确认改动落在 verify message、brief text findings、测试和 Design Context 文档段落\",\"files\":[\"src/core/verify.ts\",\"src/cli/capability.ts\",\"src/core/__tests__/verify.test.ts\",\"src/cli/__tests__/capability.test.ts\",\"README.md\",\"readme_zh.md\",\"skill/SKILL.md\"]}",
+      "latencyMs": 200,
+      "reportedAt": "2026-06-26T08:35:19.736Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/verify.ts 优化 design-lint verification message",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"优化 design-lint verification message 展示 schema findings\",\"files\":[\"src/core/verify.ts\"]}",
+      "latencyMs": 120,
+      "reportedAt": "2026-06-26T08:35:50.209Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 优化 Design Context finding text 展示",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"优化 assist brief text 的 Design Context finding 展示\",\"files\":[\"src/cli/capability.ts\"]}",
+      "latencyMs": 120,
+      "reportedAt": "2026-06-26T08:35:56.718Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 verify.test.ts 和 capability.test.ts 增加 diagnostics UX 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"增加 diagnostics UX 测试\",\"files\":[\"src/core/__tests__/verify.test.ts\",\"src/cli/__tests__/capability.test.ts\"]}",
+      "latencyMs": 250,
+      "reportedAt": "2026-06-26T08:37:03.029Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 README.md readme_zh.md skill/SKILL.md 补充 schema lint diagnostics 文档",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 DESIGN.md schema lint diagnostics 文档\",\"files\":[\"README.md\",\"readme_zh.md\",\"skill/SKILL.md\"]}",
+      "latencyMs": 180,
+      "reportedAt": "2026-06-26T08:37:12.577Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run verify.test.ts capability.test.ts + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 Design Lint Diagnostics UX 验证；定向测试 2 files/52 tests、全量测试 66 files/736 tests、lint 均通过\",\"commands\":[\"npm test -- --run src/core/__tests__/verify.test.ts src/cli/__tests__/capability.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "latencyMs": 6200,
+      "reportedAt": "2026-06-26T08:38:30.887Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-26T08:34:39.162Z",
+  "finishedAt": "2026-06-26T08:40:13.476Z",
+  "created": "2026-06-26T08:34:33.661Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/verify.test.ts src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "定向测试通过：verify/capability 共 2 files、52 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T08:38:41.525Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量测试通过：66 files、736 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T08:38:49.681Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint 通过：tsc --noEmit 无错误",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-06-26T08:38:58.211Z",
+      "layer": "compile"
+    }
+  ]
+}

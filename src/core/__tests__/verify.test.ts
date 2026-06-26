@@ -251,6 +251,34 @@ describe('executeVerifyRules', () => {
     expect(results[0].message).toContain('Broken token reference');
   });
 
+  it('design-lint: invalid token schema → passed=false', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
+      '---',
+      'name: Invalid Schema',
+      'colors:',
+      '  primary: not-a-color',
+      'spacing:',
+      '  sm: huge',
+      '  md: vast',
+      'components:',
+      '  button-primary: solid',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Invalid schema design.',
+    ].join('\n'));
+
+    const results = executeVerifyRules([{ type: 'design-lint', path: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(false);
+    expect(results[0].message).toContain('errors=');
+    expect(results[0].message).toContain('[error] colors.primary:');
+    expect(results[0].message).toContain('[error] spacing.sm:');
+    expect(results[0].message).toContain('[error] spacing.md:');
+    expect(results[0].message).toContain('Color token');
+    expect(results[0].message).not.toContain('components.button-primary');
+  });
+
   it('design-lint: warning-only DESIGN.md → passed=true', () => {
     writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
       '# Untokened design',

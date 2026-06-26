@@ -106,6 +106,36 @@ function writeDesignFixture(): void {
   );
 }
 
+function writeInvalidDesignFixture(): void {
+  writeFileSync(
+    join(project.root, 'DESIGN.md'),
+    [
+      '---',
+      'name: Broken Heritage',
+      'colors:',
+      '  primary: not-a-color',
+      'spacing:',
+      '  sm: huge',
+      '  md: vast',
+      'rounded:',
+      '  sm: round',
+      'typography:',
+      '  body: Public Sans',
+      'components:',
+      '  button-primary: solid',
+      '  button-secondary:',
+      '    backgroundColor: "{colors.primary}"',
+      '    animation: spring',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Broken editorial design system.',
+    ].join('\n'),
+    'utf8',
+  );
+}
+
 describe('assist CLI', () => {
   it('prints guided assist JSON contract', async () => {
     await makeProgram().parseAsync(['assist', 'guide', '--request', 'auth login', '--topic', 'auth', '--json'], { from: 'user' });
@@ -181,6 +211,20 @@ describe('assist CLI', () => {
     expect(output()).toContain('lint: errors=0, warnings=0, infos=0');
     expect(output()).toContain('tokens: colors=1');
     expect(output()).toContain('config:DESIGN.md');
+  });
+
+  it('prints capped design context diagnostics in brief text for visual requests', async () => {
+    writeInvalidDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'brief', '--request', 'polish UI styling', '--topic', 'auth'], { from: 'user' });
+
+    expect(output()).toContain('Design Context: Broken Heritage');
+    expect(output()).toContain('lint: errors=6, warnings=1, infos=0');
+    expect(output()).toContain('[error] colors.primary: Color token');
+    expect(output()).toContain('[error] spacing.sm: spacing token');
+    expect(output()).toContain('[error] typography.body: Typography token');
+    expect(output()).not.toContain('[error] components.button-primary: Component token');
+    expect(output()).toContain('2 more Design Context finding(s) omitted');
   });
 
   it('prints lessons text with advisory when empty', async () => {

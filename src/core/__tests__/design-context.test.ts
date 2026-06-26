@@ -171,6 +171,146 @@ describe('design context core', () => {
     }
   });
 
+  test('accepts valid token schema including component typography composite references', () => {
+    const project = createTestProject('design-context-schema-valid-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Schema Valid',
+        'colors:',
+        '  primary: "#123abc"',
+        '  surface: "rgb(255 255 255)"',
+        'typography:',
+        '  body:',
+        '    fontFamily: Inter',
+        '    fontSize: 16px',
+        '    fontWeight: 400',
+        '    lineHeight: 1.5',
+        '    letterSpacing: 0em',
+        'spacing:',
+        '  sm: 8px',
+        '  columns: 12',
+        'rounded:',
+        '  sm: 4px',
+        'components:',
+        '  button-primary:',
+        '    backgroundColor: "{colors.primary}"',
+        '    textColor: "{colors.surface}"',
+        '    typography: "{typography.body}"',
+        '    rounded: "{rounded.sm}"',
+        '    padding: "{spacing.sm}"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Valid schema fixture.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.result.errors).toBe(0);
+      expect(report.findings.some(item => item.message.includes('primitive value'))).toBe(false);
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('reports invalid color dimension typography and component schema', () => {
+    const project = createTestProject('design-context-schema-invalid-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Schema Invalid',
+        'colors:',
+        '  primary: "not a color"',
+        'spacing:',
+        '  sm: huge',
+        'rounded:',
+        '  - 4px',
+        'typography:',
+        '  body: Public Sans',
+        '  caption:',
+        '    fontFamily: Inter',
+        '    fontSize: large',
+        'components:',
+        '  button-primary: solid',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Invalid schema fixture.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.result.errors).toBeGreaterThanOrEqual(5);
+      expect(report.findings.some(item => item.path === 'colors.primary')).toBe(true);
+      expect(report.findings.some(item => item.path === 'spacing.sm')).toBe(true);
+      expect(report.findings.some(item => item.path === 'rounded')).toBe(true);
+      expect(report.findings.some(item => item.path === 'typography.body')).toBe(true);
+      expect(report.findings.some(item => item.path === 'components.button-primary')).toBe(true);
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('warns for unknown component properties without failing schema lint', () => {
+    const project = createTestProject('design-context-schema-component-warning-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Component Warning',
+        'colors:',
+        '  primary: "#123456"',
+        'components:',
+        '  button-primary:',
+        '    backgroundColor: "{colors.primary}"',
+        '    animation: spring',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Unknown component property fixture.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.result.errors).toBe(0);
+      expect(report.result.warnings).toBeGreaterThanOrEqual(1);
+      expect(report.findings.some(item => item.path === 'components.button-primary.animation')).toBe(true);
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('rejects non-component references to composite tokens', () => {
+    const project = createTestProject('design-context-schema-composite-ref-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Composite Ref',
+        'colors:',
+        '  primary: "{typography.body}"',
+        'typography:',
+        '  body:',
+        '    fontFamily: Inter',
+        '    fontSize: 16px',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Composite reference fixture.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.result.errors).toBe(1);
+      expect(report.findings[0]?.message).toContain('primitive value');
+    } finally {
+      project.cleanup();
+    }
+  });
+
   test('exports buildDesignContextReport from the public entrypoint', () => {
     expect(exportedBuildDesignContextReport).toBe(buildDesignContextReport);
   });
