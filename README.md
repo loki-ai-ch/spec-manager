@@ -4,94 +4,139 @@
 [![CI](https://github.com/loki-ai-ch/spec-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/loki-ai-ch/spec-manager/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[中文说明](readme_zh.md)
+中文 | [English](readme_en.md)
 
-**Make AI coding deliverable, reviewable, and traceable.** spec-manager is an SDD workflow layer for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, Windsurf, and other coding agents.
+**spec-manager 是给 AI 编程用的本地规格管理层。**
 
-You do not need to adopt a heavy process before trying it. Start with one project, one request, and turn agent output into repo-native delivery records.
+它把一次需求从“聊天里的一句话”变成仓库里的可追踪交付链路：
 
-## Why Use It
-
-- **Less drift**: AI agents work against approved intent, design boundaries, and implementation targets instead of a vague prompt.
-- **Better review**: specs, tasks, decisions, and verification records show what changed, why it changed, and how it was checked.
-- **Portable memory**: the workflow lives in markdown/JSON files, so humans and different agents can resume from the same repo state.
-- **Works with your agent**: install the right workflow file for Claude Code, Codex, OpenCode, MiMo-Code, CodeBuddy, Cursor, or Windsurf.
-
-Everything is repo-native: markdown/JSON + git storage, no backend, no network dependency, no MCP requirement.
-
-## How It Works
-
-spec-manager keeps the work product in your repo: PRD, design, implementation spec, task history, decisions, and verification evidence.
-
-For a typical request, the flow is:
-
-`L1 PRD -> L2 Design -> L3 Impl -> Agent Task -> Verification`
-
-That gives AI agents a frozen implementation target and gives humans a clear record of scope, rationale, execution, and verification.
-
-## Adaptive Harness Governance
-
-Some changes need speed; others need stronger proof that important acceptance criteria were actually verified.
-
-- Task creation records a Profile snapshot, so later config changes do not rewrite the delivery contract.
-- `standard` keeps the workflow lightweight while surfacing missing evidence as warnings.
-- `governed` turns critical AC coverage into a completion gate for high-risk work.
-- Read-only commands like `project profile recommend`, `project profile metrics`, `project workflow preview`, and `project readiness critical` help teams choose the right rigor and audit gaps without hidden automation.
-
-Example:
-
-```bash
-spec-manager project profile recommend --request "Add SSO login"
-spec-manager project readiness critical
+```text
+L1 PRD -> L2 Design -> L3 Impl -> Agent Task -> Verification Evidence
 ```
 
-## 3-Minute Start
+适用于 Claude Code、Codex、OpenCode、MiMo-Code、CodeBuddy、Cursor、Windsurf 等 AI 编程工具。所有数据都落在本地 markdown / JSON 文件里，可 git diff、可 review、可被不同 Agent 接力；不需要后端、不需要数据库、不依赖 MCP。
+
+## 解决什么问题
+
+AI 写代码已经很快，但真实项目里更常见的问题是：
+
+- 需求说得太短，Agent 直接开写，后面发现方向错了。
+- 多轮对话之后，AI 忘了之前为什么这么设计。
+- 代码改完了，但没有任务记录、验证证据和决策上下文。
+- UI 需求只说“高级一点”，没有稳定的设计上下文。
+- 不同 AI 工具各管各的，项目记忆散在聊天记录里。
+
+spec-manager 的价值不是让流程变重，而是让 AI 在动手前先进入项目上下文，在交付时留下证据。
+
+## 核心价值
+
+- **少跑偏**：先确认 L1/L2/L3，再进入实现，Agent 有冻结的目标和边界。
+- **好审查**：规格、任务、决策、验证记录都在仓库里，知道改了什么、为什么改、怎么验。
+- **可接力**：Claude、Codex、OpenCode、MiMo-Code、CodeBuddy、Cursor、Windsurf 都能读同一套本地文件。
+- **有证据**：Task step、verification evidence、acceptance report 让“完成了”不只是口头结论。
+- **能管设计上下文**：UI/视觉任务可读取 `specs/DESIGN.md`，把设计 prose、tokens、do/don't 约束一起交给 Agent。
+
+## 5 分钟开始
 
 ```bash
-# 1. Install or run directly
+# 1. 安装
 npm install -g spec-manager
-# or: npx spec-manager <command>
 
-# 2. Initialize your project
+# 2. 初始化你的项目
 cd my-project
 spec-manager project init --name my-project
 
-# 3. Add instructions for your AI coding tool
+# 3. 给 AI 编程工具写入工作流入口
 spec-manager project agents --provider all
 ```
 
-Now ask your agent:
+然后直接对你的 AI 工具说：
 
 ```text
-Use spec-manager to add user authentication.
+使用 spec-manager 新增用户认证。
 ```
 
-For Claude Code / CodeBuddy skills:
+如果是 Claude Code / CodeBuddy skill：
 
 ```text
-/spec-manager add user authentication
+/spec-manager 新增用户认证
 ```
 
-The agent will create specs and ask for approval before implementation. You can stop there and inspect the files, or continue into a full task.
+Agent 会先创建规格并请求你确认，再进入实现。你可以只停在规格阶段 review，也可以继续让它创建 Task、执行、记录验证。
 
-## MiMo-Code
+## 最短路径
 
-MiMo-Code reads `AGENTS.md`, so setup is intentionally small:
+不想一开始理解全部概念，可以只记这几个命令：
 
 ```bash
-npm install -g @mimo-ai/cli
-spec-manager project agents --provider mimocode
-mimocode
+spec-manager project init --name my-project
+spec-manager project agents --provider all
+spec-manager guide "新增用户认证"
+spec-manager flow status --topic auth
+spec-manager project doctor
 ```
 
-This installs the shared spec-manager workflow capsule into `AGENTS.md`.
-
-## Agent Setup
-
-If you do not want every provider, install only the one you use:
+如果你想自己手动推进完整链路：
 
 ```bash
-spec-manager project agents --provider list
+spec-manager spec new L1 --topic auth --title "用户认证"
+spec-manager spec update auth-L1 --content ./l1.md --ai-summary "..." --change-summary "init"
+spec-manager spec confirm auth-L1
+
+spec-manager spec new L2 --topic auth --parent auth-L1 --title "认证设计"
+spec-manager spec confirm auth-L2.1
+
+spec-manager spec new L3 --topic auth --parent auth-L2.1 --title "JWT 实现"
+spec-manager spec confirm auth-L3.1.1
+
+spec-manager task create auth-L3.1.1 --plan ./plan.json
+spec-manager task start T-001 --spec auth-L3.1.1
+```
+
+大多数时候，你不需要手动敲完这些。把工作流入口装进 AI 工具后，让 Agent 按 spec-manager 规则来做即可。
+
+## 它怎么工作
+
+spec-manager 在项目里维护这些文件：
+
+```text
+my-project/
+├── .spec-manager/
+│   ├── config.yaml
+│   ├── audit.json
+│   └── incidents/
+├── specs/<topic>/
+│   ├── <topic>-L1.md
+│   ├── <topic>-L2.1.md
+│   ├── <topic>-L3.1.1.md
+│   ├── decisions/
+│   │   └── DC-001.md
+│   └── tasks/
+│       └── <specCode>-T-001.json
+├── changes/<name>/
+└── archive/<name>/
+```
+
+几个概念：
+
+- **L1 PRD**：做什么，为什么做。
+- **L2 Design**：技术方案和边界。
+- **L3 Impl**：具体实施规格，冻结后才能写代码。
+- **Agent Task**：Agent 执行步骤、状态、验证记录。
+- **Decision card**：重要选择为什么这么定。
+- **Verification Evidence**：测试、lint、build、design-lint 等可追踪证据。
+
+## 接入 AI 工具
+
+一次安装所有支持的入口：
+
+```bash
+spec-manager project agents --provider all
+```
+
+只安装某个工具：
+
+```bash
 spec-manager project agents --provider claude
 spec-manager project agents --provider codex
 spec-manager project agents --provider opencode
@@ -101,121 +146,130 @@ spec-manager project agents --provider cursor
 spec-manager project agents --provider windsurf
 ```
 
-Preview changes first:
+写入前预览：
 
 ```bash
-spec-manager project agents --provider mimocode --dry-run
+spec-manager project agents --provider codex --dry-run
 ```
 
-| Provider | Entry point | Files |
+| 工具 | 入口 | 文件 |
 |---|---|---|
-| Claude Code | Native skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
-| Codex | `AGENTS.md` workflow capsule | `AGENTS.md` |
-| OpenCode | `AGENTS.md` workflow capsule | `AGENTS.md` |
-| MiMo-Code | `AGENTS.md` workflow capsule | `AGENTS.md` |
-| CodeBuddy | Native skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
-| Cursor | Project rules | `.cursorrules` |
-| Windsurf | Project rules | `.windsurfrules` |
+| Claude Code | 原生 skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| Codex | `AGENTS.md` 工作流胶囊 | `AGENTS.md` |
+| OpenCode | `AGENTS.md` 工作流胶囊 | `AGENTS.md` |
+| MiMo-Code | `AGENTS.md` 工作流胶囊 | `AGENTS.md` |
+| CodeBuddy | 原生 skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+| Cursor | 项目规则 | `.cursorrules` |
+| Windsurf | 项目规则 | `.windsurfrules` |
 
-## When You Want More Control
+## 常用 assist 能力
 
-You can drive the workflow yourself without memorizing the full process:
-
-```bash
-spec-manager guide "add user authentication"     # prints the next useful step
-spec-manager assist guide --request "add user authentication"  # local context + next-command recommendation
-spec-manager assist critique auth-L1             # review spec quality gaps before approval
-spec-manager assist next T-001 --spec auth-L3.1.1 # task navigation and evidence summary
-spec-manager assist drift T-001 --spec auth-L3.1.1 # compare changed files to declared scope
-spec-manager assist acceptance T-001 --spec auth-L3.1.1 # summarize evidence, human acceptance, and residual risk
-spec-manager assist delivery T-001 --spec auth-L3.1.1 # prepare a user-facing handoff summary
-spec-manager new feature --topic auth "User authentication"
-spec-manager flow status --topic auth            # see where the work is blocked
-spec-manager view --topic auth                   # interactive browser
-spec-manager project doctor                      # check setup and integrity
-```
-
-The full workflow is still available when you need it:
+这些命令用于让 Agent 更稳地工作，而不是替代完整流程：
 
 ```bash
-spec-manager spec new L1 --topic auth --title "User authentication"
-spec-manager spec update auth-L1 --content ./l1.md --ai-summary "..." --change-summary "init"
-spec-manager spec confirm auth-L1
-spec-manager spec new L2 --topic auth --parent auth-L1 --title "Auth design"
-spec-manager spec new L3 --topic auth --parent auth-L2.1 --title "JWT implementation"
-spec-manager task create auth-L3.1.1 --plan ./plan.json
+spec-manager assist guide --request "新增用户认证"       # 读取本地上下文并建议下一步
+spec-manager assist brief --request "优化登录页视觉"     # 生成 Agent Brief，UI 请求会带上 Design Context
+spec-manager assist critique auth-L1                    # 审查规格质量缺口
+spec-manager assist next T-001 --spec auth-L3.1.1       # 查看任务下一步和证据状态
+spec-manager assist drift T-001 --spec auth-L3.1.1      # 对账实际变更是否偏离 L3 范围
+spec-manager assist acceptance T-001 --spec auth-L3.1.1 # 汇总验收证据和残余风险
+spec-manager assist delivery T-001 --spec auth-L3.1.1   # 生成面向用户的交付摘要
 ```
 
-Think of this as optional depth. Most people should start with `guide`, `new feature`, or an AI agent prompt.
+## Design Context：让 UI 需求不再只靠感觉
 
-## Design Context
-
-For UI, visual, or styling work, add `specs/DESIGN.md` to describe the managed specs design context. spec-manager treats this file as optional local context, not as an L2 technical design replacement. A root-level `DESIGN.md` is still supported as a legacy fallback when `specs/DESIGN.md` does not exist.
-
-- `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `specs/DESIGN.md` exists, falling back to root `DESIGN.md`.
-- `spec-manager assist design-template` writes a starter `specs/DESIGN.md`; it refuses to overwrite unless `--force` is passed. Use `--out DESIGN.md` only for the legacy root path.
-- `spec-manager assist design-export --format tokens-json` exports normalized tokens from the default design context; use `--path DESIGN.md` or `--path specs/DESIGN.md` to force an explicit file. Use `--format dtcg-json` for the current DESIGN.md schema's DTCG JSON subset, `--format tailwind-json` for Tailwind v3 `theme.extend`, or `--format tailwind-css` for a Tailwind v4 `@theme` block. `--out <file>` writes the export locally.
-- L3 specs can use `@verify: design-lint(DESIGN.md)` to record DESIGN.md lint results as verification evidence.
-- Review-oriented L3 specs can use `@verify: design-diff(DESIGN.before.md, DESIGN.md)` to compare two explicit DESIGN.md files. The rule fails only when the after file increases lint errors/warnings, either file is missing, or a design token is removed; added/modified tokens and section prose changes are reported as structural diff summary.
-- Schema lint reports invalid color, dimension, typography, and component token shapes as errors; unknown component properties are warnings. Fix findings by the reported path, such as `colors.primary` or `components.button-primary.animation`.
-- Parser, lint, export, and diff behavior is covered by a small conformance fixture set under `src/core/__tests__/fixtures/design-context/`. These fixtures are copied into this repository for tests only and do not vendor or invoke the external DESIGN.md project.
-- Agent Brief adds non-blocking Design Guidance for UI requests with DESIGN.md: read prose first, prefer specific inspiration, respect do/don't constraints, and treat unknown sections as possible design intent. `assist critique` may also emit an advisory for UI/design specs that do not state how agents should use DESIGN.md prose.
-- The first version reads, summarizes, lints, diffs, exports, and reports DESIGN.md; it does not generate UI, rewrite components, modify Tailwind config files, judge visual quality, or depend on an external design CLI.
-
-## Core Ideas
-
-- **L1**: what and why
-- **L2**: technical design
-- **L3**: implementation plan
-- **Task**: agent execution with step records and verification
-- **Decision card**: why an important choice was made
-- **Delta change**: change an already shipped spec without losing history
-
-## Common Commands
-
-| Command | Use it for |
-|---|---|
-| `spec-manager project init --name X` | Create `.spec-manager/` |
-| `spec-manager project agents [--provider P]` | Install agent workflow files |
-| `spec-manager project doctor` | Check setup and repository integrity |
-| `spec-manager guide "request"` | Get the next command for a request |
-| `spec-manager new feature --topic T "Title"` | Start a lightweight L1 |
-| `spec-manager flow status --topic T` | See progress and blockers |
-| `spec-manager spec list` | List specs |
-| `spec-manager spec show <code> --include-content` | Read a spec |
-| `spec-manager task list --topic T` | List tasks |
-| `spec-manager decision list --topic T` | List decisions |
-
-Run any command with `--help` for details.
-
-## Files It Creates
+做 UI、视觉、样式相关任务时，推荐把设计上下文放在：
 
 ```text
-my-project/
-├── .spec-manager/
-│   ├── config.yaml
-│   ├── audit.json
-│   └── incidents/
-├── specs/<topic>/
-│   ├── <L1-code>.md
-│   ├── <L2-code>.md
-│   ├── <L3-code>[-desc].md
-│   ├── decisions/
-│   │   └── DC-001.md
-│   └── tasks/
-│       └── <specCode>-T-001.json
-├── changes/<name>/
-└── archive/<name>/
+specs/DESIGN.md
 ```
 
-Spec codes are readable by design: `auth-L1`, `auth-L2.1`, `auth-L3.1.1-jwt`.
+它是 spec-manager 管理的 specs 体系的一部分。根目录 `DESIGN.md` 仍作为 legacy fallback 兼容。
 
-## Learn More
+常用命令：
 
-- [Methodology](docs/methodology.md)
-- [Rules](rules/)
-- [Templates](templates/)
-- [Decision template](templates/decision.md)
+```bash
+spec-manager assist design-template
+spec-manager assist brief --request "优化仪表盘视觉"
+spec-manager assist design-export --format tokens-json
+```
+
+L3 里可以把设计 lint 纳入验证：
+
+```text
+@verify: design-lint(specs/DESIGN.md)
+```
+
+当前 Design Context 支持：
+
+- 读取 DESIGN.md frontmatter 和 prose section。
+- lint colors、typography、spacing、rounded、components 等 token。
+- 输出 `tokens-json`、`dtcg-json`、`tailwind-json`、`tailwind-css`。
+- 在 Agent Brief 中提示 prose-first、具体灵感参照、do/don't 约束。
+- 用 `design-diff` 对比两个 DESIGN.md 的结构变化。
+
+它不会自动生成 UI、不会修改 Tailwind 配置，也不会替你判断审美质量；它的作用是把设计上下文稳定地交给 Agent。
+
+## 自适应治理
+
+有些任务只需要轻量流程，有些高风险任务需要更强证据。
+
+spec-manager 支持 Profile：
+
+- `standard`：保持轻量，缺失证据以 warning 暴露。
+- `governed`：关键 AC 必须有成功 verification evidence 才能完成 Task。
+
+只读辅助命令：
+
+```bash
+spec-manager project profile recommend --request "新增 SSO 登录"
+spec-manager project profile metrics
+spec-manager project workflow preview
+spec-manager project readiness critical
+```
+
+这些命令不会偷偷修改配置，只帮助你理解风险和证据缺口。
+
+## 常用命令速查
+
+| 命令 | 用途 |
+|---|---|
+| `spec-manager project init --name X` | 初始化 `.spec-manager/` |
+| `spec-manager project agents --provider all` | 写入 AI 工具入口 |
+| `spec-manager project doctor` | 检查配置和仓库完整性 |
+| `spec-manager guide "需求"` | 根据需求给出下一条命令 |
+| `spec-manager new feature --topic T "标题"` | 快速创建轻量 L1 |
+| `spec-manager flow status --topic T` | 查看规格链路进度和阻塞点 |
+| `spec-manager spec list` | 列出规格 |
+| `spec-manager spec show <code> --include-content` | 查看规格正文 |
+| `spec-manager task list --topic T` | 查看任务 |
+| `spec-manager decision list --topic T` | 查看决策 |
+| `spec-manager view --topic T` | 交互式浏览 |
+
+任何命令都可以加 `--help` 查看细节。
+
+## 适合谁
+
+适合：
+
+- 正在用 AI Agent 维护真实项目的人。
+- 想让 AI 改动可 review、可验收、可追踪的团队。
+- 需要在多个 AI 编程工具之间共享项目记忆的人。
+- 需要把 UI 设计上下文交给 Agent 的项目。
+
+不适合：
+
+- 一次性 demo。
+- 完全不想保留规格和任务历史的临时代码。
+- 只想让 AI 直接改一行 typo 的场景。此类小改可用 `quick` 例外。
+
+## 深入了解
+
+- [English README](readme_en.md)
+- [方法论](docs/methodology.md)
+- [规则](rules/)
+- [模板](templates/)
+- [决策卡片模板](templates/decision.md)
 
 ## License
 

@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 144,
-    "R2": 161,
+    "R1": 145,
+    "R2": 162,
     "R3": 2,
-    "R4": 141,
+    "R4": 142,
     "R5": 10,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 161,
-    "R10": 11,
+    "R9": 162,
+    "R10": 12,
     "R11": 0,
     "R12": 4,
-    "R13": 143,
+    "R13": 144,
     "R14": 0,
     "R15": 0,
     "R16": 21,
     "R17": 0,
     "R18": 26,
-    "R19": 160,
+    "R19": 161,
     "R20": 0,
     "R21": 0,
-    "R22": 143,
+    "R22": 144,
     "R23": 0,
     "R24": 0
   },
@@ -1117,9 +1117,57 @@
       "timestamp": "2026-06-27T09:41:12.289Z",
       "specCode": "design-context-L3.6.1",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T13:28:53.393Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:29:38.521Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:29:38.522Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:29:38.522Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T13:30:08.278Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T13:30:08.279Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-27T13:31:00.261Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-27T13:35:21.419Z",
+      "specCode": "spec-manager-ai-ux-L3.1.9",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-27T09:41:12.289Z",
+  "lastUpdated": "2026-06-27T13:35:21.419Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }
