@@ -11,6 +11,7 @@ import { buildAcceptanceReport } from '../core/acceptance-report.js';
 import { buildGuidedAssistReport } from '../core/guided-assist.js';
 import { buildDeliverySummary } from '../core/delivery-summary.js';
 import {
+  DEFAULT_DESIGN_CONTEXT_PATH,
   buildDesignContextExportReport,
   buildDesignContextTemplate,
   type DesignContextExportFormat,
@@ -87,10 +88,10 @@ export function registerCapabilityCommands(program: Command): void {
     .command('design-export')
     .description('导出 DESIGN.md tokens JSON')
     .option('--format <format>', 'tokens-json | dtcg-json | tailwind-json | tailwind-css', 'tokens-json')
-    .option('--path <path>', 'DESIGN.md 路径', 'DESIGN.md')
+    .option('--path <path>', 'DESIGN.md 路径')
     .option('--out <path>', '项目内输出文件')
     .option('--json', '输出完整 export report JSON', false)
-    .action((opts: { format: string; path: string; out?: string; json: boolean }) => {
+    .action((opts: { format: string; path?: string; out?: string; json: boolean }) => {
       const paths = getPaths();
       requireInitialized(paths);
       const format = parseDesignExportFormat(opts.format);
@@ -100,7 +101,7 @@ export function registerCapabilityCommands(program: Command): void {
       }
       const report = buildDesignContextExportReport({ paths, filePath: opts.path, format });
       if (!report.source.exists || report.source.result.errors > 0) {
-        console.error(`✗ DESIGN_EXPORT_FAILED: ${opts.path} errors=${report.source.result.errors}, warnings=${report.source.result.warnings}, infos=${report.source.result.infos}`);
+        console.error(`✗ DESIGN_EXPORT_FAILED: ${opts.path ?? report.source.path} errors=${report.source.result.errors}, warnings=${report.source.result.warnings}, infos=${report.source.result.infos}`);
         process.exit(1);
       }
       const cssOutput = format === 'tailwind-css' && typeof report.output['css'] === 'string'
@@ -121,7 +122,7 @@ export function registerCapabilityCommands(program: Command): void {
   assist
     .command('design-template')
     .description('生成 starter DESIGN.md')
-    .option('--out <path>', '项目内输出文件', 'DESIGN.md')
+    .option('--out <path>', '项目内输出文件', DEFAULT_DESIGN_CONTEXT_PATH)
     .option('--force', '覆盖已有文件', false)
     .option('--json', '以 JSON 格式输出', false)
     .action((opts: { out: string; force: boolean; json: boolean }) => {

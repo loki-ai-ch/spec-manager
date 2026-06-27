@@ -164,6 +164,25 @@ function writeTailwindDesignFixture(): void {
   );
 }
 
+function writeManagedDesignFixture(): void {
+  mkdirSync(join(project.root, 'specs'), { recursive: true });
+  writeFileSync(
+    join(project.root, 'specs', 'DESIGN.md'),
+    [
+      '---',
+      'name: Managed Specs',
+      'colors:',
+      '  primary: "#2A2C2E"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Managed specs design system.',
+    ].join('\n'),
+    'utf8',
+  );
+}
+
 describe('assist CLI', () => {
   it('prints guided assist JSON contract', async () => {
     await makeProgram().parseAsync(['assist', 'guide', '--request', 'auth login', '--topic', 'auth', '--json'], { from: 'user' });
@@ -275,6 +294,18 @@ describe('assist CLI', () => {
     expect(json.output.colors.primary).toBe('#1A1C1E');
   });
 
+  it('prefers specs/DESIGN.md for default design export', async () => {
+    writeDesignFixture();
+    writeManagedDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tokens-json', '--json'], { from: 'user' });
+
+    const json = JSON.parse(output());
+    expect(json.source.summary.name).toBe('Managed Specs');
+    expect(json.source.path).toBe(join(project.root, 'specs', 'DESIGN.md'));
+    expect(json.output.colors.primary).toBe('#2A2C2E');
+  });
+
   it('prints design export output JSON for dtcg-json', async () => {
     writeDesignFixture();
 
@@ -348,13 +379,13 @@ describe('assist CLI', () => {
     expect(errorSpy.mock.calls.map((call) => String(call[0])).join('\n')).toContain('DESIGN_EXPORT_FAILED');
   });
 
-  it('writes a starter design template that can be exported', async () => {
-    await makeProgram().parseAsync(['assist', 'design-template', '--out', 'DESIGN.md', '--json'], { from: 'user' });
+  it('writes a starter design template to specs/DESIGN.md by default and can be exported', async () => {
+    await makeProgram().parseAsync(['assist', 'design-template', '--json'], { from: 'user' });
 
-    const templatePath = join(project.root, 'DESIGN.md');
+    const templatePath = join(project.root, 'specs', 'DESIGN.md');
     expect(existsSync(templatePath)).toBe(true);
     const json = JSON.parse(output());
-    expect(json.path).toBe('DESIGN.md');
+    expect(json.path).toBe('specs/DESIGN.md');
     expect(json.written).toBe(true);
     expect(json.content).toContain('Product Design System');
 

@@ -150,11 +150,11 @@ Think of this as optional depth. Most people should start with `guide`, `new fea
 
 ## Design Context
 
-For UI, visual, or styling work, you can add a root-level `DESIGN.md` to describe the product's design context. spec-manager treats this file as optional local context, not as an L2 technical design replacement.
+For UI, visual, or styling work, add `specs/DESIGN.md` to describe the managed specs design context. spec-manager treats this file as optional local context, not as an L2 technical design replacement. A root-level `DESIGN.md` is still supported as a legacy fallback when `specs/DESIGN.md` does not exist.
 
-- `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `DESIGN.md` exists.
-- `spec-manager assist design-template --out DESIGN.md` writes a starter DESIGN.md; it refuses to overwrite unless `--force` is passed.
-- `spec-manager assist design-export --format tokens-json --path DESIGN.md` exports normalized tokens; use `--format dtcg-json` for the current DESIGN.md schema's DTCG JSON subset, `--format tailwind-json` for Tailwind v3 `theme.extend`, or `--format tailwind-css` for a Tailwind v4 `@theme` block. `--out <file>` writes the export locally.
+- `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `specs/DESIGN.md` exists, falling back to root `DESIGN.md`.
+- `spec-manager assist design-template` writes a starter `specs/DESIGN.md`; it refuses to overwrite unless `--force` is passed. Use `--out DESIGN.md` only for the legacy root path.
+- `spec-manager assist design-export --format tokens-json` exports normalized tokens from the default design context; use `--path DESIGN.md` or `--path specs/DESIGN.md` to force an explicit file. Use `--format dtcg-json` for the current DESIGN.md schema's DTCG JSON subset, `--format tailwind-json` for Tailwind v3 `theme.extend`, or `--format tailwind-css` for a Tailwind v4 `@theme` block. `--out <file>` writes the export locally.
 - L3 specs can use `@verify: design-lint(DESIGN.md)` to record DESIGN.md lint results as verification evidence.
 - Review-oriented L3 specs can use `@verify: design-diff(DESIGN.before.md, DESIGN.md)` to compare two explicit DESIGN.md files. The rule fails only when the after file increases lint errors/warnings, either file is missing, or a design token is removed; added/modified tokens and section prose changes are reported as structural diff summary.
 - Schema lint reports invalid color, dimension, typography, and component token shapes as errors; unknown component properties are warnings. Fix findings by the reported path, such as `colors.primary` or `components.button-primary.animation`.

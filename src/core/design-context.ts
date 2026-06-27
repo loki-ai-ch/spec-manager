@@ -106,6 +106,9 @@ interface DesignContextParts {
 }
 
 const DESIGN_FILE = 'DESIGN.md';
+export const DEFAULT_DESIGN_CONTEXT_PATH = 'specs/DESIGN.md';
+export const LEGACY_DESIGN_CONTEXT_PATH = DESIGN_FILE;
+const DEFAULT_DESIGN_CONTEXT_PATHS = [DEFAULT_DESIGN_CONTEXT_PATH, LEGACY_DESIGN_CONTEXT_PATH] as const;
 const TOKEN_GROUPS = ['colors', 'typography', 'spacing', 'rounded', 'components'] as const;
 type TokenGroup = typeof TOKEN_GROUPS[number];
 const KNOWN_SECTION_ORDER = [
@@ -324,7 +327,10 @@ function readDesignContextParts(input: BuildDesignContextInput): DesignContextPa
 }
 
 function resolveDesignPath(paths: ProjectPaths, filePath?: string): string {
-  if (!filePath?.trim()) return join(paths.root, DESIGN_FILE);
+  if (!filePath?.trim()) {
+    const existingDefault = DEFAULT_DESIGN_CONTEXT_PATHS.find(candidate => existsSync(join(paths.root, candidate)));
+    return join(paths.root, existingDefault ?? DEFAULT_DESIGN_CONTEXT_PATH);
+  }
   return resolveWithin(paths.root, filePath);
 }
 

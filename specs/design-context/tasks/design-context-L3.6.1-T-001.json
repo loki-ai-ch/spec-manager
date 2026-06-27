@@ -1,0 +1,99 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.6.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey design context call sites",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Found default root DESIGN.md resolution in src/core/design-context.ts and CLI defaults in src/cli/capability.ts; brief follows core report; verify explicit path semantics can remain unchanged.\"}",
+      "reportedAt": "2026-06-27T09:35:06.460Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement managed specs default resolver",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added specs/DESIGN.md as the primary default design context path with root DESIGN.md fallback; kept explicit path resolution constrained and non-fallback.\"}",
+      "reportedAt": "2026-06-27T09:38:50.488Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update tests for default path behavior",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added core, brief, and CLI tests for managed specs default path, root fallback, explicit path override, and template default output.\"}",
+      "reportedAt": "2026-06-27T09:39:52.126Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Update CLI and documentation guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated CLI defaults and README/readme_zh/spec-manager skill guidance to describe specs/DESIGN.md as canonical and root DESIGN.md as legacy fallback.\"}",
+      "reportedAt": "2026-06-27T09:40:13.761Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Focused tests passed (3 files, 73 tests). Full npm test passed (66 files, 780 tests). npm run lint and npm run build passed.\"}",
+      "reportedAt": "2026-06-27T09:39:25.275Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T09:34:48.631Z",
+  "finishedAt": "2026-06-27T09:41:01.710Z",
+  "created": "2026-06-27T09:34:41.226Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts src/core/__tests__/capability-brief.test.ts src/cli/__tests__/capability.test.ts",
+      "exitCode": 0,
+      "summary": "Focused design-context default path tests passed: 3 files, 73 tests.",
+      "artifacts": [
+        "src/core/__tests__/design-context.test.ts",
+        "src/core/__tests__/capability-brief.test.ts",
+        "src/cli/__tests__/capability.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T09:40:36.878Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full regression passed: 66 files, 780 tests.",
+      "artifacts": [
+        "src"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6"
+      ],
+      "created": "2026-06-27T09:40:46.553Z",
+      "layer": "smoke"
+    }
+  ]
+}

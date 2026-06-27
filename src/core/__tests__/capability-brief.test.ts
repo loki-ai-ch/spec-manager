@@ -74,6 +74,16 @@ describe('buildAgentBrief', () => {
     expect(brief.suggestedReads.map(ref => `${ref.kind}:${ref.id}`)).toContain('config:DESIGN.md');
   });
 
+  it('prefers specs/DESIGN.md for visual request design context', () => {
+    writeDesignFixture();
+    writeManagedDesignFixture();
+
+    const brief = buildAgentBrief({ paths: project.paths, request: 'update UI button styling', topic: 'auth' });
+
+    expect(brief.designContext?.summary?.name).toBe('Managed Specs');
+    expect(brief.designContext?.path).toBe(`${project.root}/specs/DESIGN.md`);
+  });
+
   it('includes design philosophy guidance for visual requests when DESIGN.md exists', () => {
     writeDesignFixture();
 
@@ -125,6 +135,25 @@ function writeDesignFixture(): void {
       '## Overview',
       '',
       'Editorial design system.',
+    ].join('\n'),
+    'utf8',
+  );
+}
+
+function writeManagedDesignFixture(): void {
+  mkdirSync(`${project.root}/specs`, { recursive: true });
+  writeFileSync(
+    `${project.root}/specs/DESIGN.md`,
+    [
+      '---',
+      'name: Managed Specs',
+      'colors:',
+      '  primary: "#2A2C2E"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Managed specs design system.',
     ].join('\n'),
     'utf8',
   );

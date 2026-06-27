@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import {
@@ -69,12 +69,85 @@ describe('design context core', () => {
     }
   });
 
+  test('prefers specs/DESIGN.md over root DESIGN.md by default', () => {
+    const project = createTestProject('design-context-managed-default-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Legacy Root',
+        'colors:',
+        '  primary: "#111111"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Legacy root design.',
+      ].join('\n'));
+      writeManagedDesign(project.root, [
+        '---',
+        'name: Managed Specs',
+        'colors:',
+        '  primary: "#222222"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Managed specs design.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.exists).toBe(true);
+      expect(report.path).toBe(join(project.root, 'specs', 'DESIGN.md'));
+      expect(report.summary?.name).toBe('Managed Specs');
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('allows explicit root DESIGN.md to override managed default', () => {
+    const project = createTestProject('design-context-explicit-root-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Explicit Root',
+        'colors:',
+        '  primary: "#111111"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Explicit root design.',
+      ].join('\n'));
+      writeManagedDesign(project.root, [
+        '---',
+        'name: Managed Specs',
+        'colors:',
+        '  primary: "#222222"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Managed specs design.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths, filePath: 'DESIGN.md' });
+
+      expect(report.exists).toBe(true);
+      expect(report.path).toBe(join(project.root, 'DESIGN.md'));
+      expect(report.summary?.name).toBe('Explicit Root');
+    } finally {
+      project.cleanup();
+    }
+  });
+
   test('returns a warning when DESIGN.md is missing', () => {
     const project = createTestProject('design-context-missing-');
     try {
       const report = buildDesignContextReport({ paths: project.paths });
 
       expect(report.exists).toBe(false);
+      expect(report.path).toBe(join(project.root, 'specs', 'DESIGN.md'));
       expect(report.summary).toBeNull();
       expect(report.result.warnings).toBe(1);
       expect(report.findings[0]?.message).toContain('DESIGN.md not found');
@@ -858,6 +931,11 @@ function writeDesignFile(root: string, fileName: string, content: string): void 
 
 function writeDesign(root: string, content: string): void {
   writeDesignFile(root, 'DESIGN.md', content);
+}
+
+function writeManagedDesign(root: string, content: string): void {
+  mkdirSync(join(root, 'specs'), { recursive: true });
+  writeDesignFile(root, join('specs', 'DESIGN.md'), content);
 }
 
 function readDesignFixture(relativePath: string): string {

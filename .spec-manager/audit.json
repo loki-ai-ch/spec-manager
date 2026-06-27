@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 140,
-    "R2": 159,
+    "R1": 144,
+    "R2": 161,
     "R3": 2,
-    "R4": 139,
-    "R5": 9,
+    "R4": 141,
+    "R5": 10,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 159,
-    "R10": 10,
+    "R9": 161,
+    "R10": 11,
     "R11": 0,
     "R12": 4,
-    "R13": 139,
+    "R13": 143,
     "R14": 0,
     "R15": 0,
     "R16": 21,
     "R17": 0,
     "R18": 26,
-    "R19": 159,
+    "R19": 160,
     "R20": 0,
     "R21": 0,
-    "R22": 139,
+    "R22": 143,
     "R23": 0,
     "R24": 0
   },
@@ -991,9 +991,135 @@
       "timestamp": "2026-06-27T08:41:43.554Z",
       "specCode": "design-context-L3.5.4",
       "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T09:28:42.090Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T09:29:28.447Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T09:29:28.447Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T09:29:28.448Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T09:29:50.876Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T09:29:50.876Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T09:29:50.877Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T09:30:54.607Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T09:30:54.607Z",
+      "specCode": "design-context-L2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T09:31:12.197Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T09:31:56.802Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T09:31:56.803Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T09:31:56.803Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T09:32:18.130Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T09:32:18.130Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T09:32:18.131Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T09:33:03.320Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T09:33:03.321Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-27T09:34:25.746Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-27T09:39:33.031Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-06-27T09:41:12.289Z",
+      "specCode": "design-context-L3.6.1",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-27T08:41:43.554Z",
+  "lastUpdated": "2026-06-27T09:41:12.289Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }
