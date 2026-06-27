@@ -54,6 +54,12 @@ export function buildSpecCritique(paths: ProjectPaths, specCode: string): SpecCr
   const findings = [
     ...rulesForLevel(spec.fm.level).flatMap(rule => sectionFinding(rule, sections, sourceRef)),
     ...scopeFindings(spec.fm.level, spec.content, sourceRef),
+    ...designPhilosophyFindings(spec.fm.level, [
+      spec.fm.code,
+      spec.fm.topic,
+      spec.fm.title,
+      spec.content,
+    ].join('\n'), sourceRef),
   ];
 
   return {
@@ -111,6 +117,27 @@ function scopeFindings(level: 'L1' | 'L2' | 'L3', content: string, sourceRef: As
     detail: 'Consider stating what this L3 does not implement so agents do not expand scope.',
     sourceRefs: [sourceRef],
   }];
+}
+
+function designPhilosophyFindings(level: 'L1' | 'L2' | 'L3', content: string, sourceRef: AssistSourceRef): AssistFinding[] {
+  if (level !== 'L2' && level !== 'L3') return [];
+  if (!isDesignRelatedSpec(content)) return [];
+  if (mentionsDesignPhilosophy(content)) return [];
+  return [{
+    id: 'design.philosophy.guidance.missing',
+    severity: 'advisory',
+    title: 'Design philosophy guidance is not explicit',
+    detail: 'For UI/design-context work, state how agents should use DESIGN.md prose, specific inspiration, and do/don\'t constraints before applying tokens.',
+    sourceRefs: [sourceRef],
+  }];
+}
+
+function isDesignRelatedSpec(content: string): boolean {
+  return /\b(ui|visual|style|styling|design-context|design context|DESIGN\.md|frontend)\b|设计|视觉|样式/i.test(content);
+}
+
+function mentionsDesignPhilosophy(content: string): boolean {
+  return /prose-first|prose|do\/don't|do['’]s and don['’]ts|specific inspiration|negative constraints|DESIGN\.md prose|设计哲学|负约束/i.test(content);
 }
 
 function hasAnySection(sections: Map<string, string>, names: string[]): boolean {

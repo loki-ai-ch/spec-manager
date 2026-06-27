@@ -1,4 +1,4 @@
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, test } from 'vitest';
 import {
@@ -321,6 +321,47 @@ describe('design context core', () => {
     }
   });
 
+  test('reports design lint parity findings for missing and token-like design system details', () => {
+    const project = createTestProject('design-context-lint-parity-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Parity',
+        'colours:',
+        '  brand: "#123456"',
+        'colors:',
+        '  accent: "#777777"',
+        '  unused: "#abcdef"',
+        'components:',
+        '  button-primary:',
+        '    backgroundColor: "{colors.accent}"',
+        '    textColor: "#777777"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Use {colors.missing} only in prose.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.result.errors).toBe(0);
+      expect(report.findings).toEqual(expect.arrayContaining([
+        expect.objectContaining({ severity: 'warning', path: 'colors', message: expect.stringContaining("No 'primary' color") }),
+        expect.objectContaining({ severity: 'warning', path: 'typography', message: expect.stringContaining('No typography tokens') }),
+        expect.objectContaining({ severity: 'info', path: 'tokens', message: expect.stringContaining('Design system defines') }),
+        expect.objectContaining({ severity: 'warning', path: 'colours', message: expect.stringContaining('did you mean "colors"') }),
+        expect.objectContaining({ severity: 'warning', path: 'colours', message: expect.stringContaining('looks like a design-token map') }),
+        expect.objectContaining({ severity: 'info', path: 'sections.Colors', message: expect.stringContaining("No 'Colors' section") }),
+        expect.objectContaining({ severity: 'info', path: 'sections.Overview', message: expect.stringContaining('{colors.missing}') }),
+        expect.objectContaining({ severity: 'warning', path: 'colors.unused', message: expect.stringContaining('never referenced') }),
+        expect.objectContaining({ severity: 'warning', path: 'components.button-primary', message: expect.stringContaining('contrast ratio 1.00:1') }),
+      ]));
+    } finally {
+      project.cleanup();
+    }
+  });
+
   test('diffs token groups with stable added removed and modified keys', () => {
     const project = createTestProject('design-context-diff-tokens-');
     try {
@@ -573,6 +614,70 @@ describe('design context core', () => {
     }
   });
 
+  test('exports tailwind-json with theme extend mappings', () => {
+    const project = createTestProject('design-context-export-tailwind-json-');
+    try {
+      writeDesign(project.root, exportFixture());
+
+      const report = buildDesignContextExportReport({ paths: project.paths, format: 'tailwind-json' });
+
+      expect(report.output).toEqual({
+        theme: {
+          extend: {
+            colors: {
+              primary: '#112233',
+              accent: '#445566',
+            },
+            fontFamily: {
+              body: ['Inter'],
+            },
+            fontSize: {
+              body: ['16px', {
+                lineHeight: '1.5',
+                fontWeight: '400',
+              }],
+            },
+            borderRadius: {
+              sm: '4px',
+            },
+            spacing: {
+              sm: '8px',
+              md: '16px',
+            },
+          },
+        },
+      });
+    } finally {
+      project.cleanup();
+    }
+  });
+
+  test('exports tailwind-css with stable theme variables', () => {
+    const project = createTestProject('design-context-export-tailwind-css-');
+    try {
+      writeDesign(project.root, exportFixture());
+
+      const report = buildDesignContextExportReport({ paths: project.paths, format: 'tailwind-css' });
+
+      expect(report.output.css).toBe([
+        '@theme {',
+        '  --color-primary: #112233;',
+        '  --color-accent: #445566;',
+        '  --font-body: "Inter";',
+        '  --text-body: 16px;',
+        '  --leading-body: 1.5;',
+        '  --font-weight-body: 400;',
+        '  --radius-sm: 4px;',
+        '  --spacing-sm: 8px;',
+        '  --spacing-md: 16px;',
+        '}',
+        '',
+      ].join('\n'));
+    } finally {
+      project.cleanup();
+    }
+  });
+
   test('returns empty export output while preserving source errors for invalid DESIGN.md', () => {
     const project = createTestProject('design-context-export-invalid-');
     try {
@@ -627,6 +732,124 @@ describe('design context core', () => {
     expect(exportedBuildDesignContextExportReport).toBe(buildDesignContextExportReport);
     expect(exportedBuildDesignContextTemplate).toBe(buildDesignContextTemplate);
   });
+
+  describe('fixture conformance', () => {
+    const validFixtures = [
+      ['examples/paws-and-paths.md', 'Paws & Paths'],
+      ['examples/atmospheric-glass.md', 'Atmospheric Glass'],
+      ['examples/totality-festival.md', 'Totality Festival Design System'],
+      ['parity/heritage.md', 'Heritage'],
+      ['parity/alpine-observatory.md', 'The Alpine Observatory'],
+    ] as const;
+
+    test.each(validFixtures)('parses %s without errors', (fixturePath, expectedName) => {
+      const project = createTestProject('design-context-fixture-valid-');
+      try {
+        writeDesign(project.root, readDesignFixture(fixturePath));
+
+        const report = buildDesignContextReport({ paths: project.paths });
+
+        expect(report.exists).toBe(true);
+        expect(report.summary?.name).toBe(expectedName);
+        expect(report.result.errors).toBe(0);
+        expect(report.summary?.tokenCounts.colors).toBeGreaterThan(0);
+        expect(report.summary?.tokenCounts.typography).toBeGreaterThan(0);
+      } finally {
+        project.cleanup();
+      }
+    });
+
+    test('reports stable findings for invalid fixtures', () => {
+      expect(reportFixture('invalid/no-frontmatter.md').findings).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          severity: 'warning',
+          message: expect.stringContaining('No YAML frontmatter'),
+        }),
+      ]));
+
+      expect(reportFixture('invalid/out-of-order.md').findings).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          severity: 'warning',
+          path: 'sections',
+          message: expect.stringContaining('canonical order'),
+        }),
+      ]));
+
+      expect(reportFixture('invalid/broken-ref.md').findings).toEqual(expect.arrayContaining([
+        expect.objectContaining({
+          severity: 'error',
+          path: 'colors.primary',
+          message: expect.stringContaining('{colors.missing}'),
+        }),
+        expect.objectContaining({
+          severity: 'info',
+          path: 'sections.Overview',
+          message: expect.stringContaining('{colors.ghost}'),
+        }),
+      ]));
+
+      expect(reportFixture('invalid/bad-schema.md').findings).toEqual(expect.arrayContaining([
+        expect.objectContaining({ severity: 'error', path: 'colors.primary' }),
+        expect.objectContaining({ severity: 'error', path: 'spacing.sm' }),
+        expect.objectContaining({ severity: 'error', path: 'rounded' }),
+        expect.objectContaining({ severity: 'error', path: 'typography.body' }),
+        expect.objectContaining({ severity: 'error', path: 'components.button-primary' }),
+      ]));
+    });
+
+    test('exports a copied fixture in all supported formats', () => {
+      const project = createTestProject('design-context-fixture-export-');
+      try {
+        writeDesign(project.root, readDesignFixture('examples/paws-and-paths.md'));
+
+        const tokensJson = buildDesignContextExportReport({ paths: project.paths, format: 'tokens-json' });
+        expect(tokensJson.source.result.errors).toBe(0);
+        expect(tokensJson.output.colors.primary).toBe('#855300');
+        expect(tokensJson.output.typography['body-md'].fontFamily).toBe('Plus Jakarta Sans');
+
+        const dtcgJson = buildDesignContextExportReport({ paths: project.paths, format: 'dtcg-json' });
+        expect(dtcgJson.output.colors.primary).toMatchObject({
+          $type: 'color',
+          $value: '#855300',
+        });
+
+        const tailwindJson = buildDesignContextExportReport({ paths: project.paths, format: 'tailwind-json' });
+        expect(tailwindJson.output.theme.extend.colors.primary).toBe('#855300');
+        expect(tailwindJson.output.theme.extend.fontFamily['body-md']).toEqual(['Plus Jakarta Sans']);
+
+        const tailwindCss = buildDesignContextExportReport({ paths: project.paths, format: 'tailwind-css' });
+        expect(tailwindCss.output.css).toContain('--color-primary: #855300;');
+        expect(tailwindCss.output.css).toContain('--font-body-md: "Plus Jakarta Sans";');
+      } finally {
+        project.cleanup();
+      }
+    });
+
+    test('diffs copied parity fixtures with stable token and section deltas', () => {
+      const project = createTestProject('design-context-fixture-diff-');
+      try {
+        writeDesignFile(project.root, 'DESIGN.before.md', readDesignFixture('parity/diff-before.md'));
+        writeDesign(project.root, readDesignFixture('parity/diff-after.md'));
+
+        const diff = buildDesignContextDiffReport({
+          paths: project.paths,
+          beforePath: 'DESIGN.before.md',
+          afterPath: 'DESIGN.md',
+        });
+
+        expect(diff.tokens.colors.added).toEqual(['accent']);
+        expect(diff.tokens.colors.removed).toEqual(['secondary']);
+        expect(diff.tokens.colors.modified).toEqual(['primary']);
+        expect(diff.tokens.spacing.added).toEqual(['md']);
+        expect(diff.tokens.components.modified).toEqual(['button']);
+        expect(diff.sections.added).toEqual(['Components']);
+        expect(diff.sections.removed).toEqual(['Typography']);
+        expect(diff.sections.modified).toEqual(['Overview']);
+      } finally {
+        project.cleanup();
+      }
+    });
+  });
 });
 
 function writeDesignFile(root: string, fileName: string, content: string): void {
@@ -635,6 +858,20 @@ function writeDesignFile(root: string, fileName: string, content: string): void 
 
 function writeDesign(root: string, content: string): void {
   writeDesignFile(root, 'DESIGN.md', content);
+}
+
+function readDesignFixture(relativePath: string): string {
+  return readFileSync(new URL(`./fixtures/design-context/${relativePath}`, import.meta.url), 'utf8');
+}
+
+function reportFixture(relativePath: string): ReturnType<typeof buildDesignContextReport> {
+  const project = createTestProject('design-context-fixture-invalid-');
+  try {
+    writeDesign(project.root, readDesignFixture(relativePath));
+    return buildDesignContextReport({ paths: project.paths });
+  } finally {
+    project.cleanup();
+  }
 }
 
 function exportFixture(): string {

@@ -154,11 +154,13 @@ spec-manager task create auth-L3.1.1 --plan ./plan.json
 
 - `spec-manager assist brief --request "<UI 需求>"` 会在需求命中设计相关意图且 `DESIGN.md` 存在时自动带上 Design Context。
 - `spec-manager assist design-template --out DESIGN.md` 会写入 starter DESIGN.md；默认不覆盖已有文件，除非传 `--force`。
-- `spec-manager assist design-export --format tokens-json --path DESIGN.md` 会导出规范化 tokens；使用 `--format dtcg-json` 可输出当前 DESIGN.md schema 的 DTCG JSON 子集，使用 `--out <file>` 可写入本地文件。
+- `spec-manager assist design-export --format tokens-json --path DESIGN.md` 会导出规范化 tokens；使用 `--format dtcg-json` 可输出当前 DESIGN.md schema 的 DTCG JSON 子集，`--format tailwind-json` 可输出 Tailwind v3 `theme.extend`，`--format tailwind-css` 可输出 Tailwind v4 `@theme` block，使用 `--out <file>` 可写入本地文件。
 - L3 规格可以使用 `@verify: design-lint(DESIGN.md)`，把 DESIGN.md lint 结果记录为 verification evidence。
 - 面向 review 的 L3 规格可以使用 `@verify: design-diff(DESIGN.before.md, DESIGN.md)` 比较两个显式 DESIGN.md 文件。该规则只在 after 文件新增 lint error/warning、任一文件缺失或移除 design token 时失败；新增/修改 token 和 section prose 变化会作为结构 diff 摘要展示。
 - schema lint 会把无效颜色、尺寸、typography 和 component token 结构报告为 error；未知 component property 会报告为 warning。按 finding path 修复，例如 `colors.primary` 或 `components.button-primary.animation`。
-- 第一版只读取、摘要、lint、diff 和报告 DESIGN.md；不会自动生成 UI、改写组件、判断视觉美学质量，也不依赖外部 design CLI。
+- parser、lint、export 和 diff 行为由 `src/core/__tests__/fixtures/design-context/` 下的小型 conformance fixture 集覆盖。这些 fixture 只复制进仓库用于测试，不 vendor 或调用外部 DESIGN.md 项目。
+- 对存在 DESIGN.md 的 UI 请求，Agent Brief 会附带非门禁 Design Guidance：先读 prose、优先具体灵感参照、尊重 do/don't 约束，并把未知 section 当作可能的设计意图。`assist critique` 也可能对未说明如何使用 DESIGN.md prose 的 UI/design 规格给出 advisory。
+- 第一版只读取、摘要、lint、diff、export 和报告 DESIGN.md；不会自动生成 UI、改写组件、修改 Tailwind 配置文件、判断视觉美学质量，也不依赖外部 design CLI。
 
 ## 核心概念
 

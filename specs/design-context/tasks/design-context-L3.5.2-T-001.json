@@ -1,0 +1,135 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.5.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3.5.2、L2.5、export core/CLI 和相关测试",
+      "status": "succeeded",
+      "toolName": "spec-manager/sed/git-diff",
+      "inputJson": "{\"spec\":\"design-context-L3.5.2\"}",
+      "outputJson": "{\"summary\":\"完成 frozen L3.5.2、父 L2.5、当前 export core/CLI/tests 和未提交 lint parity diff 上下文收集\",\"files\":[\"specs/design-context/design-context-L3.5.2.md\",\"specs/design-context/design-context-L2.5.md\",\"src/core/design-context.ts\",\"src/cli/capability.ts\",\"src/core/__tests__/design-context.test.ts\",\"src/cli/__tests__/capability.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:21:38.862Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "参考源项目 Tailwind v3/v4 emitters",
+      "status": "succeeded",
+      "toolName": "sed/rg",
+      "inputJson": "{\"source\":\"/Users/loki/code/github/design.md/packages/cli/src/linter/tailwind\"}",
+      "outputJson": "{\"summary\":\"完成源 design.md Tailwind v3 theme.extend mapper、Tailwind v4 handler 和 @theme serializer 行为参考调查\",\"files\":[\"/Users/loki/code/github/design.md/packages/cli/src/linter/tailwind/handler.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/tailwind/v4/handler.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/tailwind/v4/serialize.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/tailwind/v4/serialize.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:21:52.185Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 扩展 export format contract",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/design-context.ts\"]}",
+      "outputJson": "{\"summary\":\"扩展 DesignContextExportFormat 支持 tailwind-json 和 tailwind-css，保持旧 tokens-json/dtcg-json 行为不变\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-27T01:25:40.742Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 tailwind-json mapper",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/design-context.ts\"]}",
+      "outputJson": "{\"summary\":\"实现 Tailwind v3 theme.extend mapper，覆盖 colors、fontFamily、fontSize、borderRadius 和 spacing\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-27T01:25:51.074Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 tailwind-css mapper",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/design-context.ts\"]}",
+      "outputJson": "{\"summary\":\"实现 Tailwind v4 @theme mapper 和 CSS serializer，按 colors/font/typography/radius/spacing 稳定顺序输出变量\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-27T01:26:00.868Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/capability.ts 扩展 design-export CLI",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/cli/capability.ts\"]}",
+      "outputJson": "{\"summary\":\"扩展 assist design-export 支持 tailwind-json/tailwind-css，并让 tailwind-css 普通 stdout/out 输出 CSS 文本，--json 输出完整 report\",\"files\":[\"src/cli/capability.ts\"]}",
+      "reportedAt": "2026-06-27T01:26:08.281Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "编辑 core/CLI tests 覆盖 Tailwind export",
+      "status": "succeeded",
+      "toolName": "apply_patch/npm",
+      "inputJson": "{\"files\":[\"src/core/__tests__/design-context.test.ts\",\"src/cli/__tests__/capability.test.ts\"]}",
+      "outputJson": "{\"summary\":\"增加 tailwind-json/tailwind-css core tests 和 CLI stdout/out/json tests；定向测试 2 files/52 tests 通过\",\"files\":[\"src/core/__tests__/design-context.test.ts\",\"src/cli/__tests__/capability.test.ts\"],\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts src/cli/__tests__/capability.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:26:17.024Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "编辑 README/readme_zh/skill docs 补充 Tailwind export",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"README.md\",\"readme_zh.md\",\"skill/SKILL.md\",\"templates/agents/codebuddy-skill/SKILL.md\"]}",
+      "outputJson": "{\"summary\":\"补充 tailwind-json/tailwind-css 用法，并明确 export 不会自动修改 Tailwind config 文件\",\"files\":[\"README.md\",\"readme_zh.md\",\"skill/SKILL.md\",\"templates/agents/codebuddy-skill/SKILL.md\"]}",
+      "reportedAt": "2026-06-27T01:26:29.803Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run design-context/capability + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "inputJson": "{\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts src/cli/__tests__/capability.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "outputJson": "{\"summary\":\"完成 Tailwind Export Parity 验证；定向 2 files/52 tests、全量 66 files/763 tests、TypeScript lint 均通过\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts src/cli/__tests__/capability.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "reportedAt": "2026-06-27T01:26:51.830Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T01:21:26.979Z",
+  "finishedAt": "2026-06-27T01:27:26.094Z",
+  "created": "2026-06-27T01:21:20.710Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint",
+      "exitCode": 0,
+      "summary": "Tailwind export parity targeted tests, full test suite, and TypeScript lint passed",
+      "artifacts": [
+        "src/core/design-context.ts",
+        "src/cli/capability.ts",
+        "src/core/__tests__/design-context.test.ts",
+        "src/cli/__tests__/capability.test.ts",
+        "README.md",
+        "readme_zh.md",
+        "skill/SKILL.md",
+        "templates/agents/codebuddy-skill/SKILL.md"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T01:27:00.515Z",
+      "layer": "functional"
+    }
+  ]
+}

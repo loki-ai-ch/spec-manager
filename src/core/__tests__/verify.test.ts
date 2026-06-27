@@ -303,6 +303,25 @@ describe('executeVerifyRules', () => {
     expect(results[0].message).toContain('warnings=1');
   });
 
+  it('design-lint: parity warnings do not fail verification', () => {
+    writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
+      '---',
+      'name: Warning Only',
+      'colors:',
+      '  accent: "#445566"',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Warning-only design.',
+    ].join('\n'));
+
+    const results = executeVerifyRules([{ type: 'design-lint', path: 'DESIGN.md' }], tmpDir);
+    expect(results[0].passed).toBe(true);
+    expect(results[0].message).toContain('errors=0');
+    expect(results[0].message).toContain('warnings=');
+  });
+
   it('design-diff: no regression → passed=true with summary', () => {
     writeFileSync(path.join(tmpDir, 'DESIGN.before.md'), validDesign('Before'));
     writeFileSync(path.join(tmpDir, 'DESIGN.md'), [
@@ -311,6 +330,10 @@ describe('executeVerifyRules', () => {
       'colors:',
       '  accent: "#334455"',
       '  primary: "#1A1C1E"',
+      'typography:',
+      '  body:',
+      '    fontFamily: Inter',
+      '    fontSize: 16px',
       '---',
       '',
       '## Overview',
@@ -407,6 +430,10 @@ function validDesign(name: string): string {
     `name: ${name}`,
     'colors:',
     '  primary: "#1A1C1E"',
+    'typography:',
+    '  body:',
+    '    fontFamily: Inter',
+    '    fontSize: 16px',
     '---',
     '',
     '## Overview',

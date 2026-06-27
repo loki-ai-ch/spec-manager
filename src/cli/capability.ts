@@ -86,7 +86,7 @@ export function registerCapabilityCommands(program: Command): void {
   assist
     .command('design-export')
     .description('导出 DESIGN.md tokens JSON')
-    .option('--format <format>', 'tokens-json | dtcg-json', 'tokens-json')
+    .option('--format <format>', 'tokens-json | dtcg-json | tailwind-json | tailwind-css', 'tokens-json')
     .option('--path <path>', 'DESIGN.md 路径', 'DESIGN.md')
     .option('--out <path>', '项目内输出文件')
     .option('--json', '输出完整 export report JSON', false)
@@ -103,12 +103,15 @@ export function registerCapabilityCommands(program: Command): void {
         console.error(`✗ DESIGN_EXPORT_FAILED: ${opts.path} errors=${report.source.result.errors}, warnings=${report.source.result.warnings}, infos=${report.source.result.infos}`);
         process.exit(1);
       }
+      const cssOutput = format === 'tailwind-css' && typeof report.output['css'] === 'string'
+        ? report.output['css']
+        : null;
       const payload = opts.json && !opts.out ? report : report.output;
-      const text = JSON.stringify(payload, null, 2);
+      const text = cssOutput && !opts.json ? cssOutput : JSON.stringify(payload, null, 2);
       if (opts.out) {
         const outPath = resolveWithin(paths.root, opts.out);
         mkdirSync(dirname(outPath), { recursive: true });
-        writeFileSync(outPath, `${JSON.stringify(report.output, null, 2)}\n`, 'utf8');
+        writeFileSync(outPath, cssOutput && !opts.json ? cssOutput : `${JSON.stringify(report.output, null, 2)}\n`, 'utf8');
         console.log(`✓ Design export written: ${opts.out}`);
         return;
       }
@@ -279,7 +282,12 @@ function handleTaskSpecError(err: unknown): never {
 }
 
 function parseDesignExportFormat(value: string): DesignContextExportFormat | null {
-  return value === 'tokens-json' || value === 'dtcg-json' ? value : null;
+  return value === 'tokens-json'
+    || value === 'dtcg-json'
+    || value === 'tailwind-json'
+    || value === 'tailwind-css'
+    ? value
+    : null;
 }
 
 function renderGuidedAssistText(report: Awaited<ReturnType<typeof buildGuidedAssistReport>>): void {
@@ -462,6 +470,10 @@ function renderBriefText(brief: Awaited<ReturnType<typeof buildAgentBrief>>): vo
     if (summary.proseSummary.length > 0) {
       console.log('  Prose:');
       for (const item of summary.proseSummary.slice(0, 5)) console.log(`    - ${item}`);
+    }
+    if (brief.designGuidance && brief.designGuidance.length > 0) {
+      console.log('  Design Guidance:');
+      for (const item of brief.designGuidance.slice(0, 4)) console.log(`    - ${item}`);
     }
     const notableFindings = design.findings.filter(item => item.severity !== 'info').slice(0, 5);
     if (notableFindings.length > 0) {

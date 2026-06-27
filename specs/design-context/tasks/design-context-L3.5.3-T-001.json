@@ -1,0 +1,156 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.5.3",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3.5.3、L2.5、当前 tests 和源 fixtures",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"完成 L3.5.3 父设计、当前 tests 和源 DESIGN.md fixtures 上下文收集\",\"files\":[\"specs/design-context/design-context-L3.5.3.md\",\"specs/design-context/design-context-L2.5.md\",\"src/core/__tests__/design-context.test.ts\",\"/Users/loki/code/github/design.md/examples\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/fixtures\"]}",
+      "reportedAt": "2026-06-27T01:36:08.888Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "选择 fixture 最小子集",
+      "status": "succeeded",
+      "toolName": "shell",
+      "outputJson": "{\"summary\":\"确定 conformance fixture 最小子集：3 个 examples、2 个 valid linter fixtures、2 个 invalid linter fixtures，并补充本地 parity fixtures\",\"files\":[\"/Users/loki/code/github/design.md/examples/paws-and-paths/DESIGN.md\",\"/Users/loki/code/github/design.md/examples/atmospheric-glass/DESIGN.md\",\"/Users/loki/code/github/design.md/examples/totality-festival/DESIGN.md\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/fixtures/HERITAGE.md\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/fixtures/ALPINE_OBSERVATORY.md\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/fixtures/NO_FRONTMATTER.md\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/fixtures/OUT_OF_ORDER.md\"]}",
+      "reportedAt": "2026-06-27T01:36:29.342Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "新增 fixture 目录和 README",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"新增 Design Context conformance fixture 目录说明，记录来源、选择原则和不依赖外部仓库的维护方式\",\"files\":[\"src/core/__tests__/fixtures/design-context/README.md\"]}",
+      "reportedAt": "2026-06-27T01:37:24.629Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "复制 valid DESIGN.md conformance fixtures",
+      "status": "succeeded",
+      "toolName": "cp",
+      "outputJson": "{\"summary\":\"复制 3 个 DESIGN.md examples 和 2 个 valid linter fixtures 到仓库内测试目录\",\"files\":[\"src/core/__tests__/fixtures/design-context/examples/paws-and-paths.md\",\"src/core/__tests__/fixtures/design-context/examples/atmospheric-glass.md\",\"src/core/__tests__/fixtures/design-context/examples/totality-festival.md\",\"src/core/__tests__/fixtures/design-context/parity/heritage.md\",\"src/core/__tests__/fixtures/design-context/parity/alpine-observatory.md\"]}",
+      "reportedAt": "2026-06-27T01:37:33.343Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "新增 invalid/parity fixtures",
+      "status": "succeeded",
+      "toolName": "cp/apply_patch",
+      "outputJson": "{\"summary\":\"复制 invalid linter fixtures，并新增 broken-ref、bad-schema、diff parity fixtures\",\"files\":[\"src/core/__tests__/fixtures/design-context/invalid/no-frontmatter.md\",\"src/core/__tests__/fixtures/design-context/invalid/out-of-order.md\",\"src/core/__tests__/fixtures/design-context/invalid/broken-ref.md\",\"src/core/__tests__/fixtures/design-context/invalid/bad-schema.md\",\"src/core/__tests__/fixtures/design-context/parity/diff-before.md\",\"src/core/__tests__/fixtures/design-context/parity/diff-after.md\"]}",
+      "reportedAt": "2026-06-27T01:37:40.821Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/design-context.test.ts 增加 fixture helpers",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"增加 readDesignFixture/reportFixture helpers，从仓库内 conformance fixtures 读取 DESIGN.md 样本并写入临时项目\",\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:39:48.173Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/design-context.test.ts 增加 conformance tests",
+      "status": "succeeded",
+      "toolName": "apply_patch/npm test",
+      "outputJson": "{\"summary\":\"增加 valid examples、invalid findings、export formats、diff parity conformance tests，并修复 unitless lineHeight 字符串兼容性；定向测试 29 个通过\",\"files\":[\"src/core/__tests__/design-context.test.ts\",\"src/core/design-context.ts\"],\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:39:55.070Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "编辑 README/readme_zh/skill docs 补充 fixture conformance 说明",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"补充 Design Context conformance fixture 文档，说明 fixture 只用于仓库内测试且不依赖外部 DESIGN.md checkout\",\"files\":[\"README.md\",\"readme_zh.md\",\"skill/SKILL.md\",\"templates/agents/codebuddy-skill/SKILL.md\"]}",
+      "reportedAt": "2026-06-27T01:41:26.417Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run design-context + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm",
+      "outputJson": "{\"summary\":\"完成 Design Spec Fixtures and Conformance 验证：定向测试、全量测试和 TypeScript lint 均通过\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts\",\"npm test\",\"npm run lint\"]}",
+      "reportedAt": "2026-06-27T01:42:07.453Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T01:35:26.011Z",
+  "finishedAt": "2026-06-27T01:43:03.598Z",
+  "created": "2026-06-27T01:35:20.202Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "test -f src/core/__tests__/fixtures/design-context/README.md",
+      "exitCode": 0,
+      "summary": "AC-1 fixture README exists and documents sources, selection rules, and no external checkout dependency",
+      "artifacts": [
+        "src/core/__tests__/fixtures/design-context/README.md"
+      ],
+      "coversAc": [
+        "AC-1"
+      ],
+      "created": "2026-06-27T01:42:21.409Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts",
+      "exitCode": 0,
+      "summary": "Design-context targeted tests passed: 29 tests, including valid fixtures, invalid findings, export formats, and diff conformance",
+      "artifacts": [
+        "src/core/__tests__/design-context.test.ts",
+        "src/core/__tests__/fixtures/design-context"
+      ],
+      "coversAc": [
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-06-27T01:42:28.850Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full test suite passed: 66 files, 771 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-27T01:42:34.038Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-004",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint passed with tsc --noEmit",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-06-27T01:42:39.341Z",
+      "layer": "compile"
+    }
+  ]
+}

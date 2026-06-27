@@ -73,6 +73,7 @@ export interface AgentBrief {
   relevantTasks: BriefTaskRef[];
   lessons: Lesson[];
   designContext?: DesignContextReport;
+  designGuidance?: string[];
   suggestedReads: AssistSourceRef[];
   findings: AssistFinding[];
   nextCommand: string;

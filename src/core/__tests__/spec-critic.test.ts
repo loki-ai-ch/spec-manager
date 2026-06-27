@@ -106,6 +106,99 @@ describe('buildSpecCritique', () => {
     expect(report.findings).toEqual([]);
   });
 
+  it('reports a design philosophy advisory for UI implementation specs', () => {
+    createSpec({ paths: project.paths, code: 'ui-L1', level: 'L1', title: 'UI', topic: 'ui', parentCode: null });
+    updateSpec(project.paths, 'ui-L1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'ui-L2.1', level: 'L2', title: 'UI design', topic: 'ui', parentCode: 'ui-L1' });
+    updateSpec(project.paths, 'ui-L2.1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'ui-L3.1.1', level: 'L3', title: 'UI impl', topic: 'ui', parentCode: 'ui-L2.1' });
+    updateSpec(project.paths, 'ui-L3.1.1', {
+      content: [
+        '# UI impl',
+        '## 目标',
+        'Update frontend visual styling.',
+        '## 实施步骤',
+        '1. Edit UI files.',
+        '## 验证命令',
+        'npm test',
+        '## 风险与缓解',
+        'Low risk.',
+        '## 范围',
+        '不做 backend changes.',
+      ].join('\n\n'),
+      aiSummary: 'ui impl',
+    });
+
+    const report = buildSpecCritique(project.paths, 'ui-L3.1.1');
+
+    expect(report.findings).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        id: 'design.philosophy.guidance.missing',
+        severity: 'advisory',
+      }),
+    ]));
+  });
+
+  it('uses spec title and topic when detecting design philosophy advisory', () => {
+    createSpec({ paths: project.paths, code: 'ui-L1', level: 'L1', title: 'UI', topic: 'ui', parentCode: null });
+    updateSpec(project.paths, 'ui-L1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'ui-L2.1', level: 'L2', title: 'Interface plan', topic: 'ui', parentCode: 'ui-L1' });
+    updateSpec(project.paths, 'ui-L2.1', {
+      content: [
+        '# Interface plan',
+        '## 方案概述',
+        'Ship the screen.',
+        '## 技术决策',
+        'Decision.',
+        '## 受影响模块',
+        'Frontend.',
+        '## 接口契约',
+        'CLI.',
+        '## 兼容性',
+        'No breakage.',
+        '## 测试策略',
+        'Tests.',
+        '## L3 裂变计划',
+        'One slice.',
+      ].join('\n\n'),
+      aiSummary: 'interface plan',
+    });
+
+    const report = buildSpecCritique(project.paths, 'ui-L2.1');
+
+    expect(report.findings.map(finding => finding.id)).toContain('design.philosophy.guidance.missing');
+  });
+
+  it('does not report design philosophy advisory when prose guidance is explicit', () => {
+    createSpec({ paths: project.paths, code: 'ui-L1', level: 'L1', title: 'UI', topic: 'ui', parentCode: null });
+    updateSpec(project.paths, 'ui-L1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'ui-L2.1', level: 'L2', title: 'UI design', topic: 'ui', parentCode: 'ui-L1' });
+    updateSpec(project.paths, 'ui-L2.1', {
+      content: [
+        '# UI design',
+        '## 方案概述',
+        'Use DESIGN.md prose-first guidance for frontend design.',
+        '## 技术决策',
+        'Decision.',
+        '## 受影响模块',
+        'Frontend.',
+        '## 接口契约',
+        'CLI.',
+        '## 兼容性',
+        'No breakage.',
+        '## 测试策略',
+        'Tests.',
+        '## L3 裂变计划',
+        'One slice.',
+      ].join('\n\n'),
+      aiSummary: 'ui design',
+    });
+
+    const report = buildSpecCritique(project.paths, 'ui-L2.1');
+
+    expect(report.findings.map(finding => finding.id)).not.toContain('design.philosophy.guidance.missing');
+  });
+
   it('throws SPEC_NOT_FOUND for missing specs', () => {
     expect(() => buildSpecCritique(project.paths, 'missing-L1')).toThrow(/SPEC_NOT_FOUND/);
   });

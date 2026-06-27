@@ -24,6 +24,12 @@ const MAX_SPECS = 5;
 const MAX_DECISIONS = 3;
 const MAX_TASKS = 5;
 const MAX_BRIEF_LESSONS = 5;
+const DESIGN_GUIDANCE = [
+  'Read DESIGN.md prose before using tokens; token values support the design story, not the other way around.',
+  'Prefer specific sources of inspiration over generic adjectives like modern, clean, premium, or trustworthy.',
+  'Respect negative constraints, do/don\'t lists, and explicit omissions as part of the design character.',
+  'Treat unknown sections as possible domain-specific design intent instead of ignoring them.',
+];
 
 export function buildAgentBrief(input: BuildAgentBriefInput): AgentBrief {
   const request = input.request.trim();
@@ -54,6 +60,7 @@ export function buildAgentBrief(input: BuildAgentBriefInput): AgentBrief {
     relevantTasks,
     lessons,
     ...(designContext?.exists ? { designContext } : {}),
+    ...(designContext?.exists ? { designGuidance: [...DESIGN_GUIDANCE] } : {}),
     suggestedReads: buildSuggestedReads(relevantSpecs, relevantDecisions, relevantTasks, designRef ? [designRef] : []),
     findings,
     nextCommand: nextCommandFor(request, topic, relevantSpecs),

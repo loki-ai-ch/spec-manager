@@ -74,12 +74,26 @@ describe('buildAgentBrief', () => {
     expect(brief.suggestedReads.map(ref => `${ref.kind}:${ref.id}`)).toContain('config:DESIGN.md');
   });
 
+  it('includes design philosophy guidance for visual requests when DESIGN.md exists', () => {
+    writeDesignFixture();
+
+    const brief = buildAgentBrief({ paths: project.paths, request: 'update UI button styling', topic: 'auth' });
+
+    expect(brief.designGuidance).toHaveLength(4);
+    expect(brief.designGuidance).toEqual(expect.arrayContaining([
+      expect.stringContaining('Read DESIGN.md prose'),
+      expect.stringContaining('specific sources of inspiration'),
+      expect.stringContaining('negative constraints'),
+    ]));
+  });
+
   it('does not include design context for non-visual requests', () => {
     writeDesignFixture();
 
     const brief = buildAgentBrief({ paths: project.paths, request: 'auth permission change', topic: 'auth' });
 
     expect(brief.designContext).toBeUndefined();
+    expect(brief.designGuidance).toBeUndefined();
     expect(brief.suggestedReads.map(ref => `${ref.kind}:${ref.id}`)).not.toContain('config:DESIGN.md');
   });
 
@@ -87,6 +101,7 @@ describe('buildAgentBrief', () => {
     const brief = buildAgentBrief({ paths: project.paths, request: 'polish frontend layout', topic: 'auth' });
 
     expect(brief.designContext).toBeUndefined();
+    expect(brief.designGuidance).toBeUndefined();
     expect(brief.findings.some(finding => finding.detail.includes('DESIGN.md'))).toBe(false);
   });
 });

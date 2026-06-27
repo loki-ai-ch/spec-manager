@@ -136,6 +136,34 @@ function writeInvalidDesignFixture(): void {
   );
 }
 
+function writeTailwindDesignFixture(): void {
+  writeFileSync(
+    join(project.root, 'DESIGN.md'),
+    [
+      '---',
+      'name: Tailwind Fixture',
+      'colors:',
+      '  primary: "#112233"',
+      'typography:',
+      '  body:',
+      '    fontFamily: Inter',
+      '    fontSize: 16px',
+      '    fontWeight: 400',
+      '    lineHeight: 1.5',
+      'spacing:',
+      '  sm: 8px',
+      'rounded:',
+      '  sm: 4px',
+      '---',
+      '',
+      '## Overview',
+      '',
+      'Tailwind export fixture.',
+    ].join('\n'),
+    'utf8',
+  );
+}
+
 describe('assist CLI', () => {
   it('prints guided assist JSON contract', async () => {
     await makeProgram().parseAsync(['assist', 'guide', '--request', 'auth login', '--topic', 'auth', '--json'], { from: 'user' });
@@ -199,6 +227,11 @@ describe('assist CLI', () => {
     expect(json.schemaVersion).toBe('agent-brief.v1');
     expect(json.designContext.schemaVersion).toBe('design-context.v1');
     expect(json.designContext.summary.name).toBe('Heritage');
+    expect(json.designGuidance).toEqual(expect.arrayContaining([
+      expect.stringContaining('Read DESIGN.md prose'),
+      expect.stringContaining('specific sources of inspiration'),
+      expect.stringContaining('negative constraints'),
+    ]));
     expect(json.suggestedReads.map((ref: { kind: string; id: string }) => `${ref.kind}:${ref.id}`)).toContain('config:DESIGN.md');
   });
 
@@ -208,7 +241,10 @@ describe('assist CLI', () => {
     await makeProgram().parseAsync(['assist', 'brief', '--request', 'polish UI styling', '--topic', 'auth'], { from: 'user' });
 
     expect(output()).toContain('Design Context: Heritage');
-    expect(output()).toContain('lint: errors=0, warnings=0, infos=0');
+    expect(output()).toContain('Design Guidance:');
+    expect(output()).toContain('Read DESIGN.md prose');
+    expect(output()).toContain('specific sources of inspiration');
+    expect(output()).toContain('lint: errors=0, warnings=1, infos=6');
     expect(output()).toContain('tokens: colors=1');
     expect(output()).toContain('config:DESIGN.md');
   });
@@ -219,7 +255,7 @@ describe('assist CLI', () => {
     await makeProgram().parseAsync(['assist', 'brief', '--request', 'polish UI styling', '--topic', 'auth'], { from: 'user' });
 
     expect(output()).toContain('Design Context: Broken Heritage');
-    expect(output()).toContain('lint: errors=6, warnings=1, infos=0');
+    expect(output()).toContain('lint: errors=6, warnings=1, infos=6');
     expect(output()).toContain('[error] colors.primary: Color token');
     expect(output()).toContain('[error] spacing.sm: spacing token');
     expect(output()).toContain('[error] typography.body: Typography token');
@@ -261,6 +297,46 @@ describe('assist CLI', () => {
     const json = JSON.parse(readFileSync(outPath, 'utf8'));
     expect(json.colors.primary.$type).toBe('color');
     expect(output()).toContain('Design export written: tokens.dtcg.json');
+  });
+
+  it('prints tailwind-json design export output', async () => {
+    writeTailwindDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tailwind-json'], { from: 'user' });
+
+    const json = JSON.parse(output());
+    expect(json.theme.extend.colors.primary).toBe('#112233');
+    expect(json.theme.extend.fontFamily.body).toEqual(['Inter']);
+    expect(json.theme.extend.fontSize.body).toEqual(['16px', { lineHeight: '1.5', fontWeight: '400' }]);
+    expect(json.theme.extend.borderRadius.sm).toBe('4px');
+    expect(json.theme.extend.spacing.sm).toBe('8px');
+  });
+
+  it('prints and writes tailwind-css design export output', async () => {
+    writeTailwindDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tailwind-css'], { from: 'user' });
+
+    expect(output()).toContain('@theme {');
+    expect(output()).toContain('--color-primary: #112233;');
+    expect(output()).toContain('--font-body: "Inter";');
+    expect(output()).toContain('--spacing-sm: 8px;');
+
+    logSpy.mockClear();
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tailwind-css', '--out', 'theme.css'], { from: 'user' });
+
+    expect(readFileSync(join(project.root, 'theme.css'), 'utf8')).toContain('--color-primary: #112233;');
+    expect(output()).toContain('Design export written: theme.css');
+  });
+
+  it('prints tailwind-css export report when json is requested', async () => {
+    writeTailwindDesignFixture();
+
+    await makeProgram().parseAsync(['assist', 'design-export', '--format', 'tailwind-css', '--json'], { from: 'user' });
+
+    const json = JSON.parse(output());
+    expect(json.format).toBe('tailwind-css');
+    expect(json.output.css).toContain('@theme {');
   });
 
   it('rejects invalid DESIGN.md during design export', async () => {
@@ -328,6 +404,35 @@ describe('assist CLI', () => {
 
     expect(output()).toContain('Spec Critique');
     expect(output()).toContain('Spec: auth-L1');
+  });
+
+  it('prints design philosophy critique advisory', async () => {
+    createSpec({ paths: project.paths, code: 'ui-L1', level: 'L1', title: 'UI', topic: 'ui', parentCode: null });
+    updateSpec(project.paths, 'ui-L1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'ui-L2.1', level: 'L2', title: 'UI design', topic: 'ui', parentCode: 'ui-L1' });
+    updateSpec(project.paths, 'ui-L2.1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'ui-L3.1.1', level: 'L3', title: 'UI impl', topic: 'ui', parentCode: 'ui-L2.1' });
+    updateSpec(project.paths, 'ui-L3.1.1', {
+      content: [
+        '# UI impl',
+        '## 目标',
+        'Update frontend visual styling.',
+        '## 实施步骤',
+        '1. Edit UI files.',
+        '## 验证命令',
+        'npm test',
+        '## 风险与缓解',
+        'Low risk.',
+        '## 范围',
+        '不做 backend changes.',
+      ].join('\n\n'),
+      aiSummary: 'ui impl',
+    });
+
+    await makeProgram().parseAsync(['assist', 'critique', 'ui-L3.1.1'], { from: 'user' });
+
+    expect(output()).toContain('[advisory] design.philosophy.guidance.missing: Design philosophy guidance is not explicit');
+    expect(output()).toContain('DESIGN.md prose');
   });
 
   it('prints task next JSON contract', async () => {

@@ -1,0 +1,121 @@
+{
+  "id": "T-001",
+  "specCode": "design-context-L3.5.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3.5.1、L2.5、design-context core 和相关测试",
+      "status": "succeeded",
+      "toolName": "spec-manager/sed",
+      "inputJson": "{\"spec\":\"design-context-L3.5.1\"}",
+      "outputJson": "{\"summary\":\"完成 frozen L3.5.1、父 L2.5、design-context core 与相关测试上下文收集\",\"files\":[\"specs/design-context/design-context-L3.5.1.md\",\"specs/design-context/design-context-L2.5.md\",\"src/core/design-context.ts\",\"src/core/__tests__/design-context.test.ts\",\"src/core/__tests__/verify.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:01:14.429Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "参考源项目 lint rules 行为",
+      "status": "succeeded",
+      "toolName": "sed",
+      "inputJson": "{\"source\":\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules\"}",
+      "outputJson": "{\"summary\":\"完成源 design.md lint rule 行为参考调查\",\"files\":[\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/missing-primary.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/missing-typography.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/missing-sections.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/orphaned-tokens.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/unknown-key.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/token-like-ignored.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/contrast-ratio.ts\",\"/Users/loki/code/github/design.md/packages/cli/src/linter/linter/rules/token-summary.ts\"]}",
+      "reportedAt": "2026-06-27T01:01:24.960Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 接入 lint parity pipeline",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/design-context.ts\"]}",
+      "outputJson": "{\"summary\":\"新增 lintDesignParityRules 并接入 readDesignContextParts，保持 DesignContextReport shape 不变\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-27T01:01:33.009Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 structural parity rules",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/design-context.ts\"]}",
+      "outputJson": "{\"summary\":\"实现 missing-primary、missing-typography、missing-sections、token-summary、unknown-key、token-like-ignored、prose token ref findings\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-27T00:59:57.067Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/design-context.ts 实现 color usage 与 contrast rules",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/design-context.ts\"]}",
+      "outputJson": "{\"summary\":\"实现 orphaned color token 检查、组件/prose color refs 收集、hex/rgb/named color 解析与 WCAG contrast warning\",\"files\":[\"src/core/design-context.ts\"]}",
+      "reportedAt": "2026-06-27T00:59:57.685Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/design-context.test.ts 增加 parity lint 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "outputJson": "{\"summary\":\"增加 lint parity core test，覆盖 missing-primary、missing-typography、missing-sections、orphaned tokens、unknown-key、token-like、prose ref 和 contrast warning\",\"files\":[\"src/core/__tests__/design-context.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:00:12.717Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/verify.test.ts 和必要 diff 测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "inputJson": "{\"files\":[\"src/core/__tests__/verify.test.ts\",\"src/cli/__tests__/capability.test.ts\"]}",
+      "outputJson": "{\"summary\":\"增加 warning-only design-lint verification 测试，并更新 design-diff/brief fixture 对新增 warning/info 的稳定断言\",\"files\":[\"src/core/__tests__/verify.test.ts\",\"src/cli/__tests__/capability.test.ts\"]}",
+      "reportedAt": "2026-06-27T01:00:12.726Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- --run design-context/verify + npm test + npm run lint",
+      "status": "succeeded",
+      "toolName": "npm/spec-manager",
+      "inputJson": "{\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts src/core/__tests__/verify.test.ts\",\"npm test -- --run src/core/__tests__/task-complete-verify.test.ts\",\"npm run lint\",\"npm test\"]}",
+      "outputJson": "{\"summary\":\"完成 Design Lint Parity Rules 验证；定向 design-context/verify 55 tests、task-complete-verify 13 tests、全量 66 files/758 tests、lint 均通过\",\"commands\":[\"npm test -- --run src/core/__tests__/design-context.test.ts src/core/__tests__/verify.test.ts\",\"npm test -- --run src/core/__tests__/task-complete-verify.test.ts\",\"npm run lint\",\"npm test\"]}",
+      "reportedAt": "2026-06-27T01:00:49.073Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T00:55:42.210Z",
+  "finishedAt": "2026-06-27T01:02:39.897Z",
+  "created": "2026-06-27T00:55:37.284Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test && npm run lint",
+      "exitCode": 0,
+      "summary": "Design lint parity tests, full test suite, and TypeScript lint passed",
+      "artifacts": [
+        "src/core/design-context.ts",
+        "src/core/__tests__/design-context.test.ts",
+        "src/core/__tests__/verify.test.ts",
+        "src/cli/__tests__/capability.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T01:02:16.975Z",
+      "layer": "functional"
+    }
+  ]
+}
