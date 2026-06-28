@@ -27,6 +27,7 @@ import {
 import { buildCriticalReadinessReport, type CriticalReadinessReport } from '../core/critical-readiness.js';
 import { applyRepositoryRemediation, planRepositoryRemediation } from '../core/remediation.js';
 import { applyLifecycleReconciliation, planLifecycleReconciliation } from '../core/reconciliation.js';
+import { buildDocsConsistencyReport, type DocsConsistencyReport } from '../core/docs-consistency.js';
 import { printPathGroup, requireInitialized } from './common.js';
 
 export function registerProject(program: Command): void {
@@ -285,6 +286,26 @@ export function registerProject(program: Command): void {
       }
     });
 
+  const docs = cmd
+    .command('docs')
+    .description('文档、package 与 agent guidance 一致性检查');
+
+  docs
+    .command('check')
+    .description('只读检查 README、package files 与 agent guidance 一致性')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const report = buildDocsConsistencyReport(paths);
+      if (opts.json) {
+        console.log(JSON.stringify(report, null, 2));
+      } else {
+        printDocsConsistencyReport(report);
+      }
+      if (report.summary.errors > 0) process.exit(1);
+    });
+
   cmd
     .command('reconcile')
     .description('预览或执行已审阅范围内的历史规格状态对账')
@@ -507,6 +528,23 @@ function printCriticalReadinessReport(report: CriticalReadinessReport): void {
   console.log('Governed Upgrade:');
   console.log(`  readyForGovernedDefault: ${report.governedUpgrade.readyForGovernedDefault}`);
   console.log(`  note: ${report.governedUpgrade.note}`);
+}
+
+function printDocsConsistencyReport(report: DocsConsistencyReport): void {
+  console.log('Docs consistency:');
+  console.log(`  schemaVersion: ${report.schemaVersion}`);
+  console.log(`  summary: errors=${report.summary.errors} warnings=${report.summary.warnings} infos=${report.summary.infos}`);
+  if (report.findings.length === 0) {
+    console.log('  ✓ ok');
+    return;
+  }
+  for (const finding of report.findings) {
+    const mark = finding.severity === 'error' ? '✗' : finding.severity === 'warning' ? '⚠' : 'ℹ';
+    const path = finding.path ? ` (${finding.path})` : '';
+    console.log(`  ${mark} [${finding.id}] ${finding.title}${path}`);
+    console.log(`    ${finding.detail}`);
+    if (finding.suggestion) console.log(`    fix: ${finding.suggestion}`);
+  }
 }
 
 function splitCommaList(value: string | undefined): string[] | undefined {

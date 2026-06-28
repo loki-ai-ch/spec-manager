@@ -12,7 +12,7 @@
  */
 
 import { isPlaceholderContent } from './placeholder.js';
-import { sectionBody, validateCriticalAcceptanceCriteria } from './spec-sections.js';
+import { buildSectionAliasDiagnostics, sectionBody, validateCriticalAcceptanceCriteria } from './spec-sections.js';
 import { splitArgs, VERIFY_RE, VERIFY_TYPE_ARITY } from './verify.js';
 
 const SPEC_CODE_INLINE_RE = /\b[a-z0-9][a-z0-9-]*-L[0-3](?:\.\d+)*(?:-(?!\d{8}\b)[a-z0-9][a-z0-9-]*)?\b/;
@@ -57,6 +57,14 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
         section: r,
       });
     }
+  }
+  for (const diagnostic of buildSectionAliasDiagnostics(content, required)) {
+    warnings.push({
+      rule: diagnostic.rule,
+      level: 'warn',
+      message: diagnostic.message,
+      section: diagnostic.canonical,
+    });
   }
 
   // RFC 2119 校验：L1 验收标准段每条 AC 应含 SHALL/MUST/SHOULD
@@ -204,6 +212,120 @@ export interface PlanJson {
   steps: PlanStep[];
 }
 
+export interface PlanJsonDiagnostic {
+  path: string;
+  message: string;
+  suggestion?: string;
+}
+
+const LEGACY_PLAN_STEP_FIELDS: Record<string, string> = {
+  no: 'stepNo',
+  type: 'stepType',
+  desc: 'name',
+};
+
+export function buildPlanJsonDiagnostics(plan: unknown, specCode?: string): PlanJsonDiagnostic[] {
+  const diagnostics: PlanJsonDiagnostic[] = [];
+  if (!plan || typeof plan !== 'object') {
+    return [{
+      path: '$',
+      message: 'planJson must be an object.',
+      suggestion: planJsonExample(specCode),
+    }];
+  }
+  const p = plan as Record<string, unknown>;
+  if (!Array.isArray(p.steps)) {
+    return [{
+      path: 'steps',
+      message: 'planJson.steps must be an array.',
+      suggestion: planJsonExample(specCode),
+    }];
+  }
+  for (const [i, rawStep] of p.steps.entries()) {
+    const path = `steps[${i}]`;
+    if (!rawStep || typeof rawStep !== 'object' || Array.isArray(rawStep)) {
+      diagnostics.push({
+        path,
+        message: 'step must be an object.',
+        suggestion: '{"stepNo": 1, "stepType": "tool_action", "name": "run verify test"}',
+      });
+      continue;
+    }
+    const step = rawStep as Record<string, unknown>;
+    for (const [legacy, canonical] of Object.entries(LEGACY_PLAN_STEP_FIELDS)) {
+      if (legacy in step && !(canonical in step)) {
+        diagnostics.push({
+          path: `${path}.${canonical}`,
+          message: `${path}.${canonical} is required. Found legacy field "${legacy}".`,
+          suggestion: `Rename "${legacy}" to "${canonical}".`,
+        });
+      }
+    }
+    if (!('stepNo' in step) && !('no' in step)) {
+      diagnostics.push({
+        path: `${path}.stepNo`,
+        message: `${path}.stepNo is required.`,
+        suggestion: 'Add "stepNo": 1.',
+      });
+    }
+    if (!('stepType' in step) && !('type' in step)) {
+      diagnostics.push({
+        path: `${path}.stepType`,
+        message: `${path}.stepType is required.`,
+        suggestion: 'Add "stepType": "tool_action".',
+      });
+    }
+    if ('stepType' in step && !['llm_call', 'tool_action', 'human_gate', 'mcp_tool'].includes(String(step.stepType))) {
+      diagnostics.push({
+        path: `${path}.stepType`,
+        message: `${path}.stepType="${String(step.stepType)}" is invalid.`,
+        suggestion: 'Use one of: llm_call, tool_action, human_gate, mcp_tool.',
+      });
+    }
+    if (!('name' in step) && !('desc' in step)) {
+      diagnostics.push({
+        path: `${path}.name`,
+        message: `${path}.name is required.`,
+        suggestion: 'Add "name": "run verify test".',
+      });
+    }
+  }
+  if (!Array.isArray(p.coveredSpecs) || (specCode && !p.coveredSpecs.includes(specCode))) {
+    diagnostics.push({
+      path: 'coveredSpecs',
+      message: specCode
+        ? `coveredSpecs should include current L3 specCode "${specCode}".`
+        : 'coveredSpecs should include the current L3 specCode.',
+      suggestion: specCode ? `"coveredSpecs": ["${specCode}"]` : '"coveredSpecs": ["<L3-spec-code>"]',
+    });
+  }
+  if (diagnostics.length === 0) return [];
+  diagnostics.push({
+    path: 'example',
+    message: 'Minimal valid planJson example.',
+    suggestion: planJsonExample(specCode),
+  });
+  return diagnostics;
+}
+
+export function formatPlanJsonDiagnostics(diagnostics: PlanJsonDiagnostic[]): string {
+  if (diagnostics.length === 0) return '';
+  return diagnostics.map(item => {
+    const suggestion = item.suggestion ? `\n    suggestion: ${item.suggestion}` : '';
+    return `  - ${item.path}: ${item.message}${suggestion}`;
+  }).join('\n');
+}
+
+function planJsonExample(specCode?: string): string {
+  return JSON.stringify({
+    coveredSpecs: [specCode ?? '<L3-spec-code>'],
+    steps: [
+      { stepNo: 1, stepType: 'tool_action', name: '读取规格并检查代码' },
+      { stepNo: 2, stepType: 'tool_action', name: '运行验证 npm test' },
+    ],
+  }, null, 2);
+}
+
 export function validatePlanJson(plan: unknown): ValidationWarning[] {
   const warnings: ValidationWarning[] = [];
   if (!plan || typeof plan !== 'object') {
@@ -235,7 +357,7 @@ export function validatePlanJson(plan: unknown): ValidationWarning[] {
     } else {
       const t = String(s.stepType);
       if (!['llm_call', 'tool_action', 'human_gate', 'mcp_tool'].includes(t)) {
-        warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}].stepType="${t}" 不在 [llm_call, tool_action, human_gate]` });
+        warnings.push({ rule: 'plan_field', level: 'warn', message: `steps[${i}].stepType="${t}" 不在 [llm_call, tool_action, human_gate, mcp_tool]` });
       }
     }
     if (!('name' in s)) {

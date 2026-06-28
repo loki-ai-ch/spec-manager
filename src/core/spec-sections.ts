@@ -50,6 +50,38 @@ export interface CriticalAcceptanceCriteriaValidation {
   unknown: string[];
 }
 
+export interface SectionAliasDiagnostic {
+  alias: string;
+  canonical: string;
+  rule: 'section_alias';
+  message: string;
+  suggestion: string;
+}
+
+export const SECTION_HEADING_ALIASES: Record<string, string> = {
+  '实施计划': '实施步骤',
+  '执行计划': '实施步骤',
+  '验证方式': '验证命令',
+  '验证方法': '验证命令',
+};
+
+export function buildSectionAliasDiagnostics(content: string, requiredHeadings: string[]): SectionAliasDiagnostic[] {
+  const headings = extractSecondLevelHeadings(content);
+  const diagnostics: SectionAliasDiagnostic[] = [];
+  for (const [alias, canonical] of Object.entries(SECTION_HEADING_ALIASES)) {
+    if (!requiredHeadings.includes(canonical)) continue;
+    if (!headings.has(alias) || headings.has(canonical)) continue;
+    diagnostics.push({
+      alias,
+      canonical,
+      rule: 'section_alias',
+      message: `检测到 "## ${alias}"，规范段名应为 "## ${canonical}"。`,
+      suggestion: `Rename "## ${alias}" to "## ${canonical}".`,
+    });
+  }
+  return diagnostics;
+}
+
 export function extractAcceptanceCriteria(content: string): AcceptanceCriterion[] {
   const out: AcceptanceCriterion[] = [];
   const section = sectionBody(content, '验收标准');
@@ -96,4 +128,13 @@ export function validateCriticalAcceptanceCriteria(content: string): CriticalAcc
 
 export function truncateWithEllipsis(value: string, maxLen: number): string {
   return value.length > maxLen ? value.slice(0, maxLen) + '...' : value;
+}
+
+function extractSecondLevelHeadings(content: string): Set<string> {
+  const headings = new Set<string>();
+  for (const line of content.split(/\r?\n/)) {
+    const match = line.match(/^##\s+(.+?)\s*$/);
+    if (match) headings.add(match[1].trim().replace(/[：:]+$/g, ''));
+  }
+  return headings;
 }

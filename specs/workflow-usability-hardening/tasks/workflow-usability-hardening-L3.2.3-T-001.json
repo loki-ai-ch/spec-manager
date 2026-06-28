@@ -1,0 +1,102 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-usability-hardening-L3.2.3",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取规格并调查 release docs check 路径",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.2.3, docs-consistency core, project docs CLI tests, and release subskill guidance to confirm report integration points and release notes examples.\"}",
+      "reportedAt": "2026-06-28T01:38:52.434Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "实现 release notes inline risk detector",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added release markdown scanning and gh release create --notes inline risk detection to docs-consistency, emitting docs.release-notes.inline-risk info findings and recommending --notes-file.\"}",
+      "reportedAt": "2026-06-28T01:38:58.508Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "增加 release inline risk core 和 CLI 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added core tests for risky inline gh release notes and safe --notes-file usage, plus CLI text output coverage for docs.release-notes.inline-risk.\"}",
+      "reportedAt": "2026-06-28T01:39:06.316Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "更新 release subskill notes-file guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated skill/subskills/release.md to recommend gh release create --notes-file and warn against inline --notes shell quoting risks.\"}",
+      "reportedAt": "2026-06-28T01:39:15.256Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran focused tests, full test suite, lint, build, and built CLI docs check successfully.\",\"focused\":\"2 files passed, 15 tests passed\",\"full\":\"68 files passed, 806 tests passed\",\"lint\":\"npm run lint exit 0\",\"build\":\"npm run build exit 0\",\"docsCheck\":\"node dist/cli/index.js project docs check --json exit 0 with generated asset info only\"}",
+      "reportedAt": "2026-06-28T01:40:34.508Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-28T01:37:41.415Z",
+  "finishedAt": "2026-06-28T01:40:49.219Z",
+  "created": "2026-06-28T01:37:34.285Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/docs-consistency.test.ts src/cli/__tests__/project-docs.test.ts",
+      "exitCode": 0,
+      "summary": "Focused release notes inline risk tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-28T01:40:06.469Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Full regression, TypeScript lint, and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-28T01:40:14.160Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-003",
+      "command": "node dist/cli/index.js project docs check --json",
+      "exitCode": 0,
+      "summary": "Built CLI docs check completed with generated asset info only and no release inline-risk finding for the current repository.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-4"
+      ],
+      "created": "2026-06-28T01:40:24.627Z",
+      "layer": "smoke"
+    }
+  ]
+}

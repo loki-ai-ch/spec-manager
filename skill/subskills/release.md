@@ -43,7 +43,11 @@ cat > releases/v1.2.0-release.md <<'EOF'
 EOF
 ```
 
-4. 同步到 git tag + GitHub release（如需）
+4. 同步到 git tag + GitHub release（如需）。优先使用 notes file，避免 `--notes "..."` 中的反引号或 `$()` 被 shell 展开。
+
+```bash
+gh release create v1.2.0 --title "v1.2.0" --notes-file releases/v1.2.0-release.md
+```
 
 ## 关联规则
 

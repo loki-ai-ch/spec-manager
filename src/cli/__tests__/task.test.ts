@@ -198,6 +198,25 @@ describe('task CLI', () => {
     expect(stderr()).toContain('GOVERNED_CRITICAL_AC_REQUIRED');
   });
 
+  it('prints actionable diagnostics for legacy planJson fields', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    const planFile = join(project.root, 'legacy-plan.json');
+    writeFileSync(planFile, JSON.stringify({
+      coveredSpecs: [specCode],
+      steps: [{ no: 1, type: 'tool_action', desc: 'run verify test' }],
+    }), 'utf8');
+
+    await expect(makeProgram().parseAsync(['task', 'create', specCode, '--plan', planFile], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('PLAN_JSON_INVALID');
+    expect(stderr()).toContain('steps[0].stepNo');
+    expect(stderr()).toContain('legacy field "no"');
+    expect(stderr()).toContain('Rename "type" to "stepType"');
+    expect(stderr()).toContain('Rename "desc" to "name"');
+    expect(findTask(project.paths, specCode, 'T-001')).toBeNull();
+  });
+
   it('rejects deprecated force and points to scoped bypasses', async () => {
     const specCode = createFrozenL3WithTask();
 
@@ -371,6 +390,41 @@ describe('task CLI', () => {
     const task = findTask(project.paths, specCode, 'T-001');
     expect(task?.steps?.[0].status).toBe('pending');
     expect(task?.steps?.[1].status).toBe('succeeded');
+  });
+
+  it('reports multiple task steps from batch input', async () => {
+    const specCode = createFrozenL3WithTask();
+    const batchFile = join(project.root, 'steps.json');
+    writeFileSync(batchFile, JSON.stringify({
+      steps: [
+        { stepNo: 1, status: 'succeeded', outputJson: '{"summary":"step one"}' },
+        { stepNo: 2, status: 'succeeded', outputJson: '{"summary":"step two"}' },
+      ],
+    }), 'utf8');
+
+    await makeProgram().parseAsync(['task', 'step-batch', 'T-001', '--spec', specCode, '--input', batchFile], { from: 'user' });
+
+    const task = findTask(project.paths, specCode, 'T-001');
+    expect(output()).toContain('2 step(s) reported');
+    expect(output()).toContain('Step 1: succeeded');
+    expect(output()).toContain('Step 2: succeeded');
+    expect(task?.steps?.[0].status).toBe('succeeded');
+    expect(task?.steps?.[1].status).toBe('succeeded');
+    expect(task?.steps?.[0].outputJson).toContain('step one');
+    expect(task?.steps?.[1].outputJson).toContain('step two');
+  });
+
+  it('preserves R15 warnings during batch step reporting', async () => {
+    const specCode = createFrozenL3WithTask();
+    const batchFile = join(project.root, 'steps-r15.json');
+    writeFileSync(batchFile, JSON.stringify({
+      steps: [{ stepNo: 1, status: 'succeeded' }],
+    }), 'utf8');
+
+    await makeProgram().parseAsync(['task', 'step-batch', 'T-001', '--spec', specCode, '--input', batchFile], { from: 'user' });
+
+    expect(warnings()).toContain('step 1');
+    expect(warnings()).toContain('R15');
   });
 
   it('records verification from flags', async () => {

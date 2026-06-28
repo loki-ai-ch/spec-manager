@@ -1,0 +1,89 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-usability-hardening-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey task step reporting write path",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"reportStep currently uses the initial task snapshot to replace the full steps array, so concurrent writers can overwrite unrelated step updates. CLI task step directly calls reportStep; a step-batch command can reuse the same core function sequentially.\"}",
+      "reportedAt": "2026-06-27T14:07:06.677Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement safe step merge and batch CLI",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated reportStep to merge against the latest task JSON snapshot and added task step-batch CLI with JSON input, text/json output, and per-step warning preservation.\"}",
+      "reportedAt": "2026-06-27T14:16:03.186Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update task step reporting tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added CLI step-batch tests for multiple steps and R15 warnings, plus core regression coverage that latest task JSON status is preserved when spec frontmatter is stale.\"}",
+      "reportedAt": "2026-06-27T14:09:50.677Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Focused tests passed (2 files, 74 tests). Full npm test passed (66 files, 787 tests). npm run lint and npm run build passed.\"}",
+      "reportedAt": "2026-06-27T14:10:19.840Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T14:06:39.524Z",
+  "finishedAt": "2026-06-27T14:16:16.122Z",
+  "created": "2026-06-27T14:06:33.674Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/cli/__tests__/task.test.ts src/core/__tests__/task-cascade.test.ts",
+      "exitCode": 0,
+      "summary": "Focused safe/batch task step tests passed: 2 files, 74 tests.",
+      "artifacts": [
+        "src/cli/__tests__/task.test.ts",
+        "src/core/__tests__/task-cascade.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T14:10:35.790Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Full regression, typecheck, and build passed: 66 files, 787 tests.",
+      "artifacts": [
+        "src"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T14:10:48.033Z",
+      "layer": "smoke"
+    }
+  ]
+}

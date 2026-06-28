@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { PlanJsonSchema } from '../../schemas/spec.js';
-import { extractPlanJsonFromSpecContent, validateSpecContent, validatePlanJson } from '../validate.js';
+import { buildSectionAliasDiagnostics } from '../spec-sections.js';
+import {
+  buildPlanJsonDiagnostics,
+  extractPlanJsonFromSpecContent,
+  formatPlanJsonDiagnostics,
+  validateSpecContent,
+  validatePlanJson,
+} from '../validate.js';
 
 describe('validateSpecContent — 必填段校验', () => {
   it('L1 完整正文无 warning', () => {
@@ -176,6 +183,51 @@ goal
     const warnings = validateSpecContent('L3', content);
     expect(warnings.some(w => w.section === '实施步骤')).toBe(true);
     expect(warnings.some(w => w.section === '验证命令')).toBe(true);
+  });
+
+  it('L3 alias 段名返回 section_alias warning 且不放行缺失规范段', () => {
+    const content = `# Auth Impl
+
+## 目标
+goal
+
+## 实施计划
+steps
+
+## 验证方式
+npm test
+
+## 代码调查
+\`src/core/auth.ts\`
+`;
+    const warnings = validateSpecContent('L3', content);
+    expect(warnings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ rule: 'missing_section', section: '实施步骤' }),
+      expect.objectContaining({ rule: 'missing_section', section: '验证命令' }),
+      expect.objectContaining({ rule: 'section_alias', section: '实施步骤' }),
+      expect.objectContaining({ rule: 'section_alias', section: '验证命令' }),
+    ]));
+    expect(buildSectionAliasDiagnostics(content, ['目标', '实施步骤', '验证命令']).map(item => item.alias))
+      .toEqual(['实施计划', '验证方式']);
+  });
+
+  it('规范段名存在时不返回 alias diagnostic', () => {
+    const content = `# Auth Impl
+
+## 目标
+goal
+
+## 实施步骤
+steps
+
+## 验证命令
+npm test
+
+## 代码调查
+\`src/core/auth.ts\`
+`;
+    expect(buildSectionAliasDiagnostics(content, ['目标', '实施步骤', '验证命令'])).toEqual([]);
+    expect(validateSpecContent('L3', content).some(warning => warning.rule === 'section_alias')).toBe(false);
   });
 
   it('L3 缺代码调查依据时返回 R23 warning', () => {
@@ -530,6 +582,50 @@ describe('extractPlanJsonFromSpecContent', () => {
 });
 
 describe('validatePlanJson — planJson 校验', () => {
+  it('builds actionable diagnostics for legacy plan step fields', () => {
+    const diagnostics = buildPlanJsonDiagnostics({
+      coveredSpecs: ['auth-L3.1.1'],
+      steps: [{ no: 1, type: 'tool_action', desc: 'run verify test' }],
+    }, 'auth-L3.1.1');
+
+    expect(diagnostics).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        path: 'steps[0].stepNo',
+        message: expect.stringContaining('legacy field "no"'),
+        suggestion: expect.stringContaining('stepNo'),
+      }),
+      expect.objectContaining({
+        path: 'steps[0].stepType',
+        message: expect.stringContaining('legacy field "type"'),
+        suggestion: expect.stringContaining('stepType'),
+      }),
+      expect.objectContaining({
+        path: 'steps[0].name',
+        message: expect.stringContaining('legacy field "desc"'),
+        suggestion: expect.stringContaining('name'),
+      }),
+    ]));
+    expect(formatPlanJsonDiagnostics(diagnostics)).toContain('Minimal valid planJson example');
+  });
+
+  it('builds actionable diagnostics for invalid stepType and missing coveredSpecs', () => {
+    const diagnostics = buildPlanJsonDiagnostics({
+      steps: [{ stepNo: 1, stepType: 'bad', name: 'run verify test' }],
+    }, 'auth-L3.1.1');
+
+    expect(diagnostics).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        path: 'steps[0].stepType',
+        message: expect.stringContaining('bad'),
+        suggestion: expect.stringContaining('tool_action'),
+      }),
+      expect.objectContaining({
+        path: 'coveredSpecs',
+        suggestion: expect.stringContaining('auth-L3.1.1'),
+      }),
+    ]));
+  });
+
   it('normalizes legacy stepType mcp_tool to tool_action', () => {
     const parsed = PlanJsonSchema.parse({
       steps: [{ stepNo: 1, stepType: 'mcp_tool', name: 'run verify test' }],

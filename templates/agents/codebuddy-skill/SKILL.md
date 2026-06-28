@@ -63,6 +63,7 @@ If intent is unclear, ask the user one concise clarification question before tak
 - Status transitions are user actions; one L3 `confirm` approval advances directly to frozen.
 - Agent Tasks can only be created from frozen L3 specs.
 - Before code edits, read the relevant spec and inspect the actual source files.
+- Before release or public handoff, run `spec-manager project docs check` to verify README links, package files, agent guidance consistency, and generated Agent asset boundaries such as `.agents/`, `.claude/`, `.codebuddy/`, and `.codex/`.
 
 ## Bundled References
 

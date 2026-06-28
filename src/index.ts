@@ -29,4 +29,5 @@ export * from './core/remediation.js';
 export * from './core/lifecycle.js';
 export * from './core/reconciliation.js';
 export * from './core/transaction.js';
+export * from './core/docs-consistency.js';
 export * from './schemas/spec.js';

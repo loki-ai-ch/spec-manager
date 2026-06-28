@@ -146,6 +146,65 @@ describe('spec CLI', () => {
     expect(output()).toContain('planJson 校验通过');
   });
 
+  it('prints actionable diagnostics during validate-plan', async () => {
+    const planFile = `${project.root}/legacy-plan.json`;
+    writeFileSync(planFile, JSON.stringify({
+      steps: [{ no: 1, type: 'tool_action', desc: 'run verify test' }],
+    }), 'utf8');
+
+    await makeProgram().parseAsync(['spec', 'validate-plan', planFile], { from: 'user' });
+
+    expect(output()).toContain('[plan_diagnostic] steps[0].stepNo');
+    expect(output()).toContain('legacy field "no"');
+    expect(output()).toContain('Rename "type" to "stepType"');
+    expect(output()).toContain('Rename "desc" to "name"');
+  });
+
+  it('prints section alias diagnostics during validate-plan from spec', async () => {
+    createSpec({ paths: project.paths, code: 'alias-L1', level: 'L1', title: 'Alias', topic: 'alias', parentCode: null });
+    updateSpec(project.paths, 'alias-L1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'alias-L2.1', level: 'L2', title: 'Alias design', topic: 'alias', parentCode: 'alias-L1' });
+    updateSpec(project.paths, 'alias-L2.1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'alias-L3.1.1', level: 'L3', title: 'Alias impl', topic: 'alias', parentCode: 'alias-L2.1' });
+    updateSpec(project.paths, 'alias-L3.1.1', {
+      content: `# Alias impl
+
+## 目标
+goal
+
+## 实施计划
+steps
+
+## 验证方式
+npm test
+
+## 代码调查
+\`src/core/spec-sections.ts\`
+
+## planJson (final)
+
+\`\`\`json
+{
+  "coveredSpecs": ["alias-L3.1.1"],
+  "steps": [
+    {"stepNo": 1, "stepType": "tool_action", "name": "读取 alias-L3.1.1 并检查 src/core/spec-sections.ts"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "运行验证 npm test"}
+  ]
+}
+\`\`\`
+`,
+      aiSummary: 'alias impl',
+    });
+
+    await makeProgram().parseAsync(['spec', 'validate-plan', '--from-spec', 'alias-L3.1.1'], { from: 'user' });
+
+    expect(output()).toContain('[section_alias]');
+    expect(output()).toContain('检测到 "## 实施计划"');
+    expect(output()).toContain('规范段名应为 "## 实施步骤"');
+    expect(output()).toContain('检测到 "## 验证方式"');
+    expect(output()).not.toContain('[plan_diagnostic]');
+  });
+
   it('rejects validate-plan without file or from-spec', async () => {
     await expect(makeProgram().parseAsync(['spec', 'validate-plan'], { from: 'user' })).rejects.toThrow('process.exit:2');
     expect(stderr()).toContain('validate-plan 需要 <file> 或 --from-spec <code>');

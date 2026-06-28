@@ -270,6 +270,36 @@ describe('R15 step outputJson warning', () => {
     expect(updatedTask?.steps?.[0].status).toBe('succeeded');
     expect(spec?.fm.steps?.[0].status).toBe('pending');
   });
+
+  it('step report merges against latest task JSON instead of stale spec frontmatter', () => {
+    const { l3Code } = createFrozenHierarchy('merge-step');
+    const planJson = planFor(l3Code, [
+      { stepNo: 1, stepType: 'tool_action' as const, name: 'inspect source files' },
+      { stepNo: 2, stepType: 'tool_action' as const, name: 'run verify test' },
+    ]);
+    const { task } = createTask({
+      paths,
+      specCode: l3Code,
+      autoConfirm: false,
+      planJson,
+    });
+    startTask(paths, task.id, l3Code);
+    reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: 1, status: 'succeeded', outputJson: '{"summary":"one"}' });
+
+    updateSpec(paths, l3Code, {
+      replaceStep: {
+        no: 1,
+        step: { stepNo: 1, stepType: 'tool_action', name: 'inspect source files', status: 'pending' },
+      },
+    });
+    reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: 2, status: 'succeeded', outputJson: '{"summary":"two"}' });
+
+    const updatedTask = findTask(paths, l3Code, task.id);
+    expect(updatedTask?.steps?.[0].status).toBe('succeeded');
+    expect(updatedTask?.steps?.[0].outputJson).toContain('one');
+    expect(updatedTask?.steps?.[1].status).toBe('succeeded');
+    expect(updatedTask?.steps?.[1].outputJson).toContain('two');
+  });
 });
 
 describe('R3 / R7 audit hit (P1 修复)', () => {

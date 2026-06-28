@@ -11,7 +11,13 @@ import {
   DESC_MAX_LEN,
 } from '../core/spec-io.js';
 import { isActiveStatus } from '../core/status.js';
-import { extractPlanJsonFromSpecContent, validateSpecContent, validatePlanJson, type SpecLevel } from '../core/validate.js';
+import {
+  buildPlanJsonDiagnostics,
+  extractPlanJsonFromSpecContent,
+  validateSpecContent,
+  validatePlanJson,
+  type SpecLevel,
+} from '../core/validate.js';
 import { hit } from '../core/audit.js';
 import { listDecisions } from '../core/decision.js';
 import { suggestAfterSpecCommand } from '../core/usability.js';
@@ -262,13 +268,25 @@ export function registerSpec(program: Command): void {
       if (!file && !opts.fromSpec) {
         fail('✗ validate-plan 需要 <file> 或 --from-spec <code>', 2);
       }
-      const plan = opts.fromSpec
-        ? readPlanJsonFromSpec(paths, opts.fromSpec)
+      const fromSpec = opts.fromSpec ? readSpecForPlan(paths, opts.fromSpec) : null;
+      const plan = fromSpec
+        ? extractPlanJsonFromSpecRecord(fromSpec)
         : JSON.parse(readFileSync(file as string, 'utf8'));
       const warnings = validatePlanJson(plan);
-      if (warnings.length === 0) {
+      const diagnostics = buildPlanJsonDiagnostics(plan, opts.fromSpec);
+      const sectionAliasWarnings = fromSpec
+        ? validateSpecContent(fromSpec.fm.level, fromSpec.content).filter(warning => warning.rule === 'section_alias')
+        : [];
+      if (warnings.length === 0 && sectionAliasWarnings.length === 0) {
         console.log(`✓ planJson 校验通过`);
         return;
+      }
+      for (const w of sectionAliasWarnings) {
+        console.log(`⚠ [${w.rule}] ${w.message}`);
+      }
+      for (const diagnostic of diagnostics) {
+        console.log(`⚠ [plan_diagnostic] ${diagnostic.path}: ${diagnostic.message}`);
+        if (diagnostic.suggestion) console.log(`  suggestion: ${diagnostic.suggestion}`);
       }
       const hitRules = new Set<string>();
       for (const w of warnings) {
@@ -284,10 +302,14 @@ export function registerSpec(program: Command): void {
     });
 }
 
-function readPlanJsonFromSpec(paths: ReturnType<typeof getPaths>, code: string): unknown {
+function readSpecForPlan(paths: ReturnType<typeof getPaths>, code: string): NonNullable<ReturnType<typeof findSpecByCode>> {
   const rec = findSpecByCode(paths, code);
   if (!rec) fail(`✗ SPEC_NOT_FOUND: ${code}`, 1);
   if (rec.fm.level !== 'L3') fail(`✗ --from-spec 只能指向 L3 spec，${code} 是 ${rec.fm.level}`, 2);
+  return rec;
+}
+
+function extractPlanJsonFromSpecRecord(rec: NonNullable<ReturnType<typeof findSpecByCode>>): unknown {
   try {
     return extractPlanJsonFromSpecContent(rec.content);
   } catch (err) {

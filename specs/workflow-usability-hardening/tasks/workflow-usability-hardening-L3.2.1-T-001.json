@@ -1,0 +1,103 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-usability-hardening-L3.2.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取规格并调查 project docs 相关代码",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.2.1, project CLI command structure, paths/test fixtures, package.json files, README, and skill/template guidance. Attempted assist guide per skill guidance, but current local CLI has no assist command, so continued with frozen L3 workflow.\"}",
+      "reportedAt": "2026-06-27T14:31:23.418Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "实现 docs consistency core 与 CLI",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added docs-consistency core report with README, package files, and guidance checks; added project docs check text/json CLI with error-only exit behavior and public API export.\"}",
+      "reportedAt": "2026-06-27T14:35:38.040Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "增加 docs consistency core 和 CLI 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added docs-consistency core tests and project-docs CLI tests covering schema, summaries, warnings, JSON output, and exit code 1 on errors.\"}",
+      "reportedAt": "2026-06-27T14:35:48.277Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "更新 README 与 agent guidance 文档",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Documented spec-manager project docs check in README, readme_en, skill/SKILL.md, and the CodeBuddy skill template as a pre-release/public handoff consistency check.\"}",
+      "reportedAt": "2026-06-27T14:35:54.301Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran focused docs tests, full test suite, lint, build, and built CLI docs check successfully.\",\"focused\":\"2 files passed, 8 tests passed\",\"full\":\"68 files passed, 799 tests passed\",\"lint\":\"npm run lint exit 0\",\"build\":\"npm run build exit 0\",\"docsCheck\":\"node dist/cli/index.js project docs check --json exit 0 with zero findings\"}",
+      "reportedAt": "2026-06-27T14:38:29.274Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T14:30:39.252Z",
+  "finishedAt": "2026-06-27T14:39:23.924Z",
+  "created": "2026-06-27T14:30:34.370Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/docs-consistency.test.ts src/cli/__tests__/project-docs.test.ts",
+      "exitCode": 0,
+      "summary": "Focused docs consistency core and CLI tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T14:38:03.886Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Full regression, TypeScript lint, and build passed after final package/docs updates.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-27T14:38:11.296Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-003",
+      "command": "node dist/cli/index.js project docs check --json",
+      "exitCode": 0,
+      "summary": "Built CLI docs consistency check returned zero findings for the current repository.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T14:38:20.833Z",
+      "layer": "smoke"
+    }
+  ]
+}

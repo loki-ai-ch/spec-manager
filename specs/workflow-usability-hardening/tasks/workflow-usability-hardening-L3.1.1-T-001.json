@@ -1,0 +1,90 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-usability-hardening-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey planJson validation and task create code",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Confirmed createTask currently throws raw Zod messages before validatePlanJson warnings; task create CLI only catches adaptive/profile errors. validatePlanJson already detects legacy no/type/desc fields, so diagnostics can reuse that contract.\"}",
+      "reportedAt": "2026-06-27T14:00:26.101Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement actionable planJson diagnostics",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added buildPlanJsonDiagnostics and formatPlanJsonDiagnostics, integrated PLAN_JSON_INVALID messages in createTask, and made task create CLI return friendly exit-code-2 diagnostics.\"}",
+      "reportedAt": "2026-06-27T14:03:19.109Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update core and CLI tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added validate diagnostics tests, task create CLI legacy-field diagnostics test, and spec validate-plan diagnostics test. Focused suite passed: 3 files, 83 tests.\"}",
+      "reportedAt": "2026-06-27T14:03:19.350Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Focused tests passed (3 files, 83 tests). Full npm test passed (66 files, 784 tests). npm run lint and npm run build passed.\"}",
+      "reportedAt": "2026-06-27T14:03:41.004Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-27T14:00:03.213Z",
+  "finishedAt": "2026-06-27T14:04:16.810Z",
+  "created": "2026-06-27T13:59:55.427Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/validate.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/spec.test.ts",
+      "exitCode": 0,
+      "summary": "Focused planJson diagnostics tests passed: 3 files, 83 tests.",
+      "artifacts": [
+        "src/core/__tests__/validate.test.ts",
+        "src/cli/__tests__/task.test.ts",
+        "src/cli/__tests__/spec.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T14:03:49.451Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Full regression, typecheck, and build passed: 66 files, 784 tests.",
+      "artifacts": [
+        "src"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-27T14:04:00.144Z",
+      "layer": "smoke"
+    }
+  ]
+}

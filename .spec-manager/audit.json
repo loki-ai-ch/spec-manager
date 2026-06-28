@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 145,
-    "R2": 162,
+    "R1": 156,
+    "R2": 173,
     "R3": 2,
-    "R4": 142,
-    "R5": 10,
+    "R4": 151,
+    "R5": 11,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 162,
-    "R10": 12,
+    "R9": 173,
+    "R10": 13,
     "R11": 0,
     "R12": 4,
-    "R13": 144,
+    "R13": 155,
     "R14": 0,
     "R15": 0,
-    "R16": 21,
+    "R16": 22,
     "R17": 0,
-    "R18": 26,
+    "R18": 28,
     "R19": 161,
     "R20": 0,
     "R21": 0,
-    "R22": 144,
+    "R22": 155,
     "R23": 0,
     "R24": 0
   },
@@ -1165,9 +1165,423 @@
       "timestamp": "2026-06-27T13:35:21.419Z",
       "specCode": "spec-manager-ai-ux-L3.1.9",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-06-27T13:45:43.901Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T13:45:43.904Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:46:40.978Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:46:40.978Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:46:40.979Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:47:15.171Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:47:15.172Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:47:15.172Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:47:53.310Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:47:53.311Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:47:53.311Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T13:51:40.367Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T13:51:40.368Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T13:51:47.861Z",
+      "specCode": "workflow-usability-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:55:12.574Z",
+      "specCode": "workflow-usability-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:55:12.575Z",
+      "specCode": "workflow-usability-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:55:12.576Z",
+      "specCode": "workflow-usability-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T13:55:32.413Z",
+      "specCode": "workflow-usability-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:57:08.228Z",
+      "specCode": "workflow-usability-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:57:08.228Z",
+      "specCode": "workflow-usability-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:57:08.229Z",
+      "specCode": "workflow-usability-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T13:58:06.152Z",
+      "specCode": "workflow-usability-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T13:58:06.153Z",
+      "specCode": "workflow-usability-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T13:58:06.157Z",
+      "specCode": "workflow-usability-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T13:58:06.158Z",
+      "specCode": "workflow-usability-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T13:58:17.801Z",
+      "specCode": "workflow-usability-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T13:59:09.677Z",
+      "specCode": "workflow-usability-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T13:59:09.678Z",
+      "specCode": "workflow-usability-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T13:59:09.679Z",
+      "specCode": "workflow-usability-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T13:59:31.127Z",
+      "specCode": "workflow-usability-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T13:59:31.128Z",
+      "specCode": "workflow-usability-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T14:04:30.157Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T14:05:38.128Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T14:05:38.129Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T14:05:38.129Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T14:06:12.587Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T14:06:12.588Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R5",
+      "timestamp": "2026-06-27T14:11:02.654Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T14:12:09.400Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T14:12:09.400Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T14:12:20.206Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T14:12:20.207Z",
+      "specCode": "workflow-usability-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T14:16:56.768Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T14:17:36.249Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T14:17:36.250Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T14:17:36.250Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T14:18:00.302Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T14:18:00.302Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-06-27T14:19:50.080Z",
+      "specCode": "workflow-usability-hardening-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-27T14:25:13.658Z",
+      "specCode": "workflow-usability-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-27T14:26:03.673Z",
+      "specCode": "workflow-usability-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-27T14:26:03.674Z",
+      "specCode": "workflow-usability-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-27T14:26:03.675Z",
+      "specCode": "workflow-usability-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-27T14:26:42.619Z",
+      "specCode": "workflow-usability-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-27T14:26:42.620Z",
+      "specCode": "workflow-usability-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-27T14:38:44.582Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-06-27T14:39:23.948Z",
+      "specCode": "workflow-usability-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-28T01:21:06.933Z",
+      "specCode": "workflow-usability-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-28T01:21:50.015Z",
+      "specCode": "workflow-usability-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-28T01:21:50.016Z",
+      "specCode": "workflow-usability-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-28T01:21:50.016Z",
+      "specCode": "workflow-usability-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-28T01:22:57.132Z",
+      "specCode": "workflow-usability-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-28T01:22:57.133Z",
+      "specCode": "workflow-usability-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-06-28T01:32:25.148Z",
+      "specCode": "workflow-usability-hardening-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-06-28T01:33:02.581Z",
+      "specCode": "workflow-usability-hardening-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-06-28T01:33:02.582Z",
+      "specCode": "workflow-usability-hardening-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-06-28T01:33:02.582Z",
+      "specCode": "workflow-usability-hardening-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-06-28T01:34:33.639Z",
+      "specCode": "workflow-usability-hardening-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-06-28T01:34:33.640Z",
+      "specCode": "workflow-usability-hardening-L3.2.3",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-27T13:35:21.419Z",
+  "lastUpdated": "2026-06-28T01:34:33.640Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

@@ -1,0 +1,101 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-usability-hardening-L3.2.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取规格并调查 docs check 现有实现",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.2.2, existing docs-consistency core, project docs CLI tests, README/readme_en, and skill/template guidance to confirm the existing report schema and output model.\"}",
+      "reportedAt": "2026-06-28T01:28:15.955Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "实现 generated asset 边界 findings",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added generated Agent asset directory detection to docs-consistency, with info findings for present local output directories and warning findings when package.json files includes generated asset paths.\"}",
+      "reportedAt": "2026-06-28T01:28:22.367Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "增加 generated asset core 和 CLI 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added docs-consistency core tests for generated asset info and package files warning, plus project-docs CLI text/json coverage using the existing report schema.\"}",
+      "reportedAt": "2026-06-28T01:28:28.984Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "更新 README 与 agent guidance 边界说明",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated README, readme_en, skill/SKILL.md, and the CodeBuddy skill template to state that project docs check covers generated Agent asset boundaries.\"}",
+      "reportedAt": "2026-06-28T01:28:34.857Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran focused tests, full test suite, lint, build, and built CLI docs check successfully.\",\"focused\":\"2 files passed, 12 tests passed\",\"full\":\"68 files passed, 803 tests passed\",\"lint\":\"npm run lint exit 0\",\"build\":\"npm run build exit 0\",\"docsCheck\":\"node dist/cli/index.js project docs check --json exit 0 with 3 info findings and no errors/warnings\"}",
+      "reportedAt": "2026-06-28T01:29:39.910Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-06-28T01:26:53.768Z",
+  "finishedAt": "2026-06-28T01:29:52.223Z",
+  "created": "2026-06-28T01:26:48.606Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/docs-consistency.test.ts src/cli/__tests__/project-docs.test.ts",
+      "exitCode": 0,
+      "summary": "Focused generated asset boundary tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5"
+      ],
+      "created": "2026-06-28T01:29:15.691Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test && npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "Full regression, TypeScript lint, and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6"
+      ],
+      "created": "2026-06-28T01:29:21.490Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-003",
+      "command": "node dist/cli/index.js project docs check --json",
+      "exitCode": 0,
+      "summary": "Built CLI reported generated asset boundary info for local .agents/.claude/.codebuddy directories with zero errors and zero warnings.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-4"
+      ],
+      "created": "2026-06-28T01:29:31.659Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -13,7 +13,7 @@ import { siblingMetaDir, type ProjectPaths } from './paths.js';
 import { findSpecByCode, writeSpec, listAllSpecs, type StepFrontmatter } from './spec-io.js';
 import { writeAtomic } from './frontmatter.js';
 import { PlanJsonSchema, type StepStatusT, type StepTypeT } from '../schemas/spec.js';
-import { validatePlanJson } from './validate.js';
+import { buildPlanJsonDiagnostics, formatPlanJsonDiagnostics, validatePlanJson } from './validate.js';
 import { ID_PAD_WIDTH, TASK_FILE_EXT, TASK_ID_PREFIX } from './constants.js';
 import { recordAuditHit, type AuditSink } from './audit-events.js';
 import { listTopicMetaFiles } from './repository.js';
@@ -151,7 +151,16 @@ export function createTask(input: CreateTaskInput): { task: TaskRecord; taskFile
 
   const parsedPlan = PlanJsonSchema.safeParse(input.planJson);
   if (!parsedPlan.success) {
-    const message = parsedPlan.error.issues.map(i => i.message).join('; ');
+    const diagnostics = buildPlanJsonDiagnostics(input.planJson, input.specCode);
+    const diagnosticMessage = formatPlanJsonDiagnostics(diagnostics);
+    const schemaMessage = parsedPlan.error.issues
+      .map(i => `${i.path.length > 0 ? i.path.join('.') : '$'}: ${i.message}`)
+      .join('; ');
+    const message = [
+      'PLAN_JSON_INVALID:',
+      diagnosticMessage || `  - schema: ${schemaMessage}`,
+      diagnosticMessage ? `  - schema: ${schemaMessage}` : '',
+    ].filter(Boolean).join('\n');
     if (message.includes('R11')) {
       recordAuditHit({ paths: input.paths, ruleId: 'R11', specCode: input.specCode }, input.auditSink);
     }
@@ -313,7 +322,8 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
 
   const spec = findSpecByCode(input.paths, task.specCode);
   if (!spec) throw new Error(`Spec not found: ${task.specCode}`);
-  const steps = [...taskSteps(task, spec.fm.steps)];
+  const latestTask = findTask(input.paths, task.specCode, task.id) ?? task;
+  const steps = [...taskSteps(latestTask, spec.fm.steps)];
   const idx = steps.findIndex(s => String(s.stepNo) === String(input.stepNo));
   if (idx < 0) {
     throw new Error(`STEP_NOT_PLANNED: step ${input.stepNo} is not in task ${task.id}`);
@@ -332,7 +342,7 @@ export function reportStep(input: StepInput): { task: TaskRecord; spec: ReturnTy
     reportedAt: new Date().toISOString(),
   };
   steps[idx] = step;
-  const updatedTask: TaskRecord = { ...task, steps };
+  const updatedTask: TaskRecord = { ...latestTask, steps };
   if (input.status === 'failed' && input.outputJson) {
     updatedTask.lastFailedOutput = input.outputJson;
   }

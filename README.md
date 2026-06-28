@@ -237,6 +237,7 @@ spec-manager project readiness critical
 | `spec-manager project init --name X` | 初始化 `.spec-manager/` |
 | `spec-manager project agents --provider all` | 写入 AI 工具入口 |
 | `spec-manager project doctor` | 检查配置和仓库完整性 |
+| `spec-manager project docs check` | 发布前检查 README、package files、Agent guidance 和生成资产边界 |
 | `spec-manager guide "需求"` | 根据需求给出下一条命令 |
 | `spec-manager new feature --topic T "标题"` | 快速创建轻量 L1 |
 | `spec-manager flow status --topic T` | 查看规格链路进度和阻塞点 |

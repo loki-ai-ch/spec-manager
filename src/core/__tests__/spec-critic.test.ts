@@ -75,6 +75,47 @@ describe('buildSpecCritique', () => {
     expect(report.findings.map(finding => finding.id)).toContain('l3.scope.advisory');
   });
 
+  it('reports section alias advisory without satisfying missing section rules', () => {
+    createSpec({ paths: project.paths, code: 'alias-L1', level: 'L1', title: 'Alias', topic: 'alias', parentCode: null });
+    updateSpec(project.paths, 'alias-L1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'alias-L2.1', level: 'L2', title: 'Alias design', topic: 'alias', parentCode: 'alias-L1' });
+    updateSpec(project.paths, 'alias-L2.1', { status: 'confirmed' });
+    createSpec({ paths: project.paths, code: 'alias-L3.1.1', level: 'L3', title: 'Alias impl', topic: 'alias', parentCode: 'alias-L2.1' });
+    updateSpec(project.paths, 'alias-L3.1.1', {
+      content: [
+        '# Alias impl',
+        '## 目标',
+        'Ship.',
+        '## 实施计划',
+        '1. Edit files.',
+        '## 验证方式',
+        'npm test',
+        '## 风险与缓解',
+        'Low.',
+        '## 范围',
+        '不做 backend changes.',
+      ].join('\n\n'),
+      aiSummary: 'alias impl',
+    });
+
+    const report = buildSpecCritique(project.paths, 'alias-L3.1.1');
+
+    expect(report.findings).toEqual(expect.arrayContaining([
+      expect.objectContaining({ id: 'l3.steps.missing', severity: 'blocking' }),
+      expect.objectContaining({ id: 'l3.verification.missing', severity: 'blocking' }),
+      expect.objectContaining({
+        id: 'l3.section_alias.实施计划',
+        severity: 'advisory',
+        detail: expect.stringContaining('## 实施步骤'),
+      }),
+      expect.objectContaining({
+        id: 'l3.section_alias.验证方式',
+        severity: 'advisory',
+        detail: expect.stringContaining('## 验证命令'),
+      }),
+    ]));
+  });
+
   it('returns no findings for a complete L2 fixture', () => {
     createSpec({ paths: project.paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
     updateSpec(project.paths, 'auth-L1', { status: 'confirmed' });

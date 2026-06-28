@@ -1,6 +1,8 @@
 import { findSpecByCode } from './spec-io.js';
 import type { ProjectPaths } from './paths.js';
 import type { AssistFinding, AssistSeverity, AssistSourceRef, SpecCritiqueReport } from './capability-types.js';
+import { buildSectionAliasDiagnostics } from './spec-sections.js';
+import { REQUIRED_SECTIONS } from './validate.js';
 
 interface SectionRule {
   id: string;
@@ -53,6 +55,7 @@ export function buildSpecCritique(paths: ProjectPaths, specCode: string): SpecCr
   };
   const findings = [
     ...rulesForLevel(spec.fm.level).flatMap(rule => sectionFinding(rule, sections, sourceRef)),
+    ...sectionAliasFindings(spec.fm.level, spec.content, sourceRef),
     ...scopeFindings(spec.fm.level, spec.content, sourceRef),
     ...designPhilosophyFindings(spec.fm.level, [
       spec.fm.code,
@@ -105,6 +108,17 @@ function sectionFinding(rule: SectionRule, sections: Map<string, string>, source
     detail: rule.detail,
     sourceRefs: [sourceRef],
   }];
+}
+
+function sectionAliasFindings(level: 'L1' | 'L2' | 'L3', content: string, sourceRef: AssistSourceRef): AssistFinding[] {
+  const required = REQUIRED_SECTIONS[level];
+  return buildSectionAliasDiagnostics(content, required).map(diagnostic => ({
+    id: `${level.toLowerCase()}.section_alias.${diagnostic.alias}`,
+    severity: 'advisory',
+    title: 'Section heading alias detected',
+    detail: `${diagnostic.message} ${diagnostic.suggestion}`,
+    sourceRefs: [sourceRef],
+  }));
 }
 
 function scopeFindings(level: 'L1' | 'L2' | 'L3', content: string, sourceRef: AssistSourceRef): AssistFinding[] {

@@ -77,7 +77,8 @@ export function registerTaskCommands(program: Command): void {
           message.startsWith('INVALID_WORKFLOW_PROFILE:') ||
           message.startsWith('PROFILE_OVERRIDE_REASON_REQUIRED:') ||
           message.startsWith('GOVERNED_CRITICAL_AC_REQUIRED:') ||
-          message.startsWith('UNKNOWN_CRITICAL_AC:')
+          message.startsWith('UNKNOWN_CRITICAL_AC:') ||
+          message.startsWith('PLAN_JSON_INVALID:')
         ) {
           console.error(`✗ ${message}`);
           process.exit(2);
@@ -287,6 +288,46 @@ export function registerTaskCommands(program: Command): void {
     });
 
   task
+    .command('step-batch <taskId>')
+    .description('从 JSON 文件顺序上报多个 step（推荐用于多 step/并发场景）')
+    .requiredOption('--input <file>', '包含 steps[] 的 JSON 文件')
+    .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((taskId: string, opts: { input: string; spec?: string; json: boolean }) => {
+      const paths = getPaths();
+      const payload = parseStepBatchPayload(readFileSync(opts.input, 'utf8'));
+      const results = payload.steps.map((step) => {
+        const parsed = StepStatusSchema.safeParse(step.status);
+        if (!parsed.success) {
+          throw new Error(`STEP_BATCH_STATUS_INVALID: step ${step.stepNo} status=${step.status}`);
+        }
+        const result = reportStep({
+          paths,
+          taskId,
+          specCode: opts.spec,
+          stepNo: step.stepNo,
+          status: parsed.data,
+          toolName: step.toolName,
+          inputJson: step.inputJson,
+          outputJson: step.outputJson,
+          latencyMs: step.latencyMs,
+          errorCode: step.errorCode,
+          errorMessage: step.errorMessage,
+        });
+        return { stepNo: step.stepNo, status: parsed.data, warnings: result.warnings };
+      });
+      if (opts.json) {
+        console.log(JSON.stringify({ taskId, specCode: opts.spec, steps: results }, null, 2));
+        return;
+      }
+      console.log(`✓ ${results.length} step(s) reported for task ${taskId}`);
+      for (const result of results) {
+        console.log(`  - Step ${result.stepNo}: ${result.status}`);
+        for (const warning of result.warnings) console.warn(`⚠ step ${result.stepNo}: ${warning}`);
+      }
+    });
+
+  task
     .command('complete <taskId>')
     .description('标记 Task 完成 → 触发 L3 spec cascade → implemented')
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
@@ -490,6 +531,35 @@ export function registerTaskCommands(program: Command): void {
       console.error('✗ TASK_BATCH_DEPRECATED: use task create, start, report/step, verify, then complete');
       process.exit(2);
     });
+}
+
+interface StepBatchPayload {
+  steps: Array<{
+    stepNo: number | string;
+    status: string;
+    toolName?: string;
+    inputJson?: string;
+    outputJson?: string;
+    latencyMs?: number;
+    errorCode?: string;
+    errorMessage?: string;
+  }>;
+}
+
+function parseStepBatchPayload(raw: string): StepBatchPayload {
+  const parsed = JSON.parse(raw) as unknown;
+  if (!parsed || typeof parsed !== 'object' || !Array.isArray((parsed as { steps?: unknown }).steps)) {
+    throw new Error('STEP_BATCH_INVALID: input must be an object with steps[]');
+  }
+  const steps = (parsed as StepBatchPayload).steps;
+  for (const [index, step] of steps.entries()) {
+    if (!step || typeof step !== 'object') throw new Error(`STEP_BATCH_INVALID: steps[${index}] must be an object`);
+    if (step.stepNo === undefined || step.stepNo === null || step.stepNo === '') {
+      throw new Error(`STEP_BATCH_INVALID: steps[${index}].stepNo is required`);
+    }
+    if (!step.status) throw new Error(`STEP_BATCH_INVALID: steps[${index}].status is required`);
+  }
+  return { steps };
 }
 
 function deliverySummaryCommand(taskId: string, specCode: string): string {

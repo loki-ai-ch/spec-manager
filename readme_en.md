@@ -178,6 +178,7 @@ For UI, visual, or styling work, add `specs/DESIGN.md` to describe the managed s
 | `spec-manager project init --name X` | Create `.spec-manager/` |
 | `spec-manager project agents [--provider P]` | Install agent workflow files |
 | `spec-manager project doctor` | Check setup and repository integrity |
+| `spec-manager project docs check` | Check README, package files, agent guidance, and generated asset boundaries before release |
 | `spec-manager guide "request"` | Get the next command for a request |
 | `spec-manager new feature --topic T "Title"` | Start a lightweight L1 |
 | `spec-manager flow status --topic T` | See progress and blockers |
