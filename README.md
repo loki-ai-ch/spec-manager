@@ -192,36 +192,67 @@ UI/视觉项目的设计上下文也跟随 write root 管理：推荐放在 reso
 一次安装所有支持的入口：
 
 ```bash
-spec-manager project agents --provider all
+spec-manager agents install
+# 等价别名
+spec-manager skills install
 ```
 
-只安装某个工具：
+只安装某个工具时，直接使用平台名：
 
 ```bash
-spec-manager project agents --provider claude
-spec-manager project agents --provider codex
-spec-manager project agents --provider opencode
-spec-manager project agents --provider mimocode
-spec-manager project agents --provider codebuddy
-spec-manager project agents --provider cursor
-spec-manager project agents --provider windsurf
+spec-manager claude install
+spec-manager codex install
+spec-manager cursor install
+spec-manager install --platform kimi
 ```
 
 写入前预览：
 
 ```bash
-spec-manager project agents --provider codex --dry-run
+spec-manager codex install --dry-run
+spec-manager kilo install --dry-run
 ```
 
-| 工具 | 入口 | 文件 |
+旧入口仍然保留，适合脚本或更细 provider 控制：
+
+```bash
+spec-manager project agents --provider all
+spec-manager project agents --provider codex
+spec-manager project agents --provider list
+```
+
+常用平台：
+
+| 工具 | 推荐命令 | 写入内容 |
 |---|---|---|
-| Claude Code | 原生 skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
-| Codex | `AGENTS.md` 工作流胶囊 | `AGENTS.md` |
-| OpenCode | `AGENTS.md` 工作流胶囊 | `AGENTS.md` |
-| MiMo-Code | `AGENTS.md` 工作流胶囊 | `AGENTS.md` |
-| CodeBuddy | 原生 skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
-| Cursor | 项目规则 | `.cursorrules` |
-| Windsurf | 项目规则 | `.windsurfrules` |
+| Claude Code | `spec-manager claude install` | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| CodeBuddy | `spec-manager codebuddy install` | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+| Codex | `spec-manager codex install` | `AGENTS.md` |
+| OpenCode | `spec-manager opencode install` | `AGENTS.md` |
+| MiMo-Code | `spec-manager mimocode install` | `AGENTS.md` |
+| Cursor | `spec-manager cursor install` | `.cursorrules` |
+| Windsurf | `spec-manager windsurf install` | `.windsurfrules` |
+
+更多平台也可以直接装。没有专属原生格式的平台会使用 **AGENTS-compatible fallback instructions**，也就是写入通用 `AGENTS.md`，不会声称已经完成原生 IDE 集成。
+
+| 平台 | 命令 |
+|---|---|
+| Kilo Code | `spec-manager kilo install` |
+| GitHub Copilot CLI | `spec-manager copilot install` |
+| VS Code Copilot Chat | `spec-manager vscode install` |
+| Aider | `spec-manager aider install` |
+| OpenClaw | `spec-manager claw install` |
+| Factory Droid | `spec-manager droid install` |
+| Trae | `spec-manager trae install` |
+| Trae CN | `spec-manager trae-cn install` |
+| Gemini CLI | `spec-manager gemini install` |
+| Hermes | `spec-manager hermes install` |
+| Kimi Code | `spec-manager kimi install` 或 `spec-manager install --platform kimi` |
+| Amp | `spec-manager amp install` |
+| Kiro IDE/CLI | `spec-manager kiro install` |
+| Pi coding agent | `spec-manager pi install` |
+| Devin CLI | `spec-manager devin install` |
+| Google Antigravity | `spec-manager antigravity install` |
 
 ## 常用 assist 能力
 

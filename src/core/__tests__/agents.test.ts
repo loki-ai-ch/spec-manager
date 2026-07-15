@@ -3,7 +3,17 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import type { ProjectPaths } from '../paths.js';
-import { detectAgentProviders, inspectManagedAgentAssets, installAgentSupport, listAgentProviders, mergeMissingDirectories, parseAgentProviders } from '../agents.js';
+import {
+  detectAgentProviders,
+  inspectManagedAgentAssets,
+  installAgentPlatformSupport,
+  installAgentSupport,
+  listAgentPlatforms,
+  listAgentProviders,
+  mergeMissingDirectories,
+  normalizeAgentPlatform,
+  parseAgentProviders,
+} from '../agents.js';
 import { createTestProject, type TestProject } from './project-fixture.js';
 
 let root: string;
@@ -77,6 +87,72 @@ describe('listAgentProviders', () => {
     expect(providers.find((p) => p.provider === 'codebuddy')?.aliases).toContain('code buddy');
     expect(providers.find((p) => p.provider === 'cursor')?.files).toContain('.cursorrules');
     expect(providers.find((p) => p.provider === 'windsurf')?.files).toContain('.windsurfrules');
+  });
+});
+
+describe('agent platform registry', () => {
+  it('normalizes platform aliases and resolves targets', () => {
+    expect(normalizeAgentPlatform('claude-code')).toMatchObject({ platform: 'claude', target: 'claude' });
+    expect(normalizeAgentPlatform('trae cn')).toMatchObject({ platform: 'trae-cn', target: 'codex' });
+    expect(normalizeAgentPlatform('kimi')).toMatchObject({ platform: 'kimi', target: 'codex' });
+    expect(normalizeAgentPlatform('agents')).toMatchObject({ platform: 'agents', target: 'all' });
+    expect(normalizeAgentPlatform('skills')).toMatchObject({ platform: 'skills', target: 'all' });
+  });
+
+  it('lists graphify-style platform commands', () => {
+    expect(listAgentPlatforms().map((platform) => platform.command)).toEqual([
+      'claude',
+      'codebuddy',
+      'codex',
+      'opencode',
+      'kilo',
+      'copilot',
+      'vscode',
+      'aider',
+      'claw',
+      'droid',
+      'trae',
+      'trae-cn',
+      'cursor',
+      'gemini',
+      'hermes',
+      'kimi',
+      'amp',
+      'agents',
+      'skills',
+      'kiro',
+      'pi',
+      'devin',
+      'antigravity',
+      'mimocode',
+      'windsurf',
+    ]);
+  });
+
+  it('installs fallback platforms through codex with fallback notes', () => {
+    const report = installAgentPlatformSupport({
+      paths,
+      packageRoot,
+      platform: 'kilo',
+      dryRun: true,
+    });
+
+    expect(report.providers).toEqual(['codex']);
+    expect(report.created).toContain('AGENTS.md');
+    expect(report.notes).toContain('Kilo Code uses AGENTS-compatible fallback instructions.');
+    expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
+  });
+
+  it('resolves agents and skills platforms to all providers', () => {
+    expect(installAgentPlatformSupport({ paths, packageRoot, platform: 'agents', dryRun: true }).providers)
+      .toEqual(['claude', 'codex', 'opencode', 'mimocode', 'codebuddy', 'cursor', 'windsurf']);
+    expect(installAgentPlatformSupport({ paths, packageRoot, platform: 'skills', dryRun: true }).providers)
+      .toEqual(['claude', 'codex', 'opencode', 'mimocode', 'codebuddy', 'cursor', 'windsurf']);
+  });
+
+  it('reports unsupported platforms with supported command names', () => {
+    expect(() => normalizeAgentPlatform('unknown')).toThrow('unsupported AI platform: unknown');
+    expect(() => normalizeAgentPlatform('unknown')).toThrow('trae-cn');
   });
 });
 

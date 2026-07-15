@@ -1,0 +1,90 @@
+{
+  "id": "T-001",
+  "specCode": "agent-install-surface-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey existing agent installer",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Surveyed existing provider registry, project agents CLI, top-level CLI registration, and agent tests.\"}",
+      "reportedAt": "2026-07-15T07:53:58.722Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement platform registry",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added AgentPlatform registry, platform normalizer, platform listing, and installAgentPlatformSupport wrapper in core agents.\"}",
+      "reportedAt": "2026-07-15T07:54:26.856Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Implement install CLI",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added top-level install --platform, <platform> install, agents install, and skills install CLI commands; project provider list now shows platform install commands.\"}",
+      "reportedAt": "2026-07-15T07:54:43.448Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Add parser and CLI tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added core registry tests and CLI tests for codex/kilo/kimi/agents/skills dry-run plus unsupported platform errors.\"}",
+      "reportedAt": "2026-07-15T07:54:54.032Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran targeted agents tests, lint, and build successfully.\"}",
+      "reportedAt": "2026-07-15T07:55:06.180Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T07:50:22.256Z",
+  "finishedAt": "2026-07-15T07:56:33.314Z",
+  "created": "2026-07-15T07:50:22.249Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/agents.test.ts src/cli/__tests__/project-agents.test.ts",
+      "exitCode": 0,
+      "summary": "Targeted agents core and CLI tests passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:55:16.165Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:55:28.640Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:55:40.788Z",
+      "layer": "compile"
+    }
+  ]
+}

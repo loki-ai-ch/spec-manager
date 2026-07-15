@@ -3,12 +3,15 @@ import { existsSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerProject } from '../project.js';
+import { registerAgentInstallCommands } from '../agent-install.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 
 let root: string;
 let project: TestProject;
 let oldSpecManagerRoot: string | undefined;
 let logSpy: ReturnType<typeof vi.spyOn>;
+let errorSpy: ReturnType<typeof vi.spyOn>;
+let exitSpy: ReturnType<typeof vi.spyOn>;
 
 beforeEach(() => {
   project = createTestProject('spec-mgr-cli-agents-', { initialized: false });
@@ -16,6 +19,10 @@ beforeEach(() => {
   oldSpecManagerRoot = process.env.SPEC_MANAGER_ROOT;
   process.env.SPEC_MANAGER_ROOT = root;
   logSpy = vi.spyOn(console, 'log').mockImplementation(() => undefined);
+  errorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+  exitSpy = vi.spyOn(process, 'exit').mockImplementation(((code?: string | number | null) => {
+    throw new Error(`process.exit:${code}`);
+  }) as never);
 });
 
 afterEach(() => {
@@ -25,6 +32,8 @@ afterEach(() => {
     process.env.SPEC_MANAGER_ROOT = oldSpecManagerRoot;
   }
   logSpy.mockRestore();
+  errorSpy.mockRestore();
+  exitSpy.mockRestore();
   project.cleanup();
 });
 
@@ -32,6 +41,7 @@ function makeProgram(): Command {
   const program = new Command();
   program.exitOverride();
   registerProject(program);
+  registerAgentInstallCommands(program);
   return program;
 }
 
@@ -51,6 +61,9 @@ describe('project agents CLI', () => {
     expect(output()).toContain('codebuddy');
     expect(output()).toContain('cursor');
     expect(output()).toContain('windsurf');
+    expect(output()).toContain('Supported AI platform install commands:');
+    expect(output()).toContain('spec-manager kilo install');
+    expect(output()).toContain('spec-manager trae-cn install');
     expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
   });
 
@@ -101,5 +114,49 @@ describe('project agents CLI', () => {
     await expect(
       makeProgram().parseAsync(['project', 'agents', '--dry-run'], { from: 'user' }),
     ).rejects.toThrow('--provider all');
+  });
+
+  it('dry-runs a native platform install command', async () => {
+    await makeProgram().parseAsync(['codex', 'install', '--dry-run'], { from: 'user' });
+
+    expect(output()).toContain('AI agent support planned: codex');
+    expect(output()).toContain('would create:');
+    expect(output()).toContain('AGENTS.md');
+    expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
+  });
+
+  it('dry-runs a fallback platform install command with notes', async () => {
+    await makeProgram().parseAsync(['kilo', 'install', '--dry-run'], { from: 'user' });
+
+    expect(output()).toContain('AI agent support planned: codex');
+    expect(output()).toContain('AGENTS.md');
+    expect(output()).toContain('Kilo Code uses AGENTS-compatible fallback instructions.');
+    expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
+  });
+
+  it('dry-runs install --platform for kimi', async () => {
+    await makeProgram().parseAsync(['install', '--platform', 'kimi', '--dry-run'], { from: 'user' });
+
+    expect(output()).toContain('AI agent support planned: codex');
+    expect(output()).toContain('Kimi Code uses AGENTS-compatible fallback instructions.');
+    expect(existsSync(join(root, 'AGENTS.md'))).toBe(false);
+  });
+
+  it('dry-runs agents and skills cross-framework aliases', async () => {
+    await makeProgram().parseAsync(['agents', 'install', '--dry-run'], { from: 'user' });
+    expect(output()).toContain('AI agent support planned: claude, codex, opencode, mimocode, codebuddy, cursor, windsurf');
+    logSpy.mockClear();
+
+    await makeProgram().parseAsync(['skills', 'install', '--dry-run'], { from: 'user' });
+    expect(output()).toContain('AI agent support planned: claude, codex, opencode, mimocode, codebuddy, cursor, windsurf');
+  });
+
+  it('fails unknown install --platform with supported platform hint', async () => {
+    await expect(
+      makeProgram().parseAsync(['install', '--platform', 'unknown', '--dry-run'], { from: 'user' }),
+    ).rejects.toThrow('process.exit:2');
+
+    expect(errorSpy.mock.calls.map((call) => String(call[0])).join('\n')).toContain('unsupported AI platform: unknown');
+    expect(errorSpy.mock.calls.map((call) => String(call[0])).join('\n')).toContain('trae-cn');
   });
 });

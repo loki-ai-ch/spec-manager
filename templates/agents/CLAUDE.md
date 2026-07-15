@@ -7,6 +7,7 @@ This project uses `spec-manager` via the `/spec-manager` skill.
 - Never write implementation code without a frozen L3 spec.
 - L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
 - For new or non-trivial work, start with `spec-manager next "<work>"` to identify the safe next step, or `spec-manager brief "<work>"` to collect local context, lessons, risks, and the next command.
+- For agent setup guidance, prefer `spec-manager <platform> install`; use `spec-manager agents install` / `spec-manager skills install` for cross-framework install, and keep `spec-manager project agents --provider <provider>` as the compatible advanced form.
 - Before writing any spec/task/decision, check `spec-manager project context --json` or `spec-manager dashboard --json` and confirm the resolved `writeRoot`; external `specStore.path` means writes go to that specs root, while `contextSources` are read-only.
 - During execution use `spec-manager assist next <taskId> --spec <L3-code>` / `spec-manager assist drift <taskId> --spec <L3-code>` when useful; before final handoff use `spec-manager assist acceptance <taskId> --spec <L3-code>`, then `spec-manager assist delivery <taskId> --spec <L3-code>`.
 - Before code edits, read the frozen L3 spec and create/start an Agent Task.

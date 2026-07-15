@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 187,
-    "R2": 195,
+    "R1": 192,
+    "R2": 199,
     "R3": 2,
-    "R4": 173,
+    "R4": 177,
     "R5": 11,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 195,
+    "R9": 199,
     "R10": 15,
     "R11": 0,
     "R12": 4,
-    "R13": 186,
+    "R13": 191,
     "R14": 0,
     "R15": 0,
-    "R16": 24,
+    "R16": 25,
     "R17": 0,
-    "R18": 31,
+    "R18": 33,
     "R19": 176,
     "R20": 0,
     "R21": 0,
-    "R22": 186,
+    "R22": 191,
     "R23": 0,
     "R24": 0
   },
@@ -2680,9 +2680,189 @@
       "timestamp": "2026-07-15T07:25:47.706Z",
       "specCode": "workflow-surface-simplification-L3.4.2",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-15T07:41:53.928Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T07:41:53.933Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:42:28.200Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:42:28.201Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:42:28.202Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T07:45:04.680Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T07:45:04.681Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T07:45:15.593Z",
+      "specCode": "agent-install-surface-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:46:12.742Z",
+      "specCode": "agent-install-surface-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:46:12.742Z",
+      "specCode": "agent-install-surface-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:46:12.743Z",
+      "specCode": "agent-install-surface-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T07:46:49.707Z",
+      "specCode": "agent-install-surface-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T07:46:49.708Z",
+      "specCode": "agent-install-surface-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T07:46:58.392Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:47:41.764Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:47:41.765Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:47:41.766Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:49:37.594Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:49:37.595Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:49:37.595Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T07:49:56.529Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T07:49:56.530Z",
+      "specCode": "agent-install-surface-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T07:55:54.958Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T07:56:33.341Z",
+      "specCode": "agent-install-surface-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T07:57:02.548Z",
+      "specCode": "agent-install-surface-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:57:40.036Z",
+      "specCode": "agent-install-surface-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:57:40.037Z",
+      "specCode": "agent-install-surface-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:57:40.038Z",
+      "specCode": "agent-install-surface-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T07:58:21.408Z",
+      "specCode": "agent-install-surface-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T07:58:21.409Z",
+      "specCode": "agent-install-surface-L3.1.2",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-07-15T07:25:47.706Z",
+  "lastUpdated": "2026-07-15T07:58:21.409Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

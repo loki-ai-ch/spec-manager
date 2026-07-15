@@ -123,7 +123,7 @@ MiMo-Code reads `AGENTS.md`, so setup is intentionally small:
 
 ```bash
 npm install -g @mimo-ai/cli
-spec-manager project agents --provider mimocode
+spec-manager mimocode install
 mimocode
 ```
 
@@ -131,34 +131,70 @@ This installs the shared spec-manager workflow capsule into `AGENTS.md`.
 
 ## Agent Setup
 
-If you do not want every provider, install only the one you use:
+Install every bundled agent entrypoint:
 
 ```bash
-spec-manager project agents --provider list
-spec-manager project agents --provider claude
-spec-manager project agents --provider codex
-spec-manager project agents --provider opencode
-spec-manager project agents --provider mimocode
-spec-manager project agents --provider codebuddy
-spec-manager project agents --provider cursor
-spec-manager project agents --provider windsurf
+spec-manager agents install
+# alias
+spec-manager skills install
+```
+
+If you do not want every platform, install only the one you use:
+
+```bash
+spec-manager claude install
+spec-manager codex install
+spec-manager cursor install
+spec-manager install --platform kimi
 ```
 
 Preview changes first:
 
 ```bash
-spec-manager project agents --provider mimocode --dry-run
+spec-manager codex install --dry-run
+spec-manager kilo install --dry-run
 ```
 
-| Provider | Entry point | Files |
+The older provider entrypoint remains available for scripts and advanced control:
+
+```bash
+spec-manager project agents --provider all
+spec-manager project agents --provider codex
+spec-manager project agents --provider list
+```
+
+Common platforms:
+
+| Platform | Recommended command | Files |
 |---|---|---|
-| Claude Code | Native skill | `CLAUDE.md`, `.claude/skills/spec-manager/` |
-| Codex | `AGENTS.md` workflow capsule | `AGENTS.md` |
-| OpenCode | `AGENTS.md` workflow capsule | `AGENTS.md` |
-| MiMo-Code | `AGENTS.md` workflow capsule | `AGENTS.md` |
-| CodeBuddy | Native skill | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
-| Cursor | Project rules | `.cursorrules` |
-| Windsurf | Project rules | `.windsurfrules` |
+| Claude Code | `spec-manager claude install` | `CLAUDE.md`, `.claude/skills/spec-manager/` |
+| CodeBuddy | `spec-manager codebuddy install` | `CODEBUDDY.md`, `.codebuddy/skills/spec-manager/` |
+| Codex | `spec-manager codex install` | `AGENTS.md` |
+| OpenCode | `spec-manager opencode install` | `AGENTS.md` |
+| MiMo-Code | `spec-manager mimocode install` | `AGENTS.md` |
+| Cursor | `spec-manager cursor install` | `.cursorrules` |
+| Windsurf | `spec-manager windsurf install` | `.windsurfrules` |
+
+More platforms can also use the same install surface. Platforms without a dedicated native format use **AGENTS-compatible fallback instructions**, meaning spec-manager writes generic `AGENTS.md` guidance and does not claim native IDE integration.
+
+| Platform | Command |
+|---|---|
+| Kilo Code | `spec-manager kilo install` |
+| GitHub Copilot CLI | `spec-manager copilot install` |
+| VS Code Copilot Chat | `spec-manager vscode install` |
+| Aider | `spec-manager aider install` |
+| OpenClaw | `spec-manager claw install` |
+| Factory Droid | `spec-manager droid install` |
+| Trae | `spec-manager trae install` |
+| Trae CN | `spec-manager trae-cn install` |
+| Gemini CLI | `spec-manager gemini install` |
+| Hermes | `spec-manager hermes install` |
+| Kimi Code | `spec-manager kimi install` or `spec-manager install --platform kimi` |
+| Amp | `spec-manager amp install` |
+| Kiro IDE/CLI | `spec-manager kiro install` |
+| Pi coding agent | `spec-manager pi install` |
+| Devin CLI | `spec-manager devin install` |
+| Google Antigravity | `spec-manager antigravity install` |
 
 ## When You Want More Control
 

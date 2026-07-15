@@ -20,6 +20,8 @@ spec-manager next "<需求>"
 spec-manager brief "<需求>"
 ```
 
+安装 Agent 入口时优先推荐平台命令：`spec-manager <platform> install`，例如 `spec-manager claude install`、`spec-manager codex install`、`spec-manager cursor install`。跨框架安装使用 `spec-manager agents install` 或 `spec-manager skills install`。旧入口 `spec-manager project agents --provider <provider>` 保留给脚本和高级 provider 控制。
+
 执行阶段可用 `spec-manager assist next <taskId> --spec <L3-code>` / `spec-manager assist drift <taskId> --spec <L3-code>` 对齐下一步和变更范围；验收前用 `spec-manager assist acceptance <taskId> --spec <L3-code>` 汇总证据、人工验收项和残余风险；最终回复前用 `spec-manager assist delivery <taskId> --spec <L3-code>` 生成面向用户的交付摘要。
 
 UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-manager brief "<需求>"`，默认读取 resolved write root 的 `specs/DESIGN.md`，若不存在则兼容 fallback 到项目根目录 `DESIGN.md`。需求命中设计相关意图时，Agent Brief 会包含 Design Context 摘要、lint 概览和 source ref。涉及设计约束验收的 L3 可以声明 `@verify: design-lint(specs/DESIGN.md)` 或显式 `@verify: design-lint(DESIGN.md)`。看到 Design Context findings 时，先按 path 修复对应 DESIGN.md，再继续 UI 实现。注意：`DESIGN.md` 是产品视觉/设计上下文，不是 L2 Design 技术设计的替代品。
@@ -60,6 +62,7 @@ UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-ma
 - Never write implementation code without a frozen L3 spec.
 - L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
 - For new or non-trivial work, start with `spec-manager next "<work>"` to identify the safe next step, or `spec-manager brief "<work>"` to collect local context, lessons, risks, and the next command.
+- For agent setup, prefer `spec-manager <platform> install` such as `spec-manager claude install`, `spec-manager codex install`, or `spec-manager cursor install`; use `spec-manager agents install` / `spec-manager skills install` for cross-framework install. Keep `spec-manager project agents --provider <provider>` as the compatible advanced form.
 - Before writing any spec/task/decision, check `spec-manager project context --json` or `spec-manager dashboard --json` and confirm the resolved `writeRoot`; external `specStore.path` means writes go to that specs root, while `contextSources` are read-only.
 - Before code edits, read the frozen L3 spec and create/start an Agent Task.
 - When the user asks to "confirm and run", "create and execute the task", "continue executing this L3", or uses equivalent wording, prepare an explicit planJson file and use `spec-manager task run <L3-code> --plan <planFile>`.

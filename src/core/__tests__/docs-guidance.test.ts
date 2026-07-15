@@ -92,6 +92,45 @@ describe('published docs and agent guidance', () => {
       expect(content, file).not.toContain('auto-generate planJson');
     }
   });
+
+  it('documents graphify-style platform install commands', () => {
+    const zh = read('README.md');
+    const en = read('readme_en.md');
+
+    for (const doc of [zh, en]) {
+      expect(doc).toContain('spec-manager agents install');
+      expect(doc).toContain('spec-manager skills install');
+      expect(doc).toContain('spec-manager claude install');
+      expect(doc).toContain('spec-manager codebuddy install');
+      expect(doc).toContain('spec-manager codex install');
+      expect(doc).toContain('spec-manager opencode install');
+      expect(doc).toContain('spec-manager cursor install');
+      expect(doc).toContain('spec-manager kilo install');
+      expect(doc).toContain('spec-manager trae-cn install');
+      expect(doc).toContain('spec-manager install --platform kimi');
+      expect(doc).toContain('spec-manager antigravity install');
+      expect(doc).toContain('AGENTS-compatible fallback');
+      expect(doc).toContain('spec-manager project agents --provider');
+    }
+  });
+
+  it('teaches agent guidance to prefer platform install commands', () => {
+    for (const file of [
+      'templates/agents/AGENTS.md',
+      'templates/agents/CLAUDE.md',
+      'templates/agents/CODEBUDDY.md',
+      'templates/agents/CURSOR.md',
+      'templates/agents/WINDSURF.md',
+      'templates/agents/codebuddy-skill/SKILL.md',
+      'skill/SKILL.md',
+    ]) {
+      const content = read(file);
+      expect(content, file).toContain('spec-manager <platform> install');
+      expect(content, file).toContain('spec-manager agents install');
+      expect(content, file).toContain('spec-manager skills install');
+      expect(content, file).toContain('spec-manager project agents --provider <provider>');
+    }
+  });
 });
 
 function read(relativePath: string): string {

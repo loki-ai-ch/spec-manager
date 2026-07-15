@@ -13,6 +13,7 @@ import { registerUsabilityCommands } from './usability.js';
 import { registerViewCommands } from './view.js';
 import { registerCompletionCommands } from './completion.js';
 import { registerCapabilityCommands } from './capability.js';
+import { registerAgentInstallCommands } from './agent-install.js';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../../package.json');
@@ -35,6 +36,7 @@ registerUsabilityCommands(program);
 registerViewCommands(program);
 registerCompletionCommands(program);
 registerCapabilityCommands(program);
+registerAgentInstallCommands(program);
 
 program.parseAsync(process.argv).catch((e) => {
   console.error('✗ ' + (e?.message ?? e));

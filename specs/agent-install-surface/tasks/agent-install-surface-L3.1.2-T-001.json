@@ -1,0 +1,98 @@
+{
+  "id": "T-001",
+  "specCode": "agent-install-surface-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey install docs guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Surveyed README, English README, skill guidance, agent templates, and docs guidance tests for existing install documentation.\"}",
+      "reportedAt": "2026-07-15T08:01:26.107Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Update Chinese README install surface",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated Chinese README to prefer agents/skills install and platform install commands, with common and fallback platform tables.\"}",
+      "reportedAt": "2026-07-15T08:01:35.756Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update English README install surface",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated English README with matching platform install surface, fallback wording, and legacy provider command compatibility.\"}",
+      "reportedAt": "2026-07-15T08:01:46.818Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Update skill and template guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated skill and agent templates to recommend <platform> install, agents install, skills install, while retaining project agents --provider as advanced compatibility.\"}",
+      "reportedAt": "2026-07-15T08:01:58.728Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "Add docs guidance tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended docs-guidance tests to assert platform install commands, fallback wording, and skill/template setup guidance.\"}",
+      "reportedAt": "2026-07-15T08:02:12.137Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "Run docs tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran docs guidance test, lint, and build successfully.\"}",
+      "reportedAt": "2026-07-15T08:02:22.894Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T07:58:46.509Z",
+  "finishedAt": "2026-07-15T08:03:00.676Z",
+  "created": "2026-07-15T07:58:46.499Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/docs-guidance.test.ts",
+      "exitCode": 0,
+      "summary": "Docs guidance tests passed for platform install documentation",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T08:02:32.001Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T08:02:40.607Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T08:02:50.739Z",
+      "layer": "compile"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ import { stringify as stringifyYaml } from 'yaml';
 import {
   detectAgentProviders,
   installAgentSupport,
+  listAgentPlatforms,
   listAgentProviders,
   parseAgentProviders,
   type AgentProviderDetection,
@@ -720,6 +721,13 @@ function printAgentProviderList(): void {
     console.log(`    aliases: ${provider.aliases.join(', ')}`);
     console.log(`    files: ${provider.files.join(', ')}`);
     console.log(`    ${provider.description}`);
+  }
+  console.log('');
+  console.log('Supported AI platform install commands:');
+  for (const platform of listAgentPlatforms()) {
+    console.log(`  - spec-manager ${platform.command} install`);
+    console.log(`    target: ${platform.target}`);
+    console.log(`    ${platform.description}`);
   }
 }
 

@@ -6,6 +6,7 @@ export const AGENT_PROVIDERS = ['claude', 'codex', 'opencode', 'mimocode', 'code
 
 export type AgentProvider = (typeof AGENT_PROVIDERS)[number];
 export type AgentProviderSelection = AgentProvider | 'all';
+export type AgentPlatformTarget = AgentProviderSelection;
 
 export interface AgentProviderInfo {
   provider: AgentProvider;
@@ -14,6 +15,15 @@ export interface AgentProviderInfo {
   description: string;
   notes: string[];
   installSteps: AgentInstallStep[];
+}
+
+export interface AgentPlatformInfo {
+  platform: string;
+  command: string;
+  aliases: string[];
+  target: AgentPlatformTarget;
+  description: string;
+  notes: string[];
 }
 
 export type AgentInstallStep =
@@ -27,6 +37,10 @@ export interface InstallAgentSupportOptions {
   force?: boolean;
   syncManaged?: boolean;
   dryRun?: boolean;
+}
+
+export interface InstallAgentPlatformSupportOptions extends Omit<InstallAgentSupportOptions, 'providers'> {
+  platform: string;
 }
 
 export interface AgentInstallReport {
@@ -151,6 +165,34 @@ export const AGENT_PROVIDER_INFO: AgentProviderInfo[] = [
   },
 ];
 
+export const AGENT_PLATFORM_INFO: AgentPlatformInfo[] = [
+  platform('claude', 'claude', ['claude-code'], 'claude', 'Claude Code native skill + CLAUDE.md.', []),
+  platform('codebuddy', 'codebuddy', ['code-buddy', 'code buddy'], 'codebuddy', 'CodeBuddy native skill + CODEBUDDY.md.', []),
+  platform('codex', 'codex', ['openai-codex'], 'codex', 'Codex AGENTS.md instructions.', []),
+  platform('opencode', 'opencode', ['open-code', 'open code'], 'opencode', 'OpenCode AGENTS.md instructions.', []),
+  platform('kilo', 'kilo', ['kilo-code', 'kilo code'], 'codex', 'Kilo Code AGENTS-compatible fallback instructions.', ['Kilo Code uses AGENTS-compatible fallback instructions.']),
+  platform('copilot', 'copilot', ['github-copilot', 'github copilot', 'copilot-cli'], 'codex', 'GitHub Copilot CLI AGENTS-compatible fallback instructions.', ['GitHub Copilot CLI uses AGENTS-compatible fallback instructions.']),
+  platform('vscode', 'vscode', ['vs-code', 'vs code', 'vscode-copilot', 'vs-code-copilot'], 'codex', 'VS Code Copilot Chat AGENTS-compatible fallback instructions.', ['VS Code Copilot Chat uses AGENTS-compatible fallback instructions.']),
+  platform('aider', 'aider', [], 'codex', 'Aider AGENTS-compatible fallback instructions.', ['Aider uses AGENTS-compatible fallback instructions.']),
+  platform('claw', 'claw', ['openclaw', 'open-claw'], 'codex', 'OpenClaw AGENTS-compatible fallback instructions.', ['OpenClaw uses AGENTS-compatible fallback instructions.']),
+  platform('droid', 'droid', ['factory-droid', 'factory droid'], 'codex', 'Factory Droid AGENTS-compatible fallback instructions.', ['Factory Droid uses AGENTS-compatible fallback instructions.']),
+  platform('trae', 'trae', [], 'codex', 'Trae AGENTS-compatible fallback instructions.', ['Trae uses AGENTS-compatible fallback instructions.']),
+  platform('trae-cn', 'trae-cn', ['trae cn', 'trae_china', 'trae china'], 'codex', 'Trae CN AGENTS-compatible fallback instructions.', ['Trae CN uses AGENTS-compatible fallback instructions.']),
+  platform('cursor', 'cursor', [], 'cursor', 'Cursor project rules via .cursorrules.', []),
+  platform('gemini', 'gemini', ['gemini-cli', 'gemini cli'], 'codex', 'Gemini CLI AGENTS-compatible fallback instructions.', ['Gemini CLI uses AGENTS-compatible fallback instructions.']),
+  platform('hermes', 'hermes', [], 'codex', 'Hermes AGENTS-compatible fallback instructions.', ['Hermes uses AGENTS-compatible fallback instructions.']),
+  platform('kimi', 'kimi', ['kimi-code', 'kimi code'], 'codex', 'Kimi Code AGENTS-compatible fallback instructions.', ['Kimi Code uses AGENTS-compatible fallback instructions.']),
+  platform('amp', 'amp', [], 'codex', 'Amp AGENTS-compatible fallback instructions.', ['Amp uses AGENTS-compatible fallback instructions.']),
+  platform('agents', 'agents', ['agent-skills', 'agent skills'], 'all', 'Cross-framework agent install.', ['Installs all bundled spec-manager agent entrypoints.']),
+  platform('skills', 'skills', ['skill'], 'all', 'Cross-framework skill install alias.', ['Installs all bundled spec-manager agent entrypoints.']),
+  platform('kiro', 'kiro', ['kiro-ide', 'kiro-cli'], 'codex', 'Kiro IDE/CLI AGENTS-compatible fallback instructions.', ['Kiro IDE/CLI uses AGENTS-compatible fallback instructions.']),
+  platform('pi', 'pi', ['pi-agent', 'pi coding agent'], 'codex', 'Pi coding agent AGENTS-compatible fallback instructions.', ['Pi coding agent uses AGENTS-compatible fallback instructions.']),
+  platform('devin', 'devin', ['devin-cli'], 'codex', 'Devin CLI AGENTS-compatible fallback instructions.', ['Devin CLI uses AGENTS-compatible fallback instructions.']),
+  platform('antigravity', 'antigravity', ['google-antigravity', 'google antigravity'], 'codex', 'Google Antigravity AGENTS-compatible fallback instructions.', ['Google Antigravity uses AGENTS-compatible fallback instructions.']),
+  platform('mimocode', 'mimocode', ['mimo-code', 'mimo code', 'mimo'], 'mimocode', 'MiMo-Code AGENTS.md instructions.', []),
+  platform('windsurf', 'windsurf', [], 'windsurf', 'Windsurf project rules via .windsurfrules.', []),
+];
+
 export function parseAgentProviders(input: string): AgentProviderSelection[] {
   const parts = input
     .split(',')
@@ -161,16 +203,33 @@ export function parseAgentProviders(input: string): AgentProviderSelection[] {
   return providers.includes('all') ? ['all'] : providers;
 }
 
+export function normalizeAgentPlatform(input: string): AgentPlatformInfo {
+  const key = normalizeAgentKey(input);
+  const platformInfo = AGENT_PLATFORM_INFO.find((info) =>
+    [info.platform, info.command, ...info.aliases]
+      .map(normalizeAgentKey)
+      .includes(key),
+  );
+  if (platformInfo) return platformInfo;
+  throw new Error(
+    `unsupported AI platform: ${input}. Use one of: ${AGENT_PLATFORM_INFO.map((info) => info.command).join(', ')}`,
+  );
+}
+
 export function normalizeAgentProvider(input: string): AgentProviderSelection {
-  const key = input.toLowerCase().trim().replace(/[\s_-]+/g, '-');
+  const key = normalizeAgentKey(input);
   if (key === 'all' || key === '*') return 'all';
   const provider = AGENT_PROVIDER_INFO.find((info) =>
-    info.aliases.map((alias) => alias.toLowerCase().replace(/[\s_-]+/g, '-')).includes(key),
+    info.aliases.map(normalizeAgentKey).includes(key),
   );
   if (provider) return provider.provider;
   throw new Error(
     `unsupported AI provider: ${input}. Use one of: all, ${AGENT_PROVIDERS.join(', ')}`,
   );
+}
+
+export function listAgentPlatforms(): AgentPlatformInfo[] {
+  return AGENT_PLATFORM_INFO;
 }
 
 export function expandAgentProviders(providers: AgentProviderSelection[]): AgentProvider[] {
@@ -230,6 +289,16 @@ export function installAgentSupport(options: InstallAgentSupportOptions): AgentI
     report.notes.push(...config.notes);
   }
 
+  return report;
+}
+
+export function installAgentPlatformSupport(options: InstallAgentPlatformSupportOptions): AgentInstallReport {
+  const platformInfo = normalizeAgentPlatform(options.platform);
+  const report = installAgentSupport({
+    ...options,
+    providers: [platformInfo.target],
+  });
+  report.notes.push(...platformInfo.notes);
   return report;
 }
 
@@ -422,4 +491,19 @@ function listManagedAssets(
 
 function isAgentEntryTarget(target: string): boolean {
   return ['CLAUDE.md', 'AGENTS.md', 'CODEBUDDY.md', '.cursorrules', '.windsurfrules'].includes(target);
+}
+
+function platform(
+  platformName: string,
+  command: string,
+  aliases: string[],
+  target: AgentPlatformTarget,
+  description: string,
+  notes: string[],
+): AgentPlatformInfo {
+  return { platform: platformName, command, aliases, target, description, notes };
+}
+
+function normalizeAgentKey(input: string): string {
+  return input.toLowerCase().trim().replace(/[\s_-]+/g, '-');
 }

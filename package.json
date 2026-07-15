@@ -1,6 +1,6 @@
 {
   "name": "spec-manager",
-  "version": "0.4.8",
+  "version": "0.4.9",
   "description": "spec-manager: SDD workflow layer for AI coding agents. Specs, decisions, tasks, and verification in markdown/JSON. Portable CLI + multi-agent instructions.",
   "type": "module",
   "license": "MIT",
