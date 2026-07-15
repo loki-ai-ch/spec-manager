@@ -40,7 +40,7 @@ import {
   TASK_REPORT_KNOWN_ERRORS,
   TASK_VERIFY_KNOWN_ERRORS,
 } from './task-handlers.js';
-import { printTaskRunResult, runTaskRunCommand } from './task-run.js';
+import { nextTaskStepCommand, printTaskRunResult, runTaskRunCommand } from './task-run.js';
 
 const TASK_STATUSES: TaskStatus[] = ['draft', 'running', 'waiting', 'completed', 'failed'];
 
@@ -99,10 +99,11 @@ export function registerTaskCommands(program: Command): void {
     .description('为 frozen L3 spec 创建 Agent Task（R3）')
     .requiredOption('--plan <file>', 'planJson 文件路径（含 steps[]）')
     .option('--auto-confirm', 'human_gate 自动通过', false)
+    .option('--start', '创建后立即启动 Task', false)
     .option('--profile <profile>', 'workflow profile: standard | governed')
     .option('--profile-reason <reason>', '显式覆盖项目默认 Profile 的原因')
     .option('--json', '以 JSON 格式输出', false)
-    .action((specCode: string, opts: { plan: string; autoConfirm: boolean; profile?: string; profileReason?: string; json: boolean }) => {
+    .action((specCode: string, opts: { plan: string; autoConfirm: boolean; start: boolean; profile?: string; profileReason?: string; json: boolean }) => {
       const paths = getWritePaths();
       const planJson = JSON.parse(readFileSync(opts.plan, 'utf8'));
       let result: ReturnType<typeof createTask>;
@@ -115,6 +116,12 @@ export function registerTaskCommands(program: Command): void {
           profile: opts.profile,
           profileOverrideReason: opts.profileReason,
         });
+        if (opts.start) {
+          result = {
+            ...result,
+            task: startTask(paths, result.task.id, specCode),
+          };
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
         if (
@@ -131,14 +138,26 @@ export function registerTaskCommands(program: Command): void {
         throw err;
       }
       if (opts.json) {
-        console.log(JSON.stringify(result, null, 2));
+        console.log(JSON.stringify(opts.start
+          ? {
+              task: result.task,
+              taskFile: result.taskFile,
+              nextCommand: nextTaskStepCommand(result.task.id, specCode),
+            }
+          : result, null, 2));
         return;
       }
-      console.log(`✓ Task ${result.task.id} created for ${specCode}`);
+      console.log(`✓ Task ${result.task.id} ${opts.start ? 'created and started' : 'created'} for ${specCode}`);
       console.log(`  file: ${result.taskFile}`);
       console.log(`  status: ${result.task.status}`);
       console.log(`  steps: ${planJson.steps.length}`);
       console.log(`  profile: ${result.task.profile ?? 'legacy'} (${result.task.profileSource ?? 'legacy'})`);
+      if (opts.start) {
+        console.log(`  startedAt: ${result.task.startedAt}`);
+        console.log('');
+        console.log('Next:');
+        console.log(`  ${nextTaskStepCommand(result.task.id, specCode)}`);
+      }
     });
 
   task

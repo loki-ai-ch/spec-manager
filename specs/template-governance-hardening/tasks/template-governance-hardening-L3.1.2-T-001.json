@@ -1,0 +1,93 @@
+{
+  "id": "T-001",
+  "specCode": "template-governance-hardening-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 template-governance-hardening-L3.1.2 template-governance-hardening-L2.1 和前序 L3 规格",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.1.2, prior L3.1.1, docs consistency core/tests, and current agent templates; confirmed docs check scans only skill/SKILL.md and nested SKILL.md today.\",\"files\":[\"specs/template-governance-hardening/template-governance-hardening-L3.1.2.md\",\"specs/template-governance-hardening/template-governance-hardening-L3.1.1.md\",\"src/core/docs-consistency.ts\",\"src/core/__tests__/docs-consistency.test.ts\",\"templates/agents/AGENTS.md\"]}",
+      "reportedAt": "2026-07-15T09:19:36.659Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/docs-consistency.ts 扩展 Agent capsule guidance 扫描",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Expanded docs consistency guidance scanning to skill/SKILL.md, top-level templates/agents/*.md, and nested templates/agents/*/SKILL.md with stable workflow/design phrases.\",\"files\":[\"src/core/docs-consistency.ts\"]}",
+      "reportedAt": "2026-07-15T09:20:07.464Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/docs-consistency.test.ts 增加顶层 Agent capsule fixture",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added docs-consistency fixtures for top-level AGENTS.md guidance warnings and healthy guidance coverage.\",\"files\":[\"src/core/__tests__/docs-consistency.test.ts\"]}",
+      "reportedAt": "2026-07-15T09:20:39.414Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "验证 npm test -- docs-consistency docs-guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted docs consistency and docs guidance tests passed: 2 files, 18 tests.\",\"files\":[\"src/core/docs-consistency.ts\",\"src/core/__tests__/docs-consistency.test.ts\",\"src/core/__tests__/docs-guidance.test.ts\"]}",
+      "reportedAt": "2026-07-15T09:20:55.971Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm run build 和 node dist/cli/index.js project docs check",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Build passed and dist CLI docs check reported errors=0 warnings=0 with only generated asset info findings.\",\"files\":[\"src/core/docs-consistency.ts\",\"dist/cli/project.js\",\"dist/core/docs-consistency.js\"]}",
+      "reportedAt": "2026-07-15T09:21:26.861Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T09:19:03.722Z",
+  "finishedAt": "2026-07-15T09:22:16.685Z",
+  "created": "2026-07-15T09:09:25.723Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm_config_cache=/tmp/spec-manager-npm-cache npm test -- docs-consistency docs-guidance",
+      "exitCode": 0,
+      "summary": "Docs consistency and docs guidance tests passed: 2 files, 18 tests; covers top-level AGENTS.md missing guidance and healthy guidance fixtures.",
+      "artifacts": [
+        "src/core/docs-consistency.ts",
+        "src/core/__tests__/docs-consistency.test.ts",
+        "src/core/__tests__/docs-guidance.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2"
+      ],
+      "created": "2026-07-15T09:21:39.436Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build && node dist/cli/index.js project docs check",
+      "exitCode": 0,
+      "summary": "Build passed and current project docs check reported errors=0 warnings=0.",
+      "artifacts": [
+        "src/core/docs-consistency.ts",
+        "dist/core/docs-consistency.js",
+        "dist/cli/project.js"
+      ],
+      "coversAc": [
+        "AC-3"
+      ],
+      "created": "2026-07-15T09:22:01.738Z",
+      "layer": "smoke"
+    }
+  ]
+}

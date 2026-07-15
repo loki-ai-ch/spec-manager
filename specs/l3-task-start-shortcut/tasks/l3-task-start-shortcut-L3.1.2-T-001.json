@@ -1,0 +1,132 @@
+{
+  "id": "T-001",
+  "specCode": "l3-task-start-shortcut-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取本 L3、l3-task-start-shortcut-L2.1、l3-task-start-shortcut-L3.1.1、历史 Task、agent-plan 模板及现有指导文件",
+      "status": "succeeded",
+      "toolName": "Read",
+      "outputJson": "{\"summary\":\"已确认前序 L3 implemented，并盘点 README、发布 skill、subskill、六类 agent 模板、仓库内 skill 副本及 docs-guidance 测试；识别并保留现有模板治理未提交改动。\",\"files\":[\"README.md\",\"readme_en.md\",\"skill/SKILL.md\",\"skill/subskills/impl.md\",\"templates/agents\",\".agents/skills/spec-manager\",\"src/core/__tests__/docs-guidance.test.ts\",\"templates/agent-plan.json\"]}",
+      "reportedAt": "2026-07-15T09:56:39.594Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 README.md 与 readme_en.md 增加 task create --start 主路径说明",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"中英文 README 已区分 draft L3 的 task run、frozen L3 的 task create --start，以及兼容的 create + start 高级手动链路。\",\"files\":[\"README.md\",\"readme_en.md\"]}",
+      "reportedAt": "2026-07-15T09:57:20.198Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 skill/SKILL.md 与 skill/subskills/impl.md 同步快捷入口规则",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"发布 skill 已新增 frozen L3 的 task create --start 规则；Impl 子流程推荐 create --start，并保留分步 create/start 作为兼容排障路径。\",\"files\":[\"skill/SKILL.md\",\"skill/subskills/impl.md\"]}",
+      "reportedAt": "2026-07-15T09:58:30.940Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 templates/agents 与 .agents/skills/spec-manager 同步 agent guidance",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已同步六类发布 agent 模板、仓库内主 skill、Impl 子流程和六类 agent 模板副本；全部包含 task run、frozen L3 task create --start、confirm-only 与兼容分步路径语义。\",\"files\":[\"templates/agents\",\".agents/skills/spec-manager\"]}",
+      "reportedAt": "2026-07-15T10:01:06.136Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/docs-guidance.test.ts 断言 run、create --start 与 confirm-only 语义",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已新增 shortcutGuidanceFiles 集中列表，覆盖发布与仓库内 guidance 副本，并断言 README/agent guidance 的 task run、task create --start、confirm-only 和兼容排障路径。\",\"files\":[\"src/core/__tests__/docs-guidance.test.ts\"]}",
+      "reportedAt": "2026-07-15T10:02:24.078Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- src/core/__tests__/docs-guidance.test.ts && npm test && npm run lint && npm run build",
+      "status": "succeeded",
+      "toolName": "Bash",
+      "outputJson": "{\"summary\":\"验证通过：docs-guidance 9/9、全量测试 889/889、TypeScript lint 与 build 均 exit code 0。\",\"files\":[\"README.md\",\"readme_en.md\",\"skill/SKILL.md\",\"skill/subskills/impl.md\",\"templates/agents\",\".agents/skills/spec-manager\",\"src/core/__tests__/docs-guidance.test.ts\"]}",
+      "reportedAt": "2026-07-15T10:04:22.559Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T09:55:44.707Z",
+  "finishedAt": "2026-07-15T10:07:25.842Z",
+  "created": "2026-07-15T09:55:44.703Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/docs-guidance.test.ts",
+      "exitCode": 0,
+      "summary": "README 与所有 guidance 副本的快捷入口一致性测试 9/9 通过",
+      "artifacts": [
+        "README.md",
+        "readme_en.md",
+        "skill/SKILL.md",
+        "templates/agents",
+        ".agents/skills/spec-manager",
+        "src/core/__tests__/docs-guidance.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-15T10:04:37.978Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "全量 74 个测试文件、889 个测试通过",
+      "artifacts": [
+        "src"
+      ],
+      "coversAc": [],
+      "created": "2026-07-15T10:04:57.934Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint 通过",
+      "artifacts": [
+        "src/core/__tests__/docs-guidance.test.ts"
+      ],
+      "coversAc": [],
+      "created": "2026-07-15T10:05:28.415Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build 通过",
+      "artifacts": [
+        "dist"
+      ],
+      "coversAc": [],
+      "created": "2026-07-15T10:05:41.200Z",
+      "layer": "compile"
+    }
+  ]
+}

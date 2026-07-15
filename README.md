@@ -108,6 +108,12 @@ spec-manager task run auth-L3.1.1 --plan ./plan.json
 
 `spec-manager spec confirm <L3>` 只负责把 L3 冻结，不会自动创建 Task。确认并执行、创建并执行任务、继续执行这个 L3 时，推荐用 `task run` 显式合并冻结、创建 Task 和启动 Task。
 
+如果 L3 已经 frozen，可以用一条命令创建并立即启动 Task：
+
+```bash
+spec-manager task create auth-L3.1.1 --plan ./plan.json --start
+```
+
 如果你需要排查或拆解 Task 生命周期，也可以继续使用高级手动链路：
 
 ```bash

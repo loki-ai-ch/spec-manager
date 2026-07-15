@@ -1,0 +1,115 @@
+{
+  "id": "T-001",
+  "specCode": "l3-task-start-shortcut-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取本 L3、l3-task-start-shortcut-L2.1、历史 Task、agent-plan 模板及 Task CLI 调用链",
+      "status": "succeeded",
+      "toolName": "Read",
+      "outputJson": "{\"summary\":\"已核对 frozen L3、confirmed 父 L2、无历史 Task，并确认 registerTaskCommands/createTask/startTask/nextTaskStepCommand 与 CLI 测试夹具的精确调用链。\",\"files\":[\"src/cli/task.ts\",\"src/cli/task-run.ts\",\"src/core/task.ts\",\"src/cli/__tests__/task.test.ts\",\"templates/agent-plan.json\"]}",
+      "reportedAt": "2026-07-15T09:43:14.519Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/task.ts 注册 task create --start 参数",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已为 task create 注册默认 false 的 --start 布尔选项，并扩展 Commander action opts 类型。\",\"files\":[\"src/cli/task.ts\"]}",
+      "reportedAt": "2026-07-15T09:43:35.228Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/task.ts 在创建后复用 startTask 启动 Task",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已在 createTask 成功后按 opts.start 条件调用 startTask，并用启动后的 TaskRecord 替换输出结果；启动异常继续向上抛出。\",\"files\":[\"src/cli/task.ts\"]}",
+      "reportedAt": "2026-07-15T09:44:09.466Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/task.ts 输出 running 状态、startedAt 与 nextCommand",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已导出并复用 nextTaskStepCommand；--start 文本输出 created and started、running、startedAt 和 Next，--start JSON 输出 task/taskFile/nextCommand，默认输出保持原结构。\",\"files\":[\"src/cli/task.ts\",\"src/cli/task-run.ts\"]}",
+      "reportedAt": "2026-07-15T09:44:40.437Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "编辑 src/cli/__tests__/task.test.ts 覆盖 auto-start、JSON 与默认 draft 兼容",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"已添加 task create --start 文本、--start --json 和默认 --json 三组回归测试，覆盖 running/startedAt/nextCommand 与 draft 兼容。\",\"files\":[\"src/cli/__tests__/task.test.ts\"]}",
+      "reportedAt": "2026-07-15T09:45:27.628Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "验证: npm test -- src/cli/__tests__/task.test.ts && npm run lint && npm run build",
+      "status": "succeeded",
+      "toolName": "Bash",
+      "outputJson": "{\"summary\":\"验证通过：task CLI 测试 42/42，TypeScript lint 与 build 均 exit code 0；首次目标测试发现 --start 选项定位错误，修正到 task create 后复跑通过。\",\"files\":[\"src/cli/task.ts\",\"src/cli/task-run.ts\",\"src/cli/__tests__/task.test.ts\"]}",
+      "reportedAt": "2026-07-15T09:47:27.870Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T09:42:37.534Z",
+  "finishedAt": "2026-07-15T09:48:36.468Z",
+  "created": "2026-07-15T09:42:37.531Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/task.test.ts",
+      "exitCode": 0,
+      "summary": "task create --start 与默认 draft 兼容测试 42/42 通过",
+      "artifacts": [
+        "src/cli/__tests__/task.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-07-15T09:47:40.315Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build 通过",
+      "artifacts": [
+        "dist"
+      ],
+      "coversAc": [],
+      "created": "2026-07-15T09:47:55.420Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint 通过",
+      "artifacts": [
+        "src/cli/task.ts",
+        "src/cli/task-run.ts"
+      ],
+      "coversAc": [],
+      "created": "2026-07-15T09:48:24.610Z",
+      "layer": "compile"
+    }
+  ]
+}

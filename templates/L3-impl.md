@@ -55,7 +55,7 @@ Expert guidelines:
   {"summary": "<完成内容>", "files": ["<变更文件>"]}
   ```
 
-### Step N-1 — 部署(若涉及后端)
+### Step N-1 — 发布/部署/打包(若涉及)
 
 ### Step N — 验证
 
@@ -105,14 +105,12 @@ Expert guidelines:
   "coveredSpecs": ["<本 L3 specCode>"],
   "steps": [
     {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: spec-manager spec show(L3 + 父 L2)"},
-    {"stepNo": 2, "stepType": "tool_action", "name": "<动词+宾语+文件>"},
-    {"stepNo": "N-1", "stepType": "tool_action", "name": "部署(若涉及后端)"},
+    {"stepNo": 2, "stepType": "tool_action", "name": "<动词+宾语+目标文件或模块>"},
+    {"stepNo": "N-1", "stepType": "tool_action", "name": "发布/部署/打包(若涉及)"},
     {"stepNo": "N", "stepType": "tool_action", "name": "验证: <命令 + 预期输出>"}
   ]
 }
 ```
-
-<autoConfirm 取值 + 理由>
 
 ## 回滚方案
 

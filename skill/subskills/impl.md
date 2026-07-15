@@ -53,10 +53,11 @@
    了解同主题已有实现模式，复用成功的步骤顺序，避免重复踩坑。
 9. **frozen 才可建 Task**（R3）：
    ```bash
-   spec-manager task create <L3 code> --plan ./plan.json --auto-confirm
+   spec-manager task create <L3 code> --plan ./plan.json --auto-confirm --start
    ```
+   draft L3 的“审批并执行”应使用 `spec-manager task run <L3 code> --plan ./plan.json`；已 frozen L3 推荐用 `task create --start`。
    > ☑ **R3** — 非 frozen 时 CLI 拒绝并 audit hit
-10. `spec-manager task start <task-id>`
+10. 兼容排障路径可省略 `--start`，再执行 `spec-manager task start <task-id>`
 11. 逐步 `spec-manager task step <task-id> --no N --type T --name S --status succeeded --output-json J --latency L`
     - 禁跳步（R5）
     - outputJson 必含 summary（R15）

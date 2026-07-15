@@ -29,7 +29,15 @@ export interface DocsConsistencyOptions {
 
 const ENGLISH_README = 'readme_en.md';
 const README = 'README.md';
-const GUIDANCE_PHRASES = ['spec-manager', 'project docs check'];
+const GUIDANCE_PHRASES = [
+  'spec-manager',
+  'project docs check',
+  'project context --json',
+  'writeroot',
+  'specs/design.md',
+  'assist acceptance',
+  'assist delivery',
+];
 const GENERATED_AGENT_ASSET_DIRS = ['.agents', '.claude', '.codebuddy', '.codex', '.cursor', '.windsurf'];
 const RELEASE_SCAN_FILES = [README, ENGLISH_README, 'skill/subskills/release.md'];
 const RELEASE_SCAN_DIRS = ['docs', 'releases'];
@@ -173,7 +181,7 @@ function generatedAssetFindings(root: string): DocsConsistencyFinding[] {
 function guidanceFindings(root: string): DocsConsistencyFinding[] {
   const files = [
     join(root, 'skill', 'SKILL.md'),
-    ...agentTemplateSkillFiles(root),
+    ...agentTemplateGuidanceFiles(root),
   ];
   const findings: DocsConsistencyFinding[] = [];
   for (const file of files) {
@@ -185,23 +193,27 @@ function guidanceFindings(root: string): DocsConsistencyFinding[] {
     findings.push(finding(
       rel === 'skill/SKILL.md' ? 'docs.skill.guidance.missing' : 'docs.agent-template.guidance.missing',
       'warning',
-      'Agent guidance is missing docs check instructions',
+      'Agent guidance is missing workflow instructions',
       `${rel} does not mention ${missing.map(item => `"${item}"`).join(', ')}.`,
       rel,
-      'Mention `spec-manager project docs check` as a pre-release/pre-handoff consistency check.',
+      'Mention the missing spec-manager workflow/design guidance before release or public handoff.',
     ));
   }
   return findings;
 }
 
-function agentTemplateSkillFiles(root: string): string[] {
+function agentTemplateGuidanceFiles(root: string): string[] {
   const templatesDir = join(root, 'templates', 'agents');
   if (!existsSync(templatesDir) || !statSafe(templatesDir)?.isDirectory()) return [];
   const files: string[] = [];
   for (const entry of readdirSync(templatesDir, { withFileTypes: true })) {
-    if (!entry.isDirectory()) continue;
-    const skillPath = join(templatesDir, entry.name, 'SKILL.md');
-    if (existsSync(skillPath)) files.push(skillPath);
+    const entryPath = join(templatesDir, entry.name);
+    if (entry.isFile() && entry.name.toLowerCase().endsWith('.md')) {
+      files.push(entryPath);
+    } else if (entry.isDirectory()) {
+      const skillPath = join(entryPath, 'SKILL.md');
+      if (existsSync(skillPath)) files.push(skillPath);
+    }
   }
   return files.sort((a, b) => a.localeCompare(b));
 }

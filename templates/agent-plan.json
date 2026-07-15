@@ -11,8 +11,8 @@
   "coveredSpecs": ["<current-L3-specCode>"],
   "steps": [
     {"stepNo": 1, "stepType": "tool_action", "name": "上下文收集: spec-manager spec show L3 + 父 L2 + 读 templates/agent-plan.json"},
-    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 <ServiceName>.java 新增方法 <verb>"},
-    {"stepNo": "N-1", "stepType": "tool_action", "name": "部署后端 JAR (如涉及)"},
-    {"stepNo": "N", "stepType": "tool_action", "name": "验证: curl http://... 返回 200 + 预期 body"}
+    {"stepNo": 2, "stepType": "tool_action", "name": "编辑 <target-file> 实现 <specific-change>"},
+    {"stepNo": "N-1", "stepType": "tool_action", "name": "发布/部署/打包 <artifact> (如涉及)"},
+    {"stepNo": "N", "stepType": "tool_action", "name": "验证: <command> 输出 <expected-result>"}
   ]
 }

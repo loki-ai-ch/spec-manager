@@ -63,6 +63,8 @@ describe('buildDocsConsistencyReport', () => {
     writeFileSync(join(project.root, 'package.json'), JSON.stringify({ files: ['README.md', 'readme_en.md'] }), 'utf8');
     mkdirSync(join(project.root, 'skill'), { recursive: true });
     writeFileSync(join(project.root, 'skill', 'SKILL.md'), '# spec-manager\nWorkflow only.\n', 'utf8');
+    mkdirSync(join(project.root, 'templates', 'agents'), { recursive: true });
+    writeFileSync(join(project.root, 'templates', 'agents', 'AGENTS.md'), '# spec-manager\nWorkflow only.\n', 'utf8');
     mkdirSync(join(project.root, 'templates', 'agents', 'codebuddy-skill'), { recursive: true });
     writeFileSync(join(project.root, 'templates', 'agents', 'codebuddy-skill', 'SKILL.md'), '# spec-manager\n', 'utf8');
 
@@ -71,6 +73,10 @@ describe('buildDocsConsistencyReport', () => {
     expect(report.summary.errors).toBe(0);
     expect(report.findings).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: 'docs.skill.guidance.missing', path: 'skill/SKILL.md' }),
+      expect.objectContaining({
+        id: 'docs.agent-template.guidance.missing',
+        path: 'templates/agents/AGENTS.md',
+      }),
       expect.objectContaining({
         id: 'docs.agent-template.guidance.missing',
         path: 'templates/agents/codebuddy-skill/SKILL.md',
@@ -82,9 +88,12 @@ describe('buildDocsConsistencyReport', () => {
     writeHealthyReadmes();
     writeFileSync(join(project.root, 'package.json'), JSON.stringify({ files: ['README.md', 'readme_en.md'] }), 'utf8');
     mkdirSync(join(project.root, 'skill'), { recursive: true });
-    writeFileSync(join(project.root, 'skill', 'SKILL.md'), 'Use spec-manager and run spec-manager project docs check before release.\n', 'utf8');
+    writeFileSync(join(project.root, 'skill', 'SKILL.md'), healthyGuidance(), 'utf8');
+    mkdirSync(join(project.root, 'templates', 'agents'), { recursive: true });
+    writeFileSync(join(project.root, 'templates', 'agents', 'AGENTS.md'), healthyGuidance(), 'utf8');
+    writeFileSync(join(project.root, 'templates', 'agents', 'CLAUDE.md'), healthyGuidance(), 'utf8');
     mkdirSync(join(project.root, 'templates', 'agents', 'codebuddy-skill'), { recursive: true });
-    writeFileSync(join(project.root, 'templates', 'agents', 'codebuddy-skill', 'SKILL.md'), 'Use spec-manager project docs check before handoff.\n', 'utf8');
+    writeFileSync(join(project.root, 'templates', 'agents', 'codebuddy-skill', 'SKILL.md'), healthyGuidance(), 'utf8');
 
     const report = buildDocsConsistencyReport(project.paths);
 
@@ -172,4 +181,14 @@ describe('buildDocsConsistencyReport', () => {
 function writeHealthyReadmes(): void {
   writeFileSync(join(project.root, 'README.md'), '中文 | [English](readme_en.md)\n', 'utf8');
   writeFileSync(join(project.root, 'readme_en.md'), '[中文说明](README.md)\n', 'utf8');
+}
+
+function healthyGuidance(): string {
+  return [
+    'Use spec-manager for L1 -> L2 -> L3 -> Agent Task.',
+    'Before writes run spec-manager project context --json and confirm writeRoot.',
+    'Before release run spec-manager project docs check.',
+    'For UI work read specs/DESIGN.md in the resolved write root.',
+    'Before handoff run spec-manager assist acceptance and spec-manager assist delivery.',
+  ].join('\n');
 }

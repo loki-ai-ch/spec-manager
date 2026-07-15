@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 192,
-    "R2": 199,
+    "R1": 206,
+    "R2": 207,
     "R3": 2,
-    "R4": 177,
+    "R4": 185,
     "R5": 11,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 199,
+    "R9": 207,
     "R10": 15,
     "R11": 0,
     "R12": 4,
-    "R13": 191,
+    "R13": 205,
     "R14": 0,
     "R15": 0,
-    "R16": 25,
+    "R16": 27,
     "R17": 0,
-    "R18": 33,
-    "R19": 176,
+    "R18": 36,
+    "R19": 188,
     "R20": 0,
     "R21": 0,
-    "R22": 191,
+    "R22": 205,
     "R23": 0,
     "R24": 0
   },
@@ -2860,9 +2860,507 @@
       "timestamp": "2026-07-15T07:58:21.409Z",
       "specCode": "agent-install-surface-L3.1.2",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-15T08:20:43.356Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T08:20:43.361Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T08:22:21.755Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T08:22:21.756Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T08:22:21.757Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T08:22:45.786Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T08:22:45.787Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T08:22:46.098Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T08:23:52.922Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T08:25:12.523Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T08:25:12.524Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T08:25:12.524Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T08:25:42.229Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T08:25:42.230Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T08:25:42.230Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T08:26:26.480Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T08:26:26.481Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T08:26:26.689Z",
+      "specCode": "template-governance-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T08:26:54.929Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T08:28:13.974Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T08:28:13.975Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T08:28:13.976Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T08:28:35.564Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T08:28:35.565Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T08:28:35.565Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T08:29:34.661Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T08:29:34.662Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T08:29:44.900Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:02:34.338Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:02:34.338Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:02:34.339Z",
+      "specCode": "template-governance-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T09:02:45.544Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T09:03:06.621Z",
+      "specCode": "template-governance-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T09:06:14.541Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:07:23.950Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:07:23.951Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:07:23.952Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T09:07:53.649Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T09:08:04.185Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T09:08:04.186Z",
+      "specCode": "template-governance-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-15T09:24:30.347Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T09:24:30.352Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:25:32.128Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:25:32.129Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:25:32.130Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T09:26:09.984Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:26:31.004Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:26:31.005Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:26:31.005Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T09:26:38.436Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T09:26:38.437Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T09:27:11.137Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:28:25.494Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:28:25.495Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:28:25.495Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T09:32:33.375Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T09:32:33.376Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T09:35:56.196Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:36:06.969Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:36:06.970Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:36:06.971Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:36:37.225Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:36:37.226Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:36:37.227Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T09:37:03.951Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:37:33.666Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:37:33.667Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:37:33.667Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T09:38:08.282Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T09:38:45.139Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T09:38:45.140Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T09:38:45.140Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T09:39:35.873Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T09:42:37.520Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T09:42:37.521Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T09:48:58.805Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T09:55:07.423Z",
+      "specCode": "l3-task-start-shortcut-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T09:55:44.691Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T09:55:44.692Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T10:07:25.867Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T10:07:46.772Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T10:07:46.929Z",
+      "specCode": "l3-task-start-shortcut-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T10:07:46.977Z",
+      "specCode": "l3-task-start-shortcut-L3.1.2",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-07-15T07:58:21.409Z",
+  "lastUpdated": "2026-07-15T10:07:46.977Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

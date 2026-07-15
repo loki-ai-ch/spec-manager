@@ -230,6 +230,12 @@ spec-manager task run auth-L3.1.1 --plan ./plan.json
 
 `spec-manager spec confirm <L3>` only freezes the L3. It does not create a task automatically. When the user means "confirm and run", "create and execute the task", or "continue executing this L3", prefer `task run` to explicitly combine L3 freeze, task creation, and task start.
 
+When the L3 is already frozen, create and start its task with one command:
+
+```bash
+spec-manager task create auth-L3.1.1 --plan ./plan.json --start
+```
+
 For advanced troubleshooting, the manual task lifecycle is still available:
 
 ```bash

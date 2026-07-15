@@ -1,0 +1,103 @@
+{
+  "id": "T-001",
+  "specCode": "template-governance-hardening-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 template-governance-hardening-L3.1.1 和 template-governance-hardening-L2.1 规格",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, docs-guidance tests, and agent-plan template; confirmed planned files and current guidance gaps.\",\"files\":[\"specs/template-governance-hardening/template-governance-hardening-L3.1.1.md\",\"specs/template-governance-hardening/template-governance-hardening-L2.1.md\",\"src/core/__tests__/docs-guidance.test.ts\",\"templates/agent-plan.json\"]}",
+      "reportedAt": "2026-07-15T08:57:07.763Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "编辑 src/core/__tests__/docs-guidance.test.ts 增加模板 parity 断言",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Expanded docs-guidance tests to cover all agent entry templates for design, docs check, delivery guidance, and known template boundary drift.\",\"files\":[\"src/core/__tests__/docs-guidance.test.ts\"]}",
+      "reportedAt": "2026-07-15T08:57:53.693Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "编辑 templates/L1-prd.md templates/L2-design.md templates/L3-impl.md templates/agent-plan.json 清理模板边界",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Cleaned L1 pre-write questions, clarified L2 module/interface boundary, and made L3/agent-plan examples language-neutral.\",\"files\":[\"templates/L1-prd.md\",\"templates/L2-design.md\",\"templates/L3-impl.md\",\"templates/agent-plan.json\"]}",
+      "reportedAt": "2026-07-15T08:58:36.718Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "编辑 templates/agents 和 skill/SKILL.md 补齐 Agent guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added docs check and design context guidance to top-level agent entry templates; scoped new release guidance tests to published source templates.\",\"files\":[\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\",\"src/core/__tests__/docs-guidance.test.ts\"]}",
+      "reportedAt": "2026-07-15T08:59:55.730Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm test -- docs-guidance agents project-agents",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted docs guidance and agent install tests passed: 3 files, 49 tests.\",\"files\":[\"src/core/__tests__/docs-guidance.test.ts\",\"templates/agents/AGENTS.md\",\"templates/agents/CLAUDE.md\",\"templates/agents/CODEBUDDY.md\",\"templates/agents/CURSOR.md\",\"templates/agents/WINDSURF.md\"]}",
+      "reportedAt": "2026-07-15T09:00:15.214Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "验证 npm run build 和 node dist/cli/index.js project docs check",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Build and docs check passed; reverse template bias scan returned no matches.\",\"files\":[\"templates/L1-prd.md\",\"templates/L2-design.md\",\"templates/L3-impl.md\",\"templates/agent-plan.json\",\"dist\"]}",
+      "reportedAt": "2026-07-15T09:00:48.409Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T08:46:18.656Z",
+  "finishedAt": "2026-07-15T09:03:06.593Z",
+  "created": "2026-07-15T08:32:39.262Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build && node dist/cli/index.js project docs check && rg -n '\\.java|JAR|以下 3 个问题|autoConfirm' templates/L1-prd.md templates/L2-design.md templates/L3-impl.md templates/agent-plan.json",
+      "exitCode": 0,
+      "summary": "Build passed, docs check reported errors=0 warnings=0, and reverse template bias scan returned no matches.",
+      "artifacts": [
+        "templates/L1-prd.md",
+        "templates/L2-design.md",
+        "templates/L3-impl.md",
+        "templates/agent-plan.json",
+        "templates/agents"
+      ],
+      "coversAc": [
+        "AC-2"
+      ],
+      "created": "2026-07-15T09:01:25.283Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-002",
+      "command": "npm_config_cache=/tmp/spec-manager-npm-cache npm test -- docs-guidance agents project-agents",
+      "exitCode": 0,
+      "summary": "Targeted docs guidance and agent install tests passed: 3 files, 49 tests.",
+      "artifacts": [
+        "src/core/__tests__/docs-guidance.test.ts",
+        "src/core/__tests__/agents.test.ts",
+        "src/cli/__tests__/project-agents.test.ts"
+      ],
+      "coversAc": [
+        "AC-1",
+        "AC-3"
+      ],
+      "created": "2026-07-15T09:01:45.264Z",
+      "layer": "functional"
+    }
+  ]
+}

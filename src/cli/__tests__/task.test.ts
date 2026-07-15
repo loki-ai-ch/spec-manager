@@ -278,6 +278,55 @@ describe('task CLI', () => {
     expect(findTask(project.paths, specCode, 'T-001')?.profile).toBe('legacy');
   });
 
+  it('creates and starts a task when task create receives --start', async () => {
+    const specCode = createFrozenL3WithoutTask();
+
+    await makeProgram().parseAsync([
+      'task', 'create', specCode, '--plan', writePlanFile(specCode), '--start',
+    ], { from: 'user' });
+
+    const task = findTask(project.paths, specCode, 'T-001');
+    expect(task?.status).toBe('running');
+    expect(task?.startedAt).toBeTruthy();
+    expect(output()).toContain(`Task T-001 created and started for ${specCode}`);
+    expect(output()).toContain('status: running');
+    expect(output()).toContain(`startedAt: ${task?.startedAt}`);
+    expect(output()).toContain(`spec-manager task step T-001 --spec ${specCode}`);
+  });
+
+  it('prints running task create --start json with the next command', async () => {
+    const specCode = createFrozenL3WithoutTask();
+
+    await makeProgram().parseAsync([
+      'task', 'create', specCode, '--plan', writePlanFile(specCode), '--start', '--json',
+    ], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed).toMatchObject({
+      task: {
+        id: 'T-001',
+        status: 'running',
+      },
+      nextCommand: `spec-manager task step T-001 --spec ${specCode} --no 1 --status succeeded --output-json '{"summary":"..."}'`,
+    });
+    expect(parsed.task.startedAt).toBeTruthy();
+    expect(parsed.taskFile).toContain(`${specCode}-T-001.json`);
+  });
+
+  it('keeps default task create json in draft without a next command', async () => {
+    const specCode = createFrozenL3WithoutTask();
+
+    await makeProgram().parseAsync([
+      'task', 'create', specCode, '--plan', writePlanFile(specCode), '--json',
+    ], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed.task).toMatchObject({ id: 'T-001', status: 'draft', startedAt: null });
+    expect(parsed.taskFile).toContain(`${specCode}-T-001.json`);
+    expect(parsed).not.toHaveProperty('nextCommand');
+    expect(findTask(project.paths, specCode, 'T-001')?.status).toBe('draft');
+  });
+
   it('creates governed task from CLI when enabled and critical AC exists', async () => {
     const specCode = createFrozenL3WithoutTask();
     writeAdaptiveWorkflowConfig(project.paths, { enabled: true, defaultProfile: 'standard' });

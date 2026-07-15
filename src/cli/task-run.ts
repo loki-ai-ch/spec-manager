@@ -84,7 +84,7 @@ function transitionSpecIfNeeded(context: CliActionContext, spec: SpecRecord): Ta
   };
 }
 
-function nextTaskStepCommand(taskId: string, specCode: string): string {
+export function nextTaskStepCommand(taskId: string, specCode: string): string {
   return `spec-manager task step ${taskId} --spec ${specCode} --no 1 --status succeeded --output-json '{"summary":"..."}'`;
 }
 

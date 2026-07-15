@@ -18,10 +18,13 @@ Expert guidelines:
   - 问题归类先于用户故事,确保需求来源可追溯
 
 PRE-WRITE INTERACTION (mandatory):
-  在写 L1 正文之前,AI agent 必须先用当前工具的用户提问能力向用户确认以下 3 个问题。
+  在写 L1 正文之前,AI agent 必须先执行 Q4,再向用户确认 Q1-Q3。
   Q4 历史决策查询（执行于 Q1-Q3 之前）: AI agent 必须先调 `spec-manager decision list --topic <topic>`。
     若存在 active 决策卡片,将决策摘要展示给用户。
     让用户确认新 L1 是否与历史决策一致或有意覆盖。
+  Q1 目标用户与核心场景: 确认本需求服务的主要角色、触发场景和首要业务结果。
+  Q2 成功判据与约束: 确认可判定的成功结果、范围边界和显式不做项。
+  Q3 优先级与交付切片: 确认 Must/Should/Could 分级、首个可交付切片和依赖。
 ========== -->
 
 # {{title}} — 需求文档
