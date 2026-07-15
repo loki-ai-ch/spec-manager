@@ -1,0 +1,96 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.1.4",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Read frozen L3 and current Chinese English README onboarding sections",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3 plus README.md and readme_en.md onboarding, short path, assist, Design Context, and command table sections.\"}",
+      "reportedAt": "2026-07-15T03:12:08.747Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Refresh Chinese README onboarding and command surface",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated Chinese README onboarding, shortest path, assist section, Design Context command, and command table to recommend next, brief, and dashboard while retaining compatibility entries.\"}",
+      "reportedAt": "2026-07-15T03:13:01.701Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Refresh English README onboarding and command surface",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated English README onboarding, control section, Design Context command, and common commands table to recommend next, brief, and dashboard while keeping guide/flow compatibility wording.\"}",
+      "reportedAt": "2026-07-15T03:13:18.459Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run docs consistency and targeted README related tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Docs consistency passed with 0 errors and 0 warnings; targeted tests passed: usability/capability/workflow-surface, 3 files, 58 tests.\"}",
+      "reportedAt": "2026-07-15T03:13:37.712Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm run lint and npm run build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: npm run lint and npm run build both completed successfully.\"}",
+      "reportedAt": "2026-07-15T03:13:57.180Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T03:11:54.651Z",
+  "finishedAt": "2026-07-15T03:14:28.702Z",
+  "created": "2026-07-15T03:11:48.943Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "node dist/cli/index.js project docs check && npm test -- src/cli/__tests__/usability.test.ts src/cli/__tests__/capability.test.ts src/core/__tests__/workflow-surface.test.ts",
+      "exitCode": 0,
+      "summary": "Docs consistency passed with 0 errors and 0 warnings; targeted tests passed: 3 files, 58 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T03:14:04.867Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T03:14:17.997Z",
+      "layer": "compile"
+    }
+  ]
+}

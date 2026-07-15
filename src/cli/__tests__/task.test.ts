@@ -3,6 +3,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerTaskCommands } from '../task.js';
+import { registerSpec } from '../spec.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 import { createSpec, findSpecByCode, updateSpec } from '../../core/spec-io.js';
 import { addTaskVerification, createTask, findTask, reportStep, startTask } from '../../core/task.js';
@@ -50,6 +51,12 @@ function makeProgram(): Command {
   const program = new Command();
   program.exitOverride();
   registerTaskCommands(program);
+  return program;
+}
+
+function makeProgramWithSpec(): Command {
+  const program = makeProgram();
+  registerSpec(program);
   return program;
 }
 
@@ -163,7 +170,105 @@ function createDraftL3(): string {
   return 'draft-L3.1.1-work';
 }
 
+function createRunnableDraftL3(): string {
+  const specCode = createDraftL3();
+  updateSpec(project.paths, specCode, {
+    content: `# Draft work
+
+## 目标
+\`src/cli/task.ts\`
+
+## 实施步骤
+run task
+
+## 验证命令
+\`\`\`bash
+npm test
+\`\`\`
+`,
+    aiSummary: 'Runnable draft work',
+  });
+  return specCode;
+}
+
 describe('task CLI', () => {
+  it('runs draft L3 by freezing, creating, and starting a task', async () => {
+    const specCode = createRunnableDraftL3();
+
+    await makeProgram().parseAsync(['task', 'run', specCode, '--plan', writePlanFile(specCode)], { from: 'user' });
+
+    expect(findSpecByCode(project.paths, specCode)?.fm.status).toBe('frozen');
+    expect(findTask(project.paths, specCode, 'T-001')?.status).toBe('running');
+    expect(output()).toContain(`${specCode}: draft → frozen`);
+    expect(output()).toContain(`Task T-001 created and started for ${specCode}`);
+    expect(output()).toContain(`spec-manager task step T-001 --spec ${specCode}`);
+  });
+
+  it('runs frozen L3 without repeating spec transition', async () => {
+    const specCode = createFrozenL3WithoutTask();
+
+    await makeProgram().parseAsync(['task', 'run', specCode, '--plan', writePlanFile(specCode)], { from: 'user' });
+
+    expect(findSpecByCode(project.paths, specCode)?.fm.status).toBe('frozen');
+    expect(findTask(project.paths, specCode, 'T-001')?.status).toBe('running');
+    expect(output()).toContain(`${specCode}: already frozen`);
+  });
+
+  it('prints task run json as a single object', async () => {
+    const specCode = createRunnableDraftL3();
+
+    await makeProgram().parseAsync(['task', 'run', specCode, '--plan', writePlanFile(specCode), '--json'], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed).toMatchObject({
+      spec: {
+        code: specCode,
+        oldStatus: 'draft',
+        newStatus: 'frozen',
+        transitioned: true,
+      },
+      task: {
+        id: 'T-001',
+        status: 'running',
+      },
+      nextCommand: `spec-manager task step T-001 --spec ${specCode} --no 1 --status succeeded --output-json '{"summary":"..."}'`,
+    });
+  });
+
+  it('keeps spec confirm from creating a task', async () => {
+    const specCode = createRunnableDraftL3();
+
+    await makeProgramWithSpec().parseAsync(['spec', 'confirm', specCode], { from: 'user' });
+
+    expect(findSpecByCode(project.paths, specCode)?.fm.status).toBe('frozen');
+    expect(findTask(project.paths, specCode, 'T-001')).toBeNull();
+  });
+
+  it('rejects task run when planJson does not cover the L3 spec', async () => {
+    const specCode = createRunnableDraftL3();
+    const planFile = join(project.root, 'wrong-plan.json');
+    writeFileSync(planFile, JSON.stringify({
+      coveredSpecs: ['other-L3.1.1'],
+      steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }],
+    }), 'utf8');
+
+    await expect(makeProgram().parseAsync(['task', 'run', specCode, '--plan', planFile], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('R12');
+    expect(findTask(project.paths, specCode, 'T-001')).toBeNull();
+  });
+
+  it('rejects task run when an active task already exists', async () => {
+    const specCode = createFrozenL3WithoutTask();
+    createTask({ paths: project.paths, specCode, planJson: { coveredSpecs: [specCode], steps: [{ stepNo: 1, stepType: 'tool_action', name: 'run verify test' }] }, autoConfirm: false });
+
+    await expect(makeProgram().parseAsync(['task', 'run', specCode, '--plan', writePlanFile(specCode)], { from: 'user' }))
+      .rejects.toThrow('process.exit:2');
+
+    expect(stderr()).toContain('TASK_ALREADY_ACTIVE');
+  });
+
   it('creates legacy task from CLI when adaptive workflow is disabled', async () => {
     const specCode = createFrozenL3WithoutTask();
 

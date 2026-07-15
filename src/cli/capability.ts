@@ -16,6 +16,7 @@ import {
   buildDesignContextTemplate,
   type DesignContextExportFormat,
 } from '../core/design-context.js';
+import { renderBriefTextLines } from './brief-presenter.js';
 import { requireInitialized } from './common.js';
 
 export function registerCapabilityCommands(program: Command): void {
@@ -439,63 +440,7 @@ function renderCritiqueText(report: Awaited<ReturnType<typeof buildSpecCritique>
 }
 
 function renderBriefText(brief: Awaited<ReturnType<typeof buildAgentBrief>>): void {
-  console.log('Agent Brief');
-  console.log(`Request: ${brief.request}`);
-  console.log(`Topic: ${brief.topic ?? '(unresolved)'}`);
-  if (brief.profileRecommendation) {
-    console.log(`Recommended Profile: ${brief.profileRecommendation.recommendedProfile}`);
-  }
-  if (brief.relevantSpecs.length > 0) {
-    console.log('Relevant Specs:');
-    for (const spec of brief.relevantSpecs) console.log(`  - ${spec.code} ${spec.status} ${spec.title}`);
-  }
-  if (brief.relevantDecisions.length > 0) {
-    console.log('Relevant Decisions:');
-    for (const decision of brief.relevantDecisions) console.log(`  - ${decision.id} ${decision.status} ${decision.title}`);
-  }
-  if (brief.relevantTasks.length > 0) {
-    console.log('Relevant Tasks:');
-    for (const task of brief.relevantTasks) console.log(`  - ${task.id} ${task.status} ${task.specCode}`);
-  }
-  if (brief.lessons.length > 0) {
-    console.log('Lessons:');
-    for (const lesson of brief.lessons) console.log(`  - ${lesson.id} [${lesson.confidence}] ${lesson.title}`);
-  }
-  const design = brief.designContext;
-  const summary = design?.summary;
-  if (design && summary) {
-    console.log(`Design Context: ${summary.name ?? 'DESIGN.md'}`);
-    console.log(`  file: ${design.path}`);
-    console.log(`  lint: errors=${design.result.errors}, warnings=${design.result.warnings}, infos=${design.result.infos}`);
-    console.log(`  tokens: colors=${summary.tokenCounts.colors}, typography=${summary.tokenCounts.typography}, spacing=${summary.tokenCounts.spacing}, rounded=${summary.tokenCounts.rounded}, components=${summary.tokenCounts.components}`);
-    if (summary.proseSummary.length > 0) {
-      console.log('  Prose:');
-      for (const item of summary.proseSummary.slice(0, 5)) console.log(`    - ${item}`);
-    }
-    if (brief.designGuidance && brief.designGuidance.length > 0) {
-      console.log('  Design Guidance:');
-      for (const item of brief.designGuidance.slice(0, 4)) console.log(`    - ${item}`);
-    }
-    const notableFindings = design.findings.filter(item => item.severity !== 'info').slice(0, 5);
-    if (notableFindings.length > 0) {
-      console.log('  Findings:');
-      for (const finding of notableFindings) {
-        console.log(`    - [${finding.severity}]${finding.path ? ` ${finding.path}:` : ''} ${finding.message}`);
-      }
-      const remainingFindings = design.findings.filter(item => item.severity !== 'info').length - notableFindings.length;
-      if (remainingFindings > 0) {
-        console.log(`    - ... ${remainingFindings} more Design Context finding(s) omitted`);
-      }
-    }
-  }
-  if (brief.suggestedReads.length > 0) {
-    console.log('Suggested Reads:');
-    for (const read of brief.suggestedReads) console.log(`  - ${read.kind}:${read.id}${read.path ? ` (${read.path})` : ''}`);
-  }
-  if (brief.findings.length > 0) {
-    renderFindings(brief.findings);
-  }
-  console.log(`Next: ${brief.nextCommand}`);
+  for (const line of renderBriefTextLines(brief)) console.log(line);
 }
 
 function renderLessonsText(report: Awaited<ReturnType<typeof buildLessonsReport>>): void {

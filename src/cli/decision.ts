@@ -10,9 +10,9 @@
  */
 
 import { Command } from 'commander';
-import { getPaths } from '../core/paths.js';
 import { createDecision, listDecisions, findDecision, supersedeDecision, updateDecision, setDecisionPartial, deleteDecision } from '../core/decision.js';
 import { DecisionInputSchema } from '../schemas/spec.js';
+import { getWritePaths } from './common.js';
 
 export function registerDecisionCommands(program: Command): void {
   const dec = program
@@ -42,7 +42,7 @@ export function registerDecisionCommands(program: Command): void {
         console.error(`✗ 输入非法: ${parsed.error.message}`);
         process.exit(2);
       }
-      const paths = getPaths();
+      const paths = getWritePaths();
       const record = createDecision({
         paths,
         docCode: specCode,
@@ -69,7 +69,7 @@ export function registerDecisionCommands(program: Command): void {
     .option('--include-all', '包含 superseded/partial 状态的', false)
     .option('--json', '以 JSON 格式输出', false)
     .action((opts: { topic?: string; docCode?: string; criteria?: string; includeAll: boolean; json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const all = listDecisions(paths, {
         topic: opts.topic,
         docCode: opts.docCode,
@@ -99,7 +99,7 @@ export function registerDecisionCommands(program: Command): void {
     .description('查看决策详情')
     .option('--json', '以 JSON 格式输出', false)
     .action((id: string, opts: { json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const d = findDecision(paths, id);
       if (!d) {
         console.error(`✗ Decision not found: ${id}`);
@@ -134,7 +134,7 @@ export function registerDecisionCommands(program: Command): void {
     .description('把旧决策标记为 superseded（指向新决策）')
     .requiredOption('--by <newId>', '新决策的 ID')
     .action((oldId: string, opts: { by: string }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       supersedeDecision(paths, oldId, opts.by);
       console.log(`✓ Decision ${oldId} → superseded by ${opts.by}`);
     });
@@ -150,7 +150,7 @@ export function registerDecisionCommands(program: Command): void {
       const affectedCriteria = opts.criteria
         ? opts.criteria.split(',').map(s => s.trim()).filter(Boolean)
         : undefined;
-      const paths = getPaths();
+      const paths = getWritePaths();
       const updated = updateDecision({
         paths,
         id,
@@ -172,7 +172,7 @@ export function registerDecisionCommands(program: Command): void {
     .requiredOption('--reason <reason>', '为什么标 partial(哪些部分失效)')
     .option('--json', '以 JSON 格式输出', false)
     .action((id: string, opts: { reason: string; json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const updated = setDecisionPartial({ paths, id, reason: opts.reason });
       if (opts.json) {
         console.log(JSON.stringify(updated, null, 2));
@@ -186,7 +186,7 @@ export function registerDecisionCommands(program: Command): void {
     .command('delete <id>')
     .description('删除决策(active 状态;非 active 状态需先恢复或归档)')
     .action((id: string) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       deleteDecision(paths, id);
       console.log(`✓ Decision ${id} deleted`);
     });

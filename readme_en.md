@@ -60,7 +60,15 @@ spec-manager project init --name my-project
 spec-manager project agents --provider all
 ```
 
-Now ask your agent:
+Then check the safe next step from your terminal:
+
+```bash
+spec-manager next "add user authentication"
+spec-manager brief "add user authentication"
+spec-manager dashboard
+```
+
+Or ask your agent:
 
 ```text
 Use spec-manager to add user authentication.
@@ -73,6 +81,41 @@ For Claude Code / CodeBuddy skills:
 ```
 
 The agent will create specs and ask for approval before implementation. You can stop there and inspect the files, or continue into a full task.
+
+Use terminal commands such as `next`, `brief`, and `dashboard` to inspect workflow state. Use chat requests such as `Use spec-manager to ...` or `/spec-manager ...` to have the agent advance the workflow.
+
+## Single-Repo and Multi-Repo Specs
+
+By default, spec-manager stores `.spec-manager/`, `specs/`, `changes/`, and `archive/` in the current project. That is still the simplest single-repo mode.
+
+For a product line or multi-repo workspace, keep specs in a dedicated planning repo or shared specs directory, then point each code repo at that write root from `.spec-manager/config.yaml`:
+
+```yaml
+project_name: app-repo
+specStore:
+  id: product-planning
+  path: ../product-specs
+  mode: write
+contextSources:
+  - id: platform-specs
+    path: ../platform-specs
+    mode: read
+```
+
+- `executionRoot` is the code repo where the command runs.
+- `writeRoot` is where spec/task/decision writes go after `specStore.path` is resolved.
+- `contextSources` are read-only inputs for brief/dashboard/context, never write targets.
+
+Before writing specs or tasks, verify the resolved roots:
+
+```bash
+spec-manager project context --json
+spec-manager project store show
+spec-manager project store doctor
+spec-manager dashboard --json
+```
+
+Without `specStore`, existing single-repo behavior is unchanged. This version does not provide `--store <id|path>` overrides or automatic migration. For UI/design work, keep the managed design context in the resolved write root at `specs/DESIGN.md`; root `DESIGN.md` remains a legacy fallback.
 
 ## MiMo-Code
 
@@ -122,8 +165,9 @@ spec-manager project agents --provider mimocode --dry-run
 You can drive the workflow yourself without memorizing the full process:
 
 ```bash
-spec-manager guide "add user authentication"     # prints the next useful step
-spec-manager assist guide --request "add user authentication"  # local context + next-command recommendation
+spec-manager next "add user authentication"      # prints the safe next step
+spec-manager brief "add user authentication"     # local context + workflow next action
+spec-manager dashboard                           # project/topic summary
 spec-manager assist critique auth-L1             # review spec quality gaps before approval
 spec-manager assist next T-001 --spec auth-L3.1.1 # task navigation and evidence summary
 spec-manager assist drift T-001 --spec auth-L3.1.1 # compare changed files to declared scope
@@ -142,17 +186,28 @@ spec-manager spec new L1 --topic auth --title "User authentication"
 spec-manager spec update auth-L1 --content ./l1.md --ai-summary "..." --change-summary "init"
 spec-manager spec confirm auth-L1
 spec-manager spec new L2 --topic auth --parent auth-L1 --title "Auth design"
+spec-manager spec confirm auth-L2.1
 spec-manager spec new L3 --topic auth --parent auth-L2.1 --title "JWT implementation"
-spec-manager task create auth-L3.1.1 --plan ./plan.json
+spec-manager spec confirm auth-L3.1.1
+spec-manager task run auth-L3.1.1 --plan ./plan.json
 ```
 
-Think of this as optional depth. Most people should start with `guide`, `new feature`, or an AI agent prompt.
+`spec-manager spec confirm <L3>` only freezes the L3. It does not create a task automatically. When the user means "confirm and run", "create and execute the task", or "continue executing this L3", prefer `task run` to explicitly combine L3 freeze, task creation, and task start.
+
+For advanced troubleshooting, the manual task lifecycle is still available:
+
+```bash
+spec-manager task create auth-L3.1.1 --plan ./plan.json
+spec-manager task start T-001 --spec auth-L3.1.1
+```
+
+Think of this as optional depth. Most people should start with `next`, `brief`, `dashboard`, or an AI agent prompt. Compatibility commands such as `guide`, `assist guide`, and `flow status` remain available for scripts and advanced troubleshooting.
 
 ## Design Context
 
 For UI, visual, or styling work, add `specs/DESIGN.md` to describe the managed specs design context. spec-manager treats this file as optional local context, not as an L2 technical design replacement. A root-level `DESIGN.md` is still supported as a legacy fallback when `specs/DESIGN.md` does not exist.
 
-- `spec-manager assist brief --request "<UI request>"` automatically includes Design Context when the request is design-relevant and `specs/DESIGN.md` exists, falling back to root `DESIGN.md`.
+- `spec-manager brief "<UI request>"` automatically includes Design Context when the request is design-relevant and `specs/DESIGN.md` exists, falling back to root `DESIGN.md`.
 - `spec-manager assist design-template` writes a starter `specs/DESIGN.md`; it refuses to overwrite unless `--force` is passed. Use `--out DESIGN.md` only for the legacy root path.
 - `spec-manager assist design-export --format tokens-json` exports normalized tokens from the default design context; use `--path DESIGN.md` or `--path specs/DESIGN.md` to force an explicit file. Use `--format dtcg-json` for the current DESIGN.md schema's DTCG JSON subset, `--format tailwind-json` for Tailwind v3 `theme.extend`, or `--format tailwind-css` for a Tailwind v4 `@theme` block. `--out <file>` writes the export locally.
 - L3 specs can use `@verify: design-lint(DESIGN.md)` to record DESIGN.md lint results as verification evidence.
@@ -179,7 +234,10 @@ For UI, visual, or styling work, add `specs/DESIGN.md` to describe the managed s
 | `spec-manager project agents [--provider P]` | Install agent workflow files |
 | `spec-manager project doctor` | Check setup and repository integrity |
 | `spec-manager project docs check` | Check README, package files, agent guidance, and generated asset boundaries before release |
-| `spec-manager guide "request"` | Get the next command for a request |
+| `spec-manager next "request"` | Get the safe next command for a request |
+| `spec-manager brief "request"` | Generate an Agent Brief and workflow next action |
+| `spec-manager dashboard` | Show project/topic workflow summary |
+| `spec-manager guide "request"` | Compatibility entry: get the next command for a request |
 | `spec-manager new feature --topic T "Title"` | Start a lightweight L1 |
 | `spec-manager flow status --topic T` | See progress and blockers |
 | `spec-manager spec list` | List specs |

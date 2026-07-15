@@ -1,0 +1,95 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.3.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey reusable setup projection modules",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.3.1 and surveyed workflow-surface, spec-store, agents, and workflow-profile modules. Setup projection can compose buildWorkflowNextProjection, resolveSpecStore, detectAgentProviders/listAgentProviders, and readAdaptiveWorkflowConfig without introducing writes.\"}",
+      "reportedAt": "2026-07-15T06:25:43.930Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement setup surface projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/setup-surface.ts with buildSetupSurface, setup.v1 projection types, store resolution, provider readiness, uxProfile defaults, workflowProfile summary, diagnostics, blockingReason, nextAction, and suggestedCommands. The function composes existing resolvers and performs no writes.\"}",
+      "reportedAt": "2026-07-15T06:27:57.176Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Add setup surface core tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/__tests__/setup-surface.test.ts covering uninitialized projects, local write root compatibility, external write root/context sources, broken write root diagnostics, provider readiness suggestions, and uxProfile/workflowProfile separation.\"}",
+      "reportedAt": "2026-07-15T06:28:04.020Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran targeted tests (3 files, 20 tests), npm run lint, and npm run build successfully. Recorded verification evidence V-001 through V-003.\"}",
+      "reportedAt": "2026-07-15T06:29:20.834Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T06:25:36.860Z",
+  "finishedAt": "2026-07-15T06:29:33.861Z",
+  "created": "2026-07-15T06:25:30.375Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/setup-surface.test.ts src/core/__tests__/workflow-surface.test.ts src/core/__tests__/spec-store.test.ts",
+      "exitCode": 0,
+      "summary": "Targeted setup surface, workflow surface, and spec store tests passed: 3 files, 20 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:28:54.859Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript no-emit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:29:03.678Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:29:11.375Z",
+      "layer": "compile"
+    }
+  ]
+}

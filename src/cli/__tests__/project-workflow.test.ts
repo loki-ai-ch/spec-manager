@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { parse as parseYaml } from 'yaml';
 import { Command } from 'commander';
 import { registerProject } from '../project.js';
@@ -28,6 +29,24 @@ afterEach(() => {
 });
 
 describe('project workflow CLI', () => {
+  it('initializes config with valid YAML for special project names', async () => {
+    const initProject = createTestProject('spec-mgr-init-yaml-', { initialized: false });
+    const activeRoot = process.env.SPEC_MANAGER_ROOT;
+    process.env.SPEC_MANAGER_ROOT = initProject.root;
+    try {
+      await program().parseAsync(['project', 'init', '--name', 'name: with # yaml', '--workflow', 'default:flow'], { from: 'user' });
+
+      const parsed = parseYaml(readFileSync(initProject.paths.configFile, 'utf8')) as Record<string, unknown>;
+      expect(parsed.project_name).toBe('name: with # yaml');
+      expect(parsed.specWorkflow).toBe('default:flow');
+      expect(parsed.rulesAppliesTo).toEqual([]);
+      expect(typeof parsed.created).toBe('string');
+    } finally {
+      process.env.SPEC_MANAGER_ROOT = activeRoot;
+      initProject.cleanup();
+    }
+  });
+
   it('shows legacy compatibility by default', async () => {
     await program().parseAsync(['project', 'workflow', 'show'], { from: 'user' });
 
@@ -106,6 +125,75 @@ describe('project workflow CLI', () => {
     expect(parsed.recommendation.recommendedDefaultProfile).toBe('governed');
     expect(parsed.historyPolicy.mutatesHistoricalTasks).toBe(false);
   });
+
+  it('prints project context text with local write root', async () => {
+    await program().parseAsync(['project', 'context'], { from: 'user' });
+
+    expect(output()).toContain('Project Context:');
+    expect(output()).toContain(`Execution Root: ${project.root}`);
+    expect(output()).toContain(`Write Root: ${project.root}`);
+    expect(output()).toContain('Write Store:');
+    expect(output()).toContain('Context Sources:');
+    expect(output()).toContain('Diagnostics:');
+    expect(output()).toContain('Next: spec-manager next "<work>"');
+  });
+
+  it('prints project context json as a single object', async () => {
+    await program().parseAsync(['project', 'context', '--json'], { from: 'user' });
+
+    const parsed = JSON.parse(output());
+    expect(parsed.executionRoot).toBe(project.root);
+    expect(parsed.writeRoot).toBe(project.root);
+    expect(parsed.writeStore).toMatchObject({ id: 'local', mode: 'write', initialized: true });
+    expect(parsed.contextSources).toEqual([]);
+    expect(parsed.diagnostics).toEqual([]);
+    expect(parsed.nextAction).toBe('spec-manager next "<work>"');
+  });
+
+  it('prints store show with external write root and context source', async () => {
+    const storeRoot = createInitializedSibling('product-specs');
+    const contextRoot = createInitializedSibling('platform-specs');
+    writeFileSync(project.paths.configFile, [
+      'project_name: test',
+      'specStore:',
+      '  id: product-planning',
+      '  path: ../product-specs',
+      'contextSources:',
+      '  - id: platform-specs',
+      '    path: ../platform-specs',
+      '',
+    ].join('\n'), 'utf8');
+
+    await program().parseAsync(['project', 'store', 'show'], { from: 'user' });
+
+    expect(output()).toContain('Spec Store:');
+    expect(output()).toContain(`Write Root: ${storeRoot}`);
+    expect(output()).toContain('product-planning [write]');
+    expect(output()).toContain(`path: ${contextRoot}`);
+    expect(output()).toContain('platform-specs [read]');
+  });
+
+  it('prints store doctor diagnostics with fixes', async () => {
+    writeFileSync(project.paths.configFile, [
+      'project_name: test',
+      'specStore:',
+      '  id: missing',
+      '  path: ../missing-specs',
+      '',
+    ].join('\n'), 'utf8');
+
+    await program().parseAsync(['project', 'store', 'doctor'], { from: 'user' });
+
+    expect(output()).toContain('Store doctor: issues');
+    expect(output()).toContain('store_path_missing');
+    expect(output()).toContain('fix:');
+  });
+
+  it('prints store doctor ok when there are no diagnostics', async () => {
+    await program().parseAsync(['project', 'store', 'doctor'], { from: 'user' });
+
+    expect(output()).toBe('Store doctor: ok');
+  });
 });
 
 function program(): Command {
@@ -117,6 +205,12 @@ function program(): Command {
 
 function output(): string {
   return logSpy.mock.calls.map(call => String(call[0])).join('\n');
+}
+
+function createInitializedSibling(name: string): string {
+  const root = resolve(project.root, '..', name);
+  mkdirSync(join(root, '.spec-manager'), { recursive: true });
+  return root;
 }
 
 function planFor(specCode: string) {

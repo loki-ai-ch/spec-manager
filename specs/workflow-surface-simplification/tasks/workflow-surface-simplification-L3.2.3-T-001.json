@@ -1,0 +1,96 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.2.3",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Read frozen L3 and current workflow surface projection presenters",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, current workflow-surface projections, usability presenters, workflow-surface tests, and spec-store resolver contract.\"}",
+      "reportedAt": "2026-07-15T05:42:23.434Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Extend workflow surface projections with write root store data",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended workflow next and dashboard projections with executionRoot, writeRoot, writeStore, contextSources, and storeDiagnostics while preserving projectRoot compatibility.\"}",
+      "reportedAt": "2026-07-15T05:44:09.515Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update next dashboard brief presenters and tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated next/dashboard/brief text presenters and tests to surface Write Root and store diagnostics, with JSON assertions for write root fields.\"}",
+      "reportedAt": "2026-07-15T05:44:17.392Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted workflow surface usability and spec store tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"npm test -- src/core/__tests__/workflow-surface.test.ts src/cli/__tests__/usability.test.ts src/core/__tests__/spec-store.test.ts passed: 3 files, 32 tests.\"}",
+      "reportedAt": "2026-07-15T05:44:25.804Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm run lint and npm run build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: npm run lint and npm run build both completed successfully.\"}",
+      "reportedAt": "2026-07-15T05:44:52.168Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T05:42:16.488Z",
+  "finishedAt": "2026-07-15T05:45:27.104Z",
+  "created": "2026-07-15T05:42:08.750Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/workflow-surface.test.ts src/cli/__tests__/usability.test.ts src/core/__tests__/spec-store.test.ts",
+      "exitCode": 0,
+      "summary": "Workflow surface write root projection targeted tests passed: 3 files, 32 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T05:45:04.572Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T05:45:14.951Z",
+      "layer": "compile"
+    }
+  ]
+}

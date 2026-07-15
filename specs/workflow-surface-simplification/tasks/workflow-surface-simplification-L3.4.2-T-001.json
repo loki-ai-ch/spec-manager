@@ -1,0 +1,90 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.4.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey task run docs guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Reviewed README, readme_en, agent templates, local spec-manager skill, docs guidance tests, and confirmed task run guidance gaps.\"}",
+      "reportedAt": "2026-07-15T07:14:27.751Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Update README task run guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated Chinese and English READMEs to recommend task run for explicit L3 confirm-and-execute, while preserving confirm-only and manual create/start guidance.\"}",
+      "reportedAt": "2026-07-15T07:21:16.347Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update agent templates task run guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated agent templates and the local spec-manager skill so explicit execution intent maps to task run and plain spec confirm stays confirm-only.\"}",
+      "reportedAt": "2026-07-15T07:21:22.128Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Add task run guidance tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended docs-guidance tests to assert task run README guidance, confirm-only semantics, manual create/start retention, and explicit planJson guidance across templates.\"}",
+      "reportedAt": "2026-07-15T07:21:31.691Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran targeted docs/task/store/workflow/usability tests plus lint and build successfully.\"}",
+      "reportedAt": "2026-07-15T07:21:38.316Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T07:07:42.181Z",
+  "finishedAt": "2026-07-15T07:23:42.830Z",
+  "created": "2026-07-15T07:07:42.174Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/docs-guidance.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/store-aware-writes.test.ts src/core/__tests__/workflow-surface.test.ts src/cli/__tests__/usability.test.ts",
+      "exitCode": 0,
+      "summary": "5 targeted suites passed: docs guidance, task run, store-aware writes, workflow surface, usability shortcuts",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:22:43.373Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:22:53.905Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:23:04.035Z",
+      "layer": "compile"
+    }
+  ]
+}

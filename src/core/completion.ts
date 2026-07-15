@@ -7,7 +7,7 @@ export type CompletionShell = (typeof COMPLETION_SHELLS)[number];
 
 const TOP_LEVEL_COMMANDS = [
   'project', 'spec', 'task', 'decision', 'change', 'incident', 'audit', 'dict',
-  'flow', 'guide', 'assist', 'new', 'approve', 'run', 'template', 'view', 'completion',
+  'brief', 'next', 'dashboard', 'flow', 'guide', 'assist', 'new', 'approve', 'run', 'template', 'view', 'completion',
 ];
 
 const SUBCOMMANDS: Record<string, string[]> = {

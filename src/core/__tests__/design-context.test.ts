@@ -337,6 +337,34 @@ describe('design context core', () => {
     }
   });
 
+  test('reports invalid rgb and rgba color functions', () => {
+    const project = createTestProject('design-context-invalid-rgb-');
+    try {
+      writeDesign(project.root, [
+        '---',
+        'name: Invalid RGB',
+        'colors:',
+        '  primary: "rgb(nope)"',
+        '  accent: "rgba(300, 0, 0, 2)"',
+        '  surface: "rgb(255 255 255 / 50%)"',
+        '---',
+        '',
+        '## Overview',
+        '',
+        'Invalid color function fixture.',
+      ].join('\n'));
+
+      const report = buildDesignContextReport({ paths: project.paths });
+
+      expect(report.result.errors).toBe(2);
+      expect(report.findings.some(item => item.path === 'colors.primary')).toBe(true);
+      expect(report.findings.some(item => item.path === 'colors.accent')).toBe(true);
+      expect(report.findings.some(item => item.path === 'colors.surface')).toBe(false);
+    } finally {
+      project.cleanup();
+    }
+  });
+
   test('warns for unknown component properties without failing schema lint', () => {
     const project = createTestProject('design-context-schema-component-warning-');
     try {

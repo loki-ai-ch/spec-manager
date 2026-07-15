@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdtempSync, writeFileSync, mkdirSync, rmSync } from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
-import { parseVerifyRules, executeVerifyRules, splitArgs } from '../verify.js';
+import { parseVerifyRules, parseVerifyRulesWithDiagnostics, executeVerifyRules, splitArgs } from '../verify.js';
 
 describe('parseVerifyRules', () => {
   it('解析 file-exists 规则', () => {
@@ -103,6 +103,22 @@ describe('parseVerifyRules', () => {
 `;
     const rules = parseVerifyRules(md, '验收标准');
     expect(rules).toEqual([{ type: 'file-exists', path: 'ok.ts' }]);
+  });
+
+  it('returns diagnostics for malformed verify lines without breaking legacy parser', () => {
+    const md = `## 验收标准
+
+1. @verify: file-exists(a, b)
+2. @verify: unknown-rule(arg)
+3. @verify: command(npm test)
+4. @verify command(npm run lint)
+`;
+    const parsed = parseVerifyRulesWithDiagnostics(md, '验收标准');
+
+    expect(parseVerifyRules(md, '验收标准')).toEqual([{ type: 'command', cmd: 'npm test' }]);
+    expect(parsed.rules).toEqual([{ type: 'command', cmd: 'npm test' }]);
+    expect(parsed.diagnostics.map(item => item.reason)).toEqual(['arity', 'unknown-type', 'syntax']);
+    expect(parsed.diagnostics[0]?.line).toBe(3);
   });
 
   it('空内容返回空数组', () => {

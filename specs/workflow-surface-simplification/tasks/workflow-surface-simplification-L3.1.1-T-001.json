@@ -1,0 +1,96 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Read frozen L3 and existing usability/view helpers",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3 plus existing usability/view/task helpers and tests; implementation will add a read-only core projection without CLI registration.\"}",
+      "reportedAt": "2026-07-15T02:25:19.571Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement read-only workflow surface core projection",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/workflow-surface.ts with read-only next and dashboard projections, stable status enum, doctor warnings, topic inference, flow classification, and suggested commands.\"}",
+      "reportedAt": "2026-07-15T02:27:55.380Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Add workflow surface unit tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added workflow-surface unit tests covering not_initialized, empty topic, placeholder draft, draft approval, frozen L3 ready for task, running task, and dashboard aggregation.\"}",
+      "reportedAt": "2026-07-15T02:28:03.627Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted workflow surface tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"npm test -- src/core/__tests__/workflow-surface.test.ts passed: 1 file, 7 tests.\"}",
+      "reportedAt": "2026-07-15T02:28:11.696Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm run lint and npm run build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: npm run lint and npm run build both completed successfully.\"}",
+      "reportedAt": "2026-07-15T02:28:37.884Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T02:24:59.469Z",
+  "finishedAt": "2026-07-15T02:29:47.298Z",
+  "created": "2026-07-15T02:24:54.112Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/workflow-surface.test.ts",
+      "exitCode": 0,
+      "summary": "Workflow surface targeted tests passed: 1 file, 7 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T02:28:54.253Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T02:29:00.688Z",
+      "layer": "compile"
+    }
+  ]
+}

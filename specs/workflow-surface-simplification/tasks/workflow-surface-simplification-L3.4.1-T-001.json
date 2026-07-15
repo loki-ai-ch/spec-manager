@@ -1,0 +1,95 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.4.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey task run integration points",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read task core, task CLI, spec transition handlers, and task tests. task run can reuse runSpecTransitionCommand for L3 draft/confirmed freeze, createTask for plan/profile validation and active-task checks, and startTask for execution state.\"}",
+      "reportedAt": "2026-07-15T06:53:51.208Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement task run helper and CLI",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/cli/task-run.ts with runTaskRunCommand/printTaskRunResult and registered task run in src/cli/task.ts. The command reuses runSpecTransitionCommand, createTask, startTask, getWritePaths, and existing plan/profile error mappings.\"}",
+      "reportedAt": "2026-07-15T06:58:28.253Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Add task run behavior tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended task CLI tests for draft L3 run, frozen L3 run, JSON output, spec confirm preserving no-task behavior, coveredSpecs errors, active task rejection, and external write root task run coverage.\"}",
+      "reportedAt": "2026-07-15T06:58:37.753Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran task run targeted tests (2 files, 46 tests), npm run lint, and npm run build successfully. Recorded verification evidence V-001 through V-003.\"}",
+      "reportedAt": "2026-07-15T06:59:29.277Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T06:53:09.118Z",
+  "finishedAt": "2026-07-15T06:59:40.629Z",
+  "created": "2026-07-15T06:52:59.436Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/task.test.ts src/cli/__tests__/store-aware-writes.test.ts",
+      "exitCode": 0,
+      "summary": "Task run targeted CLI and external store tests passed: 2 files, 46 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:58:51.855Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript no-emit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:59:10.179Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:59:20.093Z",
+      "layer": "compile"
+    }
+  ]
+}

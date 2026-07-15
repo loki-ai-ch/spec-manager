@@ -1,0 +1,96 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.2.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Read frozen L3 and existing paths/config test patterns",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3 plus existing paths, YAML config parsing, and test fixture patterns; implementation will add a non-invasive spec-store core resolver.\"}",
+      "reportedAt": "2026-07-15T05:19:29.498Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement spec store config parser and resolver",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/spec-store.ts with specStore/contextSources YAML parsing, local fallback write root, resolved entries, diagnostics, and no write-side effects.\"}",
+      "reportedAt": "2026-07-15T05:21:05.581Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Add spec store resolver unit tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added spec store resolver unit tests covering local fallback, external write store, read-only context source, missing/uninitialized paths, duplicate ids, invalid modes, YAML parse fallback, and getPaths compatibility.\"}",
+      "reportedAt": "2026-07-15T05:21:15.450Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted spec store tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"npm test -- src/core/__tests__/spec-store.test.ts passed: 1 file, 6 tests.\"}",
+      "reportedAt": "2026-07-15T05:21:22.557Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm run lint and npm run build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: npm run lint and npm run build both completed successfully.\"}",
+      "reportedAt": "2026-07-15T05:21:46.646Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T05:19:17.146Z",
+  "finishedAt": "2026-07-15T05:22:17.522Z",
+  "created": "2026-07-15T05:19:06.683Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/spec-store.test.ts",
+      "exitCode": 0,
+      "summary": "Spec store resolver targeted tests passed: 1 file, 6 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T05:21:55.236Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T05:22:05.116Z",
+      "layer": "compile"
+    }
+  ]
+}

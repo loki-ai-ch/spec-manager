@@ -50,7 +50,15 @@ spec-manager project init --name my-project
 spec-manager project agents --provider all
 ```
 
-然后直接对你的 AI 工具说：
+然后可以在终端先看 spec-manager 建议的安全下一步：
+
+```bash
+spec-manager next "新增用户认证"
+spec-manager brief "新增用户认证"
+spec-manager dashboard
+```
+
+也可以直接对你的 AI 工具说：
 
 ```text
 使用 spec-manager 新增用户认证。
@@ -64,6 +72,11 @@ spec-manager project agents --provider all
 
 Agent 会先创建规格并请求你确认，再进入实现。你可以只停在规格阶段 review，也可以继续让它创建 Task、执行、记录验证。
 
+简单区分一下：
+
+- **终端命令**：`spec-manager next/brief/dashboard` 用来查看下一步、生成上下文和检查项目状态。
+- **AI 聊天请求**：`使用 spec-manager ...` 或 `/spec-manager ...` 用来让 Agent 按工作流推进。
+
 ## 最短路径
 
 不想一开始理解全部概念，可以只记这几个命令：
@@ -71,8 +84,9 @@ Agent 会先创建规格并请求你确认，再进入实现。你可以只停�
 ```bash
 spec-manager project init --name my-project
 spec-manager project agents --provider all
-spec-manager guide "新增用户认证"
-spec-manager flow status --topic auth
+spec-manager next "新增用户认证"
+spec-manager brief "新增用户认证"
+spec-manager dashboard
 spec-manager project doctor
 ```
 
@@ -89,11 +103,21 @@ spec-manager spec confirm auth-L2.1
 spec-manager spec new L3 --topic auth --parent auth-L2.1 --title "JWT 实现"
 spec-manager spec confirm auth-L3.1.1
 
+spec-manager task run auth-L3.1.1 --plan ./plan.json
+```
+
+`spec-manager spec confirm <L3>` 只负责把 L3 冻结，不会自动创建 Task。确认并执行、创建并执行任务、继续执行这个 L3 时，推荐用 `task run` 显式合并冻结、创建 Task 和启动 Task。
+
+如果你需要排查或拆解 Task 生命周期，也可以继续使用高级手动链路：
+
+```bash
 spec-manager task create auth-L3.1.1 --plan ./plan.json
 spec-manager task start T-001 --spec auth-L3.1.1
 ```
 
 大多数时候，你不需要手动敲完这些。把工作流入口装进 AI 工具后，让 Agent 按 spec-manager 规则来做即可。
+
+兼容旧入口仍然可用：`spec-manager guide "需求"`、`spec-manager assist guide --request "需求"`、`spec-manager flow status --topic T` 适合已有脚本或需要更细命令提示的场景。
 
 ## 它怎么工作
 
@@ -125,6 +149,43 @@ my-project/
 - **Agent Task**：Agent 执行步骤、状态、验证记录。
 - **Decision card**：重要选择为什么这么定。
 - **Verification Evidence**：测试、lint、build、design-lint 等可追踪证据。
+
+## 单仓库与多仓库 specs
+
+默认情况下，spec-manager 把 `.spec-manager/`、`specs/`、`changes/` 和 `archive/` 放在当前项目里。这适合一个代码仓库独立管理自己的规格。
+
+如果你的目标是“一个 specs 根管理多个代码仓库”，推荐建立独立规划仓库或共享 specs 目录，然后让各代码仓库通过 `.spec-manager/config.yaml` 指向它：
+
+```yaml
+project_name: app-repo
+specStore:
+  id: product-planning
+  path: ../product-specs
+  mode: write
+contextSources:
+  - id: platform-specs
+    path: ../platform-specs
+    mode: read
+```
+
+几个边界要记住：
+
+- **execution root**：你当前运行命令的代码仓库。
+- **write root**：spec/task/decision 实际写入的 specs 根；配置 `specStore.path` 后，写命令会使用 resolved write root。
+- **context sources**：只读上下文源，只给 brief/dashboard/context 读取，不参与写入。
+
+写入前建议先检查：
+
+```bash
+spec-manager project context --json
+spec-manager project store show
+spec-manager project store doctor
+spec-manager dashboard --json
+```
+
+未配置 `specStore` 时，行为保持单仓库默认，不需要迁移已有 specs。当前版本不提供 `--store <id|path>` 覆盖，也不会自动迁移 specs；如果要启用多仓库模式，请先初始化目标 specs 根，再配置 code repo 的 `specStore.path`。
+
+UI/视觉项目的设计上下文也跟随 write root 管理：推荐放在 resolved write root 的 `specs/DESIGN.md`。代码仓库根目录的 `DESIGN.md` 仍作为 legacy fallback。
 
 ## 接入 AI 工具
 
@@ -167,8 +228,10 @@ spec-manager project agents --provider codex --dry-run
 这些命令用于让 Agent 更稳地工作，而不是替代完整流程：
 
 ```bash
-spec-manager assist guide --request "新增用户认证"       # 读取本地上下文并建议下一步
-spec-manager assist brief --request "优化登录页视觉"     # 生成 Agent Brief，UI 请求会带上 Design Context
+spec-manager next "新增用户认证"                       # 输出当前最安全下一步
+spec-manager brief "优化登录页视觉"                     # 生成 Agent Brief，UI 请求会带上 Design Context
+spec-manager dashboard                                 # 查看项目/topic 摘要
+spec-manager assist guide --request "新增用户认证"       # 兼容旧入口：读取本地上下文并建议下一步
 spec-manager assist critique auth-L1                    # 审查规格质量缺口
 spec-manager assist next T-001 --spec auth-L3.1.1       # 查看任务下一步和证据状态
 spec-manager assist drift T-001 --spec auth-L3.1.1      # 对账实际变更是否偏离 L3 范围
@@ -190,7 +253,7 @@ specs/DESIGN.md
 
 ```bash
 spec-manager assist design-template
-spec-manager assist brief --request "优化仪表盘视觉"
+spec-manager brief "优化仪表盘视觉"
 spec-manager assist design-export --format tokens-json
 ```
 
@@ -238,7 +301,10 @@ spec-manager project readiness critical
 | `spec-manager project agents --provider all` | 写入 AI 工具入口 |
 | `spec-manager project doctor` | 检查配置和仓库完整性 |
 | `spec-manager project docs check` | 发布前检查 README、package files、Agent guidance 和生成资产边界 |
-| `spec-manager guide "需求"` | 根据需求给出下一条命令 |
+| `spec-manager next "需求"` | 根据需求给出下一条安全命令 |
+| `spec-manager brief "需求"` | 生成 Agent Brief 和下一步 |
+| `spec-manager dashboard` | 查看项目/topic 摘要 |
+| `spec-manager guide "需求"` | 兼容旧入口：根据需求给出下一条命令 |
 | `spec-manager new feature --topic T "标题"` | 快速创建轻量 L1 |
 | `spec-manager flow status --topic T` | 查看规格链路进度和阻塞点 |
 | `spec-manager spec list` | 列出规格 |

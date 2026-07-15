@@ -1,0 +1,95 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.3.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey setup CLI registration points",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.3.2 plus src/cli/index.ts, usability.ts, project.ts, and existing usability/project tests. Top-level setup belongs in usability registration; project setup belongs in project registration; both should call a shared setup presenter/handler over buildSetupSurface.\"}",
+      "reportedAt": "2026-07-15T06:34:50.295Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement setup presenter and CLI handlers",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/cli/setup-presenter.ts with shared runSetupCommand/renderSetupProjection and registered top-level setup plus project setup alias. Both commands use buildSetupSurface and remain read-only.\"}",
+      "reportedAt": "2026-07-15T06:37:11.161Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Add setup CLI tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/cli/__tests__/setup.test.ts covering setup --json, project setup alias parity, text presenter profiles/provider guidance, uninitialized projects, external write root, and broken write root diagnostics.\"}",
+      "reportedAt": "2026-07-15T06:37:21.387Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran targeted setup CLI/core tests (2 files, 12 tests), npm run lint, and npm run build successfully. Recorded verification evidence V-001 through V-003.\"}",
+      "reportedAt": "2026-07-15T06:38:08.128Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T06:34:40.333Z",
+  "finishedAt": "2026-07-15T06:38:19.183Z",
+  "created": "2026-07-15T06:34:31.145Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/setup.test.ts src/core/__tests__/setup-surface.test.ts",
+      "exitCode": 0,
+      "summary": "Setup CLI and setup surface targeted tests passed: 2 files, 12 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7",
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:37:39.193Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript no-emit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:37:49.165Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-8"
+      ],
+      "created": "2026-07-15T06:37:57.265Z",
+      "layer": "compile"
+    }
+  ]
+}

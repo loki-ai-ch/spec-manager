@@ -1,6 +1,6 @@
 import { Command } from 'commander';
 import { readFileSync } from 'node:fs';
-import { getPaths } from '../core/paths.js';
+import { type ProjectPaths } from '../core/paths.js';
 import {
   createSpec,
   findSpecByCode,
@@ -21,7 +21,7 @@ import {
 import { hit } from '../core/audit.js';
 import { listDecisions } from '../core/decision.js';
 import { suggestAfterSpecCommand } from '../core/usability.js';
-import { createDefaultCliActionContext, fail, requireInitialized, runCliAction } from './common.js';
+import { createDefaultCliActionContext, fail, getWritePaths, requireInitialized, runCliAction } from './common.js';
 import {
   printSpecTransitionResult,
   printSpecUpdateResult,
@@ -48,7 +48,7 @@ export function registerSpec(program: Command): void {
       if (!['L0', 'L1', 'L2', 'L3'].includes(level)) {
         fail(`✗ level 必须是 L0/L1/L2/L3，收到 "${level}"`, 2);
       }
-      const paths = getPaths();
+      const paths = getWritePaths();
       requireInitialized(paths);
       if ((level === 'L2' || level === 'L3') && !opts.parent) {
         fail(`✗ R7: ${level} 必须有 --parent 指向父 spec code`, 2);
@@ -109,7 +109,7 @@ export function registerSpec(program: Command): void {
     .option('--status <status>', '按状态过滤 draft/confirmed/frozen/implemented/archived')
     .option('--include-archived', '包含 archived')
     .action((opts) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       requireInitialized(paths);
       let specs = listAllSpecs(paths);
       if (opts.level) specs = specs.filter(s => s.fm.level === opts.level);
@@ -136,7 +136,7 @@ export function registerSpec(program: Command): void {
     .description('查看 spec 详情。默认窄视图（R19），--include-content 才返回正文。')
     .option('--include-content', '返回完整 contentTemplate（窄视图默认不含）')
     .action((code, opts) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const rec = findSpecByCode(paths, code);
       if (!rec) {
         fail(`✗ 未找到: ${code}`);
@@ -206,7 +206,7 @@ export function registerSpec(program: Command): void {
     .command('validate <code>')
     .description('校验 spec 正文（必填段 + RFC 2119）。warning-only，exit 0。')
     .action((code) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const rec = findSpecByCode(paths, code);
       if (!rec) {
         fail(`✗ 未找到: ${code}`);
@@ -228,7 +228,7 @@ export function registerSpec(program: Command): void {
     .requiredOption('--target <targetCode>', '目标 spec code')
     .requiredOption('--type <type>', '关联类型：based_on | supersedes | implements | references')
     .action((code, opts) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       if (!['based_on', 'supersedes', 'implements', 'references'].includes(opts.type)) {
         fail(`✗ type 必须是 based_on | supersedes | implements | references`, 2);
       }
@@ -241,7 +241,7 @@ export function registerSpec(program: Command): void {
     .description('迁移 active spec 文件名：<code>-YYYYMMDD.md → <code>.md（读取仍兼容旧格式）')
     .option('--dry-run', '只显示迁移计划，不改文件', false)
     .action((opts: { dryRun: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       requireInitialized(paths);
       const result = migrateSpecPaths(paths, { dryRun: opts.dryRun });
       if (result.migrated.length === 0) {
@@ -261,7 +261,7 @@ export function registerSpec(program: Command): void {
     .description('校验 planJson 格式（INC-005 字段名 / R11 步数 / R10 末步验证）')
     .option('--from-spec <code>', '从 L3 spec markdown 的 planJson (final) 代码块抽取并校验')
     .action((file: string | undefined, opts: { fromSpec?: string }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       if (file && opts.fromSpec) {
         fail('✗ validate-plan 只能二选一：<file> 或 --from-spec <code>', 2);
       }
@@ -302,7 +302,7 @@ export function registerSpec(program: Command): void {
     });
 }
 
-function readSpecForPlan(paths: ReturnType<typeof getPaths>, code: string): NonNullable<ReturnType<typeof findSpecByCode>> {
+function readSpecForPlan(paths: ProjectPaths, code: string): NonNullable<ReturnType<typeof findSpecByCode>> {
   const rec = findSpecByCode(paths, code);
   if (!rec) fail(`✗ SPEC_NOT_FOUND: ${code}`, 1);
   if (rec.fm.level !== 'L3') fail(`✗ --from-spec 只能指向 L3 spec，${code} 是 ${rec.fm.level}`, 2);

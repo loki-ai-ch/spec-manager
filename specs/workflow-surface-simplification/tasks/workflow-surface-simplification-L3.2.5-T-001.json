@@ -1,0 +1,102 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.2.5",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey docs and guidance gaps",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3.2.5, README.md, readme_en.md, and searched docs/template tests. Existing docs mention next/brief/dashboard and specs/DESIGN.md, but do not yet explain external specStore/contextSources or require agents to verify writeRoot before spec/task/decision writes.\"}",
+      "reportedAt": "2026-07-15T06:01:18.093Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Update README multi repo store guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated README.md and readme_en.md with single-repo vs multi-repo specs modes, copyable specStore/contextSources YAML, writeRoot/contextSources semantics, verification commands, and specs/DESIGN.md write-root guidance.\"}",
+      "reportedAt": "2026-07-15T06:02:25.308Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Update agent templates store guidance",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated AGENTS/CLAUDE/CODEBUDDY/CURSOR/WINDSURF templates, CodeBuddy skill template, and the project .agents spec-manager skill to require writeRoot checks via project context/dashboard before spec/task/decision writes and to describe specs/DESIGN.md in the resolved write root.\"}",
+      "reportedAt": "2026-07-15T06:04:23.953Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Add docs guidance smoke tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added src/core/__tests__/docs-guidance.test.ts to assert README multi-repo store guidance, agent writeRoot checks, absence of --store override recommendations in templates, and DESIGN.md resolved-write-root guidance.\"}",
+      "reportedAt": "2026-07-15T06:04:56.602Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran targeted docs/template/workflow tests (4 files, 42 tests), npm run lint, and npm run build successfully. Recorded verification evidence V-001 through V-003.\"}",
+      "reportedAt": "2026-07-15T06:06:25.916Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T06:01:09.967Z",
+  "finishedAt": "2026-07-15T06:06:37.966Z",
+  "created": "2026-07-15T06:01:03.784Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/project-workflow.test.ts src/cli/__tests__/usability.test.ts src/core/__tests__/workflow-surface.test.ts src/core/__tests__/docs-guidance.test.ts",
+      "exitCode": 0,
+      "summary": "Targeted docs/template/workflow surface tests passed: 4 files, 42 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T06:05:28.538Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript no-emit lint passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-7"
+      ],
+      "created": "2026-07-15T06:05:34.080Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-7"
+      ],
+      "created": "2026-07-15T06:05:42.460Z",
+      "layer": "compile"
+    }
+  ]
+}

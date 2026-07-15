@@ -13,15 +13,16 @@ PRD → Design → Spec → Agent Task → 部署。**纯本地**，所有数据
 - `/spec-manager <需求>` — 从需求开始走完整链路
 - `/spec-manager run <taskId>` — 执行已有 Agent Task
 
-新功能或非平凡工作先生成 Agent Brief，收集本地上下文、历史 lessons、风险和下一步：
+新功能或非平凡工作先识别安全下一步，或生成 Agent Brief 收集本地上下文、历史 lessons、风险和下一步：
 
 ```bash
-spec-manager assist guide --request "<需求>"
+spec-manager next "<需求>"
+spec-manager brief "<需求>"
 ```
 
 执行阶段可用 `spec-manager assist next <taskId> --spec <L3-code>` / `spec-manager assist drift <taskId> --spec <L3-code>` 对齐下一步和变更范围；验收前用 `spec-manager assist acceptance <taskId> --spec <L3-code>` 汇总证据、人工验收项和残余风险；最终回复前用 `spec-manager assist delivery <taskId> --spec <L3-code>` 生成面向用户的交付摘要。
 
-UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-manager assist brief --request "<需求>"`，默认读取 `specs/DESIGN.md`，若不存在则兼容 fallback 到项目根目录 `DESIGN.md`。需求命中设计相关意图时，Agent Brief 会包含 Design Context 摘要、lint 概览和 source ref。涉及设计约束验收的 L3 可以声明 `@verify: design-lint(specs/DESIGN.md)` 或显式 `@verify: design-lint(DESIGN.md)`。看到 Design Context findings 时，先按 path 修复对应 DESIGN.md，再继续 UI 实现。注意：`DESIGN.md` 是产品视觉/设计上下文，不是 L2 Design 技术设计的替代品。
+UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-manager brief "<需求>"`，默认读取 resolved write root 的 `specs/DESIGN.md`，若不存在则兼容 fallback 到项目根目录 `DESIGN.md`。需求命中设计相关意图时，Agent Brief 会包含 Design Context 摘要、lint 概览和 source ref。涉及设计约束验收的 L3 可以声明 `@verify: design-lint(specs/DESIGN.md)` 或显式 `@verify: design-lint(DESIGN.md)`。看到 Design Context findings 时，先按 path 修复对应 DESIGN.md，再继续 UI 实现。注意：`DESIGN.md` 是产品视觉/设计上下文，不是 L2 Design 技术设计的替代品。
 
 ## 入口路由
 
@@ -58,14 +59,18 @@ UI、视觉或样式任务需要额外读取设计上下文：先运行 `spec-ma
 - New or non-trivial work follows L1 -> L2 -> L3 -> Agent Task.
 - Never write implementation code without a frozen L3 spec.
 - L1/L2 approval advances `draft -> confirmed`; one explicit L3 approval (an explicit user approval) advances `draft -> frozen`.
+- For new or non-trivial work, start with `spec-manager next "<work>"` to identify the safe next step, or `spec-manager brief "<work>"` to collect local context, lessons, risks, and the next command.
+- Before writing any spec/task/decision, check `spec-manager project context --json` or `spec-manager dashboard --json` and confirm the resolved `writeRoot`; external `specStore.path` means writes go to that specs root, while `contextSources` are read-only.
 - Before code edits, read the frozen L3 spec and create/start an Agent Task.
+- When the user asks to "confirm and run", "create and execute the task", "continue executing this L3", or uses equivalent wording, prepare an explicit planJson file and use `spec-manager task run <L3-code> --plan <planFile>`.
+- When the user only asks to confirm/freeze an L3 or gives `spec-manager spec confirm <L3-code>`, only run `spec-manager spec confirm <L3-code>` and stop; do not create a task automatically.
 - planJson `coveredSpecs` MUST include the current L3 specCode.
 - If adaptive workflow is enabled, Task creation records a `standard` or `governed` Profile snapshot; `governed` requires the frozen L3 to declare `## 关键验收标准` with valid AC IDs, and task complete requires successful verification evidence covering every critical AC. `standard` reports missing coverage as warnings. Use `spec-manager project profile recommend --request "<work>"` for a deterministic, explainable recommendation; it does not auto-enable adaptive workflow and is not a hidden gate. Use `spec-manager project profile metrics [--topic <topic>] [--json]` for a read-only governance report over Profile adoption, governed coverage gaps, standard warnings, and explicit overrides; metrics does not modify config or historical Tasks. Use `spec-manager project readiness critical [--topic <topic>] [--json]` for a read-only critical AC readiness report and repair suggestions; it must not auto-generate or insert critical AC. Before enabling adaptive workflow, use `spec-manager project workflow preview [--json]` for a read-only adoption preview; preview does not write config, migrate historical Tasks, or act as an enable gate.
 - `quick` remains a restricted lightweight exception and does not create the full L1/L2/L3/Task chain.
 - Validate L3 markdown plans with `spec-manager spec validate-plan --from-spec <L3-code>`.
 - Record execution with `spec-manager task step`; finish with `spec-manager task complete`.
 - Before release or public handoff, run `spec-manager project docs check` to verify README links, package files, agent guidance consistency, and generated Agent asset boundaries such as `.agents/`, `.claude/`, `.codebuddy/`, and `.codex/`.
-- For UI/visual/style work, `specs/DESIGN.md` is the canonical managed design context, with root `DESIGN.md` retained as a legacy fallback. Use `spec-manager assist brief --request "<UI request>"` to read the default design context, `spec-manager assist design-template` to create starter `specs/DESIGN.md`, and `spec-manager assist design-export --format tokens-json` when implementation tooling needs tokens. Pass `--path DESIGN.md` or `--path specs/DESIGN.md` only when a specific file must be forced. Use `--format dtcg-json` for the current schema's DTCG subset, `--format tailwind-json` for Tailwind v3 `theme.extend`, and `--format tailwind-css` for Tailwind v4 `@theme`; exports do not modify project Tailwind config files. Use `@verify: design-lint(DESIGN.md)` or `@verify: design-lint(specs/DESIGN.md)` for explicit lint evidence; use `@verify: design-diff(DESIGN.before.md, DESIGN.md)` in review-oriented L3 specs when comparing two explicit DESIGN.md files. `design-diff` reports structural summary, not visual-quality judgment. Briefs include non-blocking Design Guidance: read DESIGN.md prose first, prefer specific inspiration, respect do/don't constraints, and treat unknown sections as possible design intent. Conformance fixtures live under `src/core/__tests__/fixtures/design-context/` for test coverage only; agents should not require or shell out to an external DESIGN.md checkout.
+- For UI/visual/style work, `specs/DESIGN.md` in the resolved write root is the canonical managed design context, with root `DESIGN.md` retained as a legacy fallback. Use `spec-manager brief "<UI request>"` to read the default design context, `spec-manager assist design-template` to create starter `specs/DESIGN.md`, and `spec-manager assist design-export --format tokens-json` when implementation tooling needs tokens. Pass `--path DESIGN.md` or `--path specs/DESIGN.md` only when a specific file must be forced. Use `--format dtcg-json` for the current schema's DTCG subset, `--format tailwind-json` for Tailwind v3 `theme.extend`, and `--format tailwind-css` for Tailwind v4 `@theme`; exports do not modify project Tailwind config files. Use `@verify: design-lint(DESIGN.md)` or `@verify: design-lint(specs/DESIGN.md)` for explicit lint evidence; use `@verify: design-diff(DESIGN.before.md, DESIGN.md)` in review-oriented L3 specs when comparing two explicit DESIGN.md files. `design-diff` reports structural summary, not visual-quality judgment. Briefs include non-blocking Design Guidance: read DESIGN.md prose first, prefer specific inspiration, respect do/don't constraints, and treat unknown sections as possible design intent. Conformance fixtures live under `src/core/__tests__/fixtures/design-context/` for test coverage only; agents should not require or shell out to an external DESIGN.md checkout.
 - ALL spec/task operations MUST go through `spec-manager` CLI. Never write raw markdown to spec files or JSON to task files — raw writes bypass status machine, audit hits, and cascade logic.
 - Before marking any L3 as implemented, an Agent Task MUST be created and completed via `spec-manager task create/start/step/complete`. Direct `spec implement` is forbidden for L3 (R3).
 - After creating any spec, establish relations: `spec-manager spec add-relation <code> --type based_on --target <parentCode>`. L3 MUST have at least `based_on` to its parent L2.
@@ -95,9 +100,9 @@ L3:    draft → frozen → implemented
 
 `spec-manager <command> --help` 查看完整用法。主要命令组：
 
-- `project init|status` — 初始化/总览
+- `project init|status|context|store` — 初始化、总览、write root/context source 诊断
 - `spec new|list|show|update|confirm|freeze|implement|validate|add-relation` — Spec CRUD
-- `task create|start|step|complete|fail|wait|show|list` — Agent Task
+- `task run|create|start|step|complete|fail|wait|show|list` — Agent Task
 - `decision create|list|show|update|set-partial|supersede` — 决策卡片
 - `change new|archive|list|show` — Delta spec
 - `incident new|list` — 事故记录

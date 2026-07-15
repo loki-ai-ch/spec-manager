@@ -17,6 +17,21 @@ export type VerifyRule =
   | { type: 'design-lint'; path: string }
   | { type: 'design-diff'; beforePath: string; afterPath: string };
 
+export type VerifyRuleDiagnosticReason = 'syntax' | 'unknown-type' | 'arity';
+
+export interface VerifyRuleDiagnostic {
+  line: number;
+  raw: string;
+  reason: VerifyRuleDiagnosticReason;
+  type?: string;
+  message: string;
+}
+
+export interface VerifyRuleParseResult {
+  rules: VerifyRule[];
+  diagnostics: VerifyRuleDiagnostic[];
+}
+
 /** 单条规则执行结果 */
 export interface VerifyResult {
   rule: VerifyRule;
@@ -42,37 +57,73 @@ export const VERIFY_TYPE_ARITY: Record<string, number> = {
  * 仅解析 ## sectionName 段内的 @verify: 行。
  */
 export function parseVerifyRules(content: string, sectionName: string): VerifyRule[] {
+  return parseVerifyRulesWithDiagnostics(content, sectionName).rules;
+}
+
+export function parseVerifyRulesWithDiagnostics(content: string, sectionName: string): VerifyRuleParseResult {
   const rules: VerifyRule[] = [];
+  const diagnostics: VerifyRuleDiagnostic[] = [];
   const lines = content.split('\n');
   let inSection = false;
 
-  for (const line of lines) {
+  for (let index = 0; index < lines.length; index += 1) {
+    const line = lines[index] ?? '';
     const trimmed = line.trim();
     if (/^##\s+/.test(trimmed)) {
       inSection = trimmed.includes(sectionName);
       continue;
     }
     if (!inSection) continue;
+    if (!/@verify\b/.test(trimmed)) continue;
 
     const m = VERIFY_RE.exec(trimmed);
-    if (!m) continue;
+    if (!m) {
+      diagnostics.push({
+        line: index + 1,
+        raw: trimmed,
+        reason: 'syntax',
+        message: `@verify line has invalid syntax: ${trimmed}`,
+      });
+      continue;
+    }
 
     const [, type, argsStr] = m;
     const args = splitArgs(argsStr);
+    const expectedArity = VERIFY_TYPE_ARITY[type];
+    if (expectedArity === undefined) {
+      diagnostics.push({
+        line: index + 1,
+        raw: trimmed,
+        reason: 'unknown-type',
+        type,
+        message: `Unknown @verify type "${type}". Supported: ${Object.keys(VERIFY_TYPE_ARITY).join(', ')}`,
+      });
+      continue;
+    }
+    if (args.length !== expectedArity) {
+      diagnostics.push({
+        line: index + 1,
+        raw: trimmed,
+        reason: 'arity',
+        type,
+        message: `@verify: ${type}() expects ${expectedArity} argument(s), got ${args.length}`,
+      });
+      continue;
+    }
 
-    if (type === 'file-exists' && args.length === 1) {
+    if (type === 'file-exists') {
       rules.push({ type: 'file-exists', path: args[0] });
-    } else if (type === 'export-exists' && args.length === 2) {
+    } else if (type === 'export-exists') {
       rules.push({ type: 'export-exists', file: args[0], symbol: args[1] });
-    } else if (type === 'command' && args.length === 1) {
+    } else if (type === 'command') {
       rules.push({ type: 'command', cmd: args[0] });
-    } else if (type === 'design-lint' && args.length === 1) {
+    } else if (type === 'design-lint') {
       rules.push({ type: 'design-lint', path: args[0] });
-    } else if (type === 'design-diff' && args.length === 2) {
+    } else if (type === 'design-diff') {
       rules.push({ type: 'design-diff', beforePath: args[0], afterPath: args[1] });
     }
   }
-  return rules;
+  return { rules, diagnostics };
 }
 
 /**

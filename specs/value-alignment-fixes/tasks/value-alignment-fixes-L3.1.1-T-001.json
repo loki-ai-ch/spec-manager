@@ -1,0 +1,156 @@
+{
+  "id": "T-001",
+  "specCode": "value-alignment-fixes-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Implement verify diagnostics and completion hard fail",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added verify rule parse diagnostics and made task completion fail on malformed @verify lines.\"}",
+      "reportedAt": "2026-07-15T02:00:27.975Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement strict rgb/rgba design color lint",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Strictly validates rgb/rgba Design Context color functions and rejects invalid channels or alpha.\"}",
+      "reportedAt": "2026-07-15T02:00:36.960Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Fix duplicate feature shortcut and project init YAML serialization",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Fixed duplicate feature shortcut code generation and changed project init config output to YAML serialization.\"}",
+      "reportedAt": "2026-07-15T01:58:52.563Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Add focused regression tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added focused regression tests for verify diagnostics, completion gate, design color lint, duplicate shortcut, and init YAML.\"}",
+      "reportedAt": "2026-07-15T02:00:46.100Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "运行聚焦与全量验证",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Focused tests, full npm test, lint, build, and docs check passed.\"}",
+      "reportedAt": "2026-07-15T01:59:19.191Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T01:53:34.392Z",
+  "finishedAt": "2026-07-15T02:01:55.511Z",
+  "created": "2026-07-15T01:53:28.200Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/verify.test.ts src/core/__tests__/task-completion.test.ts",
+      "exitCode": 0,
+      "summary": "verify diagnostics and completion gate focused tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1"
+      ],
+      "created": "2026-07-15T01:59:49.186Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test -- --run src/core/__tests__/design-context.test.ts",
+      "exitCode": 0,
+      "summary": "Design Context invalid rgb/rgba lint focused tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-2"
+      ],
+      "created": "2026-07-15T01:59:49.255Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test -- --run src/cli/__tests__/usability.test.ts",
+      "exitCode": 0,
+      "summary": "duplicate feature shortcut focused tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3"
+      ],
+      "created": "2026-07-15T01:59:49.262Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-004",
+      "command": "npm test -- --run src/cli/__tests__/project-workflow.test.ts",
+      "exitCode": 0,
+      "summary": "project init YAML focused tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-4"
+      ],
+      "created": "2026-07-15T01:59:49.377Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-005",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "full test suite passed: 68 files, 811 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-07-15T02:00:02.148Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-006",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript lint passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-07-15T02:00:02.158Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-007",
+      "command": "node dist/cli/index.js project docs check --json",
+      "exitCode": 0,
+      "summary": "docs consistency check passed with no errors or warnings",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-07-15T02:00:02.172Z",
+      "layer": "smoke"
+    },
+    {
+      "id": "V-008",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-5"
+      ],
+      "created": "2026-07-15T02:00:56.744Z",
+      "layer": "compile"
+    }
+  ]
+}

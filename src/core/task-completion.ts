@@ -11,7 +11,7 @@ import { TASK_FILE_EXT } from './constants.js';
 import type { ProjectPaths } from './paths.js';
 import { listTopicMetaFiles } from './repository.js';
 import { withProjectTransaction } from './transaction.js';
-import { executeVerifyRules, parseVerifyRules, runCommand } from './verify.js';
+import { executeVerifyRules, parseVerifyRulesWithDiagnostics, runCommand } from './verify.js';
 import { siblingMetaDir } from './paths.js';
 import { writeAtomic } from './frontmatter.js';
 import type { TaskRecord } from './task.js';
@@ -212,7 +212,16 @@ export function runVerifyRuleGate(input: TaskCompletionInput, specContent: strin
   if (input.skipVerify) {
     return { gate: 'verify-rules', status: 'skipped', message: '@verify rules skipped' };
   }
-  const verifyRules = parseVerifyRules(specContent, '验收标准');
+  const parsed = parseVerifyRulesWithDiagnostics(specContent, '验收标准');
+  if (parsed.diagnostics.length > 0) {
+    throwCompletionGateError(
+      { paths: input.paths, ruleId: 'R10', metadata: { event: 'verify-rule-parse-failed', diagnostics: parsed.diagnostics }, countRule: false },
+      '@verify 规则解析失败:\n' + parsed.diagnostics
+        .map(diagnostic => `  line ${diagnostic.line}: ${diagnostic.message}`)
+        .join('\n'),
+    );
+  }
+  const verifyRules = parsed.rules;
   if (verifyRules.length === 0) {
     return {
       gate: 'verify-rules',

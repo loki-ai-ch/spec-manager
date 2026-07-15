@@ -12,7 +12,6 @@
 
 import { Command } from 'commander';
 import { readFileSync } from 'node:fs';
-import { getPaths } from '../core/paths.js';
 import {
   createTask,
   startTask,
@@ -32,7 +31,7 @@ import {
 import { buildTaskEvidence, type TaskEvidence } from '../core/task-evidence.js';
 import { listDecisions } from '../core/decision.js';
 import { StepStatusSchema } from '../schemas/spec.js';
-import { createDefaultCliActionContext, runCliAction } from './common.js';
+import { createDefaultCliActionContext, getWritePaths, runCliAction } from './common.js';
 import {
   printTaskReportResult,
   printTaskVerifyResult,
@@ -41,6 +40,7 @@ import {
   TASK_REPORT_KNOWN_ERRORS,
   TASK_VERIFY_KNOWN_ERRORS,
 } from './task-handlers.js';
+import { printTaskRunResult, runTaskRunCommand } from './task-run.js';
 
 const TASK_STATUSES: TaskStatus[] = ['draft', 'running', 'waiting', 'completed', 'failed'];
 
@@ -48,6 +48,51 @@ export function registerTaskCommands(program: Command): void {
   const task = program
     .command('task')
     .description('Agent Task 生命周期管理（创建/执行步骤/完成/失败）');
+
+  task
+    .command('run <specCode>')
+    .description('确认/冻结 L3 后创建并启动 Agent Task')
+    .requiredOption('--plan <file>', 'planJson 文件路径（含 steps[]）')
+    .option('--auto-confirm', 'human_gate 自动通过', false)
+    .option('--profile <profile>', 'workflow profile: standard | governed')
+    .option('--profile-reason <reason>', '显式覆盖项目默认 Profile 的原因')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((specCode: string, opts: { plan: string; autoConfirm: boolean; profile?: string; profileReason?: string; json: boolean }) => {
+      const context = createDefaultCliActionContext();
+      const planJson = JSON.parse(readFileSync(opts.plan, 'utf8'));
+      try {
+        const result = runTaskRunCommand({
+          context,
+          specCode,
+          planJson,
+          autoConfirm: opts.autoConfirm,
+          profile: opts.profile,
+          profileReason: opts.profileReason,
+        });
+        printTaskRunResult(context, result, { json: opts.json });
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        if (
+          message.startsWith('SPEC_CLI_EXIT_1:') ||
+          message.startsWith('SPEC_CLI_EXIT_2:') ||
+          message.startsWith('ADAPTIVE_WORKFLOW_DISABLED:') ||
+          message.startsWith('INVALID_WORKFLOW_PROFILE:') ||
+          message.startsWith('PROFILE_OVERRIDE_REASON_REQUIRED:') ||
+          message.startsWith('GOVERNED_CRITICAL_AC_REQUIRED:') ||
+          message.startsWith('UNKNOWN_CRITICAL_AC:') ||
+          message.startsWith('PLAN_JSON_INVALID:') ||
+          message.startsWith('R12:') ||
+          message.startsWith('R10:') ||
+          message.startsWith('TASK_RUN_SPEC_NOT_L3:') ||
+          message.startsWith('TASK_RUN_SPEC_STATUS_INVALID:') ||
+          message.startsWith('TASK_ALREADY_ACTIVE:')
+        ) {
+          console.error(`✗ ${message.replace(/^SPEC_CLI_EXIT_[12]:/, '')}`);
+          process.exit(2);
+        }
+        throw err;
+      }
+    });
 
   task
     .command('create <specCode>')
@@ -58,7 +103,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--profile-reason <reason>', '显式覆盖项目默认 Profile 的原因')
     .option('--json', '以 JSON 格式输出', false)
     .action((specCode: string, opts: { plan: string; autoConfirm: boolean; profile?: string; profileReason?: string; json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const planJson = JSON.parse(readFileSync(opts.plan, 'utf8'));
       let result: ReturnType<typeof createTask>;
       try {
@@ -105,7 +150,7 @@ export function registerTaskCommands(program: Command): void {
         console.error('✗ task context --format 必须是 text 或 json');
         process.exit(2);
       }
-      const paths = getPaths();
+      const paths = getWritePaths();
       try {
         const context = buildHarnessTaskContext(paths, l3Code);
         if (opts.format === 'json') {
@@ -203,7 +248,7 @@ export function registerTaskCommands(program: Command): void {
         console.error('✗ task evidence --format 必须是 text 或 json');
         process.exit(2);
       }
-      const paths = getPaths();
+      const paths = getWritePaths();
       try {
         const evidence = buildTaskEvidence(paths, taskId, opts.spec);
         if (opts.format === 'json') {
@@ -230,7 +275,7 @@ export function registerTaskCommands(program: Command): void {
     .description('把 Task 状态从 draft/running 推进到 running')
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
     .action((taskId: string, opts: { spec?: string }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const updated = startTask(paths, taskId, opts.spec);
       console.log(`✓ Task ${updated.id} → running`);
       console.log(`  startedAt: ${updated.startedAt}`);
@@ -269,7 +314,7 @@ export function registerTaskCommands(program: Command): void {
         console.error(`✗ --status 非法: ${opts.status}（必须 pending|running|succeeded|failed|skipped）`);
         process.exit(2);
       }
-      const paths = getPaths();
+      const paths = getWritePaths();
       const result = reportStep({
         paths,
         taskId,
@@ -294,7 +339,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
     .option('--json', '以 JSON 格式输出', false)
     .action((taskId: string, opts: { input: string; spec?: string; json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const payload = parseStepBatchPayload(readFileSync(opts.input, 'utf8'));
       const results = payload.steps.map((step) => {
         const parsed = StepStatusSchema.safeParse(step.status);
@@ -341,7 +386,7 @@ export function registerTaskCommands(program: Command): void {
       if (opts.force) {
         throw new Error('DEPRECATED_FORCE: --force 已移除；请按需使用 --skip-r18、--skip-verification 或 --skip-verify，并提供 --reason');
       }
-      const paths = getPaths();
+      const paths = getWritePaths();
       const result = runTaskCompletion({
         paths,
         taskId,
@@ -412,7 +457,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--code <code>', '错误代码', 'AGENT_TOOL')
     .option('--msg <message>', '错误信息', '未知错误')
     .action((taskId: string, opts: { spec?: string; code: string; msg: string }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const updated = failTask({
         paths,
         taskId,
@@ -430,7 +475,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--spec <specCode>', '限定查找范围（避免跨 spec 的 T-001 冲突）')
     .option('--reason <reason>', '等待原因', '需要人工确认')
     .action((taskId: string, opts: { spec?: string; reason: string }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const updated = waitTask({ paths, taskId, specCode: opts.spec, reason: opts.reason });
       console.log(`⏸ Task ${updated.id} → waiting`);
       console.log(`  reason: ${updated.waitReason}`);
@@ -443,7 +488,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--full', '返回完整 steps 列表', false)
     .option('--json', '以 JSON 格式输出', false)
     .action((taskId: string, opts: { spec?: string; full: boolean; json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       const result = showTask(paths, taskId, { full: opts.full, specCode: opts.spec });
       if (!result) {
         console.error(`✗ Task not found: ${taskId}`);
@@ -495,7 +540,7 @@ export function registerTaskCommands(program: Command): void {
     .option('--status <status>', '按 status 过滤（draft|running|waiting|completed|failed）')
     .option('--json', '以 JSON 格式输出', false)
     .action((opts: { topic?: string; spec?: string; status?: string; json: boolean }) => {
-      const paths = getPaths();
+      const paths = getWritePaths();
       if (opts.status && !TASK_STATUSES.includes(opts.status as TaskStatus)) {
         console.error(`✗ --status 非法: ${opts.status}（必须 ${TASK_STATUSES.join('|')}）`);
         process.exit(2);

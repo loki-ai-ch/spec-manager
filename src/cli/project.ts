@@ -2,6 +2,7 @@ import { Command } from 'commander';
 import { writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stringify as stringifyYaml } from 'yaml';
 import {
   detectAgentProviders,
   installAgentSupport,
@@ -28,10 +29,21 @@ import { buildCriticalReadinessReport, type CriticalReadinessReport } from '../c
 import { applyRepositoryRemediation, planRepositoryRemediation } from '../core/remediation.js';
 import { applyLifecycleReconciliation, planLifecycleReconciliation } from '../core/reconciliation.js';
 import { buildDocsConsistencyReport, type DocsConsistencyReport } from '../core/docs-consistency.js';
+import { resolveSpecStore, type SpecStoreResolution } from '../core/spec-store.js';
 import { printPathGroup, requireInitialized } from './common.js';
+import { runSetupCommand } from './setup-presenter.js';
 
 export function registerProject(program: Command): void {
   const cmd = program.command('project').description('项目管理（init/status）');
+
+  cmd
+    .command('setup [request...]')
+    .description('只读 setup：输出初始化、write root、agent 入口和下一步建议')
+    .option('--topic <topic>', '限定 topic')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((requestParts: string[], opts: { topic?: string; json: boolean }) => {
+      runSetupCommand(requestParts, opts);
+    });
 
   cmd
     .command('init')
@@ -50,15 +62,12 @@ export function registerProject(program: Command): void {
       mkdirSync(paths.changesDir, { recursive: true });
       mkdirSync(paths.archiveDir, { recursive: true });
 
-      const configYaml = [
-        `# spec-manager project config`,
-        `project_name: ${opts.name}`,
-        `specWorkflow: ${opts.workflow}`,
-        `# rulesAppliesTo 过滤：留空 = 应用全部 24 条规则`,
-        `rulesAppliesTo: []`,
-        `created: ${new Date().toISOString()}`,
-        ``,
-      ].join('\n');
+      const configYaml = stringifyYaml({
+        project_name: opts.name,
+        specWorkflow: opts.workflow,
+        rulesAppliesTo: [],
+        created: new Date().toISOString(),
+      });
       writeFileSync(paths.configFile, configYaml, 'utf8');
       writeFileSync(paths.auditFile, initAuditJson(), 'utf8');
       console.log(`✓ 已初始化 ${paths.configDir}`);
@@ -307,6 +316,60 @@ export function registerProject(program: Command): void {
     });
 
   cmd
+    .command('context')
+    .description('只读输出当前执行根、规格写入根和上下文源')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const context = buildProjectContext(paths);
+      if (opts.json) {
+        console.log(JSON.stringify(context, null, 2));
+        return;
+      }
+      printProjectContext(context);
+    });
+
+  const store = cmd
+    .command('store')
+    .description('只读查看 spec store 解析与诊断');
+
+  store
+    .command('show')
+    .description('展示当前 resolved spec store')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const resolution = resolveSpecStore(paths);
+      if (opts.json) {
+        console.log(JSON.stringify(resolution, null, 2));
+        return;
+      }
+      printStoreResolution(resolution);
+    });
+
+  store
+    .command('doctor')
+    .description('检查 spec store 与只读上下文源配置')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { json: boolean }) => {
+      const paths = getPaths();
+      requireInitialized(paths);
+      const resolution = resolveSpecStore(paths);
+      const report = {
+        executionRoot: resolution.executionRoot,
+        writeRoot: resolution.writeRoot,
+        diagnostics: resolution.diagnostics,
+      };
+      if (opts.json) {
+        console.log(JSON.stringify(report, null, 2));
+        return;
+      }
+      printStoreDoctor(resolution);
+    });
+
+  cmd
     .command('reconcile')
     .description('预览或执行已审阅范围内的历史规格状态对账')
     .option('--dry-run', '仅预览对账计划，不写入文件')
@@ -388,6 +451,86 @@ export function registerProject(program: Command): void {
         console.log('\n(尚无 spec)');
       }
     });
+}
+
+interface ProjectContext extends SpecStoreResolution {
+  nextAction: string;
+  note: string;
+}
+
+function buildProjectContext(paths: ReturnType<typeof getPaths>): ProjectContext {
+  return {
+    ...resolveSpecStore(paths),
+    nextAction: 'spec-manager next "<work>"',
+    note: 'This is a read-only context projection. Store-aware spec/task/decision commands and core workflow shortcuts use the resolved writeRoot; contextSources remain read-only.',
+  };
+}
+
+function printProjectContext(context: ProjectContext): void {
+  console.log('Project Context:');
+  console.log(`  Execution Root: ${context.executionRoot}`);
+  console.log(`  Write Root: ${context.writeRoot}`);
+  console.log('  Write Store:');
+  printStoreEntry(context.writeStore, '    ');
+  console.log('  Context Sources:');
+  if (context.contextSources.length === 0) {
+    console.log('    (none)');
+  } else {
+    for (const source of context.contextSources) printStoreEntry(source, '    ');
+  }
+  console.log('  Diagnostics:');
+  printStoreDiagnostics(context.diagnostics, '    ');
+  console.log(`  Next: ${context.nextAction}`);
+  console.log(`  Note: ${context.note}`);
+}
+
+function printStoreResolution(resolution: SpecStoreResolution): void {
+  console.log('Spec Store:');
+  console.log(`  Execution Root: ${resolution.executionRoot}`);
+  console.log(`  Write Root: ${resolution.writeRoot}`);
+  console.log('  Write Store:');
+  printStoreEntry(resolution.writeStore, '    ');
+  console.log('  Context Sources:');
+  if (resolution.contextSources.length === 0) {
+    console.log('    (none)');
+  } else {
+    for (const source of resolution.contextSources) printStoreEntry(source, '    ');
+  }
+  console.log('  Diagnostics:');
+  printStoreDiagnostics(resolution.diagnostics, '    ');
+}
+
+function printStoreDoctor(resolution: SpecStoreResolution): void {
+  if (resolution.diagnostics.length === 0) {
+    console.log('Store doctor: ok');
+    return;
+  }
+  console.log('Store doctor: issues');
+  printStoreDiagnostics(resolution.diagnostics, '  ');
+}
+
+function printStoreEntry(
+  entry: SpecStoreResolution['writeStore'],
+  indent: string,
+): void {
+  console.log(`${indent}- ${entry.id} [${entry.mode}]`);
+  console.log(`${indent}  path: ${entry.path}`);
+  console.log(`${indent}  exists: ${entry.exists}`);
+  console.log(`${indent}  initialized: ${entry.initialized}`);
+}
+
+function printStoreDiagnostics(
+  diagnostics: SpecStoreResolution['diagnostics'],
+  indent: string,
+): void {
+  if (diagnostics.length === 0) {
+    console.log(`${indent}(none)`);
+    return;
+  }
+  for (const diagnostic of diagnostics) {
+    console.log(`${indent}- [${diagnostic.severity}] ${diagnostic.code}: ${diagnostic.message}`);
+    if (diagnostic.fix) console.log(`${indent}  fix: ${diagnostic.fix}`);
+  }
 }
 
 function printProfileRecommendation(recommendation: ProfileRecommendation): void {

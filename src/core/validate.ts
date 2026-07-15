@@ -164,7 +164,7 @@ export function validateSpecContent(level: SpecLevel, content: string): Validati
           warnings.push({
             rule: 'unknown_verify_type',
             level: 'warn',
-            message: `未知 @verify 类型: "${type}" — 支持: file-exists, export-exists, command`,
+            message: `未知 @verify 类型: "${type}" — 支持: ${Object.keys(VERIFY_TYPE_ARITY).join(', ')}`,
             section: '验收标准',
           });
         } else if (argCount !== VERIFY_TYPE_ARITY[type]) {

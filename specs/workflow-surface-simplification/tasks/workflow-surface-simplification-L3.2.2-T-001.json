@@ -1,0 +1,96 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.2.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Read frozen L3 and existing project CLI presenter tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, project CLI implementation, project workflow tests, and spec-store resolver contract; implementation will add read-only project context/store commands.\"}",
+      "reportedAt": "2026-07-15T05:26:44.975Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement project context and project store read-only CLI commands",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added read-only project context, project store show, and project store doctor CLI commands backed by resolveSpecStore, with text and JSON output.\"}",
+      "reportedAt": "2026-07-15T05:28:05.907Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Add CLI tests for context store show and store doctor",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added project workflow CLI tests for project context text/json, store show with external write root and context source, store doctor diagnostics, and store doctor ok.\"}",
+      "reportedAt": "2026-07-15T05:28:15.751Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Run targeted project workflow and spec store tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"npm test -- src/cli/__tests__/project-workflow.test.ts src/core/__tests__/spec-store.test.ts passed: 2 files, 19 tests.\"}",
+      "reportedAt": "2026-07-15T05:28:26.289Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "验证 npm run lint and npm run build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: npm run lint and npm run build both completed successfully.\"}",
+      "reportedAt": "2026-07-15T05:28:52.122Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T05:26:35.579Z",
+  "finishedAt": "2026-07-15T05:29:21.314Z",
+  "created": "2026-07-15T05:26:27.546Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/cli/__tests__/project-workflow.test.ts src/core/__tests__/spec-store.test.ts",
+      "exitCode": 0,
+      "summary": "Project context/store CLI and spec-store targeted tests passed: 2 files, 19 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T05:29:02.602Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-6",
+        "AC-7"
+      ],
+      "created": "2026-07-15T05:29:10.950Z",
+      "layer": "compile"
+    }
+  ]
+}

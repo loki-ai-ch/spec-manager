@@ -129,7 +129,7 @@ const SECTION_ALIASES: Record<string, string> = {
 const TOKEN_REF_RE = /\{([a-zA-Z0-9_.-]+)\}/g;
 const DIMENSION_RE = /^-?(?:\d+|\d*\.\d+)(?:px|em|rem)$/;
 const HEX_COLOR_RE = /^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
-const SIMPLE_COLOR_FUNCTION_RE = /^(?:rgb|rgba|hsl|hsla)\(.+\)$/i;
+const HSL_COLOR_FUNCTION_RE = /^hsla?\(.+\)$/i;
 const MODERN_COLOR_FUNCTION_RE = /^(?:oklch|oklab|lch|lab|hwb|color|color-mix)\(.+\)$/i;
 const NAMED_COLORS = new Set([
   'black',
@@ -888,20 +888,57 @@ function parseHexColor(value: string): ParsedColor | null {
 function parseRgbColor(value: string): ParsedColor | null {
   const match = RGB_COLOR_RE.exec(value);
   if (!match?.[1]) return null;
-  const channels = match[1]
-    .replace(/\//g, ' ')
-    .split(/[,\s]+/)
-    .filter(Boolean)
-    .slice(0, 3)
-    .map(part => Number.parseFloat(part));
-  if (channels.length !== 3 || channels.some(channel => !Number.isFinite(channel))) return null;
-  const [r, g, b] = channels.map(channel => clamp(Math.round(channel), 0, 255));
+  const parsed = parseRgbChannels(match[1]);
+  if (!parsed) return null;
+  const [r, g, b] = parsed;
   return {
     hex: `#${[r, g, b].map(channel => channel.toString(16).padStart(2, '0')).join('')}`,
     r,
     g,
     b,
   };
+}
+
+function parseRgbChannels(raw: string): [number, number, number] | null {
+  const slashParts = raw.split('/');
+  if (slashParts.length > 2) return null;
+  const colorPart = slashParts[0]?.trim();
+  if (!colorPart) return null;
+  const commaSyntax = colorPart.includes(',');
+  const parts = commaSyntax
+    ? colorPart.split(',').map(part => part.trim())
+    : colorPart.split(/\s+/).map(part => part.trim());
+  if (commaSyntax && (parts.length < 3 || parts.length > 4)) return null;
+  if (!commaSyntax && parts.length !== 3) return null;
+  const channelParts = parts.slice(0, 3);
+  if (channelParts.length !== 3 || channelParts.some(part => !part)) return null;
+  const channels = channelParts.map(parseRgbChannel);
+  if (channels.some(channel => channel === null)) return null;
+  const alpha = slashParts[1]?.trim() ?? (commaSyntax ? parts[3] : undefined);
+  if (alpha !== undefined && !isValidAlpha(alpha)) return null;
+  return channels as [number, number, number];
+}
+
+function parseRgbChannel(raw: string): number | null {
+  const value = raw.trim();
+  if (value.endsWith('%')) {
+    const percent = Number.parseFloat(value.slice(0, -1));
+    if (!Number.isFinite(percent) || percent < 0 || percent > 100) return null;
+    return Math.round((percent / 100) * 255);
+  }
+  const numeric = Number.parseFloat(value);
+  if (!Number.isFinite(numeric) || numeric < 0 || numeric > 255) return null;
+  return Math.round(numeric);
+}
+
+function isValidAlpha(raw: string): boolean {
+  const value = raw.trim();
+  if (value.endsWith('%')) {
+    const percent = Number.parseFloat(value.slice(0, -1));
+    return Number.isFinite(percent) && percent >= 0 && percent <= 100;
+  }
+  const numeric = Number.parseFloat(value);
+  return Number.isFinite(numeric) && numeric >= 0 && numeric <= 1;
 }
 
 function contrastRatio(a: ParsedColor, b: ParsedColor): number {
@@ -918,10 +955,6 @@ function relativeLuminance(color: ParsedColor): number {
     return value <= 0.03928 ? value / 12.92 : Math.pow((value + 0.055) / 1.055, 2.4);
   });
   return (0.2126 * (r ?? 0)) + (0.7152 * (g ?? 0)) + (0.0722 * (b ?? 0));
-}
-
-function clamp(value: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, value));
 }
 
 function allowsCompositeReference(path: string, ref: string): boolean {
@@ -946,7 +979,8 @@ function isDimensionValue(value: unknown): boolean {
 function isSupportedColor(value: string): boolean {
   const normalized = value.trim();
   return HEX_COLOR_RE.test(normalized)
-    || SIMPLE_COLOR_FUNCTION_RE.test(normalized)
+    || parseRgbColor(normalized) !== null
+    || HSL_COLOR_FUNCTION_RE.test(normalized)
     || NAMED_COLORS.has(normalized.toLowerCase());
 }
 

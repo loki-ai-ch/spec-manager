@@ -252,6 +252,24 @@ describe('runTaskCompletion', () => {
     })).toThrow(/@verify 规则失败/);
   });
 
+  it('rejects malformed @verify rules instead of silently ignoring them', () => {
+    const { l3Code } = createFrozenHierarchy(
+      'completion-verify-malformed',
+      l3Content('2. @verify: unknown-rule(foo)'),
+    );
+    const task = createRunningTask(l3Code, { markSteps: true, verification: true });
+
+    expect(() => runTaskCompletion({
+      paths,
+      taskId: task.id,
+      specCode: l3Code,
+      skipR18Check: true,
+      bypassReason: 'test fixture',
+    })).toThrow(/@verify 规则解析失败/);
+    expect(findTask(paths, l3Code, task.id)?.status).toBe('running');
+    expect(readAudit(paths).rules.R10).toBe(0);
+  });
+
   it('executes passing @verify rules', () => {
     writeFileSync(join(root, 'exists.ts'), 'export const marker = true;');
     const { l3Code } = createFrozenHierarchy(

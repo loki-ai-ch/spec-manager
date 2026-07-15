@@ -1,4 +1,6 @@
+import { existsSync } from 'node:fs';
 import { getPaths, type ProjectPaths } from '../core/paths.js';
+import { resolveSpecStore } from '../core/spec-store.js';
 
 export interface CliActionContext {
   paths: ProjectPaths;
@@ -37,7 +39,7 @@ export interface RunCliActionInput<T> {
   action: () => T | Promise<T>;
 }
 
-export function createDefaultCliActionContext(paths: ProjectPaths = getPaths()): CliActionContext {
+export function createDefaultCliActionContext(paths: ProjectPaths = getWritePaths()): CliActionContext {
   return {
     paths,
     stdout: {
@@ -53,6 +55,25 @@ export function createDefaultCliActionContext(paths: ProjectPaths = getPaths()):
 export function fail(message: string, code = 1): never {
   console.error(message);
   process.exit(code);
+}
+
+export function getWritePaths(executionPaths: ProjectPaths = getPaths()): ProjectPaths {
+  const resolution = resolveSpecStore(executionPaths);
+  const blockingDiagnostics = resolution.diagnostics.filter(diagnostic => diagnostic.severity === 'error');
+  const hasExplicitStoreConfig = existsSync(executionPaths.configFile);
+  if (hasExplicitStoreConfig && blockingDiagnostics.length > 0) {
+    const lines = [
+      '✗ SPEC_STORE_WRITE_ROOT_INVALID: cannot use configured spec store write root',
+      `  executionRoot: ${resolution.executionRoot}`,
+      `  writeRoot:     ${resolution.writeRoot}`,
+    ];
+    for (const diagnostic of blockingDiagnostics) {
+      lines.push(`  - [${diagnostic.code}] ${diagnostic.message}`);
+      if (diagnostic.fix) lines.push(`    fix: ${diagnostic.fix}`);
+    }
+    fail(lines.join('\n'), 2);
+  }
+  return getPaths(resolution.writeRoot);
 }
 
 export function requireInitialized(paths: ProjectPaths): void {

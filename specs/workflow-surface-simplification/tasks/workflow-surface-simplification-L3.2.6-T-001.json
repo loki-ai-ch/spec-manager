@@ -1,0 +1,108 @@
+{
+  "id": "T-001",
+  "specCode": "workflow-surface-simplification-L3.2.6",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "Survey shortcut write root paths",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Surveyed usability shortcuts, workflow surface projection, project context note, capability brief, and existing store-aware tests to locate execution-root reads/writes.\"}",
+      "reportedAt": "2026-07-15T07:21:47.353Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "Implement workflow surface write root reads",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated workflow surface projection to diagnose from execution root while reading topic snapshots and dashboard data from resolved write root.\"}",
+      "reportedAt": "2026-07-15T07:21:53.286Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "Implement shortcut write commands parity",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated brief, flow, guide, new feature, approve, and top-level run shortcuts to use resolved write root for spec/task reads and writes; top-level run now reuses task run core behavior.\"}",
+      "reportedAt": "2026-07-15T07:22:02.006Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "Fix project context note",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Replaced stale project context note with accurate resolved writeRoot semantics and read-only contextSources language.\"}",
+      "reportedAt": "2026-07-15T07:22:18.658Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "Add store-aware shortcut tests",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added workflow-surface and usability CLI tests for external write root next/dashboard/brief/new feature/top-level run behavior.\"}",
+      "reportedAt": "2026-07-15T07:22:26.209Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "Run targeted tests lint build",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Ran targeted docs/task/store/workflow/usability tests plus lint and build successfully.\"}",
+      "reportedAt": "2026-07-15T07:22:35.593Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-15T07:17:31.405Z",
+  "finishedAt": "2026-07-15T07:25:04.474Z",
+  "created": "2026-07-15T07:17:31.400Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- src/core/__tests__/docs-guidance.test.ts src/cli/__tests__/task.test.ts src/cli/__tests__/store-aware-writes.test.ts src/core/__tests__/workflow-surface.test.ts src/cli/__tests__/usability.test.ts",
+      "exitCode": 0,
+      "summary": "5 targeted suites passed: docs guidance, task run, store-aware writes, workflow surface, usability shortcuts",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:23:17.219Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:23:23.724Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:23:32.419Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-004",
+      "command": "npm test -- src/cli/__tests__/store-aware-writes.test.ts src/core/__tests__/workflow-surface.test.ts src/cli/__tests__/usability.test.ts",
+      "exitCode": 0,
+      "summary": "Original L3.2.6 verification command passed after external sibling fixture isolation fix",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-15T07:24:54.855Z",
+      "layer": "functional"
+    }
+  ]
+}

@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 156,
-    "R2": 173,
+    "R1": 187,
+    "R2": 195,
     "R3": 2,
-    "R4": 151,
+    "R4": 173,
     "R5": 11,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 173,
-    "R10": 13,
+    "R9": 195,
+    "R10": 15,
     "R11": 0,
     "R12": 4,
-    "R13": 155,
+    "R13": 186,
     "R14": 0,
     "R15": 0,
-    "R16": 22,
+    "R16": 24,
     "R17": 0,
-    "R18": 28,
-    "R19": 161,
+    "R18": 31,
+    "R19": 176,
     "R20": 0,
     "R21": 0,
-    "R22": 155,
+    "R22": 186,
     "R23": 0,
     "R24": 0
   },
@@ -1579,9 +1579,1110 @@
       "timestamp": "2026-06-28T01:34:33.640Z",
       "specCode": "workflow-usability-hardening-L3.2.3",
       "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-15T01:50:31.811Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T01:50:31.815Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T01:50:39.161Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T01:50:39.162Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T01:50:39.163Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T01:51:07.766Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T01:51:07.766Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T01:51:07.767Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T01:51:13.242Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T01:51:13.243Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T01:51:20.208Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T01:51:28.215Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T01:51:28.218Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T01:51:28.220Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T01:51:54.219Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T01:51:54.219Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T01:51:54.220Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T01:52:10.445Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T01:52:10.446Z",
+      "specCode": "value-alignment-fixes-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T01:52:18.867Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T01:52:25.167Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T01:52:25.168Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T01:52:25.169Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T01:52:53.194Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T01:52:53.195Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T01:52:53.195Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T01:53:08.753Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T01:53:08.754Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-07-15T01:53:14.766Z",
+      "specCode": "value-alignment-fixes-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T02:01:55.536Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-15T02:12:21.009Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T02:12:21.012Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:14:03.955Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:14:03.955Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:14:03.956Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:14:54.636Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:14:54.636Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:14:54.637Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:15:44.706Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:15:44.706Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:15:44.707Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:16:29.356Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:16:29.356Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:16:29.357Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T02:16:37.411Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T02:17:16.720Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T02:17:16.721Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T02:18:07.850Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:19:16.260Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:19:16.260Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:19:16.261Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:20:03.628Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:20:03.629Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:20:03.629Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T02:20:11.144Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T02:20:32.456Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T02:20:32.456Z",
+      "specCode": "workflow-surface-simplification-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T02:20:56.779Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:21:48.329Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:21:48.329Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:21:48.330Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:22:07.455Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:22:07.456Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:22:07.456Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T02:22:16.281Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T02:22:40.163Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T02:22:40.164Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-07-15T02:24:33.108Z",
+      "specCode": "workflow-surface-simplification-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T02:29:10.597Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-15T02:29:47.323Z",
+      "specCode": "workflow-surface-simplification-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T02:31:28.285Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:32:32.425Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:32:32.426Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:32:32.426Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T02:32:43.527Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T02:38:18.206Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T02:38:18.207Z",
+      "specCode": "workflow-surface-simplification-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T02:46:00.033Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T02:46:48.200Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T02:46:48.200Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T02:46:48.201Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T02:47:04.637Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T02:47:40.183Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T02:47:40.184Z",
+      "specCode": "workflow-surface-simplification-L3.1.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T03:01:39.468Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T03:02:34.736Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T03:02:34.737Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T03:02:34.737Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T03:02:45.461Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T03:10:02.600Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T03:10:02.601Z",
+      "specCode": "workflow-surface-simplification-L3.1.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T03:19:53.678Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T03:21:00.034Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T03:21:00.035Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T03:21:00.035Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T03:21:08.085Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T03:23:19.628Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T03:23:19.629Z",
+      "specCode": "workflow-surface-simplification-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T03:24:06.831Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T03:25:02.730Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T03:25:02.731Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T03:25:02.731Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T03:25:13.565Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T05:16:12.579Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T05:16:12.580Z",
+      "specCode": "workflow-surface-simplification-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T05:23:14.273Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T05:24:09.852Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T05:24:09.852Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T05:24:09.853Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T05:24:19.112Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T05:24:45.934Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T05:24:45.935Z",
+      "specCode": "workflow-surface-simplification-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T05:32:12.899Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T05:33:04.736Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T05:33:04.737Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T05:33:04.737Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T05:33:28.854Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T05:41:15.572Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T05:41:15.574Z",
+      "specCode": "workflow-surface-simplification-L3.2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T05:46:23.535Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T05:47:28.197Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T05:47:28.198Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T05:47:28.199Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T05:47:45.873Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T05:48:57.074Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T05:48:57.075Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R10",
+      "timestamp": "2026-07-15T05:56:19.984Z",
+      "specCode": "workflow-surface-simplification-L3.2.4",
+      "taskCode": "T-001",
+      "metadata": {
+        "event": "task-complete-bypass",
+        "bypassedChecks": [
+          "verification-commands"
+        ],
+        "reason": "L3 verification section contains illustrative file names including a non-existent decision.test.ts; actual equivalent targeted tests, lint, and build were executed and recorded as V-001..V-003."
+      },
+      "countRule": false,
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T05:58:45.057Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T05:59:33.470Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T05:59:33.470Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T05:59:33.471Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T06:00:10.738Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T06:00:10.739Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T06:06:49.703Z",
+      "specCode": "workflow-surface-simplification-L3.2.5",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T06:07:38.486Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T06:08:44.670Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T06:08:44.671Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T06:08:44.672Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T06:09:08.096Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T06:09:08.097Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T06:09:08.098Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T06:11:13.715Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T06:11:13.716Z",
+      "specCode": "workflow-surface-simplification-L2.3",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T06:12:26.593Z",
+      "specCode": "workflow-surface-simplification-L3.3.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T06:13:19.883Z",
+      "specCode": "workflow-surface-simplification-L3.3.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T06:13:19.885Z",
+      "specCode": "workflow-surface-simplification-L3.3.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T06:13:19.885Z",
+      "specCode": "workflow-surface-simplification-L3.3.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T06:24:19.005Z",
+      "specCode": "workflow-surface-simplification-L3.3.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T06:24:19.005Z",
+      "specCode": "workflow-surface-simplification-L3.3.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T06:30:18.716Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T06:31:11.801Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T06:31:11.803Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T06:31:11.804Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T06:33:39.396Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T06:33:39.397Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T06:38:32.585Z",
+      "specCode": "workflow-surface-simplification-L3.3.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T06:47:48.511Z",
+      "specCode": "workflow-surface-simplification-L2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T06:48:51.954Z",
+      "specCode": "workflow-surface-simplification-L2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T06:48:51.955Z",
+      "specCode": "workflow-surface-simplification-L2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T06:48:51.956Z",
+      "specCode": "workflow-surface-simplification-L2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T06:49:18.693Z",
+      "specCode": "workflow-surface-simplification-L2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T06:49:18.694Z",
+      "specCode": "workflow-surface-simplification-L2.4",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T06:50:04.510Z",
+      "specCode": "workflow-surface-simplification-L3.4.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T06:51:22.581Z",
+      "specCode": "workflow-surface-simplification-L3.4.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T06:51:22.581Z",
+      "specCode": "workflow-surface-simplification-L3.4.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T06:51:22.582Z",
+      "specCode": "workflow-surface-simplification-L3.4.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T06:51:58.887Z",
+      "specCode": "workflow-surface-simplification-L3.4.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T06:51:58.889Z",
+      "specCode": "workflow-surface-simplification-L3.4.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T07:01:32.985Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:03:20.622Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:03:20.624Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:03:20.625Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T07:05:16.752Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T07:05:16.753Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T07:16:45.345Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T07:16:56.199Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T07:16:56.199Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T07:16:56.200Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T07:17:04.176Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T07:17:04.177Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T07:25:47.703Z",
+      "specCode": "workflow-surface-simplification-L3.2.6",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T07:25:47.706Z",
+      "specCode": "workflow-surface-simplification-L3.4.2",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-06-28T01:34:33.640Z",
+  "lastUpdated": "2026-07-15T07:25:47.706Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }
