@@ -1,0 +1,98 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、父 L2、前序 L3、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, previous Task, retrieval/Brief/AC/Lessons modules and plan template.\",\"files\":[]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:27.947Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 src/core/spec-sections.ts 提取正文和代码模块信号",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Reused the existing acceptance criteria parser and added bounded body/module signal extraction at activation candidate construction.\",\"files\":[\"src/core/knowledge-activation.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:28.152Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 retrieval scoring 和 index 支持新增字段解释",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended retrieval scoring with bounded bodySignals and moduleSignals fields.\",\"files\":[\"src/core/retrieval/scoring.ts\",\"src/core/retrieval/index.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:28.344Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 src/core/capability-types.ts 定义 constraint package",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added the backward-compatible ConstraintPackage type to agent-brief.v1.\",\"files\":[\"src/core/capability-types.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:28.551Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 src/core/capability-brief.ts 组装完整约束包",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Built constraint package projections for specs, decisions, ACs, lessons, modules, conflicts and unknown dimensions.\",\"files\":[\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:28.757Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "修改 Brief presenter 并补充 retrieval 与兼容测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added concise constraint package text presentation and passed retrieval/Brief compatibility tests.\",\"files\":[\"src/cli/brief-presenter.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:28.959Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build 和全量测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted tests, lint, build, and full 87-file 1016-test suite passed.\",\"files\":[]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T08:35:29.213Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T08:31:50.942Z",
+  "finishedAt": "2026-07-16T08:36:21.693Z",
+  "created": "2026-07-16T08:31:50.937Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Constraint package changes affect reusable project guidance.",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "retrieval and Brief tests; lint; build; full test",
+      "exitCode": 0,
+      "summary": "Constraint package compatibility tests passed; lint/build passed; full suite 87 files and 1016 tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T08:35:50.038Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import { listIncidents } from './incident.js';
 import type { ProjectPaths } from './paths.js';
 import { listTasks, type TaskRecord } from './task.js';
 import type { AssistFinding, AssistSourceRef, Lesson, LessonsReport } from './capability-types.js';
+import { listApprovedDeliveryKnowledge } from './delivery-knowledge.js';
 
 export interface BuildLessonsOptions {
   topic?: string;
@@ -21,6 +22,7 @@ export function buildLessonsReport(paths: ProjectPaths, opts: BuildLessonsOption
   const topic = normalizeOptional(opts.topic);
   const requestTokens = tokenize(opts.request ?? '');
   const lessons = collectLessons(paths, topic, requestTokens)
+    .filter(lesson => lesson.score > 0)
     .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id))
     .slice(0, opts.limit ?? DEFAULT_LIMIT)
     .map(({ score: _score, ...lesson }) => lesson);
@@ -38,12 +40,7 @@ export function buildLessonsReport(paths: ProjectPaths, opts: BuildLessonsOption
     });
   }
 
-  return {
-    schemaVersion: 'lessons.v1',
-    topic,
-    lessons,
-    findings,
-  };
+  return { schemaVersion: 'lessons.v1', topic, lessons, findings };
 }
 
 function collectLessons(paths: ProjectPaths, topic: string | null, requestTokens: string[]): CandidateLesson[] {
@@ -51,7 +48,16 @@ function collectLessons(paths: ProjectPaths, topic: string | null, requestTokens
     ...taskLessons(paths, topic, requestTokens),
     ...decisionLessons(paths, topic, requestTokens),
     ...incidentLessons(paths, topic, requestTokens),
+    ...deliveryLessons(paths, topic, requestTokens),
   ];
+}
+
+function deliveryLessons(paths: ProjectPaths, topic: string | null, requestTokens: string[]): CandidateLesson[] {
+  return listApprovedDeliveryKnowledge(paths, topic ?? undefined).map(record => {
+    const sourceRef: AssistSourceRef = { kind: 'task', id: `${record.specCode}:${record.taskId}`, summary: record.summary };
+    const score = scoreCandidate(topic, `${record.summary} ${record.affectedCriteria.join(' ')}`, requestTokens, 28);
+    return { id: `delivery:${record.id}`, topic: record.topic, title: `Approved delivery knowledge: ${record.id}`, detail: record.summary, sourceRefs: [sourceRef], confidence: confidenceFor(score), score };
+  });
 }
 
 function taskLessons(paths: ProjectPaths, topic: string | null, requestTokens: string[]): CandidateLesson[] {
@@ -66,13 +72,12 @@ function taskLessons(paths: ProjectPaths, topic: string | null, requestTokens: s
         ?? summaryFromJson(failedStep?.outputJson)
         ?? `Task ${task.id} for ${task.specCode} did not complete successfully.`,
     );
-    const title = `Previous task failure: ${task.specCode} ${task.id}`;
     const sourceRef = taskSource(task);
     const score = scoreCandidate(topic, sourceRef.summary ?? '', requestTokens, task.status === 'failed' ? 30 : 20);
     return {
       id: `task:${task.specCode}:${task.id}`,
       topic: topicFromSpecCode(task.specCode),
-      title,
+      title: `Previous task failure: ${task.specCode} ${task.id}`,
       detail,
       sourceRefs: [sourceRef],
       confidence: confidenceFor(score),
@@ -128,6 +133,18 @@ function incidentLessons(paths: ProjectPaths, topic: string | null, requestToken
     });
 }
 
+function scoreCandidate(topic: string | null, text: string, requestTokens: string[], base: number): number {
+  const tokenMatches = requestTokens.filter(token => text.toLowerCase().includes(token)).length;
+  if (!topic && requestTokens.length > 0 && tokenMatches === 0) return 0;
+  return base + (topic ? 40 : 0) + tokenMatches * 5;
+}
+
+function confidenceFor(score: number): Lesson['confidence'] {
+  if (score >= 60) return 'high';
+  if (score >= 30) return 'medium';
+  return 'low';
+}
+
 function hasFailedStep(task: TaskRecord): boolean {
   return Boolean(task.steps?.some(step => step.status === 'failed'));
 }
@@ -140,20 +157,8 @@ function taskSource(task: TaskRecord): AssistSourceRef {
   };
 }
 
-function scoreCandidate(topic: string | null, text: string, requestTokens: string[], base: number): number {
-  const tokenMatches = requestTokens.filter(token => text.toLowerCase().includes(token)).length;
-  return base + (topic ? 40 : 0) + tokenMatches * 5;
-}
-
-function confidenceFor(score: number): Lesson['confidence'] {
-  if (score >= 60) return 'high';
-  if (score >= 30) return 'medium';
-  return 'low';
-}
-
 function topicFromSpecCode(specCode: string): string | null {
-  const match = specCode.match(/^(.+)-L\d/);
-  return match?.[1] ?? null;
+  return specCode.match(/^(.+)-L\d/)?.[1] ?? null;
 }
 
 function tokenize(input: string): string[] {

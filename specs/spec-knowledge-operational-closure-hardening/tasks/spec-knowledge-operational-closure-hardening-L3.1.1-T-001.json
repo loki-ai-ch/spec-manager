@@ -1,0 +1,124 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、spec-knowledge-operational-closure-hardening-L2.1、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read L3/L2 specs and inspected activation, brief, workflow, CLI presenter, and existing tests.\",\"files\":[\"specs/spec-knowledge-operational-closure-hardening/spec-knowledge-operational-closure-hardening-L3.1.1.md\",\"src/core/knowledge-activation.ts\",\"src/core/capability-brief.ts\",\"src/core/workflow-surface.ts\"]}",
+      "reportedAt": "2026-07-17T01:59:32.005Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 capability-types.ts 和 knowledge-activation.ts 分离推荐与 selectedTopic",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added selectedTopic/selectionRequired projection and changed ambiguous/create-new to keep selectedTopic null while candidate/explicit topics select deterministically.\",\"files\":[\"src/core/capability-types.ts\",\"src/core/knowledge-activation.ts\"]}",
+      "reportedAt": "2026-07-17T01:59:40.166Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 capability-brief.ts、workflow-surface.ts 和 CLI 接入 topic selection gate",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated Brief and Workflow to stop on unresolved topic selection and surface explicit candidate/create-new commands without adopting inferred tokens.\",\"files\":[\"src/core/capability-brief.ts\",\"src/core/workflow-surface.ts\",\"src/cli/__tests__/usability.test.ts\"]}",
+      "reportedAt": "2026-07-17T01:59:51.380Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 extractModuleConstraints 增加项目根 lexical 和 real-path containment",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added lexical root containment before exists checks and realpath containment for symlink escapes with stable outside-root/invalid-path reasons.\",\"files\":[\"src/core/knowledge-activation.ts\",\"src/core/capability-types.ts\",\"src/core/__tests__/knowledge-activation.test.ts\"]}",
+      "reportedAt": "2026-07-17T01:59:58.631Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改模块路径状态判定要求 historical knowledge evidence",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Changed missing module paths to historical-path only when the source knowledge state or source reference carries historical evidence; current/unknown missing paths now report missing-no-history.\",\"files\":[\"src/core/knowledge-activation.ts\",\"src/core/__tests__/capability-brief.test.ts\",\"src/core/__tests__/knowledge-activation.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:00:05.056Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "扩展 activation、Brief、Workflow 和 CLI topic/path 回归测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Expanded regression coverage for candidate/ambiguous/create-new topic selection, traversal escape, symlink escape, current path, missing path, and CLI text projection.\",\"files\":[\"src/core/__tests__/knowledge-activation.test.ts\",\"src/core/__tests__/workflow-surface.test.ts\",\"src/core/__tests__/capability-brief.test.ts\",\"src/cli/__tests__/usability.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:00:13.998Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build、全量测试和角色 Agent CLI smoke",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: targeted Vitest 88 tests, npm run lint, npm run build, npm test 1035 tests, and CLI smoke selected agent-install-surface for the role-agent request.\",\"files\":[]}",
+      "reportedAt": "2026-07-17T02:01:07.084Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-17T01:53:38.598Z",
+  "finishedAt": "2026-07-17T02:02:17.541Z",
+  "created": "2026-07-17T01:53:38.590Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-17T02:01:35.011Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-17T02:01:45.718Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full Vitest suite passed: 90 files, 1035 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-17T02:01:51.583Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-004",
+      "command": "node dist/cli/index.js next '让 L0 L1 L2 角色 Agent 协作' --json",
+      "exitCode": 0,
+      "summary": "CLI smoke passed and selected agent-install-surface candidate",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-4"
+      ],
+      "created": "2026-07-17T02:01:59.257Z",
+      "layer": "smoke"
+    }
+  ]
+}

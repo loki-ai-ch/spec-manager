@@ -7,6 +7,7 @@ import type {
   DeliverySummaryReport,
   DeliveryVerificationSummary,
 } from './capability-types.js';
+import { findDeliveryKnowledge } from './delivery-knowledge.js';
 
 export function buildDeliverySummary(paths: ProjectPaths, taskId: string, specCode: string): DeliverySummaryReport {
   const spec = requireSpec(paths, specCode);
@@ -23,6 +24,7 @@ export function buildDeliverySummary(paths: ProjectPaths, taskId: string, specCo
     ...verifications.flatMap(verification => verification.artifacts),
   ]);
   const findings = buildFindings(task.status, verifications, acceptance.humanAcceptance, acceptance.residualRisk, specCode, taskId);
+  const deliveryKnowledge = findDeliveryKnowledge(paths, specCode, taskId);
 
   return {
     schemaVersion: 'delivery-summary.v1',
@@ -45,6 +47,7 @@ export function buildDeliverySummary(paths: ProjectPaths, taskId: string, specCo
     residualRisk: acceptance.residualRisk,
     nextAction: buildNextAction(task.status, verifications, acceptance.humanAcceptance, acceptance.residualRisk, taskId, specCode),
     findings,
+    ...(deliveryKnowledge ? { deliveryKnowledge: { id: deliveryKnowledge.id, conclusion: deliveryKnowledge.conclusion, status: deliveryKnowledge.status, summary: deliveryKnowledge.summary } } : {}),
   };
 }
 

@@ -21,7 +21,10 @@ import {
 import { hit } from '../core/audit.js';
 import { listDecisions } from '../core/decision.js';
 import { suggestAfterSpecCommand } from '../core/usability.js';
-import { createDefaultCliActionContext, fail, getWritePaths, requireInitialized, runCliAction } from './common.js';
+import { createDefaultCliActionContext, fail, getWritePaths, renderJson, requireInitialized, runCliAction, splitCsv } from './common.js';
+import { HistoryDispositionActionSchema } from '../schemas/spec.js';
+import { attachHistorySources, buildHistoryReviewReport, setHistoryDisposition } from '../core/history-review.js';
+import { assessScopePlan, setScopePlan } from '../core/scope-readiness.js';
 import {
   printSpecTransitionResult,
   printSpecUpdateResult,
@@ -33,6 +36,92 @@ import {
 
 export function registerSpec(program: Command): void {
   const cmd = program.command('spec').description('Spec 增删改查');
+
+  const scope = cmd.command('scope').description('规格计划子级范围');
+  scope.command('show <code>').option('--json', '输出 JSON', false)
+    .action((code: string, opts: { json?: boolean }) => {
+      const report = assessScopePlan(getWritePaths(), code);
+      console.log(opts.json ? renderJson(report) : `${report.specCode}: ${report.mode}/${report.status}`);
+    });
+  scope.command('set <code>')
+    .requiredOption('--mode <mode>', 'open/fixed')
+    .option('--children <items>', 'code:title 逗号列表')
+    .option('--reason <reason>', 'open 范围说明')
+    .option('--leaf', 'fixed 叶节点', false)
+    .action((code: string, opts: { mode: string; children?: string; reason?: string; leaf?: boolean }) => {
+      if (opts.mode !== 'open' && opts.mode !== 'fixed') throw new Error(`SCOPE_PLAN_MODE_INVALID: ${opts.mode}`);
+      const plannedChildren = (splitCsv(opts.children) ?? []).map(item => {
+        const separator = item.indexOf(':');
+        if (separator < 1) throw new Error(`SCOPE_PLAN_CHILD_INVALID: ${item}`);
+        return { code: item.slice(0, separator), title: item.slice(separator + 1), required: true };
+      });
+      const plan = setScopePlan(getWritePaths(), code, {
+        mode: opts.mode, plannedChildren, leaf: Boolean(opts.leaf), reason: opts.reason,
+      });
+      console.log(`✓ scopePlan saved: ${code} ${plan.mode} children=${plan.plannedChildren.length}`);
+    });
+
+  const history = cmd.command('history').description('规格历史来源处置');
+  history.command('show <code>')
+    .option('--json', '输出 JSON', false)
+    .action((code: string, opts: { json?: boolean }) => {
+      const report = buildHistoryReviewReport(getWritePaths(), code);
+      if (opts.json) return console.log(renderJson(report));
+      console.log(`spec: ${report.specCode}`);
+      console.log(`adopted: ${report.adopted}`);
+      if (report.noRelevantHistoryReason) console.log(`noRelevantHistoryReason: ${report.noRelevantHistoryReason}`);
+      for (const item of report.items) {
+        console.log(`- ${item.sourceRef}: ${item.knowledge.state}/${item.knowledge.basis} -> ${item.disposition?.action ?? 'unresolved'}`);
+        if (item.disposition?.reason) console.log(`  reason: ${item.disposition.reason}`);
+        if (item.disposition?.affectedCriteria.length) console.log(`  criteria: ${item.disposition.affectedCriteria.join(', ')}`);
+      }
+    });
+  history.command('attach <code>')
+    .option('--sources <items>', '逗号分隔 canonical source refs')
+    .option('--reason-if-empty <reason>', '没有相关历史时的人工说明')
+    .action((code: string, opts: { sources?: string; reasonIfEmpty?: string }) => {
+      const review = attachHistorySources({
+        paths: getWritePaths(),
+        specCode: code,
+        sources: splitCsv(opts.sources) ?? [],
+        noRelevantHistoryReason: opts.reasonIfEmpty,
+      });
+      console.log(`✓ history sources attached: ${review.sources.length}`);
+    });
+  history.command('set <code>')
+    .requiredOption('--source <sourceRef>', '已附加的 canonical source ref')
+    .requiredOption('--action <action>', 'reuse/change/reject/unknown')
+    .option('--reason <reason>', 'change/reject/unknown 的理由')
+    .option('--criteria <items>', '逗号分隔当前 Spec AC IDs')
+    .action((code: string, opts: { source: string; action: string; reason?: string; criteria?: string }) => {
+      const action = HistoryDispositionActionSchema.safeParse(opts.action);
+      if (!action.success) throw new Error(`HISTORY_ACTION_INVALID: ${opts.action}`);
+      const review = setHistoryDisposition({
+        paths: getWritePaths(),
+        specCode: code,
+        sourceRef: opts.source,
+        action: action.data,
+        reason: opts.reason,
+        affectedCriteria: splitCsv(opts.criteria),
+      });
+      console.log(`✓ history disposition saved: ${opts.source} -> ${action.data}`);
+      console.log(`  reviewedAt: ${review.reviewedAt}`);
+    });
+
+  const learning = cmd.command('learning').description('L3 交付学习策略');
+  learning.command('set <code>')
+    .requiredOption('--enabled <value>', 'true/false')
+    .option('--reason <reason>', '禁用时必填')
+    .action((code: string, opts: { enabled: string; reason?: string }) => {
+      if (opts.enabled !== 'true' && opts.enabled !== 'false') throw new Error(`DELIVERY_LEARNING_INVALID: ${opts.enabled}`);
+      const enabled = opts.enabled === 'true';
+      if (!enabled && !opts.reason?.trim()) throw new Error('DELIVERY_LEARNING_REASON_REQUIRED');
+      updateSpec(getWritePaths(), code, {
+        deliveryLearning: enabled,
+        deliveryLearningReason: enabled ? undefined : opts.reason?.trim(),
+      });
+      console.log(`✓ delivery learning ${code}: ${enabled ? 'enabled' : 'disabled'}`);
+    });
 
   cmd
     .command('new <level>')

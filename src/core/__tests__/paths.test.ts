@@ -20,6 +20,10 @@ afterEach(() => {
   rmSync(root, { recursive: true, force: true });
 });
 
+it('resolves the knowledge registry inside the project config directory', () => {
+  expect(paths.knowledgeFile).toBe(join(root, '.spec-manager', 'knowledge.json'));
+});
+
 /**
  * 平铺布局：默认写 specs/<topic>/<code>.md；legacy 文件保留 -<date> 后缀用于兼容测试。
  */

@@ -50,6 +50,49 @@ describe('buildWorkflowNextProjection', () => {
     expect(projection.suggestedCommands).toContain('spec-manager flow status --topic auth');
   });
 
+  it('routes to a high-confidence canonical topic instead of the inferred token', () => {
+    createSpec({ paths: project.paths, code: 'agent-install-L1', level: 'L1', title: 'Agent install', topic: 'agent-install', parentCode: null });
+    updateSpec(project.paths, 'agent-install-L1', { content: completeL1Content(), aiSummary: 'Agent collaboration and install workflow' });
+
+    const projection = buildWorkflowNextProjection(project.paths, { request: '让 L0 L1 L2 角色 Agent 协作' });
+
+    expect(projection.topic).toBe('agent-install');
+    expect(projection.status).toBe('needs_user_approval');
+    expect(projection.topicRecommendation).toMatchObject({
+      selection: 'candidate', selectionRequired: false, createNewAllowed: true,
+      candidates: [expect.objectContaining({ topic: 'agent-install', confidence: expect.any(Number) })],
+    });
+    expect(projection.nextAction).toContain('spec-manager spec confirm agent-install-L1');
+  });
+
+  it('stops at a topic selection gate for ambiguous canonical topics', () => {
+    createSpec({ paths: project.paths, code: 'alpha-L1', level: 'L1', title: 'Shared Workflow', topic: 'alpha', parentCode: null });
+    updateSpec(project.paths, 'alpha-L1', { content: completeL1Content(), aiSummary: 'shared workflow' });
+    createSpec({ paths: project.paths, code: 'beta-L1', level: 'L1', title: 'Shared Workflow', topic: 'beta', parentCode: null });
+    updateSpec(project.paths, 'beta-L1', { content: completeL1Content(), aiSummary: 'shared workflow' });
+
+    const projection = buildWorkflowNextProjection(project.paths, { request: 'shared workflow' });
+
+    expect(projection.topic).toBeNull();
+    expect(projection.status).toBe('needs_l1');
+    expect(projection.blockingReason).toContain('Multiple existing topics match');
+    expect(projection.topicRecommendation).toMatchObject({ selection: 'ambiguous', selectionRequired: true });
+    expect(projection.suggestedCommands).toEqual([
+      'spec-manager brief "shared workflow" --topic alpha',
+      'spec-manager brief "shared workflow" --topic beta',
+    ]);
+  });
+
+  it('does not adopt an inferred token for create-new requests', () => {
+    const projection = buildWorkflowNextProjection(project.paths, { request: 'auth login support' });
+
+    expect(projection.topic).toBeNull();
+    expect(projection.status).toBe('needs_l1');
+    expect(projection.topicRecommendation).toMatchObject({ selection: 'create-new', selectionRequired: true });
+    expect(projection.nextAction).toBe('spec-manager spec new L1 --topic auth --title "..."');
+    expect(projection.suggestedCommands).toContain('spec-manager brief "auth login support" --topic auth');
+  });
+
   it('returns needs_spec_update for a draft placeholder spec', () => {
     createSpec({ paths: project.paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
 

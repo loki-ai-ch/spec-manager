@@ -1,0 +1,132 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-operational-closure-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、spec-knowledge-operational-closure-L2.1、前序 L3、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "toolName": "Read",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent/previous specs, completion transaction, Delivery Knowledge, TaskEvidence and focused tests; confirmed nested withProjectTransaction reuses active FileTransaction and rolls back registry writes.\"}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:22:18.681Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 delivery-knowledge.ts 新增确定性 ensureDeliveryKnowledgeDraft",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added ensureDeliveryKnowledgeDraft and deterministic payload construction from successful verification and covered critical AC facts; existing records are revalidated and reused.\",\"files\":[\"src/core/delivery-knowledge.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:26:10.396Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 task-completion.ts 在外层事务内暂存自动 draft",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Integrated ensure-draft into runTaskCompletionUnlocked through the active withProjectTransaction so later failures roll back registry, Task and cascade together.\",\"files\":[\"src/core/task-completion.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:26:10.600Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 runDeliveryKnowledgeGate 接入 ensure 语义和稳定错误",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Replaced manual-only delivery gate with created/reused ensure results and stable missing evidence validation.\",\"files\":[\"src/core/task-completion.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:26:10.793Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "核对 delivery-knowledge.ts 与 capability-brief.ts 保持 approved-only 召回",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Preserved listApprovedDeliveryKnowledge as the only retrieval source; focused Brief tests confirm drafts remain excluded.\",\"files\":[\"src/core/delivery-knowledge.ts\",\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:26:11.003Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "扩展 delivery-knowledge、task-completion 和 capability-brief 事务测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added automatic creation, human draft reuse and post-draft R18 rollback tests; 36 focused tests pass.\",\"files\":[\"src/core/__tests__/delivery-knowledge.test.ts\",\"src/core/__tests__/task-completion.test.ts\",\"src/core/__tests__/capability-brief.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:26:11.198Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build 和全量测试",
+      "status": "succeeded",
+      "toolName": "Bash",
+      "outputJson": "{\"summary\":\"36 focused tests, lint/build and 89-file 1025-test full suite passed; V-001..V-003 cover AC-1..AC-4.\",\"files\":[]}",
+      "latencyMs": 9000,
+      "reportedAt": "2026-07-16T10:31:06.159Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T10:21:31.970Z",
+  "finishedAt": "2026-07-16T10:31:29.037Z",
+  "created": "2026-07-16T10:21:31.964Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Four critical AC require transactional and approved-only verification evidence",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/delivery-knowledge.test.ts src/core/__tests__/task-completion.test.ts src/core/__tests__/capability-brief.test.ts",
+      "exitCode": 0,
+      "summary": "36 focused tests passed including automatic draft, human draft reuse, approved-only retrieval and post-draft transaction rollback",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:30:39.982Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:30:40.185Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "89 files and 1025 tests passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:30:40.378Z",
+      "layer": "smoke"
+    }
+  ]
+}

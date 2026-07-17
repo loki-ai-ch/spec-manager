@@ -1,0 +1,111 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-loop-L3.1.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "读取 spec-knowledge-loop-L3.1.2 spec-knowledge-loop-L2.1 和前序 L3 规格",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"已读取 spec-knowledge-loop-L3.1.2, spec-knowledge-loop-L2.1 和 spec-knowledge-loop-L3.1.1 规格内容\", \"files\": [\"/tmp/spec-knowledge-loop-L3.1.2-content.md\", \"/tmp/spec-knowledge-loop-L2.1-content.md\", \"/tmp/spec-knowledge-loop-L3.1.1-content.md\"]}",
+      "latencyMs": 500,
+      "reportedAt": "2026-07-16T01:47:00.325Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 src/core/capability-brief.ts 集成检索编排",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"修改 src/core/capability-brief.ts 集成检索编排\", \"files\": [\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T01:49:30.772Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 src/core/lessons.ts 支持跨 topic 经验",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"修改 src/core/lessons.ts 支持跨 topic 经验\", \"files\": [\"src/core/lessons.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T01:50:56.744Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 src/core/guided-assist.ts 支持全库召回",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"修改 src/core/guided-assist.ts 支持全库召回\", \"files\": [\"src/core/guided-assist.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T01:52:30.523Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 src/cli/brief-presenter.ts 更新输出格式",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"修改 src/cli/brief-presenter.ts 更新输出格式\", \"files\": [\"src/cli/brief-presenter.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T01:53:28.225Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "创建 __tests__/integration/ 目录下的集成测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"创建 __tests__/integration/ 目录下的集成测试\", \"files\": [\"src/core/__tests__/integration/retrieval-integration.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T01:54:06.964Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "创建 __tests__/compatibility/ 目录下的兼容性测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"创建 __tests__/compatibility/ 目录下的兼容性测试\", \"files\": [\"src/core/__tests__/compatibility/brief-compatibility.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T01:54:54.922Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证 npm test 通过所有测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\": \"验证 npm test 通过所有测试\", \"tests\": {\"passed\": 78, \"failed\": 0, \"total\": 78}}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T01:57:07.090Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "tool_action",
+      "name": "验证 npm run build 成功",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"TypeScript 构建成功；81 个测试文件、972 个测试全部通过；原生 dist CLI 可启动并完成跨 topic 与显式 topic smoke 验证\",\"commands\":[\"npm run build\",\"npm test\",\"node dist/cli/index.js brief\"]}",
+      "latencyMs": 6000,
+      "reportedAt": "2026-07-16T02:38:25.406Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T01:46:01.657Z",
+  "finishedAt": "2026-07-16T02:39:26.833Z",
+  "created": "2026-07-16T01:46:01.651Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build && npm test && node dist/cli/index.js brief smoke",
+      "exitCode": 0,
+      "summary": "构建成功，81 个测试文件与 972 个测试通过，原生 CLI 启动及跨 topic/显式 topic 检索 smoke 通过",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-16T02:38:42.990Z",
+      "layer": "functional"
+    }
+  ]
+}

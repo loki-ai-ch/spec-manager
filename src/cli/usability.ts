@@ -43,7 +43,7 @@ export function registerUsabilityCommands(program: Command): void {
         const brief = buildAgentBrief({ paths: writePaths, request, topic: opts.topic });
         const next = buildWorkflowNextProjection(paths, {
           request,
-          topic: opts.topic ?? brief.topic ?? undefined,
+          topic: opts.topic,
         });
         if (opts.json) {
           console.log(JSON.stringify({ brief, next }, null, 2));

@@ -1,0 +1,107 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、父 L2、前序 L3、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, previous Task, Delivery Knowledge, metrics, evidence, profile metrics and CLI paths.\",\"files\":[]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:46.265Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 delivery-knowledge.ts 抽取统一来源校验器",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extracted a shared Delivery Knowledge source validator for Task, evidence and AC references.\",\"files\":[\"src/core/delivery-knowledge.ts\"]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:46.474Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 reviewDeliveryKnowledge 在 approve 事务内重新校验",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Revalidated all sources inside approve transactions and preserved draft on failures.\",\"files\":[\"src/core/delivery-knowledge.ts\"]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:46.705Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-metrics.ts 增加完整覆盖率和 invalidProjections",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Upgraded knowledge metrics with topic filtering, coverage ratios, retrieval, critical evidence and invalid projections.\",\"files\":[\"src/core/knowledge-metrics.ts\"]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:46.907Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "新增 knowledge-migration.ts 实现只读候选批次",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added deterministic read-only knowledge migration candidate batches.\",\"files\":[\"src/core/knowledge-migration.ts\"]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:47.104Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "修改 project CLI 扩展 metrics 和 migration preview",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added project knowledge migration preview CLI and retained metrics command compatibility.\",\"files\":[\"src/cli/project.ts\"]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:47.303Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "补充来源漂移、topic 指标和零写入测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added AC drift, metrics v2, migration zero-write and store-aware tests; targeted suite passed 16 tests.\",\"files\":[\"src/core/__tests__/delivery-knowledge.test.ts\",\"src/core/__tests__/knowledge-metrics.test.ts\",\"src/core/__tests__/knowledge-migration.test.ts\"]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:47.545Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build、全量测试和 CLI smoke",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Lint/build, CLI metrics/migration smoke, and full suite passed: 89 files and 1021 tests.\",\"files\":[]}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T09:09:47.769Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T09:04:36.751Z",
+  "finishedAt": "2026-07-16T09:11:57.010Z",
+  "created": "2026-07-16T09:04:36.743Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Final knowledge review and metrics slice requires full critical AC evidence.",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "delivery/metrics/migration tests; lint; build; full test; CLI smoke",
+      "exitCode": 0,
+      "summary": "Source revalidation and zero-write migration tests passed; lint/build and CLI smoke passed; full suite 89 files and 1021 tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T09:10:14.298Z",
+      "layer": "smoke"
+    }
+  ]
+}

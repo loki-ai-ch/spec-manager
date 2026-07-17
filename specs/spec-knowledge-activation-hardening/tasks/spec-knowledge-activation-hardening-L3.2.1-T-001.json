@@ -1,0 +1,107 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、父 L2、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, task history, config/schema/policy/lifecycle call chains and plan template.\",\"files\":[]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:40.755Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "新增 knowledge-governance-adoption.ts 实现 preview/read/enable",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added knowledge governance adoption preview/read/enable with a persisted enabledAt baseline.\",\"files\":[\"src/core/knowledge-governance-adoption.ts\"]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:40.965Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 Spec schema 和 IO 增加 deliveryLearningReason",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Extended Spec schema and IO patching with deliveryLearningReason while retaining the legacy boolean.\",\"files\":[\"src/schemas/spec.ts\",\"src/core/spec-io.ts\",\"src/core/spec-policy.ts\"]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:41.161Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 spec policy 和 handler 接入 confirm/freeze 门禁",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added post-baseline confirm/freeze validators for history, scope and learning policy.\",\"files\":[\"src/core/spec-policy.ts\"]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:41.369Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 lifecycle.ts 强制新资产 scope 完整性",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added scope-plan-required lifecycle blocking for governed new assets while retaining legacy behavior.\",\"files\":[\"src/core/lifecycle.ts\"]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:41.569Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "修改 project CLI 增加 adoption preview 和 enable",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added project knowledge adoption preview/enable and spec learning set CLI commands.\",\"files\":[\"src/cli/project.ts\",\"src/cli/spec.ts\"]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:41.767Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "补充 schema、policy、CLI、lifecycle 和 store-aware 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added adoption baseline and transition gate tests; targeted suite passed 42 tests.\",\"files\":[\"src/core/__tests__/knowledge-governance-adoption.test.ts\"]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:41.995Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build 和全量测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Lint, build and full suite passed: 88 files and 1019 tests.\",\"files\":[]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T09:02:42.224Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T08:36:59.372Z",
+  "finishedAt": "2026-07-16T09:03:22.245Z",
+  "created": "2026-07-16T08:36:59.364Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Governance transition gates require full critical AC evidence.",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "adoption gate tests; lint; build; full test",
+      "exitCode": 0,
+      "summary": "Adoption and transition tests passed; lint/build passed; full suite 88 files and 1019 tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T09:02:58.916Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -84,7 +84,8 @@ describe('createDecision — R18 允许 confirmed/implemented L1', () => {
   });
 
   it('L2 spec 不可建决策', () => {
-    const l1Code = createL1Implemented();
+    const l1Code = createL1Draft();
+    updateSpec(paths, l1Code, { status: 'confirmed' });
     const l2Code = generateSpecCode('auth', 'L2');
     createSpec({ paths, code: l2Code, level: 'L2', title: 'L2', topic: 'auth', parentCode: l1Code });
     expect(() => createDecision({ paths, docCode: l2Code, topic: 'auth', what: 'X' })).toThrow(/只能关联 L1/);

@@ -1,27 +1,27 @@
 {
   "rules": {
-    "R1": 206,
-    "R2": 207,
+    "R1": 252,
+    "R2": 234,
     "R3": 2,
-    "R4": 185,
+    "R4": 215,
     "R5": 11,
     "R6": 0,
     "R7": 0,
     "R8": 0,
-    "R9": 207,
+    "R9": 234,
     "R10": 15,
     "R11": 0,
     "R12": 4,
-    "R13": 205,
+    "R13": 253,
     "R14": 0,
     "R15": 0,
-    "R16": 27,
+    "R16": 32,
     "R17": 0,
-    "R18": 36,
-    "R19": 188,
+    "R18": 42,
+    "R19": 222,
     "R20": 0,
     "R21": 0,
-    "R22": 205,
+    "R22": 250,
     "R23": 0,
     "R24": 0
   },
@@ -3358,9 +3358,1629 @@
       "timestamp": "2026-07-15T10:07:46.977Z",
       "specCode": "l3-task-start-shortcut-L3.1.2",
       "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T12:57:35.887Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T12:57:36.056Z",
+      "specCode": "value-alignment-fixes-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T12:57:36.218Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T13:00:57.253Z",
+      "specCode": "guided-assist-workflow-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T13:00:57.416Z",
+      "specCode": "delivery-summary-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T13:00:57.571Z",
+      "specCode": "adaptive-profile-intelligence-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-15T13:05:05.156Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T13:05:05.160Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T13:05:22.430Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T13:05:22.431Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T13:05:22.432Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T13:06:29.936Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T13:06:29.937Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T13:06:29.937Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T13:08:42.744Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-15T13:10:42.659Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-15T13:10:42.660Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-15T13:18:12.413Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T13:18:28.957Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T13:18:28.958Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T13:18:28.959Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-15T13:19:06.417Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-15T13:19:06.418Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-15T13:19:06.419Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-15T13:20:17.139Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T01:27:41.146Z",
+      "specCode": "spec-knowledge-loop-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T01:28:16.940Z",
+      "specCode": "spec-knowledge-loop-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T01:28:16.941Z",
+      "specCode": "spec-knowledge-loop-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T01:28:16.941Z",
+      "specCode": "spec-knowledge-loop-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T01:28:21.045Z",
+      "specCode": "spec-knowledge-loop-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T01:28:47.971Z",
+      "specCode": "spec-knowledge-loop-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T01:28:47.972Z",
+      "specCode": "spec-knowledge-loop-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T01:28:47.972Z",
+      "specCode": "spec-knowledge-loop-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T02:36:45.999Z",
+      "specCode": "spec-knowledge-loop-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-16T02:39:26.861Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T02:40:20.426Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T02:40:20.602Z",
+      "specCode": "spec-knowledge-loop-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T02:40:20.766Z",
+      "specCode": "spec-knowledge-loop-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T02:46:54.099Z",
+      "specCode": "spec-knowledge-loop-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-16T02:49:23.831Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T02:49:23.836Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T02:49:41.099Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T02:49:41.101Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T02:49:41.101Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T02:50:44.281Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T02:50:44.282Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T02:50:44.283Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T02:52:24.796Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T03:11:29.605Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T03:11:29.606Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T03:19:31.067Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T03:19:40.289Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T03:19:40.290Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T03:19:40.290Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T03:20:04.670Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T03:21:20.554Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T03:21:20.555Z",
+      "specCode": "spec-knowledge-governance-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T03:25:00.404Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T03:25:00.593Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T03:25:00.594Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T03:25:00.594Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T03:25:01.362Z",
+      "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T03:25:01.549Z",
+      "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T03:25:01.550Z",
+      "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T03:25:01.551Z",
+      "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T03:25:46.741Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T03:25:46.742Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T03:25:46.743Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T03:27:52.427Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T03:28:00.771Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T03:28:00.772Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T03:42:41.707Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T03:50:57.267Z",
+      "specCode": "spec-knowledge-governance-L3.1.1-validity",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T03:51:55.127Z",
+      "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T03:51:55.128Z",
+      "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-16T04:07:11.812Z",
+      "specCode": "spec-knowledge-governance-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T05:34:22.473Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T05:34:22.691Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T05:34:22.692Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T05:34:22.693Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T05:34:43.845Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T05:40:53.457Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T05:40:53.458Z",
+      "specCode": "spec-knowledge-governance-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T05:45:18.137Z",
+      "specCode": "spec-knowledge-governance-L3.2.1-scope",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T05:45:18.358Z",
+      "specCode": "spec-knowledge-governance-L3.2.1-scope",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T05:45:18.359Z",
+      "specCode": "spec-knowledge-governance-L3.2.1-scope",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T05:45:18.360Z",
+      "specCode": "spec-knowledge-governance-L3.2.1-scope",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T05:45:18.931Z",
+      "specCode": "spec-knowledge-governance-L3.2.2-learning",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T05:45:19.123Z",
+      "specCode": "spec-knowledge-governance-L3.2.2-learning",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T05:45:19.123Z",
+      "specCode": "spec-knowledge-governance-L3.2.2-learning",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T05:45:19.124Z",
+      "specCode": "spec-knowledge-governance-L3.2.2-learning",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T05:47:42.703Z",
+      "specCode": "spec-knowledge-governance-L3.2.1-scope",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T05:47:42.704Z",
+      "specCode": "spec-knowledge-governance-L3.2.1-scope",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T07:18:17.219Z",
+      "specCode": "spec-knowledge-governance-L3.2.2-learning",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T07:18:17.220Z",
+      "specCode": "spec-knowledge-governance-L3.2.2-learning",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T07:33:37.274Z",
+      "metadata": {
+        "action": "knowledge.set",
+        "sourceRef": "lesson:delivery:DK-001",
+        "state": "current",
+        "idempotent": false
+      },
+      "countRule": false,
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-16T07:54:10.767Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T07:54:10.772Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T07:54:26.994Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T07:54:26.995Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T07:54:26.995Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T07:57:32.441Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T07:57:32.441Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T07:57:32.442Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T07:58:35.208Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:01:32.566Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:01:32.567Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T08:05:05.033Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:05:05.238Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:05:05.239Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:05:05.240Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T08:05:05.437Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:05:05.640Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:05:05.642Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:05:05.643Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:05:40.312Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:05:40.313Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:05:40.314Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:05:40.523Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:05:40.524Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:05:40.524Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T08:06:26.765Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T08:06:26.970Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:08:47.255Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:08:47.258Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:08:47.502Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:08:47.503Z",
+      "specCode": "spec-knowledge-activation-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T08:12:01.801Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T08:12:02.036Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T08:12:02.233Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T08:12:02.432Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:15:23.716Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:15:23.717Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:15:23.717Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:15:23.980Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:15:23.981Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:15:23.982Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:15:24.183Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:15:24.184Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:15:24.185Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:15:24.411Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:15:24.413Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:15:24.415Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:16:36.934Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:16:36.935Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:16:36.935Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:16:37.142Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:16:37.143Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:16:37.144Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:16:37.342Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:16:37.343Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:16:37.344Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T08:16:37.545Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T08:16:37.546Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T08:16:37.547Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T08:17:38.458Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T08:17:38.469Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T08:17:38.471Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T08:17:38.474Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:19:07.776Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:19:07.778Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:19:07.985Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:19:07.986Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:19:08.190Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:19:08.191Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T08:19:08.396Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T08:19:08.397Z",
+      "specCode": "spec-knowledge-activation-hardening-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-16T09:11:57.044Z",
+      "specCode": "spec-knowledge-activation-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-16T09:32:04.612Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:32:04.617Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:32:25.584Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:32:25.585Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:32:25.586Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T09:33:36.067Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T09:36:33.805Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T09:36:33.806Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:36:58.227Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:37:03.819Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:40:03.520Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:40:03.521Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:40:03.522Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:40:03.523Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:40:03.524Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:40:13.773Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:40:13.774Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:40:13.775Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:42:51.235Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:42:51.437Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:43:00.963Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:43:00.965Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:43:00.966Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:43:01.179Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:43:01.180Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:43:01.181Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T09:43:16.536Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T09:43:16.551Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T09:43:16.562Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T09:47:19.733Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T09:47:19.734Z",
+      "specCode": "spec-knowledge-operational-closure-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T09:47:19.948Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T09:47:19.949Z",
+      "specCode": "spec-knowledge-operational-closure-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:48:34.605Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:48:34.802Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:48:35.000Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T09:48:35.199Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:51:47.565Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:51:47.566Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:51:47.567Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:51:47.791Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:51:47.792Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:51:47.793Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:51:47.991Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:51:47.992Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:51:47.993Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:51:48.196Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:51:48.197Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:51:48.198Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:52:25.991Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:52:25.992Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:52:25.993Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T09:53:49.868Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T09:53:49.869Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T09:53:49.870Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T10:10:11.369Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T10:10:11.371Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T10:10:11.584Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T10:10:11.586Z",
+      "specCode": "spec-knowledge-operational-closure-L3.1.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T10:10:11.837Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T10:10:11.838Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T10:10:12.047Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T10:10:12.048Z",
+      "specCode": "spec-knowledge-operational-closure-L3.2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-16T11:44:00.602Z",
+      "specCode": "spec-knowledge-operational-closure-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R16",
+      "timestamp": "2026-07-16T12:11:13.737Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T12:11:13.742Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T12:12:45.725Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T12:12:45.726Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T12:12:45.727Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T12:13:06.023Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-16T12:20:32.721Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-16T12:20:32.723Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T12:20:33.134Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-16T12:20:33.343Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T12:22:48.433Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T12:22:48.435Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T12:22:48.435Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-16T12:22:48.657Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-16T12:22:48.658Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-16T12:22:48.659Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T12:23:47.653Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-16T12:23:47.658Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-17T00:51:36.169Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-17T00:51:36.170Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-17T00:51:36.387Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-17T00:51:36.388Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L2.2",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-17T00:51:37.006Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R4",
+      "timestamp": "2026-07-17T00:51:37.222Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-17T00:53:49.891Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-17T00:53:49.893Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-17T00:53:49.894Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R1",
+      "timestamp": "2026-07-17T00:53:57.793Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R13",
+      "timestamp": "2026-07-17T00:53:57.794Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R22",
+      "timestamp": "2026-07-17T00:53:57.795Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R19",
+      "timestamp": "2026-07-17T01:50:38.277Z",
+      "specCode": "l3-task-start-shortcut-L2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-17T01:53:19.222Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-17T01:53:19.224Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.1.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R2",
+      "timestamp": "2026-07-17T02:02:33.567Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R9",
+      "timestamp": "2026-07-17T02:02:33.568Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-17T02:10:29.487Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
+    },
+    {
+      "ruleId": "R18",
+      "timestamp": "2026-07-17T02:10:53.532Z",
+      "specCode": "spec-knowledge-operational-closure-hardening-L1",
+      "reported": false
     }
   ],
-  "lastUpdated": "2026-07-15T10:07:46.977Z",
+  "lastUpdated": "2026-07-17T02:10:53.532Z",
   "sessionId": "sess-mq8tv4jl",
   "startedAt": "2026-06-11T01:37:21.345Z"
 }

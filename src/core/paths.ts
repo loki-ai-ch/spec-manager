@@ -26,6 +26,8 @@ export interface ProjectPaths {
   configDir: string;       // .spec-manager/
   configFile: string;      // .spec-manager/config.yaml
   auditFile: string;       // .spec-manager/audit.json
+  knowledgeFile: string;   // .spec-manager/knowledge.json
+  deliveryKnowledgeFile: string; // .spec-manager/delivery-knowledge.json
   integrityExemptionsFile: string; // .spec-manager/integrity-exemptions.json
   incidentsDir: string;    // .spec-manager/incidents/
   dictFile: string;        // .spec-manager/dict.yaml
@@ -43,6 +45,8 @@ export function getPaths(root: string = resolveProjectRoot()): ProjectPaths {
     configDir,
     configFile: join(configDir, 'config.yaml'),
     auditFile: join(configDir, 'audit.json'),
+    knowledgeFile: join(configDir, 'knowledge.json'),
+    deliveryKnowledgeFile: join(configDir, 'delivery-knowledge.json'),
     integrityExemptionsFile: join(configDir, 'integrity-exemptions.json'),
     incidentsDir: join(configDir, 'incidents'),
     dictFile: join(configDir, 'dict.yaml'),

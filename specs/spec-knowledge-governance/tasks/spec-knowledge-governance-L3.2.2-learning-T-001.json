@@ -1,0 +1,140 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-governance-L3.2.2-learning",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3/L2/L3.2.1、历史 Task、agent-plan 和 delivery 调用链",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"已确认 L3 frozen、L3.2.1 implemented，并复核 Task completion 事务、evidence、Delivery、Lessons、Brief、metrics 与 CLI 调用链。\",\"files\":[]}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T07:18:44.106Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "新增 delivery-knowledge.ts 注册表和来源校验",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 delivery-knowledge.v1、store-aware 原子写入、Task/evidence/AC 校验及 reviewed immutable 语义。\",\"files\":[]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T07:26:57.045Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 task CLI 增加 knowledge declare、none、review 和 show",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 task knowledge declare/none/review/show/list，只有显式 review 可改变 draft。\",\"files\":[]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T07:26:57.251Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 task-completion.ts 接入 delivery declaration 门禁",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"显式 deliveryLearning L3 完成前必须 declaration；未启用和 legacy Task 保持兼容。\",\"files\":[]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T07:26:57.445Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 Delivery、Lessons、Brief 和 knowledge source 投影",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Delivery Summary 增量展示结论，仅 approved 进入 Lessons/Brief，并支持 lesson:delivery canonical ref。\",\"files\":[]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T07:26:57.643Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "新增 knowledge-metrics.ts 和 project CLI 只读报告",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 project knowledge metrics，聚合 validity、disposition、scope 和 delivery，全程只读。\",\"files\":[]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T07:26:57.834Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "新增 delivery learning、兼容、检索和 store-aware 测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"定向 8 个文件 91 个用例通过，覆盖 evidence、none、人工 review、approved-only 和 metrics。\",\"files\":[]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T07:26:58.030Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "验证: 检查 Decision 并运行定向测试、npm run build、全量 Vitest 和 CLI smoke",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"定向 91、反向 4、build 和全量 87 文件 1015 测试通过；记录 V-001/V-002/V-003、draft DK-001 与 Phase 3 Decision DC-002。\",\"files\":[]}",
+      "latencyMs": 7200,
+      "reportedAt": "2026-07-16T07:29:29.151Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T07:18:17.266Z",
+  "finishedAt": "2026-07-16T07:30:19.849Z",
+  "created": "2026-07-16T07:18:17.261Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-7",
+        "AC-8",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T07:28:15.417Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "delivery knowledge negative regressions",
+      "exitCode": 0,
+      "summary": "Declaration, explicit none, draft exclusion, and human review controls passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-7",
+        "AC-8",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T07:28:15.635Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test -- --run",
+      "exitCode": 0,
+      "summary": "Full suite passed: 87 files and 1015 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-7",
+        "AC-8",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T07:28:15.824Z",
+      "layer": "smoke"
+    }
+  ]
+}

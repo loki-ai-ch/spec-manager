@@ -39,6 +39,103 @@ export interface Lesson {
   detail: string;
   sourceRefs: AssistSourceRef[];
   confidence: 'high' | 'medium' | 'low';
+  match?: HistoryMatch;
+  knowledge?: KnowledgeProjection;
+}
+
+export interface HistoryMatch {
+  score: number;
+  confidence: 'high' | 'medium' | 'low';
+  reasons: string[];
+  matchedTerms: string[];
+}
+
+export interface KnowledgeProjection {
+  state: 'current' | 'historical' | 'superseded' | 'invalidated' | 'unknown';
+  basis: 'explicit' | 'derived' | 'default';
+  reason: string;
+  replacementRef?: string;
+  reviewedAt: string;
+}
+
+export interface RetrievalMeta {
+  scope: 'project' | 'topic';
+  explicitTopic: string | null;
+  inferredTopic: string | null;
+  candidateCount: number;
+  resultLimit: number;
+}
+
+export interface CanonicalTopicCandidate {
+  topic: string;
+  confidence: number;
+  relatedSpecCount: number;
+  currentKnowledgeCount: number;
+  criticalConstraintCount: number;
+  reasons: string[];
+}
+
+export interface TopicRecommendation {
+  candidates: CanonicalTopicCandidate[];
+  selection: 'candidate' | 'ambiguous' | 'create-new';
+  selectionRequired: boolean;
+  createNewAllowed: true;
+}
+
+export interface ConstraintTrust {
+  sourceRefs: AssistSourceRef[];
+  confidence: number;
+  knowledgeState: KnowledgeProjection['state'];
+}
+
+export interface ModuleConstraint extends ConstraintTrust {
+  path: string;
+  pathState: 'current-path' | 'historical-path' | 'unknown-path';
+  pathReason: 'current-exists' | 'historical-source' | 'outside-root' | 'missing-no-history' | 'invalid-path';
+  contained: boolean;
+  detection: 'structured' | 'code-block' | 'text-fallback';
+}
+
+export interface ConflictCandidate extends ConstraintTrust {
+  sourceRef: AssistSourceRef;
+  state: KnowledgeProjection['state'];
+  reason: string;
+  requestEvidence: string;
+  historicalEvidenceRef: string;
+  matchedTerms: string[];
+  polarity: {
+    request: 'positive' | 'negative' | 'unknown';
+    historical: 'positive' | 'negative' | 'unknown';
+  };
+  reasonCodes: string[];
+  verdict: 'candidate' | 'unknown';
+}
+
+export type GovernanceCandidateType =
+  | 'spec-validity'
+  | 'decision-lifecycle'
+  | 'supersedes-relation'
+  | 'history-disposition'
+  | 'critical-ac-readiness';
+
+export interface GovernanceCandidate {
+  candidateType: GovernanceCandidateType;
+  subjectRef: string;
+  sourceRefs: string[];
+  reasonCodes: string[];
+  confidence: number;
+  knowledgeState: KnowledgeProjection['state'];
+  suggestedAction: string;
+}
+
+export interface ConstraintPackage {
+  specs: AssistSourceRef[];
+  decisions: AssistSourceRef[];
+  acceptanceCriteria: Array<ConstraintTrust & { id: string; specCode: string; text: string }>;
+  lessons: Array<ConstraintTrust & { id: string; title: string }>;
+  codeModules: ModuleConstraint[];
+  conflicts: ConflictCandidate[];
+  unknownDimensions: string[];
 }
 
 export interface BriefSpecRef {
@@ -47,13 +144,18 @@ export interface BriefSpecRef {
   status: string;
   title: string;
   sourceRef: AssistSourceRef;
+  match?: HistoryMatch;
+  knowledge?: KnowledgeProjection;
 }
 
 export interface BriefDecisionRef {
   id: string;
+  topic?: string;
   status: string;
   title: string;
   sourceRef: AssistSourceRef;
+  match?: HistoryMatch;
+  knowledge?: KnowledgeProjection;
 }
 
 export interface BriefTaskRef {
@@ -61,17 +163,23 @@ export interface BriefTaskRef {
   specCode: string;
   status: string;
   sourceRef: AssistSourceRef;
+  match?: HistoryMatch;
+  knowledge?: KnowledgeProjection;
 }
 
 export interface AgentBrief {
   schemaVersion: 'agent-brief.v1';
   request: string;
   topic: string | null;
+  selectedTopic?: string | null;
+  retrieval?: RetrievalMeta;
+  topicRecommendation?: TopicRecommendation;
   profileRecommendation: ProfileRecommendation | null;
   relevantSpecs: BriefSpecRef[];
   relevantDecisions: BriefDecisionRef[];
   relevantTasks: BriefTaskRef[];
   lessons: Lesson[];
+  constraintPackage?: ConstraintPackage;
   designContext?: DesignContextReport;
   designGuidance?: string[];
   suggestedReads: AssistSourceRef[];
@@ -190,6 +298,7 @@ export interface DeliverySummaryReport {
   residualRisk: AssistFinding[];
   nextAction: string;
   findings: AssistFinding[];
+  deliveryKnowledge?: { id: string; conclusion: string; status: string; summary: string } | null;
 }
 
 export type GuidedAssistStage =

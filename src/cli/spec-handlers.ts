@@ -5,6 +5,7 @@ import { canTransition, nextStatuses } from '../core/status.js';
 import { suggestAfterSpecCommand } from '../core/usability.js';
 import { validateSpecContent, type ValidationWarning } from '../core/validate.js';
 import type { CliActionContext, CliKnownError } from './common.js';
+import { validateHistoryReviewForConfirmation, validateKnowledgeGovernanceTransition } from '../core/spec-policy.js';
 
 const SPEC_CLI_EXIT_1 = 'SPEC_CLI_EXIT_1:';
 const SPEC_CLI_EXIT_2 = 'SPEC_CLI_EXIT_2:';
@@ -97,6 +98,10 @@ export function runSpecTransitionCommand(input: SpecTransitionCommandInput): Spe
       `✗ R22: ${code} 的 contentTemplate 仍是占位（"<!-- 在此粘贴正文 -->"）\n` +
       `  请先: spec-manager spec update ${code} --content <file> --ai-summary "..." --change-summary "..."`,
     );
+  }
+  if (actualTarget === 'confirmed') validateHistoryReviewForConfirmation(rec);
+  if (actualTarget === 'confirmed' || actualTarget === 'frozen') {
+    validateKnowledgeGovernanceTransition(context.paths, rec, actualTarget);
   }
   if (!canTransition(rec.fm.status, actualTarget)) {
     throw cliError(2, `✗ 状态非法: ${rec.fm.status} → ${actualTarget}\n  合法的下一态：${nextStatuses(rec.fm.status).join(', ')}`);

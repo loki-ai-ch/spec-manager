@@ -27,6 +27,10 @@ import {
   type AdaptiveWorkflowAdoptionPreview,
 } from '../core/adaptive-workflow-adoption.js';
 import { buildCriticalReadinessReport, type CriticalReadinessReport } from '../core/critical-readiness.js';
+import { buildScopeReadinessReport } from '../core/scope-readiness.js';
+import { buildKnowledgeMetrics } from '../core/knowledge-metrics.js';
+import { enableKnowledgeGovernance, previewKnowledgeGovernance } from '../core/knowledge-governance-adoption.js';
+import { previewKnowledgeMigration } from '../core/knowledge-migration.js';
 import { applyRepositoryRemediation, planRepositoryRemediation } from '../core/remediation.js';
 import { applyLifecycleReconciliation, planLifecycleReconciliation } from '../core/reconciliation.js';
 import { buildDocsConsistencyReport, type DocsConsistencyReport } from '../core/docs-consistency.js';
@@ -294,6 +298,58 @@ export function registerProject(program: Command): void {
         }
         throw err;
       }
+    });
+
+  readiness.command('scope')
+    .description('汇总计划子级范围完整性')
+    .option('--topic <topic>', '只统计指定 topic')
+    .option('--json', '以 JSON 格式输出', false)
+    .action((opts: { topic?: string; json: boolean }) => {
+      const paths = getPaths(); requireInitialized(paths);
+      const report = buildScopeReadinessReport(paths, opts.topic);
+      if (opts.json) return console.log(JSON.stringify(report, null, 2));
+      console.log(`Scope readiness: ready=${report.summary.ready} blocked=${report.summary.blocked} legacy=${report.summary.legacy}`);
+      for (const item of report.items.filter(item => item.status === 'blocked')) {
+        console.log(`- ${item.specCode}: ${item.mode}; missing=${item.missingChildren.join(',') || '-'} incomplete=${item.incompleteChildren.join(',') || '-'}`);
+      }
+    });
+
+  const knowledge = cmd.command('knowledge').description('知识治理只读报告');
+  const adoption = knowledge.command('adoption').description('知识治理采用');
+  adoption.command('preview').option('--json', 'JSON', false).action((opts: { json?: boolean }) => {
+    const report = previewKnowledgeGovernance(getPaths());
+    console.log(opts.json ? JSON.stringify(report, null, 2) : `Knowledge governance: enabled=${report.current.enabled}, legacy=${report.legacy}`);
+  });
+  adoption.command('enable').option('--json', 'JSON', false).action((opts: { json?: boolean }) => {
+    const result = enableKnowledgeGovernance(getPaths());
+    console.log(opts.json ? JSON.stringify(result, null, 2) : `✓ knowledge governance enabled at ${result.enabledAt}`);
+  });
+  const migration = knowledge.command('migration').description('历史知识治理迁移');
+  migration.command('preview')
+    .option('--topic <topic>')
+    .option('--limit <n>', '候选上限', '20')
+    .option('--json', 'JSON', false)
+    .action((opts: { topic?: string; limit: string; json?: boolean }) => {
+      const limit = Number(opts.limit);
+      if (!Number.isInteger(limit) || limit < 1) throw new Error('KNOWLEDGE_MIGRATION_LIMIT_INVALID');
+      const report = previewKnowledgeMigration(getPaths(), { topic: opts.topic, limit });
+      if (opts.json) return console.log(JSON.stringify(report, null, 2));
+      const candidateCount = Object.values(report.batches).reduce((sum, batch) => sum + batch.length, 0);
+      console.log(`Knowledge migration preview: ${candidateCount} candidate(s), dimensions=5, writes=false`);
+      for (const [dimension, candidates] of Object.entries(report.batches)) {
+        console.log(`- ${dimension}: ${candidates.length}`);
+      }
+    });
+  knowledge.command('metrics').option('--topic <topic>').option('--json', 'JSON', false)
+    .action((opts: { topic?: string; json: boolean }) => {
+      const paths = getPaths(); requireInitialized(paths); const report = buildKnowledgeMetrics(paths, opts.topic);
+      if (opts.json) return console.log(JSON.stringify(report, null, 2));
+      console.log(
+        `Knowledge metrics: validity eligible=${report.validity.eligible} unknown=${report.validity.unknown}, `
+        + `delivery declared=${report.delivery.declarationCoverage.numerator}/${report.delivery.declarationCoverage.denominator}, `
+        + `approved=${report.delivery.approvalCoverage.numerator}/${report.delivery.approvalCoverage.denominator}, `
+        + `scope blocked=${report.scope.blocked}`,
+      );
     });
 
   const docs = cmd

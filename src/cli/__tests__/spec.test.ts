@@ -91,6 +91,31 @@ npm test
 }
 
 describe('spec CLI', () => {
+  it('attaches, sets, and shows history disposition', async () => {
+    createSpec({ paths: project.paths, code: 'source-L1', level: 'L1', title: 'Source', topic: 'source', parentCode: null });
+    createSpec({ paths: project.paths, code: 'target-L1', level: 'L1', title: 'Target', topic: 'target', parentCode: null });
+    updateSpec(project.paths, 'target-L1', {
+      content: '# Target\n\n## 验收标准\n\n1. **AC-1**: target\n',
+      aiSummary: 'target',
+    });
+    await makeProgram().parseAsync(['spec', 'history', 'attach', 'target-L1', '--sources', 'spec:source-L1'], { from: 'user' });
+    await makeProgram().parseAsync([
+      'spec', 'history', 'set', 'target-L1', '--source', 'spec:source-L1',
+      '--action', 'change', '--reason', 'Narrowed.', '--criteria', 'AC-1',
+    ], { from: 'user' });
+    await makeProgram().parseAsync(['spec', 'history', 'show', 'target-L1', '--json'], { from: 'user' });
+    expect(output()).toContain('"action": "change"');
+    expect(output()).toContain('"AC-1"');
+  });
+
+  it('records an explicit no-history reason', async () => {
+    createSpec({ paths: project.paths, code: 'target-L1', level: 'L1', title: 'Target', topic: 'target', parentCode: null });
+    await makeProgram().parseAsync([
+      'spec', 'history', 'attach', 'target-L1', '--reason-if-empty', 'No related local history.',
+    ], { from: 'user' });
+    expect(findSpecByCode(project.paths, 'target-L1')?.fm.historyReview?.noRelevantHistoryReason)
+      .toBe('No related local history.');
+  });
   it('freezes a draft L3 with one confirm approval', async () => {
     const code = createL3WithPlan();
 

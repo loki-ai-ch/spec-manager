@@ -1,9 +1,11 @@
 import type { AuditSink } from './audit-events.js';
 import type { ProjectPaths } from './paths.js';
+import { isKnowledgeGovernedCreatedAt } from './knowledge-governance-adoption.js';
 import { findSpecByCode, updateSpec } from './spec-io.js';
 import type { ImplementationAuthority, SpecStatus } from './status.js';
 import type { SpecLevel } from './validate.js';
 import { buildProjectSnapshot, isFullProjectSnapshot, type ProjectSnapshot } from './project-snapshot.js';
+import { assessScopePlan } from './scope-readiness.js';
 
 export type { ImplementationAuthority } from './status.js';
 
@@ -12,7 +14,11 @@ export type ImplementationBlocker =
   | 'wrong-status'
   | 'no-children'
   | 'children-incomplete'
-  | 'authority-not-allowed';
+  | 'authority-not-allowed'
+  | 'scope-open'
+  | 'scope-child-missing'
+  | 'scope-child-incomplete'
+  | 'scope-plan-required';
 
 export interface ImplementationReadiness {
   specCode: string;
@@ -73,9 +79,19 @@ export function assessImplementationReadiness(
     if (spec.fm.status !== 'frozen') blockers.push('wrong-status');
   } else if (spec.fm.level === 'L1' || spec.fm.level === 'L2') {
     if (spec.fm.status !== 'confirmed') blockers.push('wrong-status');
+    if (spec.fm.scopePlan) {
+      const scope = assessScopePlan(paths, specCode);
+      if (scope.mode === 'open') blockers.push('scope-open');
+      if (scope.missingChildren.length) blockers.push('scope-child-missing');
+      if (scope.incompleteChildren.length) blockers.push('scope-child-incomplete');
+    }
     const children = project.indexes.childrenByParent.get(specCode) ?? [];
-    if (children.length === 0) blockers.push('no-children');
-    else if (children.some(child => child.fm.status !== 'implemented')) blockers.push('children-incomplete');
+    if (!spec.fm.scopePlan && isKnowledgeGovernedCreatedAt(paths, spec.fm.created)) {
+      blockers.push('scope-plan-required');
+    } else if (!spec.fm.scopePlan) {
+      if (children.length === 0) blockers.push('no-children');
+      else if (children.some(child => child.fm.status !== 'implemented')) blockers.push('children-incomplete');
+    }
   } else {
     blockers.push('authority-not-allowed');
   }

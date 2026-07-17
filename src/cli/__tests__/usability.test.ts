@@ -148,7 +148,7 @@ describe('usability CLI', () => {
     expect(output()).toContain(`Project: ${project.root}`);
     expect(output()).toContain(`Write Root: ${project.root}`);
     expect(output()).toContain('Request: add auth');
-    expect(output()).toContain('Topic: add');
+    expect(output()).toContain('Topic: (none)');
     expect(output()).toContain('Status: needs_l1');
     expect(output()).toContain('Next:');
     expect(output()).toContain('spec-manager spec new L1 --topic add --title "..."');

@@ -1,0 +1,132 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-operational-closure-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、spec-knowledge-operational-closure-L2.1、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "toolName": "Read",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent L2, plan template, metrics/snapshot/knowledge/task/decision implementations and focused tests; confirmed metrics can use ProjectSnapshot and current CLI presenter.\"}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:15:07.056Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-metrics.ts 建立 eligible 集合与 coverage 不变量",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Modified knowledge-metrics.ts to define MetricSourceSet/CoverageMetric and enforce bounded numerator, denominator and zero-ratio semantics.\",\"files\":[\"src/core/knowledge-metrics.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:18:33.503Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-metrics.ts 投影 validity unknown 与 invalidProjections",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Rebuilt validity projection from scoped eligible Spec, Decision, Task and approved delivery lesson sources via resolveKnowledge; defaults now count as unknown.\",\"files\":[\"src/core/knowledge-metrics.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:18:33.706Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-metrics.ts 按 completed learning Task 计算 delivery coverage",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Changed delivery declaration, approval and retrieval coverage to completed learning-enabled Task denominators with specCode/taskId deduplication.\",\"files\":[\"src/core/knowledge-metrics.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:18:33.902Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 project-snapshot.ts 和 project.ts 呈现集合口径",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Reused ProjectSnapshot indexes and updated project metrics human output to expose eligible/unknown and Task coverage denominators.\",\"files\":[\"src/core/project-snapshot.ts\",\"src/cli/project.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:18:34.111Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "扩展 knowledge-metrics 和 project-snapshot 测试覆盖集合恒等式",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added fixtures for empty metrics, unannotated unknown sources and completed learning Task draft/approval coverage; focused suite passes 17 tests.\",\"files\":[\"src/core/__tests__/knowledge-metrics.test.ts\"]}",
+      "latencyMs": 1000,
+      "reportedAt": "2026-07-16T10:18:34.306Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build、全量测试和 metrics CLI smoke",
+      "status": "succeeded",
+      "toolName": "Bash",
+      "outputJson": "{\"summary\":\"Focused tests, TypeScript lint/build, 89-file 1023-test full suite and metrics CLI smoke all passed; recorded V-001..V-003 covering AC-1..AC-4.\",\"files\":[]}",
+      "latencyMs": 9500,
+      "reportedAt": "2026-07-16T10:19:59.192Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T10:12:30.625Z",
+  "finishedAt": "2026-07-16T10:21:20.593Z",
+  "created": "2026-07-16T10:12:30.617Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Four critical AC require explicit verification evidence",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/knowledge-metrics.test.ts src/core/__tests__/project-snapshot.test.ts src/cli/__tests__/project-profile.test.ts",
+      "exitCode": 0,
+      "summary": "17 focused tests passed: unknown source set, Task denominator, topic and snapshot compatibility",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:19:36.134Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:19:36.338Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test && node dist/cli/index.js project knowledge metrics --json",
+      "exitCode": 0,
+      "summary": "89 files and 1023 tests passed; CLI reports 393 eligible = 35 current + 358 unknown and valid 0/0/null delivery coverage",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:19:36.540Z",
+      "layer": "smoke"
+    }
+  ]
+}

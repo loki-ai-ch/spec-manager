@@ -1,0 +1,129 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-governance-L3.1.1-validity",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3/L2、历史 Task、agent-plan 模板和知识模块调用链",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"已确认 L3 frozen、父 L2 契约、无历史 Task，并复核 ProjectPaths、事务、快照、Decision、Task、Lesson、CLI 注册及测试调用链。\",\"files\":[]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T03:30:26.187Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "新增 src/core/knowledge.ts 定义知识模型和 canonical source ref",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 knowledge-registry.v1 类型、五态有效性、显式/推导/默认依据以及 Spec/Decision/Task/Lesson/AC canonical source ref 解析与格式化。\",\"files\":[\"src/core/knowledge.ts\"]}",
+      "latencyMs": 2100,
+      "reportedAt": "2026-07-16T03:32:53.567Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 src/core/paths.ts 并接入 knowledge registry 原子存储",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"为 ProjectPaths 增加 .spec-manager/knowledge.json，并实现空表读取、严格 schema、稳定序列化、项目事务原子写入与幂等更新。\",\"files\":[\"src/core/paths.ts\",\"src/core/knowledge.ts\"]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T03:32:53.755Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "实现 src/core/knowledge.ts 来源校验、状态解析和 replacement 环检测",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现五类来源存在性校验、显式优先/稳定推导/默认 unknown、archived 与 Decision 状态推导、replacement 必填和传递环检测。\",\"files\":[\"src/core/knowledge.ts\"]}",
+      "latencyMs": 2600,
+      "reportedAt": "2026-07-16T03:34:21.569Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "新增 src/cli/knowledge.ts 并修改 src/cli/index.ts 注册 show/set 命令",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 knowledge show/set 文本与 JSON CLI，完成状态参数校验、显式人工写入和顶层命令注册；只读 show 已验证不会创建注册表。\",\"files\":[\"src/cli/knowledge.ts\",\"src/cli/index.ts\"]}",
+      "latencyMs": 1900,
+      "reportedAt": "2026-07-16T03:34:21.757Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "新增 knowledge 核心与 CLI 测试并补充路径事务和 store 回归",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增知识核心与 CLI 测试，并扩展 paths、transaction、architecture smoke、store-aware 回归；6 个测试文件 67 个用例全部通过。\",\"files\":[\"src/core/__tests__/knowledge.test.ts\",\"src/cli/__tests__/knowledge.test.ts\",\"src/core/__tests__/paths.test.ts\",\"src/core/__tests__/transaction.test.ts\",\"src/cli/__tests__/architecture-smoke.test.ts\",\"src/cli/__tests__/store-aware-writes.test.ts\"]}",
+      "latencyMs": 4100,
+      "reportedAt": "2026-07-16T03:39:18.816Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、npm run build、全量 Vitest 和 CLI 反向 smoke",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"反向契约 3/3 通过，TypeScript build 通过，全量 83 个测试文件与 994 个测试全部通过；已记录 V-001/V-002/V-003 覆盖 AC-1/2/9/10/11。\",\"files\":[]}",
+      "latencyMs": 6200,
+      "reportedAt": "2026-07-16T03:41:14.821Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T03:30:02.404Z",
+  "finishedAt": "2026-07-16T03:42:16.462Z",
+  "created": "2026-07-16T03:30:02.398Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build completed successfully.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T03:41:02.829Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npm test -- --run src/cli/__tests__/knowledge.test.ts -t requires-replacement/replacement-cycle/implemented-unknown",
+      "exitCode": 0,
+      "summary": "Three negative-contract tests passed: replacement required, cycles rejected, and implemented Specs default to unknown.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-2",
+        "AC-9",
+        "AC-10"
+      ],
+      "created": "2026-07-16T03:41:03.027Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test -- --run",
+      "exitCode": 0,
+      "summary": "Full suite passed: 83 test files and 994 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T03:41:03.216Z",
+      "layer": "smoke"
+    }
+  ]
+}

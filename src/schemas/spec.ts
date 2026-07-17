@@ -13,6 +13,52 @@ export const StepTypeSchema = z.preprocess(
   value => value === 'mcp_tool' ? 'tool_action' : value,
   z.enum(['llm_call', 'tool_action', 'human_gate']),
 );
+
+export const HistoryDispositionActionSchema = z.enum(['reuse', 'change', 'reject', 'unknown']);
+export const HistoryDispositionSchema = z.object({
+  sourceRef: z.string().min(1),
+  action: HistoryDispositionActionSchema,
+  reason: z.string().trim().min(1).optional(),
+  affectedCriteria: z.array(z.string().min(1)).default([]),
+}).superRefine((value, context) => {
+  if (value.action !== 'reuse' && !value.reason) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: `HISTORY_REASON_REQUIRED: ${value.action}` });
+  }
+});
+export const HistoryReviewSchema = z.object({
+  sources: z.array(z.string().min(1)).default([]),
+  dispositions: z.array(HistoryDispositionSchema).default([]),
+  noRelevantHistoryReason: z.string().trim().min(1).optional(),
+  reviewedAt: z.string().datetime().optional(),
+}).superRefine((value, context) => {
+  if (new Set(value.sources).size !== value.sources.length) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'HISTORY_SOURCE_DUPLICATE' });
+  }
+  const dispositionSources = value.dispositions.map(item => item.sourceRef);
+  if (new Set(dispositionSources).size !== dispositionSources.length) {
+    context.addIssue({ code: z.ZodIssueCode.custom, message: 'HISTORY_DISPOSITION_DUPLICATE' });
+  }
+});
+export type HistoryDispositionActionT = z.infer<typeof HistoryDispositionActionSchema>;
+export type HistoryReviewT = z.infer<typeof HistoryReviewSchema>;
+
+export const ScopePlanSchema = z.object({
+  mode: z.enum(['open', 'fixed']),
+  plannedChildren: z.array(z.object({
+    code: z.string().regex(SPEC_CODE_RE),
+    title: z.string().min(1),
+    required: z.boolean().default(true),
+  })).default([]),
+  leaf: z.boolean().default(false),
+  reason: z.string().trim().min(1).optional(),
+  updatedAt: z.string().datetime(),
+}).superRefine((value, context) => {
+  if (value.mode === 'open' && !value.reason) context.addIssue({ code: z.ZodIssueCode.custom, message: 'SCOPE_PLAN_REASON_REQUIRED' });
+  if (value.mode === 'fixed' && !value.leaf && value.plannedChildren.length === 0) context.addIssue({ code: z.ZodIssueCode.custom, message: 'SCOPE_PLAN_CHILDREN_REQUIRED' });
+  const codes = value.plannedChildren.map(child => child.code);
+  if (new Set(codes).size !== codes.length) context.addIssue({ code: z.ZodIssueCode.custom, message: 'SCOPE_PLAN_CHILD_DUPLICATE' });
+});
+export type ScopePlanT = z.infer<typeof ScopePlanSchema>;
 export type StepTypeT = z.infer<typeof StepTypeSchema>;
 
 export const StepFrontmatterSchema = z.object({
@@ -49,6 +95,10 @@ export const SpecFrontmatterSchema = z.object({
   created: z.string().optional(),
   updated: z.string().optional(),
   changeSummary: z.string().optional(),
+  historyReview: HistoryReviewSchema.optional(),
+  scopePlan: ScopePlanSchema.optional(),
+  deliveryLearning: z.boolean().optional(),
+  deliveryLearningReason: z.string().trim().min(1).optional(),
 });
 
 export const PlanStepSchema = z.object({

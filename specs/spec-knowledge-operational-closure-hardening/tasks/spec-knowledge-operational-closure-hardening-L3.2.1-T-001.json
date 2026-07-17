@@ -1,0 +1,126 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-operational-closure-hardening-L3.2.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、spec-knowledge-operational-closure-hardening-L2.2、前序 L3、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read L3/L2 specs, prior implemented L3, normalization, Brief conflict, activation recommendation, Metrics, Migration, and related tests.\",\"files\":[\"specs/spec-knowledge-operational-closure-hardening/spec-knowledge-operational-closure-hardening-L3.2.1.md\",\"src/core/retrieval/normalization.ts\",\"src/core/capability-brief.ts\",\"src/core/knowledge-activation.ts\",\"src/core/knowledge-metrics.ts\"]}",
+      "reportedAt": "2026-07-17T02:06:53.635Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 retrieval/normalization.ts 增加确定性 CJK 对象信号",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added deterministic CJK object n-gram extraction and constraint polarity signal while preserving legacy English tokenization behavior.\",\"files\":[\"src/core/retrieval/normalization.ts\",\"src/core/__tests__/retrieval/normalization.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:07:08.936Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 capability-brief.ts 重构多语言 conflict signal",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Reworked Brief conflict candidates to use normalized object overlap plus opposite polarity, emitting matchedTerms, polarity, candidate/unknown verdicts, and stable reason codes.\",\"files\":[\"src/core/capability-brief.ts\",\"src/core/capability-types.ts\",\"src/core/__tests__/capability-brief.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:07:20.533Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-activation.ts 使用 resolver 计算 topic knowledge stats",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Changed topic recommendation stats to resolve each Spec through shared snapshot/registry and count only state=current as currentKnowledgeCount.\",\"files\":[\"src/core/knowledge-activation.ts\",\"src/core/__tests__/knowledge-activation.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:07:30.658Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-metrics.ts 校验全部 annotation 来源并报告 unscoped invalid",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Updated Knowledge Metrics to validate all registry annotations, report stale valid sourceRefs in invalidProjections, and include scoped/unscoped projection scope.\",\"files\":[\"src/core/knowledge-metrics.ts\",\"src/core/__tests__/knowledge-metrics.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:07:38.188Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "扩展 normalization、Brief、activation、Metrics 和 migration 正反测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Expanded positive/negative regression tests for CJK candidate, weak unknown, same-polarity none, resolver current counts, stale annotations, and migration compatibility.\",\"files\":[\"src/core/__tests__/retrieval/normalization.test.ts\",\"src/core/__tests__/capability-brief.test.ts\",\"src/core/__tests__/knowledge-activation.test.ts\",\"src/core/__tests__/knowledge-metrics.test.ts\",\"src/core/__tests__/knowledge-migration.test.ts\"]}",
+      "reportedAt": "2026-07-17T02:07:54.153Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build、全量测试和中文 CLI smoke",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Verification passed: targeted Vitest 57 tests, npm run lint, npm run build, npm test 1040 tests, plus Chinese Brief, Metrics, and Migration CLI smoke.\",\"files\":[]}",
+      "reportedAt": "2026-07-17T02:09:41.057Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-17T02:02:51.042Z",
+  "finishedAt": "2026-07-17T02:10:53.496Z",
+  "created": "2026-07-17T02:02:51.035Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run lint",
+      "exitCode": 0,
+      "summary": "TypeScript noEmit lint passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-17T02:09:47.783Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed",
+      "artifacts": [],
+      "coversAc": [],
+      "created": "2026-07-17T02:09:53.504Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test",
+      "exitCode": 0,
+      "summary": "Full Vitest suite passed: 90 files, 1040 tests",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-17T02:10:01.388Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-004",
+      "command": "node dist/cli/index.js brief '禁止自动批准知识记录' --topic spec-knowledge-operational-closure --json && node dist/cli/index.js project knowledge metrics --json && node dist/cli/index.js project knowledge migration preview --topic spec-knowledge-operational-closure --json",
+      "exitCode": 0,
+      "summary": "Chinese Brief, Metrics, and Migration smoke passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-17T02:10:08.146Z",
+      "layer": "smoke"
+    }
+  ]
+}

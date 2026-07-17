@@ -40,6 +40,14 @@ describe('withProjectTransaction', () => {
     expect(existsSync(target)).toBe(false);
   });
 
+  it('rolls back a knowledge registry write after failure', () => {
+    expect(() => withProjectTransaction(project.paths, 'knowledge write', tx => {
+      tx.write(project.paths.knowledgeFile, '{"schemaVersion":"knowledge-registry.v1"}');
+      throw new Error('knowledge failure');
+    })).toThrow(/knowledge failure/);
+    expect(existsSync(project.paths.knowledgeFile)).toBe(false);
+  });
+
   it('commits successful writes', () => {
     const target = join(project.root, 'state.json');
     withProjectTransaction(project.paths, 'write', tx => tx.write(target, '{"ok":true}'));

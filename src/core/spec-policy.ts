@@ -5,6 +5,8 @@ import { specFilePath, type ProjectPaths } from './paths.js';
 import { assertSpecTransition, isAuthorizedImplementationTransition, type ImplementationAuthority } from './status.js';
 import type { SpecLevel } from './validate.js';
 import type { SpecFrontmatter, SpecRecord, StepFrontmatter } from './spec-io.js';
+import type { HistoryReviewT, ScopePlanT } from '../schemas/spec.js';
+import { isKnowledgeGovernedCreatedAt, readKnowledgeGovernanceConfig } from './knowledge-governance-adoption.js';
 
 export type SpecPolicyWarning = string;
 
@@ -33,6 +35,10 @@ export interface SpecUpdatePatch {
   appendStep?: StepFrontmatter;
   replaceStep?: { no: number | string; step: StepFrontmatter };
   addRelation?: { type: string; target: string };
+  historyReview?: HistoryReviewT;
+  scopePlan?: ScopePlanT;
+  deliveryLearning?: boolean;
+  deliveryLearningReason?: string;
 }
 
 export interface UpdateSpecPolicyInput {
@@ -83,6 +89,9 @@ export function validateSpecParentPolicy(input: CreateSpecPolicyInput): SpecPare
         `R4: 创建 ${input.level} 前父级 ${input.parentCode} 必须先通过独立审核（confirmed/frozen/implemented），` +
         `当前 status=${parent.fm.status}`,
       );
+    }
+    if ((input.level === 'L2' || input.level === 'L3') && parent.fm.status === 'implemented') {
+      throw new Error(`LIFECYCLE_SCOPE_DRIFT: cannot add ${input.code} under implemented ${input.parentCode}`);
     }
     recordAuditHit({ paths: input.paths, ruleId: 'R4', specCode: input.code }, input.auditSink);
     return { parentFilePath: parent.filePath };
@@ -204,12 +213,53 @@ export function applySpecUpdatePolicy(input: UpdateSpecPolicyInput): UpdateSpecP
   applySpecStatusPolicy(input, fm, warnings);
   applySpecStepPatchPolicy(input, fm);
   applySpecRelationPolicy(input, fm);
+  if (input.patch.historyReview !== undefined) fm.historyReview = input.patch.historyReview;
+  if (input.patch.scopePlan !== undefined) fm.scopePlan = input.patch.scopePlan;
+  if (input.patch.deliveryLearning !== undefined) fm.deliveryLearning = input.patch.deliveryLearning;
+  if (input.patch.deliveryLearningReason !== undefined) fm.deliveryLearningReason = input.patch.deliveryLearningReason;
   fm.updated = new Date().toISOString();
 
   return {
     record: { fm, content, filePath: input.existing.filePath },
     warnings,
   };
+}
+
+export function validateHistoryReviewForConfirmation(record: SpecRecord): void {
+  if (record.fm.level !== 'L1' && record.fm.level !== 'L2') return;
+  const review = record.fm.historyReview;
+  if (!review) return;
+  if (review.sources.length === 0) {
+    if (!review.noRelevantHistoryReason?.trim()) {
+      throw new Error('HISTORY_REVIEW_INCOMPLETE: no history sources require noRelevantHistoryReason');
+    }
+    return;
+  }
+  const disposed = new Set(review.dispositions.map(item => item.sourceRef));
+  const missing = review.sources.filter(sourceRef => !disposed.has(sourceRef));
+  if (missing.length > 0) {
+    throw new Error(`HISTORY_REVIEW_INCOMPLETE: missing dispositions for ${missing.join(', ')}`);
+  }
+}
+
+export function validateKnowledgeGovernanceTransition(
+  paths: ProjectPaths,
+  record: SpecRecord,
+  target: 'confirmed' | 'frozen',
+): void {
+  if (!isKnowledgeGovernedCreatedAt(paths, record.fm.created)) return;
+  const config = readKnowledgeGovernanceConfig(paths);
+  if (target === 'confirmed' && (record.fm.level === 'L1' || record.fm.level === 'L2')) {
+    if (config.requireHistoryReview && !record.fm.historyReview) throw new Error('HISTORY_REVIEW_REQUIRED');
+    if (config.requireScopePlan && !record.fm.scopePlan) throw new Error('SCOPE_PLAN_REQUIRED');
+    validateHistoryReviewForConfirmation(record);
+  }
+  if (target === 'frozen' && record.fm.level === 'L3' && config.requireLearningPolicy) {
+    if (record.fm.deliveryLearning === undefined) throw new Error('DELIVERY_LEARNING_POLICY_REQUIRED');
+    if (record.fm.deliveryLearning === false && !record.fm.deliveryLearningReason?.trim()) {
+      throw new Error('DELIVERY_LEARNING_REASON_REQUIRED');
+    }
+  }
 }
 
 export function recordCreateSpecAudit(input: CreateSpecPolicyInput): void {

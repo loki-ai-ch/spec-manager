@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { Command } from 'commander';
 import { registerDecisionCommands } from '../decision.js';
 import { registerSpec } from '../spec.js';
 import { registerTaskCommands } from '../task.js';
+import { registerKnowledgeCommands } from '../knowledge.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
 import { getPaths, specFilePath } from '../../core/paths.js';
 import { findDecision } from '../../core/decision.js';
@@ -59,6 +60,7 @@ function makeProgram(): Command {
   registerSpec(program);
   registerTaskCommands(program);
   registerDecisionCommands(program);
+  registerKnowledgeCommands(program);
   return program;
 }
 
@@ -180,6 +182,21 @@ describe('store-aware spec/task/decision writes', () => {
     expect(findDecision(external.paths, 'DC-001')?.fm.what).toBe('Use token login');
     expect(findDecision(project.paths, 'DC-001')).toBeNull();
     expect(logSpy.mock.calls.map((call) => String(call[0])).join('\n')).toContain('DC-001');
+  });
+
+  it('writes knowledge annotations only to the configured external write root', async () => {
+    configureExternalWriteStore();
+    createSpec({ paths: external.paths, code: 'auth-L1', level: 'L1', title: 'Auth', topic: 'auth', parentCode: null });
+
+    await makeProgram().parseAsync([
+      'knowledge', 'set', 'spec:auth-L1',
+      '--state', 'current',
+      '--reason', 'External store review.',
+    ], { from: 'user' });
+
+    expect(existsSync(external.paths.knowledgeFile)).toBe(true);
+    expect(readFileSync(external.paths.knowledgeFile, 'utf8')).toContain('External store review.');
+    expect(existsSync(project.paths.knowledgeFile)).toBe(false);
   });
 
   it('fails fast with a fix when the configured write root is missing', async () => {

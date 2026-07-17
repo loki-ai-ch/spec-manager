@@ -14,6 +14,7 @@ import { registerViewCommands } from './view.js';
 import { registerCompletionCommands } from './completion.js';
 import { registerCapabilityCommands } from './capability.js';
 import { registerAgentInstallCommands } from './agent-install.js';
+import { registerKnowledgeCommands } from './knowledge.js';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../../package.json');
@@ -37,6 +38,7 @@ registerViewCommands(program);
 registerCompletionCommands(program);
 registerCapabilityCommands(program);
 registerAgentInstallCommands(program);
+registerKnowledgeCommands(program);
 
 program.parseAsync(process.argv).catch((e) => {
   console.error('✗ ' + (e?.message ?? e));

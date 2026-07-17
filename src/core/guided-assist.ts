@@ -2,6 +2,7 @@ import { inferTopic } from './capability-brief.js';
 import { defaultGitChangedFilesReader, type GitChangedFilesReader } from './drift-check.js';
 import type { ProjectPaths } from './paths.js';
 import { findSpecByCode, listAllSpecs, type SpecRecord } from './spec-io.js';
+import { buildKnowledgeActivation } from './knowledge-activation.js';
 import { findTask, listTasks, type TaskRecord } from './task.js';
 import type {
   AssistFinding,
@@ -24,6 +25,7 @@ export interface BuildGuidedAssistInput {
 interface ResolvedContext {
   request: string;
   topic: string | null;
+  explicitTopic: string | null;
   spec: SpecRecord | null;
   task: TaskRecord | null;
   changedFiles: DriftFile[];
@@ -64,10 +66,15 @@ export function buildGuidedAssistReport(input: BuildGuidedAssistInput): GuidedAs
   const spec = specCode ? requireSpec(input.paths, specCode) : null;
   const task = taskId && specCode ? requireTask(input.paths, specCode, taskId) : null;
   const explicitTopic = normalizeOptional(input.topic);
-  const inferredTopic = explicitTopic ?? spec?.fm.topic ?? inferTopicFromLocalHistory(input.paths, request) ?? inferTopic(request);
-  const changedFiles = safeChangedFiles(input.paths, input.gitReader ?? defaultGitChangedFilesReader, findings, specCode, taskId);
-  const ctx: ResolvedContext = { request, topic: inferredTopic, spec, task, changedFiles, findings };
-  return buildReportForContext(ctx);
+  const topic = explicitTopic ?? spec?.fm.topic ?? inferTopicFromLocalHistory(input.paths, request) ?? inferTopic(request);
+  const changedFiles = safeChangedFiles(
+    input.paths,
+    input.gitReader ?? defaultGitChangedFilesReader,
+    findings,
+    specCode,
+    taskId,
+  );
+  return buildReportForContext({ request, topic, explicitTopic, spec, task, changedFiles, findings });
 }
 
 function buildReportForContext(ctx: ResolvedContext): GuidedAssistReport {
@@ -93,18 +100,11 @@ function buildReportForContext(ctx: ResolvedContext): GuidedAssistReport {
     return report(ctx, 'flow', `spec-manager flow status --topic ${ctx.topic}`, `Topic ${ctx.topic} has local history; flow status shows the current workflow position.`);
   }
   if (ctx.topic) {
-    return report(ctx, 'brief', briefCommand(ctx.request, ctx.topic), `No specific spec or task is bound; brief gathers local context for topic ${ctx.topic}.`);
+    const command = briefCommand(ctx.request, ctx.explicitTopic);
+    const scope = ctx.explicitTopic ? `topic ${ctx.explicitTopic}` : 'the entire project';
+    return report(ctx, 'brief', command, `No specific spec or task is bound; brief gathers local context from ${scope}.`);
   }
-  return needsInputReport(ctx.request, null, null, null, [
-    {
-      id: 'guided-assist.topic.unresolved',
-      severity: 'advisory',
-      title: 'Topic was not resolved',
-      detail: 'Pass --topic or use a request containing the project topic so guided assist can choose between brief and flow.',
-      sourceRefs: [],
-      nextCommand: `spec-manager assist guide --request "${escapeForDoubleQuotes(ctx.request)}" --topic <topic>`,
-    },
-  ]);
+  return report(ctx, 'brief', briefCommand(ctx.request, null), 'No topic was resolved; brief searches the entire project before recommending a new L1.');
 }
 
 function report(ctx: ResolvedContext, stage: GuidedAssistStage, next: string, reason: string): GuidedAssistReport {
@@ -170,7 +170,7 @@ function alternativesFor(ctx: ResolvedContext, stage: GuidedAssistStage): Guided
     out.push({ command: `spec-manager task show ${ctx.task.id} --spec ${ctx.task.specCode}`, reason: 'Inspect task status, steps, and recorded verifications.' });
   }
   if (stage === 'flow' && ctx.topic) {
-    out.push({ command: briefCommand(ctx.request, ctx.topic), reason: 'Generate a context package before starting or resuming work.' });
+    out.push({ command: briefCommand(ctx.request, ctx.explicitTopic), reason: 'Generate a context package before starting or resuming work.' });
   }
   return out.slice(0, 3);
 }
@@ -227,7 +227,8 @@ function inferTopicFromLocalHistory(paths: ProjectPaths, request: string): strin
     ...listTasks(paths).map(task => task.specCode.replace(/-L\d.*$/, '')),
   ]);
   const matches = [...topics].filter(topic => normalized.includes(topic.toLowerCase()));
-  return matches.length === 1 ? matches[0] : null;
+  if (matches.length === 1) return matches[0];
+  return buildKnowledgeActivation({ paths, request, maxResults: 1 }).matches[0]?.topic ?? null;
 }
 
 function hasTopicHistory(ctx: ResolvedContext): boolean {
@@ -252,8 +253,9 @@ function isSpecGuidanceIntent(request: string, spec: SpecRecord): boolean {
   return /critique|review|confirm|freeze|design|impl|spec|审查|确认|冻结|设计|实现|规格/.test(request.toLowerCase());
 }
 
-function briefCommand(request: string, topic: string): string {
-  return `spec-manager assist brief --request "${escapeForDoubleQuotes(request)}" --topic ${topic}`;
+function briefCommand(request: string, topic: string | null): string {
+  const topicArg = topic ? ` --topic ${topic}` : '';
+  return `spec-manager assist brief --request "${escapeForDoubleQuotes(request)}"${topicArg}`;
 }
 
 function nextCommand(taskId: string, specCode: string): string {

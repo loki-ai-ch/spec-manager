@@ -9,6 +9,7 @@ import { runTaskCompletion } from '../task-completion.js';
 import { readAudit } from '../audit.js';
 import { CollectingAuditSink } from '../audit-events.js';
 import { writeAdaptiveWorkflowConfig } from '../workflow-profile.js';
+import { findDeliveryKnowledge, readDeliveryKnowledge } from '../delivery-knowledge.js';
 
 let root: string;
 let paths: ProjectPaths;
@@ -218,6 +219,23 @@ describe('runTaskCompletion', () => {
     expect(findSpecByCode(paths, l2Code)?.fm.status).toBe('confirmed');
     expect(findSpecByCode(paths, l1Code)?.fm.status).toBe('confirmed');
     expect(readAudit(paths).rules.R18).toBe(1);
+  });
+
+  it('rolls back an automatic delivery draft when a later completion gate fails', () => {
+    writeAdaptiveWorkflowConfig(paths, { enabled: true, defaultProfile: 'standard' });
+    const { l1Code, l3Code } = createFrozenHierarchy('completion-delivery-rollback', l3ContentWithCriticalAc());
+    updateSpec(paths, l3Code, { deliveryLearning: true });
+    const planJson = planFor(l3Code);
+    const { task } = createTask({ paths, specCode: l3Code, autoConfirm: false, planJson, profile: 'governed', profileOverrideReason: 'test' });
+    startTask(paths, task.id, l3Code);
+    for (const step of planJson.steps) reportStep({ paths, taskId: task.id, specCode: l3Code, stepNo: step.stepNo, status: 'succeeded', outputJson: '{"summary":"done"}' });
+    addTaskVerification({ paths, taskId: task.id, specCode: l3Code, command: 'npm test', exitCode: 0, summary: 'passed', coversAc: ['AC-1'] });
+
+    expect(() => runTaskCompletion({ paths, taskId: task.id, specCode: l3Code })).toThrow(/R18/);
+    expect(findDeliveryKnowledge(paths, l3Code, task.id)).toBeNull();
+    expect(readDeliveryKnowledge(paths).records).toEqual([]);
+    expect(findTask(paths, l3Code, task.id)?.status).toBe('running');
+    expect(findSpecByCode(paths, l1Code)?.fm.status).toBe('confirmed');
   });
 
   it('requires successful verification evidence', () => {

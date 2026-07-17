@@ -1,0 +1,152 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-governance-L3.1.2-disposition",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3/L2/L3.1.1、历史 Task、agent-plan 模板和 Spec/Brief 调用链",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"已确认 L3.1.2 frozen、L3.1.1 implemented，复核 Spec schema/policy/handler、Brief、critical readiness、历史 Task 与 plan 模板。\",\"files\":[]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T03:52:59.869Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 src/schemas/spec.ts 和 src/core/spec-io.ts 增加 historyReview schema",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增可选 historyReview、四态处置、去重与理由校验，并保持 legacy frontmatter 不补写默认字段。\",\"files\":[\"src/schemas/spec.ts\",\"src/core/spec-io.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:30.140Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "新增 historyReview 核心服务实现 attach、set 和 report",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现批量来源校验、原子 attach、处置更新、AC 校验、resolved knowledge 报告与按 AC 聚合。\",\"files\":[\"src/core/history-review.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:30.325Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 src/core/spec-policy.ts 和 transition handler 增加渐进式确认门禁",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"确认门禁仅约束显式采用 historyReview 的 L1/L2；不完整处置保持 draft，legacy 流程兼容。\",\"files\":[\"src/core/spec-policy.ts\",\"src/cli/spec-handlers.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:30.509Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 src/cli/spec.ts 挂载 history show、attach 和 set 命令",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 spec history show/attach/set 文本与 JSON 入口，并提供 --reason-if-empty 空历史说明。\",\"files\":[\"src/cli/spec.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:30.695Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "修改 capability-types.ts 和 capability-brief.ts 增加只读 knowledge 投影",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"agent-brief.v1 保留原字段并为 Spec/Decision/Task/Lesson 增加可选 knowledge；单次读取注册表且失败降级 unknown。\",\"files\":[\"src/core/capability-types.ts\",\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:30.905Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "连接 affectedCriteria、canonical AC ref 与 critical readiness 连续性",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"处置报告按稳定 AC ID 聚合，canonical ac source ref 与既有 critical readiness/evidence 使用同一 AC ID。\",\"files\":[\"src/core/history-review.ts\",\"src/core/knowledge.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:31.091Z"
+    },
+    {
+      "stepNo": "8",
+      "stepType": "tool_action",
+      "name": "补充 Spec policy、CLI、Brief、legacy 和 governed AC 回归测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 history review 核心测试并扩展 Spec handler/CLI/Brief 回归；定向 7 文件 125 用例通过。\",\"files\":[\"src/core/__tests__/history-review.test.ts\",\"src/core/__tests__/capability-brief.test.ts\",\"src/cli/__tests__/spec.test.ts\",\"src/cli/__tests__/spec-handlers.test.ts\"]}",
+      "latencyMs": 2000,
+      "reportedAt": "2026-07-16T04:03:31.281Z"
+    },
+    {
+      "stepNo": "9",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、npm run build、全量 Vitest 和确认门禁反向 smoke",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"定向 125 用例、反向边界 3/3、TypeScript build 和全量 84 文件 1005 测试全部通过；V-001/V-002/V-003 覆盖 AC-3/4/5/9/10/11。\",\"files\":[]}",
+      "latencyMs": 6500,
+      "reportedAt": "2026-07-16T04:06:31.819Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T03:51:55.142Z",
+  "finishedAt": "2026-07-16T04:07:11.783Z",
+  "created": "2026-07-16T03:51:55.139Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed for history review, gate, CLI, and Brief projection.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T04:06:11.908Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "targeted history gate and read-only Brief tests",
+      "exitCode": 0,
+      "summary": "Incomplete review blocked, legacy confirmation remained compatible, and Brief performed no writes.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T04:06:12.093Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test -- --run",
+      "exitCode": 0,
+      "summary": "Full suite passed: 84 test files and 1005 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-3",
+        "AC-4",
+        "AC-5",
+        "AC-9",
+        "AC-10",
+        "AC-11"
+      ],
+      "created": "2026-07-16T04:06:12.276Z",
+      "layer": "smoke"
+    }
+  ]
+}

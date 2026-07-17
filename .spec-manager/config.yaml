@@ -3,3 +3,9 @@ created_at: 2026-06-05
 adaptiveWorkflow:
   enabled: true
   defaultProfile: standard
+knowledgeGovernance:
+  enabled: true
+  enabledAt: 2026-07-16T09:19:48.482Z
+  requireHistoryReview: true
+  requireScopePlan: true
+  requireLearningPolicy: true

@@ -16,6 +16,8 @@ import {
   type TopicFlow,
 } from './usability.js';
 import { buildViewModel } from './view.js';
+import { buildKnowledgeActivation } from './knowledge-activation.js';
+import type { TopicRecommendation } from './capability-types.js';
 
 export type WorkflowSurfaceStatus =
   | 'not_initialized'
@@ -40,6 +42,7 @@ export interface WorkflowNextProjection {
   initialized: boolean;
   request: string;
   topic: string | null;
+  topicRecommendation?: TopicRecommendation;
   status: WorkflowSurfaceStatus;
   blockingReason?: string;
   nextAction: string;
@@ -128,8 +131,15 @@ export function buildWorkflowNextProjection(
     };
   }
 
-  const topic = opts.topic ?? inferTopicFromRequest(request);
+  const inferredActivation = request && !opts.topic
+    ? buildKnowledgeActivation({ paths: writePaths, request })
+    : null;
+  const topic = opts.topic ?? inferredActivation?.selectedTopic ?? null;
   if (!topic) {
+    const suggestedTopic = inferredActivation?.inferredTopic ?? inferTopicFromRequest(request);
+    const selectionCommands = inferredActivation
+      ? selectionCommandsForActivation(request, inferredActivation)
+      : suggestedTopic ? [`spec-manager spec new L1 --topic ${suggestedTopic} --title "..."`] : ['spec-manager flow status'];
     return {
       projectRoot: paths.root,
       executionRoot: store.executionRoot,
@@ -140,10 +150,13 @@ export function buildWorkflowNextProjection(
       initialized: true,
       request,
       topic: null,
+      ...(inferredActivation ? { topicRecommendation: inferredActivation.topicRecommendation } : {}),
       status: 'needs_l1',
-      blockingReason: 'No topic provided or inferred from request',
-      nextAction: 'spec-manager spec new L1 --topic <topic> --title "..."',
-      suggestedCommands: ['spec-manager flow status'],
+      blockingReason: inferredActivation?.selectionRequired
+        ? topicSelectionBlockingReason(inferredActivation)
+        : 'No topic provided or selected from request',
+      nextAction: selectionCommands[0],
+      suggestedCommands: selectionCommands,
       warnings,
     };
   }
@@ -151,6 +164,8 @@ export function buildWorkflowNextProjection(
   const snapshot = buildProjectSnapshot(writePaths, { topic });
   const flow = getFlowStatus(writePaths, { topic, snapshot })[0];
   const status = classifyFlow(flow);
+  const activation = status === 'needs_l1' ? inferredActivation : null;
+  const relatedHistory = Boolean(activation?.hasRelatedHistory);
   return {
     projectRoot: paths.root,
     executionRoot: store.executionRoot,
@@ -161,10 +176,17 @@ export function buildWorkflowNextProjection(
     initialized: true,
     request,
     topic,
+    ...(inferredActivation ? { topicRecommendation: inferredActivation.topicRecommendation } : {}),
     status,
-    blockingReason: blockingReasonForStatus(status, flow),
-    nextAction: flow.nextAction,
-    suggestedCommands: suggestedCommandsForFlow(topic, flow),
+    blockingReason: relatedHistory
+      ? `No exact specs found for inferred topic ${topic}, but related project history exists`
+      : blockingReasonForStatus(status, flow),
+    nextAction: relatedHistory
+      ? `spec-manager brief "${request.replace(/"/g, '\\"')}"\nThen review related history before: ${flow.nextAction}`
+      : flow.nextAction,
+    suggestedCommands: relatedHistory
+      ? [`spec-manager brief "${request.replace(/"/g, '\\"')}"`, ...suggestedCommandsForFlow(topic, flow)]
+      : suggestedCommandsForFlow(topic, flow),
     warnings,
   };
 }
@@ -310,4 +332,27 @@ function buildViewModelOrEmpty(paths: ProjectPaths, opts: BuildWorkflowDashboard
 
 function inferTopicFromRequest(input: string): string | null {
   return input.toLowerCase().match(/[a-z0-9][a-z0-9-]*/)?.[0] ?? null;
+}
+
+function selectionCommandsForActivation(
+  request: string,
+  activation: ReturnType<typeof buildKnowledgeActivation>,
+): string[] {
+  const escapedRequest = request.replace(/"/g, '\\"');
+  if (activation.topicRecommendation.selection === 'ambiguous') {
+    return activation.topicRecommendation.candidates.map(candidate =>
+      `spec-manager brief "${escapedRequest}" --topic ${candidate.topic}`,
+    );
+  }
+  const topic = activation.inferredTopic ?? inferTopicFromRequest(request);
+  return topic
+    ? [`spec-manager spec new L1 --topic ${topic} --title "..."`, `spec-manager brief "${escapedRequest}" --topic ${topic}`]
+    : ['spec-manager spec new L1 --topic <topic> --title "..."'];
+}
+
+function topicSelectionBlockingReason(activation: ReturnType<typeof buildKnowledgeActivation>): string {
+  if (activation.topicRecommendation.selection === 'ambiguous') {
+    return `Multiple existing topics match this request: ${activation.topicRecommendation.candidates.map(candidate => candidate.topic).join(', ')}`;
+  }
+  return 'No existing topic was selected; create a new topic explicitly';
 }

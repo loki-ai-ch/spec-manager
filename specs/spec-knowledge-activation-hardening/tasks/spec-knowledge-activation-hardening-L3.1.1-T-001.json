@@ -1,0 +1,98 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-activation-hardening-L3.1.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、父 L2、历史 Task 和 agent-plan 模板",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Read frozen L3 and parent L2, task history, agent-plan template, workflow/brief/guide call chains and exact tests.\",\"files\":[]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T08:22:30.254Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "新增 src/core/knowledge-activation.ts 实现共享激活投影",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added shared deterministic activation projection with project/topic scope and explainable matches.\",\"files\":[\"src/core/knowledge-activation.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T08:28:55.131Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 src/core/capability-brief.ts 消费共享激活投影",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Connected Agent Brief retrieval metadata and inferred topic to the shared activation projection.\",\"files\":[\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T08:28:55.328Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 src/core/workflow-surface.ts 输出 history-aware 下一步",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Made Workflow Next acknowledge related cross-topic history before suggesting a new L1.\",\"files\":[\"src/core/workflow-surface.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T08:28:55.530Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 src/core/guided-assist.ts 统一引导路由",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Made Guided Assist fall back to the shared activation projection when exact local topic matching is ambiguous.\",\"files\":[\"src/core/guided-assist.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T08:28:55.732Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "补充 Brief、Workflow Surface 和 Guided Assist 回归测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Added the cross-topic history routing regression and retained all Brief/Guide tests.\",\"files\":[\"src/core/__tests__/workflow-surface.test.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T08:28:55.957Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、npm run lint 和全量 npm test",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"Targeted tests, TypeScript lint, and the full 87-file 1016-test suite passed.\",\"files\":[]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T08:28:56.154Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T08:21:19.362Z",
+  "finishedAt": "2026-07-16T08:30:26.246Z",
+  "created": "2026-07-16T08:21:19.354Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Knowledge workflow routing changes require critical AC evidence.",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run routing regressions && npm run lint && npm test",
+      "exitCode": 0,
+      "summary": "Cross-topic routing regression passed; lint passed; full suite 87 files and 1016 tests passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T08:29:45.026Z",
+      "layer": "smoke"
+    }
+  ]
+}

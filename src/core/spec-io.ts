@@ -19,6 +19,7 @@ import {
 import type { AuditSink } from './audit-events.js';
 import { SpecFrontmatterSchema } from '../schemas/spec.js';
 import type { ImplementationAuthority } from './status.js';
+import type { HistoryReviewT, ScopePlanT } from '../schemas/spec.js';
 import {
   applySpecUpdatePolicy,
   buildInitialSpecRecord,
@@ -45,6 +46,10 @@ export interface SpecFrontmatter {
   created?: string;
   updated?: string;
   changeSummary?: string;
+  historyReview?: HistoryReviewT;
+  scopePlan?: ScopePlanT;
+  deliveryLearning?: boolean;
+  deliveryLearningReason?: string;
 }
 
 export interface StepFrontmatter {

@@ -1,0 +1,133 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-operational-closure-L3.2.1",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、spec-knowledge-operational-closure-L2.2、前序 L3、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "toolName": "Read",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent/previous specs, complete capability brief/type/activation implementations and tests; confirmed current module extraction is body regex only and conflicts only reflect invalidated/superseded state.\"}",
+      "latencyMs": 1400,
+      "reportedAt": "2026-07-16T10:32:30.322Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 capability-types.ts 定义候选与 ConstraintTrust 类型",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added ConstraintTrust, ModuleConstraint, ConflictCandidate and GovernanceCandidate contracts with backward-compatible fields.\",\"files\":[\"src/core/capability-types.ts\",\"src/core/knowledge-migration.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:35:35.889Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-activation.ts 实现结构化模块提取和路径三态",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added structured/code-block/text fallback module extraction with current, historical and unknown path states validated against project root.\",\"files\":[\"src/core/knowledge-activation.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:35:36.103Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 capability-brief.ts 构建可解释 conflict candidates",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added explainable state, lexical polarity and history disposition conflict candidates with both sides, reason codes, verdict and confidence.\",\"files\":[\"src/core/capability-brief.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:35:36.306Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "重构 buildConstraintPackage 为全部子项补齐信任元数据",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Rebuilt Constraint Package AC, Lesson, module and conflict items with independent sourceRefs, numeric confidence and knowledgeState; added reusable lifecycle candidate builder.\",\"files\":[\"src/core/capability-brief.ts\",\"src/core/knowledge-migration.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:35:36.508Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "扩展 knowledge-activation 和 capability-brief 候选路径测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added path-state and constraint trust/conflict fixtures; 29 focused tests and TypeScript lint pass.\",\"files\":[\"src/core/__tests__/knowledge-activation.test.ts\",\"src/core/__tests__/capability-brief.test.ts\"]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T10:35:36.706Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build、全量测试和 Brief CLI smoke",
+      "status": "succeeded",
+      "toolName": "Bash",
+      "outputJson": "{\"summary\":\"29 focused tests, lint/build, 90-file 1027-test full suite and Brief CLI smoke passed; V-001..V-003 cover AC-1..AC-4.\",\"files\":[]}",
+      "latencyMs": 9000,
+      "reportedAt": "2026-07-16T10:37:05.974Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T10:31:44.400Z",
+  "finishedAt": "2026-07-16T10:37:30.648Z",
+  "created": "2026-07-16T10:31:44.394Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Four critical AC require trust metadata, path-state and read-only evidence",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/knowledge-activation.test.ts src/core/__tests__/capability-brief.test.ts src/core/__tests__/knowledge.test.ts",
+      "exitCode": 0,
+      "summary": "29 focused tests passed for per-item trust, three-state paths, conflict candidates and knowledge compatibility",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:36:45.860Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-2",
+        "AC-3"
+      ],
+      "created": "2026-07-16T10:36:46.068Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test && node dist/cli/index.js brief change-current-knowledge-constraints --topic spec-knowledge-operational-closure --json",
+      "exitCode": 0,
+      "summary": "90 files and 1027 tests passed; Brief smoke exposes trust metadata, path state and explainable history conflict candidates",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T10:36:46.262Z",
+      "layer": "smoke"
+    }
+  ]
+}

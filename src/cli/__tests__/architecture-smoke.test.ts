@@ -5,6 +5,7 @@ import { Command } from 'commander';
 import { registerProject } from '../project.js';
 import { registerSpec } from '../spec.js';
 import { registerTaskCommands } from '../task.js';
+import { registerKnowledgeCommands } from '../knowledge.js';
 import { findSpecByCode } from '../../core/spec-io.js';
 import { findTask } from '../../core/task.js';
 import { createTestProject, type TestProject } from '../../core/__tests__/project-fixture.js';
@@ -44,6 +45,7 @@ function makeProgram(): Command {
   registerProject(program);
   registerSpec(program);
   registerTaskCommands(program);
+  registerKnowledgeCommands(program);
   return program;
 }
 
@@ -74,6 +76,12 @@ describe('architecture CLI smoke', () => {
       '--content', writeFixture('l1.md', '# Architecture smoke\n\n## Goal\nExercise CLI architecture flow.\n'),
       '--ai-summary', 'architecture smoke PRD',
       '--change-summary', 'smoke fixture',
+    ]);
+    await run(['knowledge', 'show', 'spec:architecture-smoke-L1', '--json']);
+    await run([
+      'knowledge', 'set', 'spec:architecture-smoke-L1',
+      '--state', 'current',
+      '--reason', 'Architecture smoke explicit review.',
     ]);
     await run(['spec', 'confirm', 'architecture-smoke-L1']);
 

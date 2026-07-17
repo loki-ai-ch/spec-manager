@@ -11,6 +11,7 @@ import {
   runSpecTransitionCommand,
   runSpecUpdateCommand,
 } from '../spec-handlers.js';
+import { attachHistorySources, setHistoryDisposition } from '../../core/history-review.js';
 
 let project: TestProject;
 let context: CliActionContext & { logs: string[]; warnings: string[]; errors: string[] };
@@ -63,6 +64,31 @@ function createCompleteL3(): string {
 }
 
 describe('spec CLI handlers', () => {
+  it('rejects incomplete history review', () => {
+    createCompleteL1();
+    createSpec({ paths: project.paths, code: 'source-L1', level: 'L1', title: 'Source', topic: 'source', parentCode: null });
+    attachHistorySources({ paths: project.paths, specCode: 'auth-L1', sources: ['spec:source-L1'] });
+    expect(() => runSpecTransitionCommand({ context, code: 'auth-L1', command: 'confirm', force: false }))
+      .toThrow(/HISTORY_REVIEW_INCOMPLETE/);
+    expect(findSpecByCode(project.paths, 'auth-L1')?.fm.status).toBe('draft');
+  });
+
+  it('keeps legacy confirmation compatible', () => {
+    createCompleteL1();
+    expect(runSpecTransitionCommand({ context, code: 'auth-L1', command: 'confirm', force: false }).newStatus)
+      .toBe('confirmed');
+  });
+
+  it('confirms a complete history review', () => {
+    createCompleteL1();
+    createSpec({ paths: project.paths, code: 'source-L1', level: 'L1', title: 'Source', topic: 'source', parentCode: null });
+    attachHistorySources({ paths: project.paths, specCode: 'auth-L1', sources: ['spec:source-L1'] });
+    setHistoryDisposition({
+      paths: project.paths, specCode: 'auth-L1', sourceRef: 'spec:source-L1', action: 'reuse',
+    });
+    expect(runSpecTransitionCommand({ context, code: 'auth-L1', command: 'confirm', force: false }).newStatus)
+      .toBe('confirmed');
+  });
   it('updates spec content from a file and presents validation output', () => {
     createCompleteL1();
     const contentFile = join(project.root, 'content.md');

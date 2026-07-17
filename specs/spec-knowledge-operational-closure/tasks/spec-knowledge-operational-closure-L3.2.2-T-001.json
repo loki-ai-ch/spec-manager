@@ -1,0 +1,132 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-operational-closure-L3.2.2",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3、spec-knowledge-operational-closure-L2.2、前序 L3、历史 Task 和 plan 模板",
+      "status": "succeeded",
+      "toolName": "Read",
+      "outputJson": "{\"summary\":\"Read frozen L3, parent/previous specs, migration v1, critical readiness, retrieval activation, workflow next projection and CLI tests; confirmed v1 only emits missing Spec validity and workflow still selects inferred token before related topics.\"}",
+      "latencyMs": 1500,
+      "reportedAt": "2026-07-16T10:38:50.740Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-migration.ts 生成五维稳定治理批次",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Upgraded knowledge migration to v2 with deterministic spec-validity, decision-lifecycle, supersedes-relation, history-disposition and critical-ac-readiness batches while retaining legacy items.\",\"files\":[\"src/core/knowledge-migration.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T10:47:02.373Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-migration.ts 增加只读 simulatedMetricsDelta",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added read-only simulatedMetricsDelta bounded by Metrics v2 baseline and explicit writes=false/readOnly=true contract.\",\"files\":[\"src/core/knowledge-migration.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T10:47:02.574Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 knowledge-activation.ts 构建 canonical topic 推荐器",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Added ranked canonical topic recommendation with relevance confidence, historical strength, critical constraint counts and candidate/ambiguous/create-new states.\",\"files\":[\"src/core/knowledge-activation.ts\",\"src/core/capability-types.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T10:47:02.766Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 capability-brief.ts、workflow-surface.ts 和 CLI 统一 topic 候选呈现",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Integrated one recommendation into Agent Brief and workflow next projections; high-confidence existing topics replace accidental inferred tokens while create-new remains explicit; updated CLI migration presenter.\",\"files\":[\"src/core/capability-brief.ts\",\"src/core/workflow-surface.ts\",\"src/cli/project.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T10:47:02.971Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "扩展 migration、workflow、brief、readiness 和 CLI 只读排序测试",
+      "status": "succeeded",
+      "toolName": "apply_patch",
+      "outputJson": "{\"summary\":\"Expanded migration, activation, workflow, Brief, readiness and CLI tests for five dimensions, read-only facts, stable candidates, ambiguous and create-new; 47 focused tests pass.\",\"files\":[\"src/core/__tests__/knowledge-migration.test.ts\",\"src/core/__tests__/knowledge-activation.test.ts\",\"src/core/__tests__/workflow-surface.test.ts\",\"src/core/__tests__/capability-brief.test.ts\"]}",
+      "latencyMs": 1300,
+      "reportedAt": "2026-07-16T10:47:03.221Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行定向 Vitest、lint、build、全量测试和 migration/next CLI smoke",
+      "status": "succeeded",
+      "toolName": "Bash",
+      "outputJson": "{\"summary\":\"47 focused tests, lint/build, 90-file 1029-test full suite, migration v2 and canonical-topic Next smoke passed; V-001..V-003 cover AC-1..AC-4.\",\"files\":[]}",
+      "latencyMs": 12000,
+      "reportedAt": "2026-07-16T11:42:37.231Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T10:37:51.963Z",
+  "finishedAt": "2026-07-16T11:44:00.567Z",
+  "created": "2026-07-16T10:37:51.953Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "governed",
+  "profileSource": "explicit",
+  "profileOverrideReason": "Four critical AC require five-dimension read-only and canonical-topic evidence",
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm test -- --run src/core/__tests__/knowledge-migration.test.ts src/core/__tests__/knowledge-activation.test.ts src/core/__tests__/workflow-surface.test.ts src/core/__tests__/capability-brief.test.ts src/core/__tests__/critical-readiness.test.ts src/cli/__tests__/project-workflow.test.ts",
+      "exitCode": 0,
+      "summary": "47 focused tests passed for five migration dimensions, read-only facts, stable topic ranking, ambiguous and create-new",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T11:19:58.617Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-002",
+      "command": "npm run lint && npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript lint and build passed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-4"
+      ],
+      "created": "2026-07-16T11:19:58.813Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test && migration preview and next CLI smoke",
+      "exitCode": 0,
+      "summary": "90 files and 1029 tests passed; migration v2 returned five read-only batches and next routed the role-agent request to agent-install-surface with explicit create-new allowed",
+      "artifacts": [],
+      "coversAc": [
+        "AC-1",
+        "AC-2",
+        "AC-3",
+        "AC-4"
+      ],
+      "created": "2026-07-16T11:19:59.004Z",
+      "layer": "smoke"
+    }
+  ]
+}

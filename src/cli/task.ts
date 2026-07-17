@@ -31,7 +31,8 @@ import {
 import { buildTaskEvidence, type TaskEvidence } from '../core/task-evidence.js';
 import { listDecisions } from '../core/decision.js';
 import { StepStatusSchema } from '../schemas/spec.js';
-import { createDefaultCliActionContext, getWritePaths, runCliAction } from './common.js';
+import { createDefaultCliActionContext, getWritePaths, renderJson, runCliAction, splitCsv } from './common.js';
+import { declareDeliveryKnowledge, findDeliveryKnowledge, readDeliveryKnowledge, reviewDeliveryKnowledge, type DeliveryConclusion } from '../core/delivery-knowledge.js';
 import {
   printTaskReportResult,
   printTaskVerifyResult,
@@ -48,6 +49,33 @@ export function registerTaskCommands(program: Command): void {
   const task = program
     .command('task')
     .description('Agent Task 生命周期管理（创建/执行步骤/完成/失败）');
+
+  const knowledge = task.command('knowledge').description('Task 交付知识声明与人工审核');
+  knowledge.command('declare <taskId>').requiredOption('--spec <code>').requiredOption('--conclusion <type>')
+    .requiredOption('--summary <text>').option('--evidence <ids>').option('--criteria <ids>')
+    .action((taskId: string, opts: { spec: string; conclusion: string; summary: string; evidence?: string; criteria?: string }) => {
+      if (!['validated', 'invalidated', 'discovered', 'none'].includes(opts.conclusion)) throw new Error(`DELIVERY_CONCLUSION_INVALID: ${opts.conclusion}`);
+      const record = declareDeliveryKnowledge({ paths: getWritePaths(), specCode: opts.spec, taskId, conclusion: opts.conclusion as DeliveryConclusion, summary: opts.summary, evidenceRefs: splitCsv(opts.evidence), affectedCriteria: splitCsv(opts.criteria) });
+      console.log(`✓ Delivery Knowledge ${record.id} declared (${record.status})`);
+    });
+  knowledge.command('none <taskId>').requiredOption('--spec <code>').requiredOption('--reason <text>')
+    .action((taskId: string, opts: { spec: string; reason: string }) => {
+      const record = declareDeliveryKnowledge({ paths: getWritePaths(), specCode: opts.spec, taskId, conclusion: 'none', summary: opts.reason });
+      console.log(`✓ Delivery Knowledge ${record.id} declared (none)`);
+    });
+  knowledge.command('review <id>').requiredOption('--decision <decision>').option('--reason <text>')
+    .action((id: string, opts: { decision: string; reason?: string }) => {
+      if (opts.decision !== 'approve' && opts.decision !== 'reject') throw new Error(`DELIVERY_REVIEW_INVALID: ${opts.decision}`);
+      const record = reviewDeliveryKnowledge(getWritePaths(), id, opts.decision, opts.reason); console.log(`✓ ${id} -> ${record.status}`);
+    });
+  knowledge.command('show <taskId>').requiredOption('--spec <code>').option('--json', 'JSON', false)
+    .action((taskId: string, opts: { spec: string; json?: boolean }) => {
+      const record = findDeliveryKnowledge(getWritePaths(), opts.spec, taskId);
+      console.log(opts.json ? renderJson(record) : record ? `${record.id}: ${record.conclusion}/${record.status}` : '(none)');
+    });
+  knowledge.command('list').option('--json', 'JSON', false).action((opts: { json?: boolean }) => {
+    const value = readDeliveryKnowledge(getWritePaths()); console.log(opts.json ? renderJson(value) : value.records.map(item => `${item.id} ${item.status} ${item.specCode}/${item.taskId}`).join('\n') || '(none)');
+  });
 
   task
     .command('run <specCode>')

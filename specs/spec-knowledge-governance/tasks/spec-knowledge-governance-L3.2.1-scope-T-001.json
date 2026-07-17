@@ -1,0 +1,125 @@
+{
+  "id": "T-001",
+  "specCode": "spec-knowledge-governance-L3.2.1-scope",
+  "status": "completed",
+  "steps": [
+    {
+      "stepNo": "1",
+      "stepType": "tool_action",
+      "name": "上下文收集: 读取 L3/L2、历史 Task、agent-plan 和 lifecycle 调用链",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"已确认 L3 frozen、L2 契约、历史 Task，并复核 schema、spec policy、lifecycle cascade、task completion 与 project readiness CLI。\",\"files\":[]}",
+      "latencyMs": 1200,
+      "reportedAt": "2026-07-16T05:48:23.432Z"
+    },
+    {
+      "stepNo": "2",
+      "stepType": "tool_action",
+      "name": "修改 spec schema 并新增 scopePlan 更新服务",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 open/fixed scopePlan、计划子级、leaf、reason schema 和受策略保护的更新服务。\",\"files\":[]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T05:52:59.505Z"
+    },
+    {
+      "stepNo": "3",
+      "stepType": "tool_action",
+      "name": "新增 scope readiness 核心投影",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"实现 project/topic 只读 ready/blocked/legacy、missing/incomplete 投影。\",\"files\":[]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T05:52:59.701Z"
+    },
+    {
+      "stepNo": "4",
+      "stepType": "tool_action",
+      "name": "修改 lifecycle.ts 接入计划子级完整性门禁",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"级联现可阻断 open、missing、incomplete，legacy 保持原实际子级逻辑。\",\"files\":[]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T05:52:59.893Z"
+    },
+    {
+      "stepNo": "5",
+      "stepType": "tool_action",
+      "name": "修改 spec-policy.ts 检测 implemented ancestor scope drift",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"创建子级或更新范围遇到 implemented ancestor 时返回 LIFECYCLE_SCOPE_DRIFT。\",\"files\":[]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T05:53:00.083Z"
+    },
+    {
+      "stepNo": "6",
+      "stepType": "tool_action",
+      "name": "新增 scope CLI、生命周期、readiness 和兼容回归测试",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"新增 spec scope、project readiness scope 与四类事故回归；定向 79 用例通过。\",\"files\":[]}",
+      "latencyMs": 1800,
+      "reportedAt": "2026-07-16T05:53:00.301Z"
+    },
+    {
+      "stepNo": "7",
+      "stepType": "tool_action",
+      "name": "验证: 运行 scope 定向测试、npm run build 和全量 Vitest",
+      "status": "succeeded",
+      "outputJson": "{\"summary\":\"定向 79、反向 4、build 和全量 85 文件 1009 测试通过；证据覆盖 AC-6/9/10。\",\"files\":[]}",
+      "latencyMs": 6200,
+      "reportedAt": "2026-07-16T05:55:51.726Z"
+    }
+  ],
+  "autoConfirm": false,
+  "startedAt": "2026-07-16T05:47:42.719Z",
+  "finishedAt": "2026-07-16T05:56:21.672Z",
+  "created": "2026-07-16T05:47:42.715Z",
+  "waitReason": null,
+  "errorCode": null,
+  "errorMessage": null,
+  "lastFailedOutput": null,
+  "profile": "standard",
+  "profileSource": "project-default",
+  "profileOverrideReason": null,
+  "verifications": [
+    {
+      "id": "V-001",
+      "command": "npm run build",
+      "exitCode": 0,
+      "summary": "TypeScript build passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6",
+        "AC-9",
+        "AC-10"
+      ],
+      "created": "2026-07-16T05:55:26.116Z",
+      "layer": "compile"
+    },
+    {
+      "id": "V-002",
+      "command": "scope readiness negative regressions",
+      "exitCode": 0,
+      "summary": "Open, missing, legacy, and premature cascade cases passed.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6",
+        "AC-9",
+        "AC-10"
+      ],
+      "created": "2026-07-16T05:55:26.313Z",
+      "layer": "functional"
+    },
+    {
+      "id": "V-003",
+      "command": "npm test -- --run",
+      "exitCode": 0,
+      "summary": "Full suite passed: 85 files and 1009 tests.",
+      "artifacts": [],
+      "coversAc": [
+        "AC-6",
+        "AC-9",
+        "AC-10"
+      ],
+      "created": "2026-07-16T05:55:26.501Z",
+      "layer": "smoke"
+    }
+  ]
+}

@@ -16,6 +16,7 @@ import { siblingMetaDir } from './paths.js';
 import { writeAtomic } from './frontmatter.js';
 import type { TaskRecord } from './task.js';
 import { buildTaskEvidence, evaluateEvidenceCoverage, type TaskEvidence } from './task-evidence.js';
+import { ensureDeliveryKnowledgeDraft } from './delivery-knowledge.js';
 
 export type CompletionGateName =
   | 'bypass'
@@ -25,6 +26,7 @@ export type CompletionGateName =
   | 'verification-commands'
   | 'verify-rules'
   | 'evidence-coverage'
+  | 'delivery-knowledge'
   | 'lifecycle-cascade'
   | 'decision-r18';
 
@@ -83,6 +85,7 @@ function runTaskCompletionUnlocked(input: TaskCompletionInput): TaskCompletionRe
     gateResults.push(runVerificationCommandGate(input, l3.content));
     gateResults.push(runVerifyRuleGate(input, l3.content));
     gateResults.push(runEvidenceCoverageGate(input, task));
+    gateResults.push(runDeliveryKnowledgeGate(input, task, Boolean(l3.fm.deliveryLearning)));
   } else {
     gateResults.push(runVerificationEvidenceGate(task));
   }
@@ -122,6 +125,17 @@ function runTaskCompletionUnlocked(input: TaskCompletionInput): TaskCompletionRe
     cascadedL1Specs,
     skippedSpecs: cascade.skippedSpecs,
     gateResults,
+  };
+}
+
+export function runDeliveryKnowledgeGate(input: TaskCompletionInput, task: TaskRecord, required: boolean): CompletionGateResult {
+  if (!required) return { gate: 'delivery-knowledge', status: 'skipped', message: 'delivery learning not enabled' };
+  const ensured = ensureDeliveryKnowledgeDraft({ paths: input.paths, specCode: task.specCode, taskId: task.id });
+  return {
+    gate: 'delivery-knowledge',
+    status: 'passed',
+    message: `${ensured.knowledgeId} ${ensured.action} (${ensured.status})`,
+    metadata: { action: ensured.action, sourceRefs: ensured.sourceRefs },
   };
 }
 

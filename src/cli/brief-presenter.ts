@@ -8,25 +8,50 @@ export function renderBriefTextLines(brief: AgentBriefForPresentation): string[]
     `Request: ${brief.request}`,
     `Topic: ${brief.topic ?? '(unresolved)'}`,
   ];
+  if (brief.retrieval) {
+    lines.push(`Retrieval: ${brief.retrieval.scope} candidates=${brief.retrieval.candidateCount} limit=${brief.retrieval.resultLimit}`);
+  }
+
   if (brief.profileRecommendation) {
     lines.push(`Recommended Profile: ${brief.profileRecommendation.recommendedProfile}`);
   }
+
   if (brief.relevantSpecs.length > 0) {
     lines.push('Relevant Specs:');
-    for (const spec of brief.relevantSpecs) lines.push(`  - ${spec.code} ${spec.status} ${spec.title}`);
+    for (const spec of brief.relevantSpecs) {
+      lines.push(`  - ${spec.code} ${spec.status} ${spec.title}`);
+      if (spec.match) lines.push(`    [${spec.match.confidence}] ${spec.match.reasons.join('; ')}`);
+    }
   }
+
   if (brief.relevantDecisions.length > 0) {
     lines.push('Relevant Decisions:');
-    for (const decision of brief.relevantDecisions) lines.push(`  - ${decision.id} ${decision.status} ${decision.title}`);
+    for (const decision of brief.relevantDecisions) {
+      lines.push(`  - ${decision.id} ${decision.status} ${decision.title}`);
+      if (decision.match) lines.push(`    [${decision.match.confidence}] ${decision.match.reasons.join('; ')}`);
+    }
   }
+
   if (brief.relevantTasks.length > 0) {
     lines.push('Relevant Tasks:');
-    for (const task of brief.relevantTasks) lines.push(`  - ${task.id} ${task.status} ${task.specCode}`);
+    for (const task of brief.relevantTasks) {
+      lines.push(`  - ${task.id} ${task.status} ${task.specCode}`);
+      if (task.match) lines.push(`    [${task.match.confidence}] ${task.match.reasons.join('; ')}`);
+    }
   }
+
   if (brief.lessons.length > 0) {
     lines.push('Lessons:');
-    for (const lesson of brief.lessons) lines.push(`  - ${lesson.id} [${lesson.confidence}] ${lesson.title}`);
+    for (const lesson of brief.lessons) {
+      lines.push(`  - ${lesson.id} [${lesson.confidence}] ${lesson.title}`);
+    }
   }
+  if (brief.constraintPackage) {
+    const pkg = brief.constraintPackage;
+    lines.push(`Constraint Package: specs=${pkg.specs.length} decisions=${pkg.decisions.length} ac=${pkg.acceptanceCriteria.length} lessons=${pkg.lessons.length} modules=${pkg.codeModules.length} conflicts=${pkg.conflicts.length}`);
+    if (pkg.unknownDimensions.length) lines.push(`  Unknown: ${pkg.unknownDimensions.join(', ')}`);
+  }
+
   const design = brief.designContext;
   const summary = design?.summary;
   if (design && summary) {
@@ -54,12 +79,17 @@ export function renderBriefTextLines(brief: AgentBriefForPresentation): string[]
       }
     }
   }
+
   if (brief.suggestedReads.length > 0) {
     lines.push('Suggested Reads:');
-    for (const read of brief.suggestedReads) lines.push(`  - ${read.kind}:${read.id}${read.path ? ` (${read.path})` : ''}`);
+    for (const read of brief.suggestedReads) {
+      lines.push(`  - ${read.kind}:${read.id}${read.path ? ` (${read.path})` : ''}`);
+    }
   }
+
   lines.push(...renderFindingsTextLines(brief.findings));
   lines.push(`Next: ${brief.nextCommand}`);
+
   return lines;
 }
 
